@@ -2,7 +2,7 @@
 
 public class RequestTemplate
 {
-    public string? Name { get; set; }
-    public HttpMethod? Method { get; set; }
-    public string? Url { get; set; }
+    public required string Name { get; set; }
+    public required HttpMethod Method { get; set; }
+    public required string Url { get; set; }
 }
