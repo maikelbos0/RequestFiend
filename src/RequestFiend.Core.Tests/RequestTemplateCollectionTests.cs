@@ -17,7 +17,7 @@ public class RequestTemplateCollectionTests {
             Method = HttpMethod.Get,
             Url = url
         };
-        var subject = new RequestTemplateCollection() { 
+        var subject = new RequestTemplateCollection() {
             Name = "Collection",
             Templates = [requestTemplate]
         };
@@ -57,5 +57,39 @@ public class RequestTemplateCollectionTests {
         Assert.Equal(requestTemplate.Method, message.Method);
         Assert.NotNull(message.RequestUri);
         Assert.Equal(requestTemplate.Url, message.RequestUri.ToString());
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    [InlineData("\t")]
+    public void ApplyVariables_Returns_Value_If_Null_Or_Whitespace(string? value) {
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            Variables = [
+                new() { Name = "First", Value = "Replacement" },
+                new() { Name = "Second", Value = "Another" }
+            ]
+        };
+
+        var result = subject.ApplyVariables(value);
+
+        Assert.Equal(value, result);
+    }
+
+    [Fact]
+    public void ApplyVariables_Replaces_Variables_With_Values() {
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            Variables = [
+                new() { Name = "First", Value = "Replacement" },
+                new() { Name = "Second", Value = "Another" }
+            ]
+        };
+
+        var result = subject.ApplyVariables("{{First}} first and {{second}}");
+
+        Assert.Equal("Replacement first and Another", result);
     }
 }
