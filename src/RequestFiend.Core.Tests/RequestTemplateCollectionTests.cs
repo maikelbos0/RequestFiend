@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using Xunit;
 
@@ -26,6 +27,20 @@ public class RequestTemplateCollectionTests {
     }
 
     [Fact]
+    public void TryCreateMessage_Throws_ArgumentException_If_Template_Not_In_Collection() {
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/"
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection"
+        };
+
+        Assert.Equal("template", Assert.Throws<ArgumentException>(() => subject.TryCreateMessage(requestTemplate, out var message)).ParamName);
+    }
+
+    [Fact]
     public void TryCreateMessage_Creates_Message_If_Possible() {
         var requestTemplate = new RequestTemplate() {
             Name = "Template",
@@ -38,7 +53,6 @@ public class RequestTemplateCollectionTests {
         };
 
         Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
-
         Assert.NotNull(message);
         Assert.Equal(requestTemplate.Method, message.Method);
         Assert.NotNull(message.RequestUri);

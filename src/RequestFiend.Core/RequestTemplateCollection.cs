@@ -7,6 +7,10 @@ public class RequestTemplateCollection {
     public List<RequestTemplate> Templates { get; set; } = [];
 
     public bool TryCreateMessage(RequestTemplate template, [NotNullWhen(true)] out HttpRequestMessage? message) {
+        if (!Templates.Contains(template)) {
+            throw new ArgumentException("This template is not part of the collection.", nameof(template));
+        }
+
         if (!Uri.TryCreate(template.Url, UriKind.Absolute, out var uri)) {
             message = null;
             return false;
