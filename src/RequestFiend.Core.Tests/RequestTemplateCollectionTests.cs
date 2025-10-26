@@ -37,7 +37,7 @@ public class RequestTemplateCollectionTests {
             Name = "Collection"
         };
 
-        Assert.Equal("template", Assert.Throws<ArgumentException>(() => subject.TryCreateMessage(requestTemplate, out var message)).ParamName);
+        Assert.Equal("requestTemplate", Assert.Throws<ArgumentException>(() => subject.TryCreateMessage(requestTemplate, out var message)).ParamName);
     }
 
     [Fact]
@@ -73,18 +73,80 @@ public class RequestTemplateCollectionTests {
         };
 
         Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
-        Assert.NotNull(message);
         Assert.Equal(requestTemplate.Method, message.Method);
         Assert.NotNull(message.RequestUri);
         Assert.Equal("https://localhost:7001/values", message.RequestUri.ToString());
     }
 
+    [Fact]
+    public void TryCreateMessage_Adds_Headers() {
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/",
+            HeaderTemplates = [
+                new() { Name = "Accept", Value = "application/json" }
+            ]
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            RequestTemplates = [requestTemplate]
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        var header = Assert.Single(message.Headers);
+        Assert.Equal("Accept", header.Key);
+        Assert.Equal("application/json", Assert.Single(header.Value));
+    }
+
+    [Fact]
+    public void TryCreateMessage_Applies_Variables_To_Header_Names() {
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/",
+            HeaderTemplates = [
+                new() { Name = "{{header}}", Value = "application/json" }
+            ]
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            RequestTemplates = [requestTemplate],
+            Variables = { { "Header", "Accept" } }
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        var header = Assert.Single(message.Headers);
+        Assert.Equal("Accept", header.Key);
+    }
+
+    [Fact]
+    public void TryCreateMessage_Applies_Variables_To_Header_Values() {
+
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/",
+            HeaderTemplates = [
+                new() { Name = "Accept", Value = "{{header}}" }
+            ]
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            RequestTemplates = [requestTemplate],
+            Variables = { { "Header", "application/json" } }
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        var header = Assert.Single(message.Headers);
+        Assert.Equal("application/json", Assert.Single(header.Value));
+    }
+
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData("  ")]
     [InlineData("\t")]
-    public void ApplyVariables_Returns_Value_If_Null_Or_Whitespace(string? value) {
+    public void ApplyVariables_Returns_Value_If_Whitespace(string value) {
         var subject = new RequestTemplateCollection() {
             Name = "Collection",
             Variables = {

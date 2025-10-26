@@ -18,11 +18,14 @@ public class RequestTemplateCollection {
         }
 
         message = new(requestTemplate.Method, uri);
+        foreach (var headerTemplate in requestTemplate.HeaderTemplates) {
+            message.Headers.Add(ApplyVariables(headerTemplate.Name), ApplyVariables(headerTemplate.Value));
+        }
 
-        return true;
+            return true;
     }
 
-    public string? ApplyVariables(string? value) {
+    public string ApplyVariables(string value) {
         if (string.IsNullOrWhiteSpace(value)) {
             return value;
         }
