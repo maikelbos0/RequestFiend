@@ -59,6 +59,26 @@ public class RequestTemplateCollectionTests {
         Assert.Equal(requestTemplate.Url, message.RequestUri.ToString());
     }
 
+    [Fact]
+    public void TryCreateMessage_Applies_Variables_To_Url() {
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "{{baseurl}}values"
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            Templates = [requestTemplate],
+            Variables = { { "BaseUrl", "https://localhost:7001/" } }
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        Assert.NotNull(message);
+        Assert.Equal(requestTemplate.Method, message.Method);
+        Assert.NotNull(message.RequestUri);
+        Assert.Equal("https://localhost:7001/values", message.RequestUri.ToString());
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -67,10 +87,10 @@ public class RequestTemplateCollectionTests {
     public void ApplyVariables_Returns_Value_If_Null_Or_Whitespace(string? value) {
         var subject = new RequestTemplateCollection() {
             Name = "Collection",
-            Variables = [
-                new() { Name = "First", Value = "Replacement" },
-                new() { Name = "Second", Value = "Another" }
-            ]
+            Variables = {
+                { "First", "Replacement" },
+                { "Second", "Another" }
+            }
         };
 
         var result = subject.ApplyVariables(value);
@@ -82,10 +102,10 @@ public class RequestTemplateCollectionTests {
     public void ApplyVariables_Replaces_Variables_With_Values() {
         var subject = new RequestTemplateCollection() {
             Name = "Collection",
-            Variables = [
-                new() { Name = "First", Value = "Replacement" },
-                new() { Name = "Second", Value = "Another" }
-            ]
+            Variables = {
+                { "First", "Replacement" },
+                { "Second", "Another" }
+            }
         };
 
         var result = subject.ApplyVariables("{{First}} first and {{second}}");
