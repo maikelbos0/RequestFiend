@@ -1,3 +1,4 @@
+using NSubstitute;
 using System;
 using System.Net.Http;
 using Xunit;
@@ -202,5 +203,32 @@ public class RequestTemplateTests {
         Assert.True(subject.TryCreateMessage(collection, out var message));
         var defaultHeader = Assert.Single(message.Headers);
         Assert.Equal("application/json", Assert.Single(defaultHeader.Value));
+    }
+
+    [Fact]
+    public void TryCreateMessage_Adds_Content_If_Available() {
+        var contentTemplate = Substitute.For<IContentTemplate>();
+        var subject = new RequestTemplate() {
+            Name = "Request",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/",
+            Content = contentTemplate
+        };
+        var collection = new RequestTemplateCollection() {
+            Name = "Collection",
+            Requests = [subject],
+            Variables = { { "DefaultHeader", "application/json" } },
+            DefaultHeaders = [
+                new() { Name = "Accept", Value = "{{DefaultHeader}}" }
+            ]
+        };
+        contentTemplate.MediaType.Returns("application/json");
+        contentTemplate.CharSet.Returns("utf-8");
+
+        Assert.True(subject.TryCreateMessage(collection, out var message));
+        Assert.IsType<ByteArrayContent>(message.Content);
+        Assert.NotNull(message.Content.Headers.ContentType);
+        Assert.Equal("application/json", message.Content.Headers.ContentType.MediaType);
+        Assert.Equal("utf-8", message.Content.Headers.ContentType.CharSet);
     }
 }

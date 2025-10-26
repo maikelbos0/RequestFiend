@@ -8,6 +8,7 @@ public class RequestTemplate
     public required HttpMethod Method { get; set; }
     public required string Url { get; set; }
     public List<HeaderTemplate> Headers { get; set; } = [];
+    public IContentTemplate? Content { get; set; }
 
     public bool TryCreateMessage(RequestTemplateCollection collection, [NotNullWhen(true)] out HttpRequestMessage? message) {
         if (!collection.Requests.Contains(this)) {
@@ -27,6 +28,14 @@ public class RequestTemplate
             message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
         }
 
+        if (Content != null) {
+            message.Content = new ByteArrayContent(Content.GetContent(collection)) {
+                Headers = {
+                      ContentType = new(Content.MediaType, Content.CharSet)
+                }
+            };
+        }
+
         return true;
-}
+    }
 }
