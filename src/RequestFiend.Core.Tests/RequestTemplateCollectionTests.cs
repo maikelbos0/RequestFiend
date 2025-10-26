@@ -19,7 +19,7 @@ public class RequestTemplateCollectionTests {
         };
         var subject = new RequestTemplateCollection() {
             Name = "Collection",
-            Templates = [requestTemplate]
+            RequestTemplates = [requestTemplate]
         };
 
         Assert.False(subject.TryCreateMessage(requestTemplate, out var message));
@@ -49,7 +49,7 @@ public class RequestTemplateCollectionTests {
         };
         var subject = new RequestTemplateCollection() {
             Name = "Collection",
-            Templates = [requestTemplate]
+            RequestTemplates = [requestTemplate]
         };
 
         Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
@@ -68,7 +68,7 @@ public class RequestTemplateCollectionTests {
         };
         var subject = new RequestTemplateCollection() {
             Name = "Collection",
-            Templates = [requestTemplate],
+            RequestTemplates = [requestTemplate],
             Variables = { { "BaseUrl", "https://localhost:7001/" } }
         };
 

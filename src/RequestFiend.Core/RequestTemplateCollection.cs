@@ -4,20 +4,20 @@ namespace RequestFiend.Core;
 
 public class RequestTemplateCollection {
     public required string Name { get; set; }
-    public List<RequestTemplate> Templates { get; set; } = [];
+    public List<RequestTemplate> RequestTemplates { get; set; } = [];
     public Dictionary<string, string> Variables { get; set; } = [];
 
-    public bool TryCreateMessage(RequestTemplate template, [NotNullWhen(true)] out HttpRequestMessage? message) {
-        if (!Templates.Contains(template)) {
-            throw new ArgumentException("This template is not part of the collection.", nameof(template));
+    public bool TryCreateMessage(RequestTemplate requestTemplate, [NotNullWhen(true)] out HttpRequestMessage? message) {
+        if (!RequestTemplates.Contains(requestTemplate)) {
+            throw new ArgumentException("This template is not part of the collection.", nameof(requestTemplate));
         }
 
-        if (!Uri.TryCreate(ApplyVariables(template.Url), UriKind.Absolute, out var uri)) {
+        if (!Uri.TryCreate(ApplyVariables(requestTemplate.Url), UriKind.Absolute, out var uri)) {
             message = null;
             return false;
         }
 
-        message = new(template.Method, uri);
+        message = new(requestTemplate.Method, uri);
 
         return true;
     }
