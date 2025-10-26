@@ -1,5 +1,4 @@
 using NSubstitute;
-using System;
 using System.Net.Http;
 using Xunit;
 
@@ -25,20 +24,6 @@ public class RequestTemplateTests {
 
         Assert.False(subject.TryCreateMessage(collection, out var message));
         Assert.Null(message);
-    }
-
-    [Fact]
-    public void TryCreateMessage_Throws_ArgumentException_If_Template_Not_In_Collection() {
-        var subject = new RequestTemplate() {
-            Name = "Request",
-            Method = HttpMethod.Get,
-            Url = "https://localhost:7001/"
-        };
-        var collection = new RequestTemplateCollection() {
-            Name = "Collection"
-        };
-
-        Assert.Equal("collection", Assert.Throws<ArgumentException>(() => subject.TryCreateMessage(collection, out var message)).ParamName);
     }
 
     [Fact]

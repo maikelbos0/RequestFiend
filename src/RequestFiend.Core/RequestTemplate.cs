@@ -11,10 +11,6 @@ public class RequestTemplate
     public IContentTemplate? Content { get; set; }
 
     public bool TryCreateMessage(RequestTemplateCollection collection, [NotNullWhen(true)] out HttpRequestMessage? message) {
-        if (!collection.Requests.Contains(this)) {
-            throw new ArgumentException("This request is not part of the collection.", nameof(collection));
-        }
-
         if (!Uri.TryCreate(collection.ApplyVariables(Url), UriKind.Absolute, out var uri)) {
             message = null;
             return false;
