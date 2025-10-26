@@ -6,6 +6,7 @@ public class RequestTemplateCollection {
     public required string Name { get; set; }
     public List<RequestTemplate> RequestTemplates { get; set; } = [];
     public Dictionary<string, string> Variables { get; set; } = [];
+    public List<HeaderTemplate> DefaultHeaderTemplates { get; set; } = [];
 
     public bool TryCreateMessage(RequestTemplate requestTemplate, [NotNullWhen(true)] out HttpRequestMessage? message) {
         if (!RequestTemplates.Contains(requestTemplate)) {
@@ -21,8 +22,11 @@ public class RequestTemplateCollection {
         foreach (var headerTemplate in requestTemplate.HeaderTemplates) {
             message.Headers.Add(ApplyVariables(headerTemplate.Name), ApplyVariables(headerTemplate.Value));
         }
+        foreach (var headerTemplate in DefaultHeaderTemplates) {
+            message.Headers.Add(ApplyVariables(headerTemplate.Name), ApplyVariables(headerTemplate.Value));
+        }
 
-            return true;
+        return true;
     }
 
     public string ApplyVariables(string value) {

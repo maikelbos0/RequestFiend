@@ -142,6 +142,70 @@ public class RequestTemplateCollectionTests {
         Assert.Equal("application/json", Assert.Single(header.Value));
     }
 
+    [Fact]
+    public void TryCreateMessage_Adds_DefaultHeaders() {
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/"
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            RequestTemplates = [requestTemplate],
+            DefaultHeaderTemplates = [
+                new() { Name = "Accept", Value = "application/json" }
+            ]
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        var DefaultHeader = Assert.Single(message.Headers);
+        Assert.Equal("Accept", DefaultHeader.Key);
+        Assert.Equal("application/json", Assert.Single(DefaultHeader.Value));
+    }
+
+    [Fact]
+    public void TryCreateMessage_Applies_Variables_To_DefaultHeader_Names() {
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/"
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            RequestTemplates = [requestTemplate],
+            Variables = { { "DefaultHeader", "Accept" } },
+            DefaultHeaderTemplates = [
+                new() { Name = "{{DefaultHeader}}", Value = "application/json" }
+            ]
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        var DefaultHeader = Assert.Single(message.Headers);
+        Assert.Equal("Accept", DefaultHeader.Key);
+    }
+
+    [Fact]
+    public void TryCreateMessage_Applies_Variables_To_DefaultHeader_Values() {
+
+        var requestTemplate = new RequestTemplate() {
+            Name = "Template",
+            Method = HttpMethod.Get,
+            Url = "https://localhost:7001/"
+        };
+        var subject = new RequestTemplateCollection() {
+            Name = "Collection",
+            RequestTemplates = [requestTemplate],
+            Variables = { { "DefaultHeader", "application/json" } },
+            DefaultHeaderTemplates = [
+                new() { Name = "Accept", Value = "{{DefaultHeader}}" }
+            ]
+        };
+
+        Assert.True(subject.TryCreateMessage(requestTemplate, out var message));
+        var DefaultHeader = Assert.Single(message.Headers);
+        Assert.Equal("application/json", Assert.Single(DefaultHeader.Value));
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("  ")]
