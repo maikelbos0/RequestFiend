@@ -1,4 +1,6 @@
-﻿namespace RequestFiend.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RequestFiend.Core;
 
 public class RequestTemplate
 {
@@ -6,4 +8,25 @@ public class RequestTemplate
     public required HttpMethod Method { get; set; }
     public required string Url { get; set; }
     public List<HeaderTemplate> Headers { get; set; } = [];
+
+    public bool TryCreateMessage(RequestTemplateCollection collection, [NotNullWhen(true)] out HttpRequestMessage? message) {
+        if (!collection.Requests.Contains(this)) {
+            throw new ArgumentException("This request is not part of the collection.", nameof(collection));
+        }
+
+        if (!Uri.TryCreate(collection.ApplyVariables(Url), UriKind.Absolute, out var uri)) {
+            message = null;
+            return false;
+        }
+
+        message = new(Method, uri);
+        foreach (var header in Headers) {
+            message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
+        }
+        foreach (var header in collection.DefaultHeaders) {
+            message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
+        }
+
+        return true;
+}
 }
