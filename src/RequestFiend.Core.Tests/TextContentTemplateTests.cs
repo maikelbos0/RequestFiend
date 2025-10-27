@@ -6,7 +6,7 @@ public class TextContentTemplateTests {
     [Fact]
     public void Validate() {
         var subject = new TextContentTemplate() {
-            Text = "Just a piece of text"
+            Content = "Just a piece of text"
         };
         var collection = new RequestTemplateCollection() {
             Name = "Collection"
@@ -17,23 +17,23 @@ public class TextContentTemplateTests {
 
     [Fact]
     public void Format() {
-        const string text = "Just a piece of text";
+        const string content = "Just a piece of text";
         var subject = new TextContentTemplate() {
-            Text = text
+            Content = content
         };
         var collection = new RequestTemplateCollection() {
             Name = "Collection"
         };
 
-        subject.Format(collection);
+        Assert.True(subject.Format(collection));
 
-        Assert.Equal(text, subject.Text);
+        Assert.Equal(content, subject.Content);
     }
 
     [Fact]
     public void GetContent() {
         var subject = new TextContentTemplate() {
-            Text = "The {{first}} and {{second}} get replaced"
+            Content = "The {{first}} and {{second}} get replaced"
         };
         var collection = new RequestTemplateCollection() {
             Name = "Collection",
