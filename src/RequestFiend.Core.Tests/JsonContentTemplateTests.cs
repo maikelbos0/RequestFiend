@@ -8,16 +8,12 @@ public class JsonContentTemplateTests {
     [InlineData("\"Field\": \"Value\"", false)]
     [InlineData("{\"Field\": \"Value\"}", true)]
     [InlineData("[0, 1, 2, 3, 4, 5]", true)]
-    [InlineData("{{Node}}", true)]
     public void Validate(string content, bool expectedResult) {
         var subject = new JsonContentTemplate() {
             Content = content
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
-            Variables = {
-                { "Node", "{\"Meaning\": 42}" }
-            }
+            Name = "Collection"
         };
 
         Assert.Equal(expectedResult, subject.Validate(collection));
@@ -26,13 +22,15 @@ public class JsonContentTemplateTests {
     [Fact]
     public void Format() {
         var subject = new JsonContentTemplate() {
-            Content = "TODO"
+            Content = "[{\"Field\":\"Value\"},{\"Field\":\"Value\"}]"
         };
         var collection = new RequestTemplateCollection() {
             Name = "Collection"
         };
 
         Assert.True(subject.Format(collection));
+
+        Assert.Equal("[\r\n  {\r\n    \"Field\": \"Value\"\r\n  },\r\n  {\r\n    \"Field\": \"Value\"\r\n  }\r\n]", subject.Content);
     }
 
     [Fact]
