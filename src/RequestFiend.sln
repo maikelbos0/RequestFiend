@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.Core", "Reques
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.Core.Tests", "RequestFiend.Core.Tests\RequestFiend.Core.Tests.csproj", "{1442F047-FD8A-41B9-984F-9D27D78BAB60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.UI", "RequestFiend.UI\RequestFiend.UI.csproj", "{7313E86A-7889-4AD2-BA71-16B3033FE472}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1442F047-FD8A-41B9-984F-9D27D78BAB60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1442F047-FD8A-41B9-984F-9D27D78BAB60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1442F047-FD8A-41B9-984F-9D27D78BAB60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7313E86A-7889-4AD2-BA71-16B3033FE472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7313E86A-7889-4AD2-BA71-16B3033FE472}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7313E86A-7889-4AD2-BA71-16B3033FE472}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7313E86A-7889-4AD2-BA71-16B3033FE472}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
