@@ -9,13 +9,18 @@ public partial class NewRequestTemplateCollectionPage : ContentPage {
         InitializeComponent();        
     }
 
-    private void OnCreateClicked(object sender, EventArgs e) {
+    private async void OnCreateClicked(object sender, EventArgs e) {
         var context = BindingContext as NewRequestTemplateCollection ?? throw new InvalidOperationException();
 
-        Shell.Current.Items.Add(new ShellContent() {
+        var newContent = new ShellContent() {
             Title = context.Name,
-            Content = new RequestTemplateCollectionPage(context.Name, "TODO")
-        });
+            Content = new RequestTemplateCollectionPage(context.Name, "TODO"),
+            Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
+        };
+
+        Shell.Current.Items.Add(newContent);
+
+        await Shell.Current.GoToAsync($"//{newContent.Route}");
     }
 }
 
