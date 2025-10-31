@@ -13,20 +13,12 @@
 
     <ShellContent
         Title="New"
-        ContentTemplate="{DataTemplate local:TestPage}"
+        ContentTemplate="{DataTemplate local:NewRequestTemplateCollectionPage}"
         Route="New" />
 
     <ShellContent
         Title="Load"
-        ContentTemplate="{DataTemplate local:TestPage}"
+        ContentTemplate="{DataTemplate local:MainPage}"
         Route="Load" />
-
-    <ShellContent
-        Title="Collection 1"
-        ContentTemplate="{DataTemplate local:TestPage}" />
-
-    <ShellContent
-        Title="Collection 2"
-        ContentTemplate="{DataTemplate local:TestPage}" />
-
+    
 </Shell>

@@ -1,24 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RequestFiend.UI.TestPage">
+             xmlns:local="clr-namespace:RequestFiend.UI"
+             x:Class="RequestFiend.UI.NewRequestTemplateCollectionPage"
+             x:DataType="local:NewRequestTemplateCollection">
 
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
             Spacing="25">
+            
             <Label
                 Text="Hello, World!"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
 
-            <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+            <Entry Text="{Binding Name, Mode=TwoWay}" />
 
-            <Button Text="Click me lol" Clicked="OnAddClicked"></Button>
+            <Button Text="Create new collection" Clicked="OnCreateClicked"></Button>
         </VerticalStackLayout>
     </ScrollView>
 

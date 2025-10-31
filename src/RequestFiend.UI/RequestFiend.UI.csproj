@@ -63,4 +63,20 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\RequestFiend.Core\RequestFiend.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="NewRequestTemplateCollectionPage.xaml.cs">
+	    <DependentUpon>NewRequestTemplateCollectionPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="RequestTemplateCollectionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
