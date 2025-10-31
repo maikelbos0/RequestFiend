@@ -11,4 +11,22 @@
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
+    <ShellContent
+        Title="New"
+        ContentTemplate="{DataTemplate local:TestPage}"
+        Route="New" />
+
+    <ShellContent
+        Title="Load"
+        ContentTemplate="{DataTemplate local:TestPage}"
+        Route="Load" />
+
+    <ShellContent
+        Title="Collection 1"
+        ContentTemplate="{DataTemplate local:TestPage}" />
+
+    <ShellContent
+        Title="Collection 2"
+        ContentTemplate="{DataTemplate local:TestPage}" />
+
 </Shell>
