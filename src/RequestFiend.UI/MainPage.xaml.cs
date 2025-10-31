@@ -1,4 +1,8 @@
-﻿namespace RequestFiend.UI;
+﻿using Microsoft.Maui.Accessibility;
+using Microsoft.Maui.Controls;
+using System;
+
+namespace RequestFiend.UI;
 
 public partial class MainPage : ContentPage {
     int count = 0;

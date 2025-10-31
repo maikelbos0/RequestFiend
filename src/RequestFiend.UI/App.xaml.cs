@@ -1,4 +1,7 @@
-﻿namespace RequestFiend.UI;
+﻿using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+
+namespace RequestFiend.UI;
 
 public partial class App : Application {
     public App() {
