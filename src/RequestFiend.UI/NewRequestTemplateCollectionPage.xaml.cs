@@ -2,23 +2,28 @@
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
+using RequestFiend.UI.Models;
 using System;
 using System.IO;
 
 namespace RequestFiend.UI;
 
 public partial class NewRequestTemplateCollectionPage : ContentPage {
+    public NewRequestTemplateCollectionModel Model {
+        get => BindingContext as NewRequestTemplateCollectionModel ?? throw new InvalidOperationException();
+        set => BindingContext = value;
+    }
+
     public NewRequestTemplateCollectionPage() {
-        BindingContext = new NewRequestTemplateCollection();
-        InitializeComponent();        
+        Model = new();
+        InitializeComponent();
     }
 
     private async void OnCreateClicked(object sender, EventArgs e) {
-        var context = BindingContext as NewRequestTemplateCollection ?? throw new InvalidOperationException();
-        var collection = new RequestTemplateCollection() { 
-            Name = context.Name
+        var collection = new RequestTemplateCollection() {
+            Name = Model.Name
         };
-        var fileName = $"{string.Concat(collection.Name.Split(Path.GetInvalidFileNameChars()))}.json";
+        var fileName = $"{string.Concat(Model.Name.Split(Path.GetInvalidFileNameChars()))}.json";
         var stream = new MemoryStream();
 
         System.Text.Json.JsonSerializer.Serialize(stream, collection);
@@ -28,7 +33,7 @@ public partial class NewRequestTemplateCollectionPage : ContentPage {
         if (saveResult.IsSuccessful) {
             // TODO move initialization logic to RequestTemplateCollectionPage and use bindingcontext over there
             var newContent = new ShellContent() {
-                Title = context.Name,
+                Title = Model.Name,
                 Content = new RequestTemplateCollectionPage(collection, saveResult.FilePath),
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
             };
@@ -41,9 +46,4 @@ public partial class NewRequestTemplateCollectionPage : ContentPage {
             Toast.Make("Failed to create collection!");
         }
     }
-}
-
-// TODO move or something
-public class NewRequestTemplateCollection {
-    public string Name { get; set; } = "New collection";
 }
