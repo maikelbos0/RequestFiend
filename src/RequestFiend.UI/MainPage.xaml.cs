@@ -1,10 +1,14 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Devices;
+using Microsoft.Maui.Storage;
 using RequestFiend.Core;
 using RequestFiend.UI.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace RequestFiend.UI;
 
@@ -19,7 +23,6 @@ public partial class MainPage : ContentPage {
         Model = new();
     }
 
-
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
         var collection = new RequestTemplateCollection() {
             Name = Model.NewCollectionName
@@ -27,7 +30,7 @@ public partial class MainPage : ContentPage {
         var fileName = $"{string.Concat(collection.Name.Split(Path.GetInvalidFileNameChars()))}.json";
         var stream = new MemoryStream();
 
-        System.Text.Json.JsonSerializer.Serialize(stream, collection);
+        JsonSerializer.Serialize(stream, collection);
 
         var saveResult = await FileSaver.Default.SaveAsync(fileName, stream);
 
@@ -46,5 +49,37 @@ public partial class MainPage : ContentPage {
         else {
             Toast.Make("Failed to create collection!");
         }
+    }
+
+    private async void OnLoadExistingCollectionClicked(object sender, EventArgs e) {
+        var file = await FilePicker.Default.PickAsync(new() {
+            FileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>() {
+                { DevicePlatform.Android, ["application/json"] },
+                { DevicePlatform.iOS, ["public.json"] },
+                { DevicePlatform.MacCatalyst, ["public.json"] },
+                { DevicePlatform.WinUI, ["*.json"] },
+            })
+        });
+
+        if (file != null) {
+            using var stream = await file.OpenReadAsync();
+            var collection = await JsonSerializer.DeserializeAsync<RequestTemplateCollection>(stream);
+
+            if (collection != null) {
+                var newContent = new ShellContent() {
+                    Title = collection.Name,
+                    Content = new RequestTemplateCollectionPage(collection, file.FullPath),
+                    Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
+                };
+
+                Shell.Current.Items.Add(newContent);
+
+                await Shell.Current.GoToAsync($"//{newContent.Route}");
+
+                return;
+            }
+        }
+
+        Toast.Make("Failed to load collection!");
     }
 }

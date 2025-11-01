@@ -35,7 +35,8 @@
             <Button 
                 Text="Load existing collection" 
                 HorizontalOptions="Fill"
-                SemanticProperties.Description="Load an existing collection" />
+                SemanticProperties.Description="Load an existing collection"
+                Clicked="OnLoadExistingCollectionClicked"/>
         </VerticalStackLayout>
     </ScrollView>
 
