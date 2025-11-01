@@ -1,5 +1,6 @@
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
+using System;
 
 namespace RequestFiend.UI;
 
@@ -9,6 +10,7 @@ public partial class RequestTemplateCollectionPage : ContentPage {
     public RequestTemplateCollectionPage(RequestTemplateCollection requestTemplateCollection, string filePath) {
         InitializeComponent();
 
+        // TODO use model with binding context
         RequestTemplateCollection = requestTemplateCollection;
         FilePath = filePath;
         Title = requestTemplateCollection.Name;
