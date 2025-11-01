@@ -11,14 +11,4 @@
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
-    <ShellContent
-        Title="New"
-        ContentTemplate="{DataTemplate local:NewRequestTemplateCollectionPage}"
-        Route="New" />
-
-    <ShellContent
-        Title="Load"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="Load" />
-    
 </Shell>
