@@ -16,27 +16,45 @@
 
             <Label
                 Text="An open source platform for managing and executing API requests."
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="An open source platform for managing and executing API requests." />
+                Style="{StaticResource SubHeadline}" />
 
-            <BoxView HeightRequest="1" Color="CornflowerBlue" />
+            <Border StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
 
-            <Entry Text="{Binding NewCollectionName, Mode=TwoWay}" />
+                <VerticalStackLayout Padding="25" Spacing="25" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
+                    <Label
+                        Text="Create a new collection"
+                        Style="{StaticResource SubHeadline}" />
+                    
+                    <Entry Text="{Binding NewCollectionName, Mode=TwoWay}" />
 
-            <Button
-                Text="Create new collection"
-                HorizontalOptions="Fill"
-                SemanticProperties.Description="Create a new collection"
-                Clicked="OnCreateNewCollectionClicked"/>
+                    <Button
+                        Text="Choose file location and create"
+                        HorizontalOptions="Fill"
+                        Clicked="OnCreateNewCollectionClicked"/>
+                </VerticalStackLayout>
+            </Border>
 
-            <BoxView HeightRequest="1" Color="CornflowerBlue" />
-            
-            <Button 
-                Text="Load existing collection" 
-                HorizontalOptions="Fill"
-                SemanticProperties.Description="Load an existing collection"
-                Clicked="OnLoadExistingCollectionClicked"/>
+            <Border StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Padding="25" Spacing="25" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
+                    <Label
+                        Text="Load an existing collection"
+                        Style="{StaticResource SubHeadline}" />
+
+                    <Label Text="TODO: add recent list!" />
+                    
+                    <Button 
+                        Text="Choose collection file to load" 
+                        HorizontalOptions="Fill"
+                        Clicked="OnLoadExistingCollectionClicked"/>
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 

@@ -8,6 +8,7 @@ using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Text.Json;
 
 namespace RequestFiend.UI;
@@ -25,7 +26,14 @@ public partial class MainPage : ContentPage {
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
         var collection = new RequestTemplateCollection() {
-            Name = Model.NewCollectionName
+            Name = Model.NewCollectionName,
+            Requests = [
+                new() {
+                    Name = "Test",
+                    Method = HttpMethod.Get,
+                    Url = "https://localhost"
+                }
+            ]
         };
         var fileName = $"{string.Concat(collection.Name.Split(Path.GetInvalidFileNameChars()))}.json";
         var stream = new MemoryStream();

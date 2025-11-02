@@ -8,15 +8,31 @@ namespace RequestFiend.UI;
 
 public partial class RequestTemplateCollectionPage : ContentPage {
     public static async Task Open(RequestTemplateCollection collection, string filePath) {
-        var page = new RequestTemplateCollectionPage(collection, filePath);
-        var shellContent = new ShellContent() {
+        var item = new FlyoutItem() {
             Title = collection.Name,
-            Content = page,
             Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
         };
 
-        Shell.Current.Items.Add(shellContent);
-        await Shell.Current.GoToAsync($"//{shellContent.Route}");
+        item.Items.Add(new Tab() {
+            Title = "Collection settings",
+            Items = {
+                new RequestTemplateCollectionPage(collection, filePath)
+            }
+        });
+
+        foreach (var request in collection.Requests) {
+            item.Items.Add(new Tab() {
+                // TODO add some icons for various stuff like type of request, settings, home?
+                Title = request.Name,
+                Items = {
+                    // TODO create request template page
+                    new RequestTemplateCollectionPage(collection, filePath)
+                }
+            });
+        }
+
+        Shell.Current.Items.Add(item);
+        await Shell.Current.GoToAsync($"//{item.Route}");
     }
 
     public RequestTemplateCollectionModel Model {
