@@ -15,7 +15,7 @@ namespace RequestFiend.UI;
 public partial class MainPage : ContentPage {
     public MainPageModel Model {
         get => BindingContext as MainPageModel ?? throw new InvalidOperationException();
-        set => BindingContext = value;
+        init => BindingContext = value;
     }
 
     public MainPage() {

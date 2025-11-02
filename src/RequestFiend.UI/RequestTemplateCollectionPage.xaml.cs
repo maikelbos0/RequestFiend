@@ -21,7 +21,7 @@ public partial class RequestTemplateCollectionPage : ContentPage {
 
     public RequestTemplateCollectionModel Model {
         get => BindingContext as RequestTemplateCollectionModel ?? throw new InvalidOperationException();
-        set => BindingContext = value;
+        init => BindingContext = value;
     }
 
     public RequestTemplateCollectionPage(RequestTemplateCollection collection, string filePath) {
