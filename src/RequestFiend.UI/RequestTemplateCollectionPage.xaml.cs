@@ -10,11 +10,13 @@ public partial class RequestTemplateCollectionPage : ContentPage {
     public static async Task Open(RequestTemplateCollection collection, string filePath) {
         var item = new FlyoutItem() {
             Title = collection.Name,
+            Icon = "folder_open_solid_full.png",
             Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
         };
 
         item.Items.Add(new Tab() {
             Title = "Collection settings",
+            Icon =  "bars_solid_full.png",
             Items = {
                 new RequestTemplateCollectionPage(collection, filePath)
             }
@@ -22,7 +24,7 @@ public partial class RequestTemplateCollectionPage : ContentPage {
 
         foreach (var request in collection.Requests) {
             item.Items.Add(new Tab() {
-                // TODO add some icons for various stuff like type of request, settings, home?
+                Icon = "paper_plane_solid_full.png",
                 Title = request.Name,
                 Items = {
                     // TODO create request template page

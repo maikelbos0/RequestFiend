@@ -8,6 +8,7 @@
 
     <ShellContent
         Title="Home"
+        Icon="house_solid_full.png"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
