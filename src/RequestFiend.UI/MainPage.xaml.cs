@@ -35,20 +35,12 @@ public partial class MainPage : ContentPage {
         var saveResult = await FileSaver.Default.SaveAsync(fileName, stream);
 
         if (saveResult.IsSuccessful) {
-            // TODO move initialization logic to RequestTemplateCollectionPage and use bindingcontext over there
-            var newContent = new ShellContent() {
-                Title = collection.Name,
-                Content = new RequestTemplateCollectionPage(collection, saveResult.FilePath),
-                Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
-            };
+            await RequestTemplateCollectionPage.Open(collection, fileName);
 
-            Shell.Current.Items.Add(newContent);
+            return;
+        }
 
-            await Shell.Current.GoToAsync($"//{newContent.Route}");
-        }
-        else {
-            Toast.Make("Failed to create collection!");
-        }
+        Toast.Make("Failed to create collection.");
     }
 
     private async void OnLoadExistingCollectionClicked(object sender, EventArgs e) {
@@ -66,20 +58,12 @@ public partial class MainPage : ContentPage {
             var collection = await JsonSerializer.DeserializeAsync<RequestTemplateCollection>(stream);
 
             if (collection != null) {
-                var newContent = new ShellContent() {
-                    Title = collection.Name,
-                    Content = new RequestTemplateCollectionPage(collection, file.FullPath),
-                    Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
-                };
-
-                Shell.Current.Items.Add(newContent);
-
-                await Shell.Current.GoToAsync($"//{newContent.Route}");
+                await RequestTemplateCollectionPage.Open(collection, file.FullPath);
 
                 return;
             }
         }
 
-        Toast.Make("Failed to load collection!");
+        Toast.Make("Failed to load collection.");
     }
 }
