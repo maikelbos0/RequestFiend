@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:RequestFiend.UI.Models"
+    x:Class="RequestFiend.UI.NewRequestTemplatePage"
+    Title="New request"
+    x:DataType="models:NewRequestTemplateModel">
+
+    <ScrollView>
+
+        <VerticalStackLayout>
+
+            <Entry Text="{Binding Name, Mode=TwoWay}" Placeholder="Name *" />
+
+            <Entry Text="{Binding Url, Mode=TwoWay}" Placeholder="Url" />
+
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

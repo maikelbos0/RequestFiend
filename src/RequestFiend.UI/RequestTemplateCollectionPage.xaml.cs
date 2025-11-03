@@ -33,6 +33,14 @@ public partial class RequestTemplateCollectionPage : ContentPage {
             });
         }
 
+        item.Items.Add(new Tab() {
+            Title = "New request",
+            Icon = "plus_solid_full.png",
+            Items = {
+                new NewRequestTemplatePage()
+            }
+        });
+
         Shell.Current.Items.Add(item);
         await Shell.Current.GoToAsync($"//{item.Route}");
     }
