@@ -30,6 +30,8 @@
                     
                     <Entry Text="{Binding NewCollectionName, Mode=TwoWay}" Placeholder="Name *" />
 
+                    <Entry Text="{Binding NewCollectionDefaultUrl, Mode=TwoWay}" Placeholder="Default url" />
+
                     <Button
                         Text="Choose file location and create"
                         HorizontalOptions="Fill"

@@ -27,6 +27,7 @@ public partial class MainPage : ContentPage {
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
         var collection = new RequestTemplateCollection() {
             Name = Model.NewCollectionName,
+            DefaultUrl = Model.NewCollectionDefaultUrl,
             Requests = [
                 new() {
                     Name = "Test",

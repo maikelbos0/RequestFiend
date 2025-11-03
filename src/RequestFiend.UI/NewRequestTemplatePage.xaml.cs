@@ -1,4 +1,5 @@
 using Microsoft.Maui.Controls;
+using RequestFiend.Core;
 using RequestFiend.UI.Models;
 using System;
 
@@ -10,8 +11,11 @@ public partial class NewRequestTemplatePage : ContentPage {
         init => BindingContext = value;
     }
 
-    public NewRequestTemplatePage() {
-        Model = new();
+    public NewRequestTemplatePage(RequestTemplateCollection collection) {
+        Model = new() {
+            Collection = collection,
+            Url = collection.DefaultUrl
+        };
         InitializeComponent();
     }
 }

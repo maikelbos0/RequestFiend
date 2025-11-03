@@ -2,4 +2,5 @@
 
 public class MainPageModel {
     public string NewCollectionName { get; set; } = "New collection";
+    public string? NewCollectionDefaultUrl { get; set; }
 }

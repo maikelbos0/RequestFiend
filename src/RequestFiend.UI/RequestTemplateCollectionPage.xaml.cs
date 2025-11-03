@@ -37,7 +37,7 @@ public partial class RequestTemplateCollectionPage : ContentPage {
             Title = "New request",
             Icon = "plus_solid_full.png",
             Items = {
-                new NewRequestTemplatePage()
+                new NewRequestTemplatePage(collection)
             }
         });
 

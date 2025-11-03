@@ -2,6 +2,7 @@
 
 public class RequestTemplateCollection {
     public required string Name { get; set; }
+    public string? DefaultUrl { get; set; }
     public List<RequestTemplate> Requests { get; set; } = [];
     public Dictionary<string, string> Variables { get; set; } = [];
     public List<HeaderTemplate> DefaultHeaders { get; set; } = [];
