@@ -6,7 +6,12 @@
     x:Class="RequestFiend.UI.RequestTemplateCollectionPage"
     x:DataType="models:RequestTemplateCollectionModel">
 
-    <VerticalStackLayout Padding="25" Spacing="25">
+    <ScrollView>
+        
+        <VerticalStackLayout>
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+        
+    </ScrollView>
+    
 </ContentPage>

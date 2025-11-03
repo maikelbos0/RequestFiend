@@ -7,7 +7,9 @@
     x:DataType="models:MainPageModel">
 
     <ScrollView>
-        <VerticalStackLayout Padding="25" Spacing="25">
+        
+        <VerticalStackLayout>
+            
             <Label
                 Text="Request fiend"
                 Style="{StaticResource Headline}"
@@ -18,12 +20,10 @@
                 Text="An open source platform for managing and executing API requests."
                 Style="{StaticResource SubHeadline}" />
 
-            <Border StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="5" />
-                </Border.StrokeShape>
+            <Border>
+                
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
 
-                <VerticalStackLayout Padding="25" Spacing="25" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
                     <Label
                         Text="Create a new collection"
                         Style="{StaticResource SubHeadline}" />
@@ -34,15 +34,15 @@
                         Text="Choose file location and create"
                         HorizontalOptions="Fill"
                         Clicked="OnCreateNewCollectionClicked"/>
+                    
                 </VerticalStackLayout>
+                
             </Border>
 
-            <Border StrokeThickness="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="5" />
-                </Border.StrokeShape>
+            <Border>
 
-                <VerticalStackLayout Padding="25" Spacing="25" BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    
                     <Label
                         Text="Load an existing collection"
                         Style="{StaticResource SubHeadline}" />
@@ -53,9 +53,13 @@
                         Text="Choose collection file to load" 
                         HorizontalOptions="Fill"
                         Clicked="OnLoadExistingCollectionClicked"/>
+                    
                 </VerticalStackLayout>
+                
             </Border>
+            
         </VerticalStackLayout>
+        
     </ScrollView>
 
 </ContentPage>
