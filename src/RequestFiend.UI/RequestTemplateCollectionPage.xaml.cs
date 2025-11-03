@@ -51,11 +51,11 @@ public partial class RequestTemplateCollectionPage : ContentPage {
     }
 
     public RequestTemplateCollectionPage(RequestTemplateCollection collection, string filePath) {
-        InitializeComponent();
         Model = new() {
             Collection = collection,
             FilePath = filePath
         };
         Title = collection.Name;
+        InitializeComponent();
     }
 }

@@ -449,4 +449,9 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}"/>
     </Style>
 
+    <Style TargetType="Grid">
+        <Setter Property="ColumnSpacing" Value="25"/>
+        <Setter Property="RowSpacing" Value="25"/>
+    </Style>
+
 </ResourceDictionary>

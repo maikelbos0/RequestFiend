@@ -13,9 +13,23 @@
 
             <Entry Text="{Binding Name, Mode=TwoWay}" Placeholder="Name *" />
 
-            <Entry Text="{Binding Url, Mode=TwoWay}" Placeholder="Url" />
+            <Grid>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Picker SelectedItem="{Binding Method}" ItemsSource="{Binding Methods}" Grid.Row="0" Grid.Column="0"/>
+
+                <Entry Text="{Binding Url, Mode=TwoWay}" Placeholder="Url" Grid.Row="0" Grid.Column="1"/>
+
+            </Grid>            
+            
         </VerticalStackLayout>
 
     </ScrollView>

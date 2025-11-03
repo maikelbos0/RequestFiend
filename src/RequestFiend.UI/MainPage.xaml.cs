@@ -20,8 +20,8 @@ public partial class MainPage : ContentPage {
     }
 
     public MainPage() {
-        InitializeComponent();
         Model = new();
+        InitializeComponent();
     }
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {

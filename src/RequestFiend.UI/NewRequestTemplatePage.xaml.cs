@@ -11,7 +11,7 @@ public partial class NewRequestTemplatePage : ContentPage {
     }
 
     public NewRequestTemplatePage() {
-        InitializeComponent();
         Model = new();
+        InitializeComponent();
     }
 }
