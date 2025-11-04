@@ -8,7 +8,7 @@ namespace RequestFiend.Core;
 public class RequestTemplate
 {
     public required string Name { get; set; }
-    public required HttpMethod Method { get; set; }
+    public required string Method { get; set; }
     public required string Url { get; set; }
     public List<HeaderTemplate> Headers { get; set; } = [];
     public IContentTemplate? Content { get; set; }
@@ -19,7 +19,7 @@ public class RequestTemplate
             return false;
         }
 
-        message = new(Method, uri);
+        message = new(HttpMethod.Parse(Method), uri);
         foreach (var header in Headers) {
             message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
         }

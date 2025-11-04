@@ -8,7 +8,6 @@ using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Text.Json;
 
 namespace RequestFiend.UI;
@@ -31,7 +30,7 @@ public partial class MainPage : ContentPage {
             Requests = [
                 new() {
                     Name = "Test",
-                    Method = HttpMethod.Get,
+                    Method = "GET",
                     Url = "https://localhost"
                 }
             ]

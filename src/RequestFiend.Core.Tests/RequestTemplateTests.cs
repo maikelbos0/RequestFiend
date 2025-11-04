@@ -14,7 +14,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Does_Not_Create_Message_When_Url_Is_Invalid(string url) {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = url
         };
         var collection = new RequestTemplateCollection() {
@@ -30,7 +30,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Creates_Message_If_Possible() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
@@ -40,7 +40,7 @@ public class RequestTemplateTests {
 
         Assert.True(subject.TryCreateMessage(collection, out var message));
         Assert.NotNull(message);
-        Assert.Equal(subject.Method, message.Method);
+        Assert.Equal(subject.Method, message.Method.Method);
         Assert.NotNull(message.RequestUri);
         Assert.Equal(subject.Url, message.RequestUri.ToString());
     }
@@ -49,7 +49,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Applies_Variables_To_Url() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "{{baseurl}}values"
         };
         var collection = new RequestTemplateCollection() {
@@ -59,7 +59,6 @@ public class RequestTemplateTests {
         };
 
         Assert.True(subject.TryCreateMessage(collection, out var message));
-        Assert.Equal(subject.Method, message.Method);
         Assert.NotNull(message.RequestUri);
         Assert.Equal("https://localhost:7001/values", message.RequestUri.ToString());
     }
@@ -68,7 +67,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Adds_Headers() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/",
             Headers = [
                 new() { Name = "Accept", Value = "application/json" }
@@ -89,7 +88,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Applies_Variables_To_Header_Names() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/",
             Headers = [
                 new() { Name = "{{header}}", Value = "application/json" }
@@ -110,7 +109,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Applies_Variables_To_Header_Values() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/",
             Headers = [
                 new() { Name = "Accept", Value = "{{header}}" }
@@ -131,7 +130,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Adds_DefaultHeaders() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
@@ -152,7 +151,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Applies_Variables_To_DefaultHeader_Names() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
@@ -173,7 +172,7 @@ public class RequestTemplateTests {
     public void TryCreateMessage_Applies_Variables_To_DefaultHeader_Values() {
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
@@ -195,7 +194,7 @@ public class RequestTemplateTests {
         var contentTemplate = Substitute.For<IContentTemplate>();
         var subject = new RequestTemplate() {
             Name = "Request",
-            Method = HttpMethod.Get,
+            Method = "GET",
             Url = "https://localhost:7001/",
             Content = contentTemplate
         };
