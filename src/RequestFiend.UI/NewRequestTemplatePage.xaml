@@ -8,30 +8,34 @@
     x:DataType="models:NewRequestTemplateModel">
 
     <ScrollView>
-
         <VerticalStackLayout>
+            <Border>
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
-            <Entry Text="{Binding Name, Mode=TwoWay}" Placeholder="Name *" />
+                    <Entry Text="{Binding Name, Mode=TwoWay}" />
 
-            <Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+                        <Label Text="Method" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="0"/>
 
-                <Picker SelectedItem="{Binding Method}" ItemsSource="{Binding Methods}" Grid.Row="0" Grid.Column="0"/>
+                        <Label Text="Url" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="1"/>
 
-                <Entry Text="{Binding Url, Mode=TwoWay}" Placeholder="Url" Grid.Row="0" Grid.Column="1"/>
+                        <Picker SelectedItem="{Binding Method}" ItemsSource="{Binding Methods}" Grid.Row="1" Grid.Column="0"/>
 
-            </Grid>            
-            
+                        <Entry Text="{Binding Url, Mode=TwoWay}" Grid.Row="1" Grid.Column="1"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
-
     </ScrollView>
-
 </ContentPage>

@@ -6,10 +6,5 @@
     xmlns:local="clr-namespace:RequestFiend.UI"
     Title="RequestFiend">
 
-    <ShellContent
-        Title="Home"
-        Icon="house_solid_full.png"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+    <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
 </Shell>

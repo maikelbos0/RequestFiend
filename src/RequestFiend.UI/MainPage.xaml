@@ -7,61 +7,36 @@
     x:DataType="models:MainPageModel">
 
     <ScrollView>
-        
         <VerticalStackLayout>
-            
-            <Label
-                Text="Request fiend"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1"
-                SemanticProperties.Description="Request fiend"/>
+            <Label Text="Request fiend" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1"/>
 
-            <Label
-                Text="An open source platform for managing and executing API requests."
-                Style="{StaticResource SubHeadline}" />
+            <Label Text="An open source platform for managing and executing API requests." Style="{StaticResource SubHeadline}" />
 
             <Border>
-                
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Label Text="Create a new collection" Style="{StaticResource SubHeadline}" />
 
-                    <Label
-                        Text="Create a new collection"
-                        Style="{StaticResource SubHeadline}" />
-                    
-                    <Entry Text="{Binding NewCollectionName, Mode=TwoWay}" Placeholder="Name *" />
+                    <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding NewCollectionDefaultUrl, Mode=TwoWay}" Placeholder="Default url" />
+                    <Entry Text="{Binding NewCollectionName, Mode=TwoWay}" />
 
-                    <Button
-                        Text="Choose file location and create"
-                        HorizontalOptions="Fill"
-                        Clicked="OnCreateNewCollectionClicked"/>
-                    
+                    <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
+
+                    <Entry Text="{Binding NewCollectionDefaultUrl, Mode=TwoWay}" />
+
+                    <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
-                
             </Border>
 
             <Border>
-
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    
-                    <Label
-                        Text="Load an existing collection"
-                        Style="{StaticResource SubHeadline}" />
+                    <Label Text="Load an existing collection" Style="{StaticResource SubHeadline}" />
 
                     <Label Text="TODO: add recent list!" />
                     
-                    <Button 
-                        Text="Choose collection file to load" 
-                        HorizontalOptions="Fill"
-                        Clicked="OnLoadExistingCollectionClicked"/>
-                    
+                    <Button Text="Choose collection file to load"  HorizontalOptions="Fill" Clicked="OnLoadExistingCollectionClicked"/>
                 </VerticalStackLayout>
-                
             </Border>
-            
         </VerticalStackLayout>
-        
     </ScrollView>
-
 </ContentPage>
