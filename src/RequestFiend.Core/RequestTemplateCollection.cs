@@ -1,4 +1,7 @@
-﻿namespace RequestFiend.Core;
+﻿using System;
+using System.Collections.Generic;
+
+namespace RequestFiend.Core;
 
 public class RequestTemplateCollection {
     public required string Name { get; set; }
