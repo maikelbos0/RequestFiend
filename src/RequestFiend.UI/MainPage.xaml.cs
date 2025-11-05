@@ -15,7 +15,7 @@ namespace RequestFiend.UI;
 public partial class MainPage : ContentPage {
     public MainPageModel Model {
         get => BindingContext as MainPageModel ?? throw new InvalidOperationException();
-        init => BindingContext = value;
+        set => BindingContext = value;
     }
 
     public MainPage() {
@@ -44,6 +44,7 @@ public partial class MainPage : ContentPage {
 
         if (saveResult.IsSuccessful) {
             await RequestTemplateCollectionPage.Open(collection, fileName);
+            Model = new();
 
             return;
         }
@@ -51,7 +52,7 @@ public partial class MainPage : ContentPage {
         Toast.Make("Failed to create collection.");
     }
 
-    private async void OnLoadExistingCollectionClicked(object sender, EventArgs e) {
+    private async void OnOpenExistingCollectionClicked(object sender, EventArgs e) {
         var file = await FilePicker.Default.PickAsync(new() {
             FileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>() {
                 { DevicePlatform.Android, ["application/json"] },
