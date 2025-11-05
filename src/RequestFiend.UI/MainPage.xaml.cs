@@ -13,8 +13,8 @@ using System.Text.Json;
 namespace RequestFiend.UI;
 
 public partial class MainPage : ContentPage {
-    public MainPageModel Model {
-        get => BindingContext as MainPageModel ?? throw new InvalidOperationException();
+    public NewRequestTemplateCollectionModel Model {
+        get => BindingContext as NewRequestTemplateCollectionModel ?? throw new InvalidOperationException();
         set => BindingContext = value;
     }
 
@@ -25,8 +25,8 @@ public partial class MainPage : ContentPage {
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
         var collection = new RequestTemplateCollection() {
-            Name = Model.NewCollectionName,
-            DefaultUrl = Model.NewCollectionDefaultUrl,
+            Name = Model.Name,
+            DefaultUrl = Model.DefaultUrl,
             Requests = [
                 new() {
                     Name = "Test",

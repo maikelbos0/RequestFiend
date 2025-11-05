@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.UI.Models"
     x:Class="RequestFiend.UI.MainPage"
-    x:DataType="models:MainPageModel">
+    x:DataType="models:NewRequestTemplateCollectionModel">
 
     <ScrollView>
         <VerticalStackLayout>
@@ -18,11 +18,11 @@
 
                     <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding NewCollectionName, Mode=TwoWay}" />
+                    <Entry Text="{Binding Name, Mode=TwoWay}" />
 
                     <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding NewCollectionDefaultUrl, Mode=TwoWay}" />
+                    <Entry Text="{Binding DefaultUrl, Mode=TwoWay}" />
 
                     <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
