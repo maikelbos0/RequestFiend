@@ -6,16 +6,43 @@ using System;
 namespace RequestFiend.UI;
 
 public partial class NewRequestTemplatePage : ContentPage {
+    private readonly RequestTemplateCollection collection;
+    private readonly ShellItem parentItem;
+
     public NewRequestTemplateModel Model {
         get => BindingContext as NewRequestTemplateModel ?? throw new InvalidOperationException();
-        init => BindingContext = value;
+        set => BindingContext = value;
     }
 
-    public NewRequestTemplatePage(RequestTemplateCollection collection) {
+    public NewRequestTemplatePage(ShellItem parentItem, RequestTemplateCollection collection) {
+        this.collection = collection;
+        this.parentItem = parentItem;
         Model = new() {
-            Collection = collection,
             Url = collection.DefaultUrl
         };
         InitializeComponent();
+    }
+
+    private async void OnCreateRequestTemplateClicked(object sender, EventArgs e) {
+        var request = new RequestTemplate() {
+            Name = Model.Name,
+            Method = Model.Method,
+            Url = Model.Url
+        };
+        var item = new Tab() {
+            Icon = "paper_plane_solid_full.png",
+            Title = request.Name,
+            Items = {
+                new RequestTemplatePage(request)
+            },
+            Route = $"RequestTemplate_{Guid.NewGuid()}"
+        };
+        parentItem.Items.Add(item);
+
+        await Shell.Current.GoToAsync($"//{parentItem.Route}/{item.Route}");
+
+        Model = new() {
+            Url = collection.DefaultUrl
+        };
     }
 }

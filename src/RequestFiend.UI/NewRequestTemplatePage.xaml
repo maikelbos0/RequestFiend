@@ -36,6 +36,8 @@
                     </Grid>
                 </VerticalStackLayout>
             </Border>
+
+            <Button Text="Create new request" HorizontalOptions="Fill" Clicked="OnCreateRequestTemplateClicked"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

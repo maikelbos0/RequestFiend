@@ -27,8 +27,7 @@ public partial class RequestTemplateCollectionPage : ContentPage {
                 Icon = "paper_plane_solid_full.png",
                 Title = request.Name,
                 Items = {
-                    // TODO create request template page
-                    new RequestTemplateCollectionPage(collection, filePath)
+                    new RequestTemplatePage(request)
                 }
             });
         }
@@ -37,7 +36,7 @@ public partial class RequestTemplateCollectionPage : ContentPage {
             Title = "New request",
             Icon = "plus_solid_full.png",
             Items = {
-                new NewRequestTemplatePage(collection)
+                new NewRequestTemplatePage(item, collection)
             }
         });
 
