@@ -7,6 +7,7 @@ namespace RequestFiend.UI;
 
 public partial class RequestTemplatePage : ContentPage {
     private readonly RequestTemplateCollection collection;
+    private readonly RequestTemplate request;
 
     public RequestTemplateModel Model {
         get => BindingContext as RequestTemplateModel ?? throw new InvalidOperationException();
@@ -15,9 +16,8 @@ public partial class RequestTemplatePage : ContentPage {
 
     public RequestTemplatePage(RequestTemplateCollection collection, RequestTemplate request) {
         this.collection = collection;
-        Model = new() {
-            Request = request
-        };
+        this.request = request;
+        Model = new();
         InitializeComponent();
         Title = collection.Name;
     }
