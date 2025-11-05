@@ -34,10 +34,10 @@
 
                         <Entry Text="{Binding Url, Mode=TwoWay}" Grid.Row="1" Grid.Column="1"/>
                     </Grid>
+
+                    <Button Text="Create new request" HorizontalOptions="Fill" Clicked="OnCreateRequestTemplateClicked"/>
                 </VerticalStackLayout>
             </Border>
-
-            <Button Text="Create new request" HorizontalOptions="Fill" Clicked="OnCreateRequestTemplateClicked"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
@@ -43,7 +44,7 @@ public partial class MainPage : ContentPage {
         var saveResult = await FileSaver.Default.SaveAsync(fileName, stream);
 
         if (saveResult.IsSuccessful) {
-            await RequestTemplateCollectionPage.Open(collection, fileName);
+            await OpenCollection(collection, fileName);
             Model = new();
 
             return;
@@ -67,12 +68,49 @@ public partial class MainPage : ContentPage {
             var collection = await JsonSerializer.DeserializeAsync<RequestTemplateCollection>(stream);
 
             if (collection != null) {
-                await RequestTemplateCollectionPage.Open(collection, file.FullPath);
+                await OpenCollection(collection, file.FullPath);
 
                 return;
             }
         }
 
         Toast.Make("Failed to load collection.");
+    }
+
+    private static async Task OpenCollection(RequestTemplateCollection collection, string filePath) {
+        var item = new FlyoutItem() {
+            Title = collection.Name,
+            Icon = "folder_open_solid_full.png",
+            Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
+        };
+
+        item.Items.Add(new Tab() {
+            Title = "Collection settings",
+            Icon = "bars_solid_full.png",
+            Items = {
+                new RequestTemplateCollectionPage(collection, filePath)
+            }
+        });
+
+        item.Items.Add(new Tab() {
+            Title = "New request",
+            Icon = "plus_solid_full.png",
+            Items = {
+                new NewRequestTemplatePage(item, collection)
+            }
+        });
+
+        foreach (var request in collection.Requests) {
+            item.Items.Add(new Tab() {
+                Icon = "paper_plane_solid_full.png",
+                Title = request.Name,
+                Items = {
+                    new RequestTemplatePage(collection, request)
+                }
+            });
+        }
+
+        Shell.Current.Items.Add(item);
+        await Shell.Current.GoToAsync($"//{item.Route}");
     }
 }

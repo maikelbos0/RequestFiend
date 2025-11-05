@@ -6,16 +6,19 @@ using System;
 namespace RequestFiend.UI;
 
 public partial class RequestTemplatePage : ContentPage {
+    private readonly RequestTemplateCollection collection;
+
     public RequestTemplateModel Model {
         get => BindingContext as RequestTemplateModel ?? throw new InvalidOperationException();
         init => BindingContext = value;
     }
 
-    public RequestTemplatePage(RequestTemplate request) {
+    public RequestTemplatePage(RequestTemplateCollection collection, RequestTemplate request) {
+        this.collection = collection;
         Model = new() {
             Request = request
         };
-        Title = request.Name;
         InitializeComponent();
+        Title = collection.Name;
     }
 }

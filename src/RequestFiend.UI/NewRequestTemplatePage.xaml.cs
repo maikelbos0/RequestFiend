@@ -21,6 +21,7 @@ public partial class NewRequestTemplatePage : ContentPage {
             Url = collection.DefaultUrl
         };
         InitializeComponent();
+        Title = collection.Name;
     }
 
     private async void OnCreateRequestTemplateClicked(object sender, EventArgs e) {
@@ -29,11 +30,13 @@ public partial class NewRequestTemplatePage : ContentPage {
             Method = Model.Method,
             Url = Model.Url
         };
+        collection.Requests.Add(request);
+
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,
             Items = {
-                new RequestTemplatePage(request)
+                new RequestTemplatePage(collection, request)
             },
             Route = $"RequestTemplate_{Guid.NewGuid()}"
         };
