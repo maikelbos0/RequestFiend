@@ -1,27 +1,32 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 
 namespace RequestFiend.UI.Models.Validation;
 
 // For now we don't need composable validation, but if we do, something like this will be the next step:
 // https://learn.microsoft.com/en-us/dotnet/architecture/maui/validation
 
-public class RequiredString {
+public class RequiredString : ObservableObject {
     public static implicit operator string(RequiredString requiredValue) => requiredValue.Value ?? throw new InvalidOperationException();
 
     private string? value;
-    public string errorMessage;
+    private bool? isValid;
 
     public string? Value {
         get => value;
         set {
-            IsValid = !string.IsNullOrWhiteSpace(value);
-            this.value = value;
+            SetProperty(ref this.value, value);
+            Validate();
         }
     }
-    public bool IsValid { get; private set; }
-    public string? Error => IsValid ? null : errorMessage;
+    public bool? IsValid {
+        get => isValid;
+        private set => SetProperty(ref isValid, value);
+    }
 
-    public RequiredString(string errorMessage) {
-        this.errorMessage = errorMessage;
+    public bool Validate() {
+        var isValid = !string.IsNullOrWhiteSpace(value);
+        IsValid = isValid;
+        return isValid;
     }
 }
