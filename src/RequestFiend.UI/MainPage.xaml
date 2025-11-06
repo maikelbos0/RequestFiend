@@ -18,11 +18,11 @@
 
                     <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding Name, Mode=TwoWay}" />
+                    <Entry Text="{Binding Name.Value}"/>
 
                     <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding DefaultUrl, Mode=TwoWay}" />
+                    <Entry Text="{Binding DefaultUrl}" />
 
                     <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
