@@ -1,6 +1,23 @@
-﻿namespace RequestFiend.UI.Models;
+﻿using RequestFiend.Core;
+using RequestFiend.UI.Models.Validation;
+using System.Diagnostics.CodeAnalysis;
+
+namespace RequestFiend.UI.Models;
 
 public class NewRequestTemplateCollectionModel {
-    public string Name { get; set; } = "New collection";
+    public RequiredString Name { get; set; } = new("Name is required");
     public string? DefaultUrl { get; set; }
+
+    public bool TryCreateRequestTemplateCollection([NotNullWhen(true)] out RequestTemplateCollection? collection) {
+        if (!Name.IsValid) {
+            collection = null;
+            return false;
+        }
+
+        collection = new() {
+            Name = Name,
+            DefaultUrl = DefaultUrl
+        };
+        return true;
+    }
 }

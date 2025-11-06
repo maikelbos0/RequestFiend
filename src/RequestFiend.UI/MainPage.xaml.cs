@@ -25,17 +25,16 @@ public partial class MainPage : ContentPage {
     }
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
-        var collection = new RequestTemplateCollection() {
-            Name = Model.Name,
-            DefaultUrl = Model.DefaultUrl,
-            Requests = [
-                new() {
-                    Name = "Test",
-                    Method = "GET",
-                    Url = "https://localhost"
-                }
-            ]
-        };
+        if (!Model.TryCreateRequestTemplateCollection(out var collection)) {
+            return;
+        }
+
+        collection.Requests.Add(new() {
+            Name = "Test",
+            Method = "GET",
+            Url = "https://localhost"
+        });
+
         var fileName = $"{string.Concat(collection.Name.Split(Path.GetInvalidFileNameChars()))}.json";
         var stream = new MemoryStream();
 
