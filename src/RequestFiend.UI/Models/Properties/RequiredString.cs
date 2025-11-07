@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
-namespace RequestFiend.UI.Models.Validation;
+namespace RequestFiend.UI.Models.Properties;
 
 // For now we don't need composable validation, but if we do, something like this will be the next step:
 // https://learn.microsoft.com/en-us/dotnet/architecture/maui/validation

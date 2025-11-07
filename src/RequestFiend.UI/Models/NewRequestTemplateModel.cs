@@ -1,5 +1,5 @@
 ﻿using RequestFiend.Core;
-using RequestFiend.UI.Models.Validation;
+using RequestFiend.UI.Models.Properties;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 

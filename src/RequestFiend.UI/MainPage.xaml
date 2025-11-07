@@ -28,7 +28,7 @@
 
                     <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding DefaultUrl}" />
+                    <Entry Text="{Binding DefaultUrl.Value}" />
 
                     <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
