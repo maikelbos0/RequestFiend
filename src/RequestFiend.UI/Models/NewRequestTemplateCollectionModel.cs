@@ -20,5 +20,10 @@ public class NewRequestTemplateCollectionModel {
         };
         return true;
     }
+
+    public void Reset() {
+        Name.Reset();
+        DefaultUrl = null;
+    }
 }
 

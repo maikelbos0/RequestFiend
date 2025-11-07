@@ -44,7 +44,7 @@ public partial class MainPage : ContentPage {
 
         if (saveResult.IsSuccessful) {
             await OpenCollection(collection, fileName);
-            Model = new();
+            Model.Reset();
 
             return;
         }
