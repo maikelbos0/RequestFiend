@@ -8,6 +8,7 @@ namespace RequestFiend.UI.Models.Validation;
 
 public class RequiredString : ObservableObject {
     public static implicit operator string(RequiredString requiredValue) => requiredValue.Value ?? throw new InvalidOperationException();
+    public static implicit operator RequiredString(string? requiredValue) => new(requiredValue);
 
     private string? value;
     private bool? isValid;
@@ -28,5 +29,11 @@ public class RequiredString : ObservableObject {
         var isValid = !string.IsNullOrWhiteSpace(value);
         IsValid = isValid;
         return isValid;
+    }
+
+    public RequiredString() : this(null) { }
+
+    public RequiredString(string? value) {
+        this.value = value;
     }
 }

@@ -25,11 +25,10 @@ public partial class NewRequestTemplatePage : ContentPage {
     }
 
     private async void OnCreateRequestTemplateClicked(object sender, EventArgs e) {
-        var request = new RequestTemplate() {
-            Name = Model.Name,
-            Method = Model.Method,
-            Url = Model.Url
-        };
+        if (!Model.TryCreateRequestTemplate(out var request)) {
+            return;
+        }
+
         collection.Requests.Add(request);
 
         var item = new Tab() {
