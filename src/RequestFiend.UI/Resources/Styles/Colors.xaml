@@ -11,8 +11,8 @@
     <Color x:Key="SecondaryDark">#1e2c45</Color>
     <Color x:Key="SecondaryDarkText">#0089c4</Color>
     <Color x:Key="Tertiary">#00b8c0</Color>
-    <Color x:Key="Error">#ffaacc</Color>
-    <Color x:Key="ErrorDark">#880022</Color>
+    <Color x:Key="Error">#ffc0d0</Color>
+    <Color x:Key="ErrorDark">#700020</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
