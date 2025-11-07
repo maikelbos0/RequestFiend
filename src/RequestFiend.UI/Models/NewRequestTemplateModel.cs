@@ -1,13 +1,10 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.UI.Models.Properties;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace RequestFiend.UI.Models;
 
 public class NewRequestTemplateModel {
-    // TODO can this move to static data?
-    public List<string> Methods { get; set; } = ["GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"];
     public RequiredString Name { get; set; } = new();
     public RequiredString Method { get; set; } = new();
     public RequiredString Url { get; set; } 

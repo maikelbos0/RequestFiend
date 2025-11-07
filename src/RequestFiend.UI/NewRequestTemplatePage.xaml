@@ -36,7 +36,7 @@
 
                         <Label Text="Url" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="1"/>
 
-                        <Picker SelectedItem="{Binding Method.Value}" ItemsSource="{Binding Methods}" Grid.Row="1" Grid.Column="0">
+                        <Picker SelectedItem="{Binding Method.Value}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" Grid.Column="0">
                             <Picker.Triggers>
                                 <DataTrigger TargetType="Picker" Binding="{Binding Method.IsValid}" Value="False">
                                     <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
