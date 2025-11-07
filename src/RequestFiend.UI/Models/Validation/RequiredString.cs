@@ -8,10 +8,10 @@ namespace RequestFiend.UI.Models.Validation;
 
 public class RequiredString : ObservableObject {
     public static implicit operator string(RequiredString requiredValue) => requiredValue.Value ?? throw new InvalidOperationException();
-    public static implicit operator RequiredString(string? requiredValue) => new(requiredValue);
 
     private string? value;
     private bool? isValid;
+    private readonly Func<string?> defaultValueProvider;
 
     public string? Value {
         get => value;
@@ -25,10 +25,11 @@ public class RequiredString : ObservableObject {
         private set => SetProperty(ref isValid, value);
     }
 
-    public RequiredString() : this(null) { }
+    public RequiredString() : this(() => null) { }
 
-    public RequiredString(string? value) {
-        this.value = value;
+    public RequiredString(Func<string?> defaultValueProvider) {
+        this.defaultValueProvider = defaultValueProvider;
+        Reset();
     }
 
     public bool Validate() {
@@ -37,10 +38,8 @@ public class RequiredString : ObservableObject {
         return isValid;
     }
 
-    public void Reset() => Reset(null);
-
-    public void Reset(string? value) {
-        Value = value;
+    public void Reset() {
+        Value = defaultValueProvider();
         IsValid = null;
     }
 }
