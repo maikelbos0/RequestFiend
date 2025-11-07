@@ -17,9 +17,7 @@ public partial class NewRequestTemplatePage : ContentPage {
     public NewRequestTemplatePage(ShellItem parentItem, RequestTemplateCollection collection) {
         this.collection = collection;
         this.parentItem = parentItem;
-        Model = new() {
-            Url = collection.DefaultUrl
-        };
+        Model = new(collection);
         InitializeComponent();
         Title = collection.Name;
     }
@@ -43,8 +41,6 @@ public partial class NewRequestTemplatePage : ContentPage {
 
         await Shell.Current.GoToAsync($"//{parentItem.Route}/{item.Route}");
 
-        Model = new() {
-            Url = collection.DefaultUrl
-        };
+        Model.Reset();
     }
 }
