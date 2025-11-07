@@ -7,7 +7,7 @@ namespace RequestFiend.UI.Models.Properties;
 // https://learn.microsoft.com/en-us/dotnet/architecture/maui/validation
 
 public class RequiredString : ObservableObject {
-    public static implicit operator string(RequiredString requiredValue) => requiredValue.Value ?? throw new InvalidOperationException();
+    public static implicit operator string(RequiredString requiredString) => requiredString.Value ?? throw new InvalidOperationException();
 
     private string? value;
     private bool? isValid;

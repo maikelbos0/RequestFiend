@@ -4,7 +4,7 @@ using System;
 namespace RequestFiend.UI.Models.Properties;
 
 public class OptionalString : ObservableObject {
-    public static implicit operator string(OptionalString requiredValue) => requiredValue.Value ?? throw new InvalidOperationException();
+    public static implicit operator string?(OptionalString optionalString) => optionalString.Value;
 
     private string? value;
     private readonly Func<string?> defaultValueProvider;
