@@ -94,7 +94,7 @@ public partial class MainPage : ContentPage {
         }
     }
 
-    private static async Task OpenCollection(RequestTemplateCollection collection, string filePath) {
+    private async Task OpenCollection(RequestTemplateCollection collection, string filePath) {
         var item = new FlyoutItem() {
             Title = collection.Name,
             Icon = "folder_open_solid_full.png",
@@ -130,5 +130,6 @@ public partial class MainPage : ContentPage {
         Shell.Current.Items.Add(item);
         await Shell.Current.GoToAsync($"//{item.Route}");
         RecentCollections.Add(filePath, collection.Name);
+        Model.RecentCollections = RecentCollections.Get();
     }
 }
