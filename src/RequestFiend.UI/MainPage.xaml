@@ -41,7 +41,7 @@
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="5">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:RecentCollectionModel">
-                                <Button Text="{Binding Name}" Clicked="OnOpenRecentCollectionClicked" />
+                                <Button Text="{Binding Name}" Clicked="OnOpenRecentCollectionClicked" Style="{StaticResource SecondaryButton}" />
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                         <BindableLayout.EmptyView>
