@@ -111,5 +111,6 @@ public partial class MainPage : ContentPage {
 
         Shell.Current.Items.Add(item);
         await Shell.Current.GoToAsync($"//{item.Route}");
+        RecentCollections.Add(filePath, collection.Name);
     }
 }
