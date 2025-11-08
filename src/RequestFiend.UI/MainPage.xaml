@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.UI.Models"
     x:Class="RequestFiend.UI.MainPage"
-    x:DataType="models:NewRequestTemplateCollectionModel">
+    x:DataType="models:MainPageModel">
 
     <ScrollView>
         <VerticalStackLayout>
@@ -18,9 +18,9 @@
 
                     <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding Name.Value}">
+                    <Entry Text="{Binding NewRequestTemplateCollection.Name.Value}">
                         <Entry.Triggers>
-                            <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
+                            <DataTrigger TargetType="Entry" Binding="{Binding NewRequestTemplateCollection.Name.IsValid}" Value="False">
                                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
                             </DataTrigger>
                         </Entry.Triggers>
@@ -28,7 +28,7 @@
 
                     <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding DefaultUrl.Value}" />
+                    <Entry Text="{Binding NewRequestTemplateCollection.DefaultUrl.Value}" />
 
                     <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
@@ -38,7 +38,16 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Open an existing collection" Style="{StaticResource SubHeadline}" />
 
-                    <Label Text="TODO: add recent list!" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="5">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:RecentCollectionModel">
+                                <Button Text="{Binding Name}" Clicked="OnOpenRecentCollectionClicked" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                        <BindableLayout.EmptyView>
+                            <Label Text="No recent items found."/>
+                        </BindableLayout.EmptyView>
+                    </VerticalStackLayout>
                     
                     <Button Text="Choose collection file to open" HorizontalOptions="Fill" Clicked="OnOpenExistingCollectionClicked"/>
                 </VerticalStackLayout>

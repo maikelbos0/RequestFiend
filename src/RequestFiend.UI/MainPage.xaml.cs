@@ -4,6 +4,7 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Storage;
 using RequestFiend.Core;
+using RequestFiend.UI.Configuration;
 using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ using System.Threading.Tasks;
 namespace RequestFiend.UI;
 
 public partial class MainPage : ContentPage {
-    public NewRequestTemplateCollectionModel Model {
-        get => BindingContext as NewRequestTemplateCollectionModel ?? throw new InvalidOperationException();
+    public MainPageModel Model {
+        get => BindingContext as MainPageModel ?? throw new InvalidOperationException();
         set => BindingContext = value;
     }
 
@@ -25,7 +26,7 @@ public partial class MainPage : ContentPage {
     }
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
-        if (!Model.TryCreateRequestTemplateCollection(out var collection)) {
+        if (!Model.NewRequestTemplateCollection.TryCreateRequestTemplateCollection(out var collection)) {
             return;
         }
 
@@ -43,8 +44,8 @@ public partial class MainPage : ContentPage {
         var saveResult = await FileSaver.Default.SaveAsync(fileName, stream);
 
         if (saveResult.IsSuccessful) {
-            await OpenCollection(collection, fileName);
-            Model.Reset();
+            await OpenCollection(collection, saveResult.FilePath);
+            Model.NewRequestTemplateCollection.Reset();
 
             return;
         }
@@ -74,6 +75,23 @@ public partial class MainPage : ContentPage {
         }
 
         Toast.Make("Failed to load collection.");
+    }
+
+    private async void OnOpenRecentCollectionClicked(object sender, EventArgs e) {
+        if (sender is Button button && button.BindingContext is RecentCollectionModel recentCollection) {
+            if (File.Exists(recentCollection.FilePath)) {
+                var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(File.ReadAllText(recentCollection.FilePath));
+
+                if (collection != null) {
+                    await OpenCollection(collection, recentCollection.FilePath);
+
+                    return;
+                }
+            }
+            else {
+                // TODO remove?
+            }
+        }
     }
 
     private static async Task OpenCollection(RequestTemplateCollection collection, string filePath) {
