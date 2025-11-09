@@ -5,14 +5,9 @@ using System;
 
 namespace RequestFiend.UI;
 
-public partial class NewRequestTemplatePage : ContentPage {
+public partial class NewRequestTemplatePage : ContentPage<NewRequestTemplateModel> {
     private readonly RequestTemplateCollection collection;
     private readonly ShellItem parentItem;
-
-    public NewRequestTemplateModel Model {
-        get => BindingContext as NewRequestTemplateModel ?? throw new InvalidOperationException();
-        set => BindingContext = value;
-    }
 
     public NewRequestTemplatePage(ShellItem parentItem, RequestTemplateCollection collection) {
         this.collection = collection;
