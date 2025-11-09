@@ -59,34 +59,35 @@ public partial class MainPage : ContentPage<MainPageModel> {
         });
 
         if (file != null) {
-            using var stream = await file.OpenReadAsync();
-            var collection = await JsonSerializer.DeserializeAsync<RequestTemplateCollection>(stream);
-
-            if (collection != null) {
-                await OpenCollection(collection, file.FullPath);
-                return;
-            }
+            await OpenCollectionFromFile(file.FullPath);
         }
-
-        ShowError("Failed to load collection.");
     }
 
     private async void OnOpenRecentCollectionClicked(object sender, EventArgs e) {
-        if (sender is Button button && button.BindingContext is RecentCollectionModel recentCollection) {
-            if (File.Exists(recentCollection.FilePath)) {
-                var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(File.ReadAllText(recentCollection.FilePath));
+        var filePath = ((RecentCollectionModel)((Button)sender).BindingContext).FilePath;
+
+        await OpenCollectionFromFile(filePath);
+    }
+
+    private async Task OpenCollectionFromFile(string filePath) {
+        if (File.Exists(filePath)) {
+            try {
+                var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(File.ReadAllText(filePath));
 
                 if (collection != null) {
-                    await OpenCollection(collection, recentCollection.FilePath);
+                    await OpenCollection(collection, filePath);
                 }
                 else {
                     ShowError("Failed to load collection.");
                 }
             }
-            else {
-                ShowError("Collection file does not exist.");
-                Model.RecentCollections = RecentCollections.Remove(recentCollection.FilePath);
+            catch (Exception ex) {
+                ShowError($"Failed to load collection: {ex.Message}");
             }
+        }
+        else {
+            ShowError("Collection file does not exist.");
+            Model.RecentCollections = RecentCollections.Remove(filePath);
         }
     }
 
