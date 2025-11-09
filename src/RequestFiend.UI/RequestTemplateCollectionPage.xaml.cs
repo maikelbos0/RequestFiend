@@ -22,6 +22,7 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
         await SaveCollection();
         Title = collection.Name;
         parentItem.Title = collection.Name;
+        ((AppShell)Shell.Current).SetTitle(collection.Name);
 
         // TODO show feedback
     }

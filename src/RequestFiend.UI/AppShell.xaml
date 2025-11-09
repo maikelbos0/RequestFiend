@@ -5,6 +5,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:RequestFiend.UI"
     Title="RequestFiend">
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="*" Padding="15,0,15,0">
+            <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}" Grid.Row="0" Grid.Column="0"/>
 
+            <Button
+                x:Name="CloseButton" 
+                Text="🗙"
+                SemanticProperties.Description="Close collection" 
+                Clicked="OnCloseClicked"
+                Style="{StaticResource TitleButton}"
+                Grid.Row="0" 
+                Grid.Column="1" 
+                IsVisible="False"/>
+        </Grid>
+    </Shell.TitleView>
+    
     <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
 </Shell>
