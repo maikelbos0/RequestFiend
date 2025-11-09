@@ -64,7 +64,6 @@ public partial class MainPage : ContentPage<MainPageModel> {
 
             if (collection != null) {
                 await OpenCollection(collection, file.FullPath);
-
                 return;
             }
         }
@@ -82,9 +81,13 @@ public partial class MainPage : ContentPage<MainPageModel> {
 
                     return;
                 }
+                else {
+                    Toast.Make("Failed to load collection.");
+            }
             }
             else {
-                // TODO remove?
+                Toast.Make("Collection file does not exist.");
+                Model.RecentCollections = RecentCollections.Remove(recentCollection.FilePath);
             }
         }
     }
@@ -124,7 +127,6 @@ public partial class MainPage : ContentPage<MainPageModel> {
 
         Shell.Current.Items.Add(item);
         await Shell.Current.GoToAsync($"//{item.Route}");
-        RecentCollections.Add(filePath, collection.Name);
-        Model.RecentCollections = RecentCollections.Get();
+        Model.RecentCollections = RecentCollections.Add(filePath, collection.Name);
     }
 }
