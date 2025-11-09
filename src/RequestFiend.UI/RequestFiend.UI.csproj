@@ -68,4 +68,16 @@
 		<ProjectReference Include="..\RequestFiend.Core\RequestFiend.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\ErrorPopup.xaml.cs">
+	    <DependentUpon>ErrorPopup.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\ErrorPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

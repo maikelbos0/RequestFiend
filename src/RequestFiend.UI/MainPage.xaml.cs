@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Storage;
+﻿using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Storage;
@@ -46,7 +45,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
             return;
         }
 
-        Toast.Make("Failed to create collection.");
+        ShowError("Failed to create collection.");
     }
 
     private async void OnOpenExistingCollectionClicked(object sender, EventArgs e) {
@@ -69,7 +68,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
             }
         }
 
-        Toast.Make("Failed to load collection.");
+        ShowError("Failed to load collection.");
     }
 
     private async void OnOpenRecentCollectionClicked(object sender, EventArgs e) {
@@ -81,11 +80,11 @@ public partial class MainPage : ContentPage<MainPageModel> {
                     await OpenCollection(collection, recentCollection.FilePath);
                 }
                 else {
-                    Toast.Make("Failed to load collection.");
+                    ShowError("Failed to load collection.");
                 }
             }
             else {
-                Toast.Make("Collection file does not exist.");
+                ShowError("Collection file does not exist.");
                 Model.RecentCollections = RecentCollections.Remove(recentCollection.FilePath);
             }
         }
