@@ -106,7 +106,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
                 Title = "Collection settings",
                 Icon = "bars_solid_full.png",
                 Items = {
-                    new RequestTemplateCollectionPage(filePath, collection)
+                    new RequestTemplateCollectionPage(filePath, collection, item)
                 }
             });
 
