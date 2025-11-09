@@ -1,3 +1,7 @@
-﻿namespace RequestFiend.UI.Models;
+﻿using System.IO;
 
-public record RecentCollectionModel(string FilePath, string Name);
+namespace RequestFiend.UI.Models;
+
+public record RecentCollectionModel(string FilePath) {
+    public string DisplayName { get; } = Path.GetFileName(FilePath);
+};

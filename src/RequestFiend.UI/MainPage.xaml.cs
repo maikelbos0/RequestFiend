@@ -129,7 +129,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
             }
 
             Shell.Current.Items.Add(item);
-            Model.RecentCollections = RecentCollections.Add(filePath, collection.Name);
+            Model.RecentCollections = RecentCollections.Add(filePath);
         }
 
         await Shell.Current.GoToAsync($"//{item.Route}");
