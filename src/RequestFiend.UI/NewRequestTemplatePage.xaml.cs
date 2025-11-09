@@ -21,6 +21,7 @@ public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<
         }
 
         collection.Requests.Add(request);
+        await SaveCollection();
 
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",

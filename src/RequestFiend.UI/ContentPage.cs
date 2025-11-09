@@ -1,10 +1,9 @@
 using Microsoft.Maui.Controls;
-using RequestFiend.Core;
 using System;
 
 namespace RequestFiend.UI;
 
-public class ContentPage<TModel> : ContentPage where TModel : class {
+public partial class ContentPage<TModel> : ContentPage where TModel : class {
     public TModel Model {
         get => BindingContext as TModel ?? throw new InvalidOperationException();
         init => BindingContext = value;

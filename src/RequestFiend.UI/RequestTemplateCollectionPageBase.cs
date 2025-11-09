@@ -1,8 +1,11 @@
 using RequestFiend.Core;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> where TModel : class {
+public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> where TModel : class {
     protected readonly string filePath;
     protected readonly RequestTemplateCollection collection;
 
@@ -10,4 +13,7 @@ public class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> whe
         this.filePath = filePath;
         this.collection = collection;
     }
+
+    public Task SaveCollection()
+        => File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
 }
