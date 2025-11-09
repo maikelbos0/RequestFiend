@@ -9,6 +9,7 @@ using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -78,12 +79,10 @@ public partial class MainPage : ContentPage<MainPageModel> {
 
                 if (collection != null) {
                     await OpenCollection(collection, recentCollection.FilePath);
-
-                    return;
                 }
                 else {
                     Toast.Make("Failed to load collection.");
-            }
+                }
             }
             else {
                 Toast.Make("Collection file does not exist.");
@@ -93,40 +92,46 @@ public partial class MainPage : ContentPage<MainPageModel> {
     }
 
     private async Task OpenCollection(RequestTemplateCollection collection, string filePath) {
-        var item = new FlyoutItem() {
-            Title = collection.Name,
-            Icon = "folder_open_solid_full.png",
-            Route = $"RequestTemplateCollection_{Guid.NewGuid()}"
-        };
+        var item = Shell.Current.Items.FirstOrDefault(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
 
-        item.Items.Add(new Tab() {
-            Title = "Collection settings",
-            Icon = "bars_solid_full.png",
-            Items = {
-                new RequestTemplateCollectionPage(filePath, collection)
-            }
-        });
+        if (item == null) {
+            item = new FlyoutItem() {
+                Title = collection.Name,
+                Icon = "folder_open_solid_full.png",
+                Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
+                StyleId = filePath
+            };
 
-        item.Items.Add(new Tab() {
-            Title = "New request",
-            Icon = "plus_solid_full.png",
-            Items = {
-                new NewRequestTemplatePage(filePath, collection, item)
-            }
-        });
-
-        foreach (var request in collection.Requests) {
             item.Items.Add(new Tab() {
-                Icon = "paper_plane_solid_full.png",
-                Title = request.Name,
+                Title = "Collection settings",
+                Icon = "bars_solid_full.png",
                 Items = {
-                    new RequestTemplatePage(filePath, collection, request)
+                    new RequestTemplateCollectionPage(filePath, collection)
                 }
             });
+
+            item.Items.Add(new Tab() {
+                Title = "New request",
+                Icon = "plus_solid_full.png",
+                Items = {
+                    new NewRequestTemplatePage(filePath, collection, item)
+                }
+            });
+
+            foreach (var request in collection.Requests) {
+                item.Items.Add(new Tab() {
+                    Icon = "paper_plane_solid_full.png",
+                    Title = request.Name,
+                    Items = {
+                        new RequestTemplatePage(filePath, collection, request)
+                    }
+                });
+            }
+
+            Shell.Current.Items.Add(item);
+            Model.RecentCollections = RecentCollections.Add(filePath, collection.Name);
         }
 
-        Shell.Current.Items.Add(item);
         await Shell.Current.GoToAsync($"//{item.Route}");
-        Model.RecentCollections = RecentCollections.Add(filePath, collection.Name);
     }
 }
