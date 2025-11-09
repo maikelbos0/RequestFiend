@@ -1,4 +1,5 @@
 using Microsoft.Maui.Controls;
+using RequestFiend.Core;
 using System;
 
 namespace RequestFiend.UI;

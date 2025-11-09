@@ -100,7 +100,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
             Title = "Collection settings",
             Icon = "bars_solid_full.png",
             Items = {
-                new RequestTemplateCollectionPage(collection, filePath)
+                new RequestTemplateCollectionPage(filePath, collection)
             }
         });
 
@@ -108,7 +108,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
             Title = "New request",
             Icon = "plus_solid_full.png",
             Items = {
-                new NewRequestTemplatePage(item, collection)
+                new NewRequestTemplatePage(filePath, collection, item)
             }
         });
 
@@ -117,7 +117,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
                 Icon = "paper_plane_solid_full.png",
                 Title = request.Name,
                 Items = {
-                    new RequestTemplatePage(collection, request)
+                    new RequestTemplatePage(filePath, collection, request)
                 }
             });
         }

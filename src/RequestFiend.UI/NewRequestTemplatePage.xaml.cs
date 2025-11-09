@@ -5,12 +5,10 @@ using System;
 
 namespace RequestFiend.UI;
 
-public partial class NewRequestTemplatePage : ContentPage<NewRequestTemplateModel> {
-    private readonly RequestTemplateCollection collection;
+public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<NewRequestTemplateModel> {
     private readonly ShellItem parentItem;
 
-    public NewRequestTemplatePage(ShellItem parentItem, RequestTemplateCollection collection) {
-        this.collection = collection;
+    public NewRequestTemplatePage(string filePath, RequestTemplateCollection collection, ShellItem parentItem) : base(filePath, collection) {
         this.parentItem = parentItem;
         Model = new(collection);
         InitializeComponent();
@@ -28,7 +26,7 @@ public partial class NewRequestTemplatePage : ContentPage<NewRequestTemplateMode
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,
             Items = {
-                new RequestTemplatePage(collection, request)
+                new RequestTemplatePage(filePath, collection, request)
             },
             Route = $"RequestTemplate_{Guid.NewGuid()}"
         };

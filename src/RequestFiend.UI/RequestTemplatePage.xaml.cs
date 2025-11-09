@@ -3,12 +3,10 @@ using RequestFiend.UI.Models;
 
 namespace RequestFiend.UI;
 
-public partial class RequestTemplatePage : ContentPage<RequestTemplateModel> {
-    private readonly RequestTemplateCollection collection;
+public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<RequestTemplateModel> {
     private readonly RequestTemplate request;
 
-    public RequestTemplatePage(RequestTemplateCollection collection, RequestTemplate request) {
-        this.collection = collection;
+    public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
         Model = new();
         InitializeComponent();
