@@ -12,7 +12,6 @@ public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<
         this.parentItem = parentItem;
         Model = new(collection);
         InitializeComponent();
-        Title = collection.Name;
     }
 
     private async void OnCreateRequestTemplateClicked(object sender, EventArgs e) {

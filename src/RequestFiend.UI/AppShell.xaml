@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:RequestFiend.UI"
     Title="RequestFiend">
+    
     <Shell.TitleView>
         <Grid ColumnDefinitions="*,Auto" RowDefinitions="*" Padding="15,0,15,0">
             <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}" Grid.Row="0" Grid.Column="0"/>

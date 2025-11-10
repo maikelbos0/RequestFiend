@@ -7,13 +7,21 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> where TModel : class {
+public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> where TModel : class {
     protected readonly string filePath;
     protected readonly RequestTemplateCollection collection;
 
     public RequestTemplateCollectionPageBase(string filePath, RequestTemplateCollection collection) {
         this.filePath = filePath;
         this.collection = collection;
+        WeakReferenceMessenger.Default.Register(this);
+        Title = collection.Name;
+    }
+
+    public void Receive(RequestTemplateCollectionUpdatedMessage message) {
+        if (message.FilePath == filePath) {
+            Title = message.Collection.Name;
+        }
     }
 
     public async Task SaveCollection() {

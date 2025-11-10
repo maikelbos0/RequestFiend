@@ -10,6 +10,5 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         this.request = request;
         Model = new();
         InitializeComponent();
-        Title = collection.Name;
     }
 }

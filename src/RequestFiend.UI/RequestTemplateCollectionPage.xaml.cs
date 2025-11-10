@@ -7,7 +7,6 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
     public RequestTemplateCollectionPage(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
         Model = new(collection);
         InitializeComponent();
-        Title = collection.Name;
     }
 
     private async void OnUpdateCollectionClicked(object sender, System.EventArgs e) {
@@ -16,7 +15,6 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
         }
 
         await SaveCollection();
-        Title = collection.Name;
 
         // TODO show feedback
     }

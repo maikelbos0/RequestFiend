@@ -9,7 +9,7 @@ namespace RequestFiend.UI;
 public partial class AppShell : Shell, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public AppShell() {
         InitializeComponent();
-        WeakReferenceMessenger.Default.RegisterAll(this);
+        WeakReferenceMessenger.Default.Register(this);
     }
 
     protected override void OnNavigated(ShellNavigatedEventArgs args) {
