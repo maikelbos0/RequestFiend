@@ -2,7 +2,6 @@
 using Microsoft.Maui.Controls;
 using RequestFiend.UI.Messages;
 using System;
-using System.Linq;
 
 namespace RequestFiend.UI;
 
@@ -24,12 +23,6 @@ public partial class AppShell : Shell, IRecipient<RequestTemplateCollectionUpdat
     }
 
     public void Receive(RequestTemplateCollectionUpdatedMessage message) {
-        var item = Items.SingleOrDefault(item => item.StyleId == message.FilePath);
-
-        if (item != null) {
-            item.Title = message.Collection.Name;
-        }
-
         if (CurrentItem.StyleId == message.FilePath) {
             TitleLabel.Text = message.Collection.Name;
         }

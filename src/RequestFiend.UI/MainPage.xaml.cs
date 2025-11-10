@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Storage;
 using RequestFiend.Core;
 using RequestFiend.UI.Configuration;
+using RequestFiend.UI.Messages;
 using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -95,6 +97,8 @@ public partial class MainPage : ContentPage<MainPageModel> {
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
                 StyleId = filePath
             };
+
+            WeakReferenceMessenger.Default.Register<RequestTemplateCollectionUpdatedMessage, string>(item, filePath, (item, message) => ((ShellItem)item).Title = message.Collection.Name);
 
             item.Items.Add(new Tab() {
                 Title = "Collection settings",
