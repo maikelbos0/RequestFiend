@@ -24,13 +24,7 @@ public partial class MainPage : ContentPage<MainPageModel> {
         if (!Model.NewRequestTemplateCollection.TryCreateRequestTemplateCollection(out var collection)) {
             return;
         }
-
-        collection.Requests.Add(new() {
-            Name = "Test",
-            Method = "GET",
-            Url = "https://localhost"
-        });
-
+        
         var fileName = $"{string.Concat(collection.Name.Split(Path.GetInvalidFileNameChars()))}.json";
         var stream = new MemoryStream();
 

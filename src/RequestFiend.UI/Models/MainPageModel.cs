@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RequestFiend.UI.Models;
 
-public class MainPageModel : ObservableObject {
+public partial class MainPageModel : ObservableObject {
     private List<RecentCollectionModel> recentCollections = Configuration.RecentCollections.Get();
 
     public NewRequestTemplateCollectionModel NewRequestTemplateCollection { get; set; } = new();
