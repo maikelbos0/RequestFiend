@@ -1,25 +1,37 @@
-﻿using Microsoft.Maui.Controls;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
+using RequestFiend.UI.Messages;
 using System;
+using System.Linq;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell {
+public partial class AppShell : Shell, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public AppShell() {
         InitializeComponent();
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     protected override void OnNavigated(ShellNavigatedEventArgs args) {
-        SetTitle(CurrentItem.Title);
+        TitleLabel.Text = CurrentItem.Title;
         CloseButton.IsVisible = CurrentItem.StyleId != null;
-    }
-
-    public void SetTitle(string title) {
-        TitleLabel.Text = title;
     }
 
     private async void OnCloseClicked(object sender, EventArgs e) {
         var currentItem = CurrentItem;
         await GoToAsync("//MainPage");
         Items.Remove(currentItem);
+    }
+
+    public void Receive(RequestTemplateCollectionUpdatedMessage message) {
+        var item = Items.SingleOrDefault(item => item.StyleId == message.FilePath);
+
+        if (item != null) {
+            item.Title = message.Collection.Name;
+        }
+
+        if (CurrentItem.StyleId == message.FilePath) {
+            TitleLabel.Text = message.Collection.Name;
+        }
     }
 }

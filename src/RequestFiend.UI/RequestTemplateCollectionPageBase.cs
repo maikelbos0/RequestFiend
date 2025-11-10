@@ -1,4 +1,6 @@
+using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
+using RequestFiend.UI.Messages;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,6 +16,8 @@ public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TMo
         this.collection = collection;
     }
 
-    public Task SaveCollection()
-        => File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
+    public async Task SaveCollection() {
+        await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
+        WeakReferenceMessenger.Default.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection));
+    }
 }
