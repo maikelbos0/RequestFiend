@@ -10,17 +10,23 @@ public static class RecentCollections {
     // TODO create user preferences for max and for disabling and clearing
     private const int MaximumItemCount = 10;
 
-    public static List<RecentCollectionModel> Add(string filePath) {
+    public static List<RecentCollectionModel> Get()
+        => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
+
+    public static void Set(List<RecentCollectionModel> recentCollections)
+        => Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
+
+    public static List<RecentCollectionModel> Push(string filePath) {
         var recentCollections = Get();
 
-        recentCollections.RemoveAll(x => string.Equals(x.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
+        recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
         recentCollections.Insert(0, new(filePath));
 
         if (recentCollections.Count > MaximumItemCount) {
             recentCollections.RemoveRange(MaximumItemCount, recentCollections.Count - MaximumItemCount);
         }
 
-        Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
+        Set(recentCollections);
 
         return recentCollections;
     }
@@ -28,12 +34,9 @@ public static class RecentCollections {
     public static List<RecentCollectionModel> Remove(string filePath) {
         var recentCollections = Get();
 
-        recentCollections.RemoveAll(x => string.Equals(x.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
-        Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
+        recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
+        Set(recentCollections);
 
         return recentCollections;
     }
-
-    public static List<RecentCollectionModel> Get()
-        => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
 }

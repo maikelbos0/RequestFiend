@@ -16,10 +16,11 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class MainPage : ContentPage<MainPageModel> {
+public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public MainPage() {
         Model = new();
         InitializeComponent();
+        WeakReferenceMessenger.Default.Register(this);
     }
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
@@ -127,9 +128,13 @@ public partial class MainPage : ContentPage<MainPageModel> {
             }
 
             Shell.Current.Items.Add(item);
-            Model.RecentCollections = RecentCollections.Add(filePath);
+            Model.RecentCollections = RecentCollections.Push(filePath);
         }
 
         await Shell.Current.GoToAsync($"//{item.Route}");
+    }
+
+    public void Receive(RequestTemplateCollectionUpdatedMessage message) {
+        Model.RecentCollections = RecentCollections.Push(message.FilePath);
     }
 }
