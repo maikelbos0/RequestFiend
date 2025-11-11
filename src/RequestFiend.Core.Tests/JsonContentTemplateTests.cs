@@ -12,9 +12,7 @@ public class JsonContentTemplateTests {
         var subject = new JsonContentTemplate() {
             Content = content
         };
-        var collection = new RequestTemplateCollection() {
-            Name = "Collection"
-        };
+        var collection = new RequestTemplateCollection();
 
         Assert.Equal(expectedResult, subject.Validate(collection));
     }
@@ -24,9 +22,7 @@ public class JsonContentTemplateTests {
         var subject = new JsonContentTemplate() {
             Content = "[{\"Field\":\"Value\"},{\"Field\":\"Value\"}]"
         };
-        var collection = new RequestTemplateCollection() {
-            Name = "Collection"
-        };
+        var collection = new RequestTemplateCollection();
 
         Assert.True(subject.Format(collection));
 
@@ -39,7 +35,6 @@ public class JsonContentTemplateTests {
             Content = "[{{Node}}, {{Node}}]"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Variables = {
                 { "Node", "{\"Meaning\": 42}" }
             }

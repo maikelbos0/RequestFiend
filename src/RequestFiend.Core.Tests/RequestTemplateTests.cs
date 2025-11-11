@@ -18,7 +18,6 @@ public class RequestTemplateTests {
             Url = url
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject]
         };
 
@@ -34,7 +33,6 @@ public class RequestTemplateTests {
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject]
         };
 
@@ -53,7 +51,6 @@ public class RequestTemplateTests {
             Url = "{{baseurl}}values"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             Variables = { { "BaseUrl", "https://localhost:7001/" } }
         };
@@ -74,7 +71,6 @@ public class RequestTemplateTests {
             ]
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject]
         };
 
@@ -95,7 +91,6 @@ public class RequestTemplateTests {
             ]
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             Variables = { { "Header", "Accept" } }
         };
@@ -116,7 +111,6 @@ public class RequestTemplateTests {
             ]
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             Variables = { { "Header", "application/json" } }
         };
@@ -134,7 +128,6 @@ public class RequestTemplateTests {
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             DefaultHeaders = [
                 new() { Name = "Accept", Value = "application/json" }
@@ -155,7 +148,6 @@ public class RequestTemplateTests {
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             Variables = { { "DefaultHeader", "Accept" } },
             DefaultHeaders = [
@@ -176,7 +168,6 @@ public class RequestTemplateTests {
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             Variables = { { "DefaultHeader", "application/json" } },
             DefaultHeaders = [
@@ -199,7 +190,6 @@ public class RequestTemplateTests {
             Content = contentTemplate
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Requests = [subject],
             Variables = { { "DefaultHeader", "application/json" } },
             DefaultHeaders = [

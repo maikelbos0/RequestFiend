@@ -4,7 +4,6 @@ using System.Collections.Generic;
 namespace RequestFiend.Core;
 
 public class RequestTemplateCollection {
-    public required string Name { get; set; }
     public string? DefaultUrl { get; set; }
     public List<RequestTemplate> Requests { get; set; } = [];
     public Dictionary<string, string> Variables { get; set; } = [];

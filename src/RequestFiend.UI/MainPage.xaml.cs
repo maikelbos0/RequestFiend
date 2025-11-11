@@ -24,25 +24,19 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
     }
 
     private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
-        if (!Model.NewRequestTemplateCollection.TryCreateRequestTemplateCollection(out var collection)) {
-            return;
-        }
-        
-        var fileName = $"{string.Concat(collection.Name.Split(Path.GetInvalidFileNameChars()))}.json";
+        var collection = new RequestTemplateCollection();
         var stream = new MemoryStream();
 
         JsonSerializer.Serialize(stream, collection);
 
-        var saveResult = await FileSaver.Default.SaveAsync(fileName, stream);
+        var saveResult = await FileSaver.Default.SaveAsync(".json", stream);
 
         if (saveResult.IsSuccessful) {
             await OpenCollection(collection, saveResult.FilePath);
-            Model.NewRequestTemplateCollection.Reset();
-
-            return;
         }
-
-        ShowError("Failed to create collection.");
+        else {
+            ShowError("Failed to create collection.");
+        }
     }
 
     private async void OnOpenExistingCollectionClicked(object sender, EventArgs e) {
@@ -93,13 +87,11 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
 
         if (item == null) {
             item = new FlyoutItem() {
-                Title = collection.Name,
+                Title = Path.GetFileNameWithoutExtension(filePath),
                 Icon = "folder_open_solid_full.png",
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
                 StyleId = filePath
             };
-
-            WeakReferenceMessenger.Default.Register<RequestTemplateCollectionUpdatedMessage, string>(item, filePath, (item, message) => ((ShellItem)item).Title = message.Collection.Name);
 
             item.Items.Add(new Tab() {
                 Title = "Collection settings",

@@ -8,9 +8,7 @@ public class TextContentTemplateTests {
         var subject = new TextContentTemplate() {
             Content = "Just a piece of text"
         };
-        var collection = new RequestTemplateCollection() {
-            Name = "Collection"
-        };
+        var collection = new RequestTemplateCollection();
 
         Assert.True(subject.Validate(collection));
     }
@@ -21,9 +19,7 @@ public class TextContentTemplateTests {
         var subject = new TextContentTemplate() {
             Content = content
         };
-        var collection = new RequestTemplateCollection() {
-            Name = "Collection"
-        };
+        var collection = new RequestTemplateCollection();
 
         Assert.True(subject.Format(collection));
 
@@ -36,7 +32,6 @@ public class TextContentTemplateTests {
             Content = "The {{first}} and {{second}} get replaced"
         };
         var collection = new RequestTemplateCollection() {
-            Name = "Collection",
             Variables = {
                 { "First", "Replacement" },
                 { "Second", "Another" }

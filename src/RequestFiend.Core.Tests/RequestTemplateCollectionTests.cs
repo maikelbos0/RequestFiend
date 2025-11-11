@@ -9,7 +9,6 @@ public class RequestTemplateCollectionTests {
     [InlineData("\t")]
     public void ApplyVariables_Returns_Value_If_Whitespace(string value) {
         var subject = new RequestTemplateCollection() {
-            Name = "Collection",
             Variables = {
                 { "First", "Replacement" },
                 { "Second", "Another" }
@@ -24,7 +23,6 @@ public class RequestTemplateCollectionTests {
     [Fact]
     public void ApplyVariables_Replaces_Variables_With_Values() {
         var subject = new RequestTemplateCollection() {
-            Name = "Collection",
             Variables = {
                 { "First", "Replacement" },
                 { "Second", "Another" }

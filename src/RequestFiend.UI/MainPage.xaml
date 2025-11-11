@@ -18,20 +18,6 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Create a new collection" Style="{StaticResource SubHeadline}" />
 
-                    <Label Text="Name" Style="{StaticResource FormLabel}"/>
-
-                    <Entry Text="{Binding NewRequestTemplateCollection.Name.Value}">
-                        <Entry.Triggers>
-                            <DataTrigger TargetType="Entry" Binding="{Binding NewRequestTemplateCollection.Name.IsValid}" Value="False">
-                                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                            </DataTrigger>
-                        </Entry.Triggers>
-                    </Entry>
-
-                    <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
-
-                    <Entry Text="{Binding NewRequestTemplateCollection.DefaultUrl.Value}" />
-
                     <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
             </Border>
@@ -43,7 +29,7 @@
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="5">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:RecentCollectionModel">
-                                <Button Text="{Binding DisplayName}" Clicked="OnOpenRecentCollectionClicked" Style="{StaticResource SecondaryButton}" />
+                                <Button Text="{Binding Name}" Clicked="OnOpenRecentCollectionClicked" Style="{StaticResource SecondaryButton}" />
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                         <BindableLayout.EmptyView>
