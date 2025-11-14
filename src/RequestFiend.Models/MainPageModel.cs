@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 
-namespace RequestFiend.UI.Models;
+namespace RequestFiend.Models;
 
 public partial class MainPageModel : ObservableObject {
-    private List<RecentCollectionModel> recentCollections = Configuration.RecentCollections.Get();
+    private List<RecentCollectionModel> recentCollections = [];
 
     public List<RecentCollectionModel> RecentCollections { 
         get => recentCollections;

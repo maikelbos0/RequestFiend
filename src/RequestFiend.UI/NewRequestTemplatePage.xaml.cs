@@ -1,6 +1,6 @@
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
-using RequestFiend.UI.Models;
+using RequestFiend.Models;
 using System;
 
 namespace RequestFiend.UI;

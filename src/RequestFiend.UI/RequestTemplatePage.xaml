@@ -2,7 +2,7 @@
 <local:RequestTemplateCollectionPageBase
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:models="clr-namespace:RequestFiend.UI.Models"
+    xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:local="clr-namespace:RequestFiend.UI"
     x:Class="RequestFiend.UI.RequestTemplatePage"
     x:DataType="models:RequestTemplateModel"

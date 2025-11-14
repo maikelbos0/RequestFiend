@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
+using RequestFiend.Models;
 using RequestFiend.UI.Messages;
-using RequestFiend.UI.Models;
 
 namespace RequestFiend.UI;
 

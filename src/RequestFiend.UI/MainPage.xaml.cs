@@ -4,9 +4,9 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Storage;
 using RequestFiend.Core;
+using RequestFiend.Models;
 using RequestFiend.UI.Configuration;
 using RequestFiend.UI.Messages;
-using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +17,9 @@ namespace RequestFiend.UI;
 
 public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public MainPage() {
-        Model = new();
+        Model = new() {
+            RecentCollections = RecentCollections.Get()
+        };
         InitializeComponent();
         WeakReferenceMessenger.Default.Register(this);
     }

@@ -1,8 +1,8 @@
 ﻿using RequestFiend.Core;
-using RequestFiend.UI.Models.Properties;
+using RequestFiend.Models.PropertyTypes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RequestFiend.UI.Models;
+namespace RequestFiend.Models;
 
 public class NewRequestTemplateModel {
     public RequiredString Name { get; set; } = new();

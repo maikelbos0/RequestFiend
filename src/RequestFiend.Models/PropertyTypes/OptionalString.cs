@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
-namespace RequestFiend.UI.Models.Properties;
+namespace RequestFiend.Models.PropertyTypes;
 
 public class OptionalString : ObservableObject {
     public static implicit operator string?(OptionalString optionalString) => optionalString.Value;

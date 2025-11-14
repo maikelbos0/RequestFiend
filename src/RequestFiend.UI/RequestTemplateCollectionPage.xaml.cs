@@ -1,5 +1,5 @@
 using RequestFiend.Core;
-using RequestFiend.UI.Models;
+using RequestFiend.Models;
 
 namespace RequestFiend.UI;
 

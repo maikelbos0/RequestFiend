@@ -1,7 +1,7 @@
 ﻿using RequestFiend.Core;
-using RequestFiend.UI.Models.Properties;
+using RequestFiend.Models.PropertyTypes;
 
-namespace RequestFiend.UI.Models;
+namespace RequestFiend.Models;
 
 public class RequestTemplateCollectionModel {
     public OptionalString DefaultUrl { get; set; } = new();

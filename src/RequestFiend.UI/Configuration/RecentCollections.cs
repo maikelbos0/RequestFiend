@@ -1,5 +1,5 @@
 ﻿using Microsoft.Maui.Storage;
-using RequestFiend.UI.Models;
+using RequestFiend.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
