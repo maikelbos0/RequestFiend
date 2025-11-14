@@ -13,8 +13,6 @@
 
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Name" Style="{StaticResource FormLabel}"/>
-
                     <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
                     <Entry Text="{Binding DefaultUrl.Value}" />
