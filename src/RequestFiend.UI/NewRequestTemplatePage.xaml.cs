@@ -1,7 +1,5 @@
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
-using RequestFiend.UI.Messages;
 using RequestFiend.UI.Models;
 using System;
 
@@ -24,19 +22,7 @@ public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<
 
         collection.Requests.Add(request);
         await SaveCollection();
-
-        var item = new Tab() {
-            Icon = "paper_plane_solid_full.png",
-            Title = request.Name,
-            Items = {
-                new RequestTemplatePage(filePath, collection, request)
-            },
-            Route = $"RequestTemplate_{Guid.NewGuid()}"
-        };
-        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateUpdatedMessage, Guid>(item, request.Id, (tab, message) => tab.Title = request.Name);
-        collectionItem.Items.Add(item);
-
-        await Shell.Current.GoToAsync($"//{collectionItem.Route}/{item.Route}");
+        await Shell.Current.OpenRequest(filePath, collection, request);
 
         Model.Reset();
     }

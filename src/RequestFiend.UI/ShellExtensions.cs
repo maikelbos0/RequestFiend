@@ -1,0 +1,71 @@
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
+using RequestFiend.Core;
+using RequestFiend.UI.Messages;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace RequestFiend.UI;
+
+public static class ShellExtensions {
+    public static async Task OpenCollection(this Shell shell, string filePath, RequestTemplateCollection collection) {
+        var collectionItem = Shell.Current.Items.SingleOrDefault(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
+
+        if (collectionItem == null) {
+            collectionItem = new FlyoutItem() {
+                Title = Path.GetFileNameWithoutExtension(filePath),
+                Icon = "folder_open_solid_full.png",
+                Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
+                StyleId = filePath
+            };
+
+            collectionItem.Items.Add(new Tab() {
+                Title = "Collection settings",
+                Icon = "bars_solid_full.png",
+                Items = {
+                    new RequestTemplateCollectionPage(filePath, collection)
+                }
+            });
+
+            collectionItem.Items.Add(new Tab() {
+                Title = "New request",
+                Icon = "plus_solid_full.png",
+                Items = {
+                    new NewRequestTemplatePage(filePath, collection, collectionItem)
+                }
+            });
+
+            foreach (var request in collection.Requests) {
+                collectionItem.Items.Add(CreateRequestTab(filePath, collection, request));
+            }
+
+            Shell.Current.Items.Add(collectionItem);
+        }
+
+        await Shell.Current.GoToAsync($"//{collectionItem.Route}");
+    }
+
+    public static async Task OpenRequest(this Shell shell, string filePath, RequestTemplateCollection collection, RequestTemplate request) {
+        var collectionItem = shell.Items.Single(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
+        var item = CreateRequestTab(filePath, collection, request);
+        
+        collectionItem.Items.Add(item);
+        await Shell.Current.GoToAsync($"//{collectionItem.Route}/{item.Route}");
+    }
+
+    private static Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
+        var item = new Tab() {
+            Icon = "paper_plane_solid_full.png",
+            Title = request.Name,
+            Items = {
+                new RequestTemplatePage(filePath, collection, request)
+            },
+            Route = $"RequestTemplate_{request.Id}"
+        };
+        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateUpdatedMessage, Guid>(item, request.Id, (tab, message) => tab.Title = request.Name);
+
+        return item;
+    }
+}

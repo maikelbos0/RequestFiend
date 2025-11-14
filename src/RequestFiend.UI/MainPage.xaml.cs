@@ -10,7 +10,6 @@ using RequestFiend.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -32,7 +31,8 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
         var saveResult = await FileSaver.Default.SaveAsync(".json", stream);
 
         if (saveResult.IsSuccessful) {
-            await OpenCollection(collection, saveResult.FilePath);
+            await Shell.Current.OpenCollection(saveResult.FilePath, collection);
+            Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
         }
         else {
             ShowError("Failed to create collection.");
@@ -66,7 +66,8 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
                 var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(File.ReadAllText(filePath));
 
                 if (collection != null) {
-                    await OpenCollection(collection, filePath);
+                    await Shell.Current.OpenCollection(filePath, collection);
+                    Model.RecentCollections = RecentCollections.Push(filePath);
                 }
                 else {
                     ShowError("Failed to load collection.");
@@ -80,52 +81,6 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
             ShowError("Collection file does not exist.");
             Model.RecentCollections = RecentCollections.Remove(filePath);
         }
-    }
-
-    private async Task OpenCollection(RequestTemplateCollection collection, string filePath) {
-        var collectionItem = Shell.Current.Items.FirstOrDefault(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
-
-        if (collectionItem == null) {
-            collectionItem = new FlyoutItem() {
-                Title = Path.GetFileNameWithoutExtension(filePath),
-                Icon = "folder_open_solid_full.png",
-                Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
-                StyleId = filePath
-            };
-
-            collectionItem.Items.Add(new Tab() {
-                Title = "Collection settings",
-                Icon = "bars_solid_full.png",
-                Items = {
-                    new RequestTemplateCollectionPage(filePath, collection)
-                }
-            });
-
-            collectionItem.Items.Add(new Tab() {
-                Title = "New request",
-                Icon = "plus_solid_full.png",
-                Items = {
-                    new NewRequestTemplatePage(filePath, collection, collectionItem)
-                }
-            });
-
-            foreach (var request in collection.Requests) {
-                var item = new Tab() {
-                    Icon = "paper_plane_solid_full.png",
-                    Title = request.Name,
-                    Items = {
-                        new RequestTemplatePage(filePath, collection, request)
-                    }
-                };
-                WeakReferenceMessenger.Default.Register<Tab, RequestTemplateUpdatedMessage, Guid>(item, request.Id, (tab, message) => tab.Title = request.Name);
-                collectionItem.Items.Add(item);
-            }
-
-            Shell.Current.Items.Add(collectionItem);
-            Model.RecentCollections = RecentCollections.Push(filePath);
-        }
-
-        await Shell.Current.GoToAsync($"//{collectionItem.Route}");
     }
 
     public void Receive(RequestTemplateCollectionUpdatedMessage message) {
