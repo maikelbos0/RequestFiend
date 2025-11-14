@@ -8,7 +8,18 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
-        Model = new();
+        Model = new(request);
         InitializeComponent();
+    }
+
+    private async void OnUpdateRequestClicked(object sender, System.EventArgs e) {
+        if (!Model.TryUpdateRequestTemplate(request)) {
+            return;
+        }
+
+        await SaveCollection();
+
+        // TODO update shell
+        // TODO show feedback
     }
 }
