@@ -1,4 +1,6 @@
+using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
+using RequestFiend.UI.Messages;
 using RequestFiend.UI.Models;
 
 namespace RequestFiend.UI;
@@ -18,8 +20,8 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         }
 
         await SaveCollection();
+        WeakReferenceMessenger.Default.Send(new RequestTemplateUpdatedMessage(request), request.Id);
 
-        // TODO update shell
         // TODO show feedback
     }
 }
