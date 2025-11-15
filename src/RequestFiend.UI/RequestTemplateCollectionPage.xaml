@@ -8,17 +8,21 @@
     x:DataType="models:RequestTemplateCollectionModel"
     x:TypeArguments="models:RequestTemplateCollectionModel">
 
-    <ScrollView>
-        <VerticalStackLayout>
-            <Border>
-                <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
+    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*" RowSpacing="0">
+        <ScrollView Grid.Row="0" Grid.Column="0">
+            <VerticalStackLayout>
+                <Border>
+                    <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                        <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
-                    <Entry Text="{Binding DefaultUrl.Value}" />
+                        <Entry Text="{Binding DefaultUrl.Value}" />
 
-                    <Button Text="Save changes" Clicked="OnUpdateCollectionClicked"/>
-                </VerticalStackLayout>
-            </Border>
-        </VerticalStackLayout>
-    </ScrollView>
+                        <Button Text="Save changes" Clicked="OnUpdateCollectionClicked"/>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+        
+        <Label x:Name="SuccessLabel" Style="{StaticResource SuccessMessage}" Grid.Row="1" Grid.Column="0" IsVisible="False" />
+    </Grid>
 </local:RequestTemplateCollectionPageBase>

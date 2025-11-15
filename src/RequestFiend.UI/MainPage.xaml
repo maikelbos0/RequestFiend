@@ -36,7 +36,7 @@
                             <Label Text="No recent items found."/>
                         </BindableLayout.EmptyView>
                     </VerticalStackLayout>
-                    
+
                     <Button Text="Choose collection file to open" Clicked="OnOpenExistingCollectionClicked"/>
                 </VerticalStackLayout>
             </Border>
