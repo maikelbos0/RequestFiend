@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:local="clr-namespace:RequestFiend.UI"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.RequestTemplateCollectionPage"
     x:DataType="models:RequestTemplateCollectionModel"
     x:TypeArguments="models:RequestTemplateCollectionModel">
@@ -22,7 +23,7 @@
                 </Border>
             </VerticalStackLayout>
         </ScrollView>
-        
-        <Label x:Name="SuccessLabel" Style="{StaticResource SuccessMessage}" Grid.Row="1" Grid.Column="0" IsVisible="False" />
+
+        <views:Message x:Name="SuccessMessage" Grid.Row="1" Grid.Column="0" />
     </Grid>
 </local:RequestTemplateCollectionPageBase>

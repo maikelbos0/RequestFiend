@@ -22,6 +22,6 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         await SaveCollection();
         WeakReferenceMessenger.Default.Send(new RequestTemplateUpdatedMessage(request), request.Id);
 
-        // TODO show feedback
+        await SuccessMessage.Show("Changes have been saved");
     }
 }
