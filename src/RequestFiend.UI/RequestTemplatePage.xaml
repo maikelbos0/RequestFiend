@@ -44,10 +44,9 @@
                         </Entry>
                     </Grid>
 
-                    <Button Text="Save changes" HorizontalOptions="Fill" Clicked="OnUpdateRequestClicked"/>
+                    <Button Text="Save changes" Clicked="OnUpdateRequestClicked"/>
                 </VerticalStackLayout>
             </Border>
-
         </VerticalStackLayout>
     </ScrollView>
 </local:RequestTemplateCollectionPageBase>

@@ -10,17 +10,15 @@
 
     <ScrollView>
         <VerticalStackLayout>
-
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
                     <Entry Text="{Binding DefaultUrl.Value}" />
 
-                    <Button Text="Save changes" HorizontalOptions="Fill" Clicked="OnUpdateCollectionClicked"/>
+                    <Button Text="Save changes" Clicked="OnUpdateCollectionClicked"/>
                 </VerticalStackLayout>
             </Border>
-            
         </VerticalStackLayout>
     </ScrollView>
 </local:RequestTemplateCollectionPageBase>

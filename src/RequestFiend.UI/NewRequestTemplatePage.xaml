@@ -45,7 +45,7 @@
                         </Entry>
                     </Grid>
 
-                    <Button Text="Create new request" HorizontalOptions="Fill" Clicked="OnCreateRequestTemplateClicked"/>
+                    <Button Text="Create new request" Clicked="OnCreateRequestTemplateClicked"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

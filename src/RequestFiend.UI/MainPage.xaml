@@ -18,7 +18,7 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Create a new collection" Style="{StaticResource SubHeadline}" />
 
-                    <Button Text="Choose file location and create" HorizontalOptions="Fill" Clicked="OnCreateNewCollectionClicked"/>
+                    <Button Text="Choose file location and create" Clicked="OnCreateNewCollectionClicked"/>
                 </VerticalStackLayout>
             </Border>
 
@@ -37,7 +37,7 @@
                         </BindableLayout.EmptyView>
                     </VerticalStackLayout>
                     
-                    <Button Text="Choose collection file to open" HorizontalOptions="Fill" Clicked="OnOpenExistingCollectionClicked"/>
+                    <Button Text="Choose collection file to open" Clicked="OnOpenExistingCollectionClicked"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
