@@ -22,7 +22,7 @@
                         </Entry.Triggers>
                     </Entry>
 
-                    <Grid ColumnDefinitions="150,*" RowDefinitions="*,*">
+                    <Grid ColumnDefinitions="*,4*" RowDefinitions="*,*">
                         <Label Text="Method" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="0"/>
 
                         <Label Text="Url" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="1"/>
