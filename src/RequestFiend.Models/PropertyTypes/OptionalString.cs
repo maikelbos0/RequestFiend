@@ -7,11 +7,16 @@ public class OptionalString : ObservableObject {
     public static implicit operator string?(OptionalString optionalString) => optionalString.Value;
 
     private string? value;
+    private bool isModified;
     private readonly Func<string?> defaultValueProvider;
 
     public string? Value {
         get => value;
-        set => SetProperty(ref this.value, value);
+        set => IsModified = SetProperty(ref this.value, value);
+    }
+    public bool IsModified {
+        get => isModified;
+        set => SetProperty(ref isModified, value);
     }
 
     public OptionalString() : this(() => null) { }
@@ -23,5 +28,6 @@ public class OptionalString : ObservableObject {
 
     public void Reset() {
         Value = defaultValueProvider();
+        IsModified = false;
     }
 }

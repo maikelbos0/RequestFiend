@@ -10,15 +10,20 @@ public class RequiredString : ObservableObject {
     public static implicit operator string(RequiredString requiredString) => requiredString.Value ?? throw new InvalidOperationException();
 
     private string? value;
+    private bool isModified;
     private bool? isValid;
     private readonly Func<string?> defaultValueProvider;
 
     public string? Value {
         get => value;
         set {
-            SetProperty(ref this.value, value);
+            IsModified = SetProperty(ref this.value, value);
             Validate();
         }
+    }
+    public bool IsModified {
+        get => isModified;
+        set => SetProperty(ref isModified, value);
     }
     public bool? IsValid {
         get => isValid;
@@ -40,6 +45,7 @@ public class RequiredString : ObservableObject {
 
     public void Reset() {
         Value = defaultValueProvider();
+        IsModified = false;
         IsValid = null;
     }
 }
