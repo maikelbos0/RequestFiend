@@ -190,6 +190,7 @@
     <Style TargetType="Label" x:Key="Title">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
         <Setter Property="FontSize" Value="32" />
+        <Setter Property="LineBreakMode" Value="TailTruncation"/>
     </Style>
 
     <Style TargetType="Label" x:Key="Headline">
