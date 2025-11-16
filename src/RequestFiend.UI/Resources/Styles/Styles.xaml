@@ -34,8 +34,7 @@
         <Setter Property="BorderWidth" Value="0"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="14,10"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
-        <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="MinimumWidthRequest" Value="200"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -205,14 +204,6 @@
         <Setter Property="FontSize" Value="24" />
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
-    </Style>
-
-    <Style TargetType="Label" x:Key="SuccessMessage">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" />
-        <Setter Property="FontSize" Value="18" />
-        <Setter Property="HorizontalOptions" Value="Fill" />
-        <Setter Property="HorizontalTextAlignment" Value="Center" />
-        <Setter Property="Padding" Value="25,10,25,10"/>
     </Style>
 
     <Style TargetType="ListView">
@@ -467,6 +458,10 @@
 
     <Style TargetType="VerticalStackLayout">
         <Setter Property="Padding" Value="25"/>
+        <Setter Property="Spacing" Value="25"/>
+    </Style>
+
+    <Style TargetType="HorizontalStackLayout">
         <Setter Property="Spacing" Value="25"/>
     </Style>
 

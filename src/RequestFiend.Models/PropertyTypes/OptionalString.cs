@@ -14,6 +14,8 @@ public class OptionalString : ObservableObject {
         get => value;
         set => IsModified = SetProperty(ref this.value, value);
     }
+    
+    // TODO decide how to show modified status
     public bool IsModified {
         get => isModified;
         set => SetProperty(ref isModified, value);

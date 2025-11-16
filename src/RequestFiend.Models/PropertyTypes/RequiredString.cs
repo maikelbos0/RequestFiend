@@ -21,10 +21,13 @@ public class RequiredString : ObservableObject {
             Validate();
         }
     }
+
+    // TODO decide how to show modified status
     public bool IsModified {
         get => isModified;
         set => SetProperty(ref isModified, value);
     }
+
     public bool? IsValid {
         get => isValid;
         private set => SetProperty(ref isValid, value);
