@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace RequestFiend.UI;
 
 public static class ShellExtensions {
-    public static async Task OpenCollection(this Shell shell, string filePath, RequestTemplateCollection collection) {
+    public static async Task OpenCollection(this Shell _, string filePath, RequestTemplateCollection collection) {
         var collectionItem = Shell.Current.Items.SingleOrDefault(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
 
         if (collectionItem == null) {

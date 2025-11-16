@@ -18,7 +18,8 @@
                 Style="{StaticResource TitleButton}"
                 Grid.Row="0" 
                 Grid.Column="1" 
-                IsVisible="False"/>
+                IsVisible="False"
+                MinimumWidthRequest="-1"/>
         </Grid>
     </Shell.TitleView>
     
