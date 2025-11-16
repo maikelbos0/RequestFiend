@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RequestFiend.Models;
 
-public class NewRequestTemplateModel : ModelBase {
+public class NewRequestTemplateModel : BoundModelBase {
     public RequiredString Name { get; set; } = new();
     public RequiredString Method { get; set; } = new();
     public RequiredString Url { get; set; } 

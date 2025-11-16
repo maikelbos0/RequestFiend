@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class ContentPage<TModel> : ContentPage where TModel : ModelBase {
+public partial class ContentPage<TModel> : ContentPage where TModel : BoundModelBase {
     public TModel Model {
         get => BindingContext as TModel ?? throw new InvalidOperationException();
         init => BindingContext = value;

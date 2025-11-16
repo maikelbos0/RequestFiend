@@ -3,10 +3,10 @@ using RequestFiend.Models.PropertyTypes;
 
 namespace RequestFiend.Models;
 
-public class RequestTemplateModel : ModelBase {
+public class RequestTemplateModel : BoundModelBase {
 
-    public RequiredString Name { get; set; } = new();
-    public RequiredString Method { get; set; } = new();
+    public RequiredString Name { get; set; }
+    public RequiredString Method { get; set; }
     public RequiredString Url { get; set; }
 
     public RequestTemplateModel(RequestTemplate requestTemplate) {

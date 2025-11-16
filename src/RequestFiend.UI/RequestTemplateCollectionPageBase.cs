@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> where TModel : ModelBase {
+public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> where TModel : BoundModelBase {
     protected readonly string filePath;
     protected readonly RequestTemplateCollection collection;
 

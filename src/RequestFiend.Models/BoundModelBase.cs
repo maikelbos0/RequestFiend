@@ -4,7 +4,7 @@ using Microsoft.Maui.Devices;
 
 namespace RequestFiend.Models;
 
-public abstract class ModelBase : ObservableObject {
+public abstract class BoundModelBase : ObservableObject {
     private const double widthBreakpoint = 500;
 
     private double pageWidth;

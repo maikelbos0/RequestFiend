@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Models;
 
-public partial class MainPageModel : ModelBase {
+public partial class MainPageModel : BoundModelBase {
     private List<RecentCollectionModel> recentCollections = [];
 
     public List<RecentCollectionModel> RecentCollections { 
