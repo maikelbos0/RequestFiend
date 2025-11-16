@@ -3,7 +3,7 @@ using RequestFiend.Models.PropertyTypes;
 
 namespace RequestFiend.Models;
 
-public class RequestTemplateModel {
+public class RequestTemplateModel : ModelBase {
 
     public RequiredString Name { get; set; } = new();
     public RequiredString Method { get; set; } = new();

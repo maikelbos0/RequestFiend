@@ -465,6 +465,10 @@
         <Setter Property="Spacing" Value="25"/>
     </Style>
 
+    <Style TargetType="StackLayout">
+        <Setter Property="Spacing" Value="25"/>
+    </Style>
+
     <Style TargetType="VerticalStackLayout" x:Key="ElementGroup">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}"/>
     </Style>

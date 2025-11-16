@@ -1,5 +1,7 @@
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Devices;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.UI.Messages;
@@ -7,15 +9,19 @@ using System;
 
 namespace RequestFiend.UI;
 
-// TODO maybe use idiom to determine button orientation
-// https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/device/information?view=net-maui-10.0&tabs=android
 public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<RequestTemplateModel> {
     private readonly RequestTemplate request;
 
     public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
-        Model = new(request);
+        Model = new(request) {
+            PageWidth = Width,
+            DeviceIdiom = DeviceInfo.Current.Idiom
+        };
         InitializeComponent();
+        var x = new Button();
+        
+        SizeChanged += (_, _) => Model.PageWidth = Width;
     }
 
     private async void OnUpdateRequestClicked(object sender, EventArgs e) {
