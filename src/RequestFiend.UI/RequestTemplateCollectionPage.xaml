@@ -14,11 +14,12 @@
             <VerticalStackLayout>
                 <Border>
                     <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                        <Button Text="Save changes" Clicked="OnUpdateCollectionClicked" HorizontalOptions="End"/>
+                        
                         <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
 
                         <Entry Text="{Binding DefaultUrl.Value}" />
 
-                        <Button Text="Save changes" Clicked="OnUpdateCollectionClicked"/>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>

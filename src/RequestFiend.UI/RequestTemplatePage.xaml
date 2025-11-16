@@ -14,6 +14,8 @@
             <VerticalStackLayout>
                 <Border>
                     <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                        <Button Text="Save changes" Clicked="OnUpdateRequestClicked" HorizontalOptions="End"/>
+                        
                         <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
                         <Entry Text="{Binding Name.Value}">
@@ -45,8 +47,6 @@
                                 </Entry.Triggers>
                             </Entry>
                         </Grid>
-
-                        <Button Text="Save changes" Clicked="OnUpdateRequestClicked"/>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>

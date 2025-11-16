@@ -13,6 +13,8 @@
         <VerticalStackLayout>
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Button Text="Create new request" Clicked="OnCreateRequestTemplateClicked" HorizontalOptions="End"/>
+
                     <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
                     <Entry Text="{Binding Name.Value}">
@@ -44,8 +46,6 @@
                             </Entry.Triggers>
                         </Entry>
                     </Grid>
-
-                    <Button Text="Create new request" Clicked="OnCreateRequestTemplateClicked"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
