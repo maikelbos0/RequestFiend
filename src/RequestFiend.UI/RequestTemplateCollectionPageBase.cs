@@ -21,8 +21,6 @@ public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TMo
     public async Task SaveCollection() {
         await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
 
-        // Send message also without token so globally it can be known that a collection was updated
-        WeakReferenceMessenger.Default.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection), filePath);
         WeakReferenceMessenger.Default.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection));
     }
 }
