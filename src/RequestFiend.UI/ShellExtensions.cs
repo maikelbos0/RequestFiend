@@ -65,6 +65,12 @@ public static class ShellExtensions {
             Route = $"RequestTemplate_{request.Id}"
         };
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateUpdatedMessage, Guid>(item, request.Id, (tab, message) => tab.Title = request.Name);
+        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, Guid>(item, request.Id, async (tab, _) => {
+            if (tab.Parent is ShellItem collectionItem) {
+                collectionItem.Items.Remove(tab);
+                await Shell.Current.GoToAsync($"//{collectionItem.Route}");
+            }
+        });
 
         return item;
     }
