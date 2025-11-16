@@ -13,7 +13,9 @@
         <VerticalStackLayout>
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Button Text="Create new request" Clicked="OnCreateRequestTemplateClicked" HorizontalOptions="End"/>
+                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                        <Button Text="Create new request" Clicked="OnCreateRequestTemplateClicked"/>
+                    </StackLayout>
 
                     <Label Text="Name" Style="{StaticResource FormLabel}"/>
 
@@ -25,7 +27,7 @@
                         </Entry.Triggers>
                     </Entry>
 
-                    <Grid ColumnDefinitions="*,4*" RowDefinitions="*,*">
+                    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
                         <Label Text="Method" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="0"/>
 
                         <Label Text="Url" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="1"/>

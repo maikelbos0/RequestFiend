@@ -1,9 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RequestFiend.Models;
 
-public partial class MainPageModel : ObservableObject {
+public partial class MainPageModel : ModelBase {
     private List<RecentCollectionModel> recentCollections = [];
 
     public List<RecentCollectionModel> RecentCollections { 

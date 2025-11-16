@@ -1,7 +1,5 @@
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Devices;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.UI.Messages;
@@ -14,14 +12,8 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
-        Model = new(request) {
-            PageWidth = Width,
-            DeviceIdiom = DeviceInfo.Current.Idiom
-        };
+        Model = new(request);
         InitializeComponent();
-        var x = new Button();
-        
-        SizeChanged += (_, _) => Model.PageWidth = Width;
     }
 
     private async void OnUpdateRequestClicked(object sender, EventArgs e) {

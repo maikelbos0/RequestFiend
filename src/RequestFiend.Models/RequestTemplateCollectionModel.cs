@@ -3,7 +3,7 @@ using RequestFiend.Models.PropertyTypes;
 
 namespace RequestFiend.Models;
 
-public class RequestTemplateCollectionModel {
+public class RequestTemplateCollectionModel : ModelBase {
     public OptionalString DefaultUrl { get; set; } = new();
 
     public RequestTemplateCollectionModel(RequestTemplateCollection collection) {
