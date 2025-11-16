@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Extensions;
 using Microsoft.Maui.Controls;
 using System;
+using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
@@ -10,7 +11,7 @@ public partial class ContentPage<TModel> : ContentPage where TModel : class {
         init => BindingContext = value;
     }
 
-    public void ShowError(string message) {
-        this.ShowPopup(new Views.ErrorPopup(message));
+    public async Task ShowError(string message) {
+        await this.ShowPopupAsync(new Views.ErrorPopup(message));
     }
 }

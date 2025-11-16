@@ -13,7 +13,7 @@
             <Label Text="Request fiend" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1"/>
 
             <Label Text="An open source platform for managing and executing API requests." Style="{StaticResource SubHeadline}" />
-
+            
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Create a new collection" Style="{StaticResource SubHeadline}" />

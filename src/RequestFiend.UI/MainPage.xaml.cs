@@ -37,7 +37,7 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
             Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
         }
         else {
-            ShowError("Failed to create collection.");
+            await ShowError("Failed to create collection.");
         }
     }
 
@@ -72,15 +72,15 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
                     Model.RecentCollections = RecentCollections.Push(filePath);
                 }
                 else {
-                    ShowError("Failed to load collection.");
+                    await ShowError("Failed to load collection.");
                 }
             }
             catch (Exception ex) {
-                ShowError($"Failed to load collection: {ex.Message}");
+                await ShowError($"Failed to load collection: {ex.Message}");
             }
         }
         else {
-            ShowError("Collection file does not exist.");
+            await ShowError("Collection file does not exist.");
             Model.RecentCollections = RecentCollections.Remove(filePath);
         }
     }
