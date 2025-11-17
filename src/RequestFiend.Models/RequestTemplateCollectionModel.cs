@@ -1,17 +1,17 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace RequestFiend.Models;
 
 public class RequestTemplateCollectionModel : BoundModelBase {
     public OptionalString DefaultUrl { get; set; }
-    public List<HeaderTemplateModel> DefaultHeaders { get; set; }
+    public ObservableCollection<HeaderTemplateModel> DefaultHeaders { get; set; }
 
     public RequestTemplateCollectionModel(RequestTemplateCollection collection) {
         DefaultUrl = new(() => collection.DefaultUrl);
-        DefaultHeaders = collection.DefaultHeaders.Select(x => new HeaderTemplateModel(x)).ToList();
+        DefaultHeaders = new(collection.DefaultHeaders.Select(x => new HeaderTemplateModel(x)));
     }
 
     public bool TryUpdateRequestTemplateCollection(RequestTemplateCollection collection) {

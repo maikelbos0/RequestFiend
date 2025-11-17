@@ -17,8 +17,7 @@
                 Clicked="OnCloseClicked"
                 Style="{StaticResource TitleButton}"
                 Grid.Column="1" 
-                IsVisible="False"
-                MinimumWidthRequest="-1"/>
+                IsVisible="False"/>
         </Grid>
     </Shell.TitleView>
     

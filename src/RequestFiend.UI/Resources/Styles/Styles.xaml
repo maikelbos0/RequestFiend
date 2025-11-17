@@ -61,6 +61,16 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="Padding" Value="0"/>
+        <Setter Property="MinimumWidthRequest" Value="44"/>
+    </Style>
+
+    <Style TargetType="Button" x:Key="TableButton">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource TertiaryDark}}" />
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0, 10, 0, 0"/>
+        <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="CornerRadius" Value="4"/>
     </Style>
 
     <Style TargetType="CheckBox">
@@ -144,10 +154,6 @@
                 </VisualStateGroup>
             </VisualStateGroupList>
         </Setter>
-    </Style>
-
-    <Style TargetType="View" x:Key="TableEntry" ApplyToDerivedTypes="true">
-        <Setter Property="Margin" Value="0, 10, 0, 0"/>
     </Style>
 
     <Style TargetType="ImageButton">
@@ -495,6 +501,10 @@
     <Style TargetType="Label" x:Key="TableHeader">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryDark}, Dark={StaticResource Secondary}}" />
         <Setter Property="Margin" Value="10, 0, 0, -5"/>
+    </Style>
+
+    <Style TargetType="View" x:Key="TableEntry" ApplyToDerivedTypes="true">
+        <Setter Property="Margin" Value="0, 10, 0, 0"/>
     </Style>
 
 </ResourceDictionary>
