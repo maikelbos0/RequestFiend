@@ -14,8 +14,4 @@ public class RequestTemplateCollectionModel : BoundModelBase {
         collection.DefaultUrl = DefaultUrl;
         return true;
     }
-
-    public void Reset() {
-        DefaultUrl.Reset();
-    }
 }

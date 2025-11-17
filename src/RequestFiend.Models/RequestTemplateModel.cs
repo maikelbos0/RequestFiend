@@ -25,10 +25,4 @@ public class RequestTemplateModel : BoundModelBase {
         request.Url = Url;
         return true;
     }
-
-    public void Reset() {
-        Name.Reset();
-        Method.Reset();
-        Url.Reset();
-    }
 }
