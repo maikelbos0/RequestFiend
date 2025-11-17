@@ -18,7 +18,7 @@
                             <Button Text="Save changes" Clicked="OnUpdateCollectionClicked"/>
                         </StackLayout>
 
-                        <Label Text="Default url (optional)" Style="{StaticResource FormLabel}"/>
+                        <Label Text="Default url (optional)" Style="{StaticResource EntryLabel}"/>
 
                         <Entry Text="{Binding DefaultUrl.Value}" />
 

@@ -20,7 +20,7 @@
                             <Button Text="Delete" Clicked="OnDeleteRequestClicked"/>
                         </StackLayout>
 
-                        <Label Text="Name" Style="{StaticResource FormLabel}"/>
+                        <Label Text="Name" Style="{StaticResource EntryLabel}"/>
 
                         <Entry Text="{Binding Name.Value}">
                             <Entry.Triggers>
@@ -31,9 +31,9 @@
                         </Entry>
 
                         <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
-                            <Label Text="Method" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Method" Style="{StaticResource EntryLabel}" Grid.Row="0" Grid.Column="0"/>
 
-                            <Label Text="Url" Style="{StaticResource FormLabel}" Grid.Row="0" Grid.Column="1"/>
+                            <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Row="0" Grid.Column="1"/>
 
                             <Picker SelectedItem="{Binding Method.Value}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" Grid.Column="0">
                                 <Picker.Triggers>
