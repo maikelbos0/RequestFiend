@@ -7,6 +7,4 @@
 	HorizontalOptions="Fill"
 	HorizontalTextAlignment="Center"
 	Padding="25,10,25,10"
-	Grid.Row="1"
-	Grid.Column="0"
 	IsVisible="False"/>

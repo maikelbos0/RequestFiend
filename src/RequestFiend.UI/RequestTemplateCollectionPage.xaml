@@ -9,7 +9,7 @@
     x:DataType="models:RequestTemplateCollectionModel"
     x:TypeArguments="models:RequestTemplateCollectionModel">
 
-    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*" RowSpacing="0">
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
         <ScrollView Grid.Row="0" Grid.Column="0">
             <VerticalStackLayout>
                 <Border>
@@ -45,6 +45,6 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <views:Message x:Name="SuccessMessage" Grid.Row="1" Grid.Column="0" />
+        <views:Message x:Name="SuccessMessage" Grid.Row="1"/>
     </Grid>
 </local:RequestTemplateCollectionPageBase>

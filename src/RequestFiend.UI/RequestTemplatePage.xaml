@@ -9,8 +9,8 @@
     x:DataType="models:RequestTemplateModel"
     x:TypeArguments="models:RequestTemplateModel">
 
-    <Grid RowDefinitions="*,Auto" ColumnDefinitions="*" RowSpacing="0">
-        <ScrollView Grid.Row="0" Grid.Column="0">
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+        <ScrollView>
             <VerticalStackLayout>
                 <Border>
                     <VerticalStackLayout Style="{StaticResource ElementGroup}">
@@ -30,12 +30,12 @@
                             </Entry.Triggers>
                         </Entry>
 
-                        <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
-                            <Label Text="Method" Style="{StaticResource EntryLabel}" Grid.Row="0" Grid.Column="0"/>
+                        <Grid ColumnDefinitions="*,3*">
+                            <Label Text="Method" Style="{StaticResource EntryLabel}"/>
 
-                            <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Row="0" Grid.Column="1"/>
+                            <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>
 
-                            <Picker SelectedItem="{Binding Method.Value}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" Grid.Column="0">
+                            <Picker SelectedItem="{Binding Method.Value}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1">
                                 <Picker.Triggers>
                                     <DataTrigger TargetType="Picker" Binding="{Binding Method.IsValid}" Value="False">
                                         <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
@@ -56,6 +56,6 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <views:Message x:Name="SuccessMessage" Grid.Row="1" Grid.Column="0" />
+        <views:Message x:Name="SuccessMessage" Grid.Row="1" />
     </Grid>
 </local:RequestTemplateCollectionPageBase>

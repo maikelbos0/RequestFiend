@@ -7,8 +7,8 @@
     Title="RequestFiend">
     
     <Shell.TitleView>
-        <Grid ColumnDefinitions="*,Auto" RowDefinitions="*" Padding="15,0,15,0">
-            <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}" Grid.Row="0" Grid.Column="0"/>
+        <Grid ColumnDefinitions="*,Auto" Padding="15,0,15,0">
+            <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}"/>
 
             <Button
                 x:Name="CloseButton" 
@@ -16,7 +16,6 @@
                 SemanticProperties.Description="Close collection" 
                 Clicked="OnCloseClicked"
                 Style="{StaticResource TitleButton}"
-                Grid.Row="0" 
                 Grid.Column="1" 
                 IsVisible="False"
                 MinimumWidthRequest="-1"/>
