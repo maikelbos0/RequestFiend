@@ -146,6 +146,10 @@
         </Setter>
     </Style>
 
+    <Style TargetType="View" x:Key="TableEntry" ApplyToDerivedTypes="true">
+        <Setter Property="Margin" Value="0, 10, 0, 0"/>
+    </Style>
+
     <Style TargetType="ImageButton">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="BorderColor" Value="Transparent"/>
@@ -479,9 +483,18 @@
         <Setter Property="RowSpacing" Value="25"/>
     </Style>
 
+    <Style TargetType="Grid" x:Key="Table">
+        <Setter Property="ColumnSpacing" Value="10"/>
+    </Style>
+
     <Style TargetType="Label" x:Key="EntryLabel">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryDark}, Dark={StaticResource Secondary}}" />
         <Setter Property="Margin" Value="10, 0, 0, -20"/>
+    </Style>
+
+    <Style TargetType="Label" x:Key="TableHeader">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryDark}, Dark={StaticResource Secondary}}" />
+        <Setter Property="Margin" Value="10, 0, 0, -5"/>
     </Style>
 
 </ResourceDictionary>
