@@ -4,6 +4,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<SupportedPlatforms>Windows;macOS;Android;iOS</SupportedPlatforms>
 		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);IDE0290</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
