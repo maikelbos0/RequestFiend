@@ -52,7 +52,7 @@ public class RequestTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject],
-            Variables = { { "BaseUrl", "https://localhost:7001/" } }
+            Variables = { new() { Name = "BaseUrl", Value = "https://localhost:7001/" } }
         };
 
         Assert.True(subject.TryCreateMessage(collection, out var message));
@@ -92,7 +92,7 @@ public class RequestTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject],
-            Variables = { { "Header", "Accept" } }
+            Variables = { new() { Name = "Header", Value = "Accept" } }
         };
 
         Assert.True(subject.TryCreateMessage(collection, out var message));
@@ -112,7 +112,7 @@ public class RequestTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject],
-            Variables = { { "Header", "application/json" } }
+            Variables = { new() { Name = "Header", Value = "application/json" } }
         };
 
         Assert.True(subject.TryCreateMessage(collection, out var message));
@@ -149,7 +149,7 @@ public class RequestTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject],
-            Variables = { { "DefaultHeader", "Accept" } },
+            Variables = { new() { Name = "DefaultHeader", Value = "Accept" } },
             DefaultHeaders = [
                 new() { Name = "{{DefaultHeader}}", Value = "application/json" }
             ]
@@ -169,7 +169,7 @@ public class RequestTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject],
-            Variables = { { "DefaultHeader", "application/json" } },
+            Variables = { new() { Name = "DefaultHeader", Value = "application/json" } },
             DefaultHeaders = [
                 new() { Name = "Accept", Value = "{{DefaultHeader}}" }
             ]
@@ -190,11 +190,7 @@ public class RequestTemplateTests {
             Content = contentTemplate
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [subject],
-            Variables = { { "DefaultHeader", "application/json" } },
-            DefaultHeaders = [
-                new() { Name = "Accept", Value = "{{DefaultHeader}}" }
-            ]
+            Requests = [subject]
         };
         contentTemplate.MediaType.Returns("application/json");
         contentTemplate.CharSet.Returns("utf-8");

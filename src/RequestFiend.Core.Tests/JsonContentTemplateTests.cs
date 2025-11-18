@@ -36,7 +36,7 @@ public class JsonContentTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Variables = {
-                { "Node", "{\"Meaning\": 42}" }
+                new() { Name = "Node", Value = "{\"Meaning\": 42}" }
             }
         };
 

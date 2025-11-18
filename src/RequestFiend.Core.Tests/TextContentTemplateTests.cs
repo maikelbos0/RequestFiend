@@ -33,8 +33,8 @@ public class TextContentTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Variables = {
-                { "First", "Replacement" },
-                { "Second", "Another" }
+                new() { Name = "First", Value = "Replacement" },
+                new() { Name =  "Second", Value = "Another" }
             }
         };
 
