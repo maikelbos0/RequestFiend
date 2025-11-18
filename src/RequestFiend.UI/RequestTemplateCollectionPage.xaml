@@ -33,9 +33,21 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:HeaderTemplateModel">
                                     <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
-                                        <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}"/>
+                                        <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
+                                            <Entry.Triggers>
+                                                <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
+                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                                                </DataTrigger>
+                                            </Entry.Triggers>
+                                        </Entry>
 
-                                        <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1"/>
+                                        <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1">
+                                            <Entry.Triggers>
+                                                <DataTrigger TargetType="Entry" Binding="{Binding Value.IsValid}" Value="False">
+                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                                                </DataTrigger>
+                                            </Entry.Triggers>
+                                        </Entry>
 
                                         <Button Text="🗙" Clicked="OnRemoveDefaultHeaderClicked" Style="{StaticResource TableButton}" Grid.Column="2" />
                                     </Grid>
@@ -46,6 +58,14 @@
                 </Border>
             </VerticalStackLayout>
         </ScrollView>
+
+        <!--<Entry Text="{Binding Name.Value}">
+            <Entry.Triggers>
+                <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                </DataTrigger>
+            </Entry.Triggers>
+        </Entry>-->
 
         <views:Message x:Name="SuccessMessage" Grid.Row="1"/>
     </Grid>
