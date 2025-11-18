@@ -17,6 +17,8 @@
     <Color x:Key="ErrorDark">#700020</Color>
     <Color x:Key="Success">#40e080</Color>
     <Color x:Key="SuccessDark">#007020</Color>
+    <Color x:Key="Danger">#C05060</Color>
+    <Color x:Key="DangerDark">#E07080</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
