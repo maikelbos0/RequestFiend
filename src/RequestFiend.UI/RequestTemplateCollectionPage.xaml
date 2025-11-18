@@ -25,7 +25,7 @@
                         <CollectionView ItemsSource="{Binding DefaultHeaders}">
                             <CollectionView.Header>
                                 <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
-                                    <Label Text="Header" Style="{StaticResource TableHeader}"/>
+                                    <Label Text="Default header" Style="{StaticResource TableHeader}"/>
 
                                     <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
                                 </Grid>
@@ -53,19 +53,14 @@
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
+                            <CollectionView.Footer>
+                                <Button Text="Add default header" Clicked="OnAddDefaultHeaderClicked" Style="{StaticResource TableButton}"/>
+                            </CollectionView.Footer>
                         </CollectionView>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
         </ScrollView>
-
-        <!--<Entry Text="{Binding Name.Value}">
-            <Entry.Triggers>
-                <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
-                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                </DataTrigger>
-            </Entry.Triggers>
-        </Entry>-->
 
         <views:Message x:Name="SuccessMessage" Grid.Row="1"/>
     </Grid>
