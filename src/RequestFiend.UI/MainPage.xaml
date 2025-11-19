@@ -10,13 +10,13 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <Label Text="Request fiend" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1"/>
+            <Label Text="Request fiend" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1"/>
 
-            <Label Text="An open source platform for managing and executing API requests." Style="{StaticResource SubHeadline}" />
+            <Label Text="An open source platform for managing and executing API requests." Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
             
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Create a new collection" Style="{StaticResource SubHeadline}" />
+                    <Label Text="Create a new collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                     <Button Text="Choose file location and create" Clicked="OnCreateNewCollectionClicked" HorizontalOptions="Fill"/>
                 </VerticalStackLayout>
@@ -24,9 +24,9 @@
 
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Open an existing collection" Style="{StaticResource SubHeadline}" />
+                    <Label Text="Open an existing collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="5">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="10">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:RecentCollectionModel">
                                 <Button Text="{Binding Name}" Clicked="OnOpenRecentCollectionClicked" Style="{StaticResource SecondaryButton}" />

@@ -8,7 +8,7 @@
     x:Class="RequestFiend.UI.RequestTemplateCollectionPage"
     x:DataType="models:RequestTemplateCollectionModel"
     x:TypeArguments="models:RequestTemplateCollectionModel">
-
+    
     <ContentPage.Resources>
         <ResourceDictionary>
             <local:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
@@ -28,12 +28,12 @@
 
                         <Entry Text="{Binding DefaultUrl.Value}" />
 
-                        <Label Text="Default headers" Style="{StaticResource SubHeadline}"/>
+                        <Label Text="Default headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                         <CollectionView ItemsSource="{Binding DefaultHeaders}">
                             <CollectionView.Header>
                                 <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding DefaultHeaders.Count, Converter={StaticResource GreaterThanZeroConverter}}">
-                                    <Label Text="Default header name" Style="{StaticResource TableHeader}"/>
+                                    <Label Text="Name" Style="{StaticResource TableHeader}"/>
 
                                     <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
                                 </Grid>
@@ -66,12 +66,12 @@
                             </CollectionView.Footer>
                         </CollectionView>
 
-                        <Label Text="Variables" Style="{StaticResource SubHeadline}"/>
+                        <Label Text="Variables" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                         <CollectionView ItemsSource="{Binding Variables}">
                             <CollectionView.Header>
                                 <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding Variables.Count, Converter={StaticResource GreaterThanZeroConverter}}">
-                                    <Label Text="Variable name" Style="{StaticResource TableHeader}"/>
+                                    <Label Text="Name" Style="{StaticResource TableHeader}"/>
 
                                     <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
                                 </Grid>
