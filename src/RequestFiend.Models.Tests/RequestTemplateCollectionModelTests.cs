@@ -28,10 +28,15 @@ public class RequestTemplateCollectionModelTests {
         const string defaultUrl = "https://default";
         const string headerName = "Name";
         const string headerValue = "Value";
+        const string variableName = "Name";
+        const string variableValue = "Value";
 
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             DefaultHeaders = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
@@ -40,6 +45,8 @@ public class RequestTemplateCollectionModelTests {
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.DefaultHeaders[0].Value.Value = headerValue;
+        subject.Variables[0].Name.Value = variableName;
+        subject.Variables[0].Value.Value = variableValue;
 
         var result = subject.TryUpdateRequestTemplateCollection(collection);
 
@@ -47,18 +54,25 @@ public class RequestTemplateCollectionModelTests {
         Assert.Equal(defaultUrl, collection.DefaultUrl);
         Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
         Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
+        Assert.Equal(variableName, collection.Variables[0].Name);
+        Assert.Equal(variableValue, collection.Variables[0].Value);
     }
 
     [Theory]
-    [InlineData(null, null)]
-    [InlineData("Name", null)]
-    [InlineData(null, "Value")]
-    public void TryUpdateRequestTemplateCollection_Fails_When_Invalid(string? headerName, string? headerValue) {
+    [InlineData(null, null, null, null)]
+    [InlineData("Name", null, "Name", "Value")]
+    [InlineData(null, "Value", "Name", "Value")]
+    [InlineData("Name", "Value", null, "Value")]
+    [InlineData("Name", "Value", "Name", null)]
+    public void TryUpdateRequestTemplateCollection_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
         const string defaultUrl = "https://default";
-        
+
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             DefaultHeaders = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
@@ -67,6 +81,8 @@ public class RequestTemplateCollectionModelTests {
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.DefaultHeaders[0].Value.Value = headerValue;
+        subject.Variables[0].Name.Value = variableName;
+        subject.Variables[0].Value.Value = variableValue;
 
         var result = subject.TryUpdateRequestTemplateCollection(collection);
 
@@ -74,5 +90,7 @@ public class RequestTemplateCollectionModelTests {
         Assert.NotEqual(defaultUrl, collection.DefaultUrl);
         Assert.NotEqual(headerName, collection.DefaultHeaders[0].Name);
         Assert.NotEqual(headerValue, collection.DefaultHeaders[0].Value);
+        Assert.NotEqual(variableName, collection.Variables[0].Name);
+        Assert.NotEqual(variableValue, collection.Variables[0].Value);
     }
 }
