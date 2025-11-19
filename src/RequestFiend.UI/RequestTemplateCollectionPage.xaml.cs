@@ -32,9 +32,15 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
         Model.DefaultHeaders.Remove((HeaderTemplateModel)button.BindingContext);
     }
 
-    public void OnAddDefaultHeaderClicked(object sender, EventArgs e) {
-        Model.DefaultHeaders.Add(new());
+    public void OnAddDefaultHeaderClicked(object sender, EventArgs e) => Model.DefaultHeaders.Add(new());
+
+    public void OnRemoveVariableClicked(object sender, EventArgs e) {
+        var button = (Button)sender;
+
+        Model.Variables.Remove((VariableModel)button.BindingContext);
     }
+
+    public void OnAddVariableClicked(object sender, EventArgs e) => Model.Variables.Add(new());
 
     public Task ShowMessage(string text) => SuccessMessage.Show(text);
 }

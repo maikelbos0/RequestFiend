@@ -25,7 +25,7 @@
                         <CollectionView ItemsSource="{Binding DefaultHeaders}">
                             <CollectionView.Header>
                                 <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
-                                    <Label Text="Default header" Style="{StaticResource TableHeader}"/>
+                                    <Label Text="Default header name" Style="{StaticResource TableHeader}"/>
 
                                     <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
                                 </Grid>
@@ -55,6 +55,42 @@
                             </CollectionView.ItemTemplate>
                             <CollectionView.Footer>
                                 <Button Text="Add default header" Clicked="OnAddDefaultHeaderClicked" Style="{StaticResource TableButton}"/>
+                            </CollectionView.Footer>
+                        </CollectionView>
+
+                        <CollectionView ItemsSource="{Binding Variables}">
+                            <CollectionView.Header>
+                                <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
+                                    <Label Text="Variable name" Style="{StaticResource TableHeader}"/>
+
+                                    <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
+                                </Grid>
+                            </CollectionView.Header>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:VariableModel">
+                                    <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
+                                        <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
+                                            <Entry.Triggers>
+                                                <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
+                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                                                </DataTrigger>
+                                            </Entry.Triggers>
+                                        </Entry>
+
+                                        <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1">
+                                            <Entry.Triggers>
+                                                <DataTrigger TargetType="Entry" Binding="{Binding Value.IsValid}" Value="False">
+                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                                                </DataTrigger>
+                                            </Entry.Triggers>
+                                        </Entry>
+
+                                        <Button Text="🗙" Clicked="OnRemoveVariableClicked" Style="{StaticResource TableButton}" Grid.Column="2" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.Footer>
+                                <Button Text="Add variable" Clicked="OnAddVariableClicked" Style="{StaticResource TableButton}"/>
                             </CollectionView.Footer>
                         </CollectionView>
                     </VerticalStackLayout>
