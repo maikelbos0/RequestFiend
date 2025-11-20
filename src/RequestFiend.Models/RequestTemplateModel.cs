@@ -1,5 +1,7 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace RequestFiend.Models;
 
@@ -8,21 +10,33 @@ public class RequestTemplateModel : BoundModelBase {
     public RequiredString Name { get; set; }
     public RequiredString Method { get; set; }
     public RequiredString Url { get; set; }
+    public ObservableCollection<HeaderTemplateModel> Headers { get; set; }
 
-    public RequestTemplateModel(RequestTemplate requestTemplate) {
-        Name = new(() => requestTemplate.Name);
-        Method = new(() => requestTemplate.Method);
-        Url = new(() => requestTemplate.Url);
+    public RequestTemplateModel(RequestTemplate request) {
+        Name = new(() => request.Name);
+        Method = new(() => request.Method);
+        Url = new(() => request.Url);
+        Headers = new(request.Headers.Select(variable => new HeaderTemplateModel(variable)));
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
-        if (!Name.Validate() | !Method.Validate() | !Url.Validate()) {
+        var isValid = Name.Validate() & Method.Validate() & Url.Validate();
+
+        foreach (var header in Headers) {
+            isValid = isValid & header.Name.Validate() & header.Value.Validate();
+        }
+
+        if (!isValid) {
             return false;
         }
 
         request.Name = Name;
         request.Method = Method;
         request.Url = Url;
+        request.Headers = Headers.Select(header => new HeaderTemplate() {
+            Name = header.Name,
+            Value = header.Value
+        }).ToList();
         return true;
     }
 }
