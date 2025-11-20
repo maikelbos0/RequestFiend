@@ -81,7 +81,7 @@
                                             </Entry.Triggers>
                                         </Entry>
 
-                                        <Button Text="🗙" Clicked="OnRemovetHeaderClicked" Style="{StaticResource TableButton}" Grid.Column="2" />
+                                        <Button Text="🗙" Clicked="OnRemovetHeaderClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="Delete" />
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
