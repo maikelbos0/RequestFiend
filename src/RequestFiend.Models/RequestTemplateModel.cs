@@ -10,13 +10,13 @@ public class RequestTemplateModel : BoundModelBase {
     public RequiredString Name { get; set; }
     public RequiredString Method { get; set; }
     public RequiredString Url { get; set; }
-    public ObservableCollection<HeaderTemplateModel> Headers { get; set; }
+    public ObservableCollection<NameValuePairModel> Headers { get; set; }
 
     public RequestTemplateModel(RequestTemplate request) {
         Name = new(() => request.Name);
         Method = new(() => request.Method);
         Url = new(() => request.Url);
-        Headers = new(request.Headers.Select(variable => new HeaderTemplateModel(variable)));
+        Headers = new(request.Headers.Select(pair => new NameValuePairModel(pair)));
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
@@ -33,7 +33,7 @@ public class RequestTemplateModel : BoundModelBase {
         request.Name = Name;
         request.Method = Method;
         request.Url = Url;
-        request.Headers = Headers.Select(header => new HeaderTemplate() {
+        request.Headers = Headers.Select(header => new NameValuePair() {
             Name = header.Name,
             Value = header.Value
         }).ToList();

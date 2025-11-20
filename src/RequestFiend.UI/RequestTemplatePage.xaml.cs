@@ -31,7 +31,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
     public void OnRemovetHeaderClicked(object sender, EventArgs e) {
         var button = (Button)sender;
 
-        Model.Headers.Remove((HeaderTemplateModel)button.BindingContext);
+        Model.Headers.Remove((NameValuePairModel)button.BindingContext);
     }
 
     public void OnAddHeaderClicked(object sender, EventArgs e) => Model.Headers.Add(new());

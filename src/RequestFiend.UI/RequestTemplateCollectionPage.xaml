@@ -39,7 +39,7 @@
                                 </Grid>
                             </CollectionView.Header>
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:HeaderTemplateModel">
+                                <DataTemplate x:DataType="models:NameValuePairModel">
                                     <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
                                         <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
                                             <Entry.Triggers>
@@ -77,7 +77,7 @@
                                 </Grid>
                             </CollectionView.Header>
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:VariableModel">
+                                <DataTemplate x:DataType="models:NameValuePairModel">
                                     <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
                                         <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
                                             <Entry.Triggers>

@@ -11,7 +11,7 @@ public class RequestTemplate
     public required string Name { get; set; }
     public required string Method { get; set; }
     public required string Url { get; set; }
-    public List<HeaderTemplate> Headers { get; set; } = [];
+    public List<NameValuePair> Headers { get; set; } = [];
     public IContentTemplate? Content { get; set; }
 
     public bool TryCreateMessage(RequestTemplateCollection collection, [NotNullWhen(true)] out HttpRequestMessage? message) {

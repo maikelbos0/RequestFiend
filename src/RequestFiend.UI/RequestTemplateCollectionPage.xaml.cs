@@ -29,7 +29,7 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
     public void OnRemoveDefaultHeaderClicked(object sender, EventArgs e) {
         var button = (Button)sender;
 
-        Model.DefaultHeaders.Remove((HeaderTemplateModel)button.BindingContext);
+        Model.DefaultHeaders.Remove((NameValuePairModel)button.BindingContext);
     }
 
     public void OnAddDefaultHeaderClicked(object sender, EventArgs e) => Model.DefaultHeaders.Add(new());
@@ -37,7 +37,7 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
     public void OnRemoveVariableClicked(object sender, EventArgs e) {
         var button = (Button)sender;
 
-        Model.Variables.Remove((VariableModel)button.BindingContext);
+        Model.Variables.Remove((NameValuePairModel)button.BindingContext);
     }
 
     public void OnAddVariableClicked(object sender, EventArgs e) => Model.Variables.Add(new());

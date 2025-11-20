@@ -7,13 +7,13 @@ namespace RequestFiend.Models;
 
 public class RequestTemplateCollectionModel : BoundModelBase {
     public OptionalString DefaultUrl { get; set; }
-    public ObservableCollection<HeaderTemplateModel> DefaultHeaders { get; set; }
-    public ObservableCollection<VariableModel> Variables { get; set; }
+    public ObservableCollection<NameValuePairModel> DefaultHeaders { get; set; }
+    public ObservableCollection<NameValuePairModel> Variables { get; set; }
 
     public RequestTemplateCollectionModel(RequestTemplateCollection collection) {
         DefaultUrl = new(() => collection.DefaultUrl);
-        DefaultHeaders = new(collection.DefaultHeaders.Select(variable => new HeaderTemplateModel(variable)));
-        Variables = new(collection.Variables.Select(header => new VariableModel(header)));
+        DefaultHeaders = new(collection.DefaultHeaders.Select(variable => new NameValuePairModel(variable)));
+        Variables = new(collection.Variables.Select(header => new NameValuePairModel(header)));
     }
 
     public bool TryUpdateRequestTemplateCollection(RequestTemplateCollection collection) {
@@ -32,11 +32,11 @@ public class RequestTemplateCollectionModel : BoundModelBase {
         }
 
         collection.DefaultUrl = DefaultUrl;
-        collection.DefaultHeaders = DefaultHeaders.Select(header => new HeaderTemplate() {
+        collection.DefaultHeaders = DefaultHeaders.Select(header => new NameValuePair() {
             Name = header.Name,
             Value = header.Value
         }).ToList();
-        collection.Variables = Variables.Select(variable => new Variable() {
+        collection.Variables = Variables.Select(variable => new NameValuePair() {
             Name = variable.Name,
             Value = variable.Value,
         }).ToList();
