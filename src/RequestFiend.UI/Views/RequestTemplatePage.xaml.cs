@@ -6,7 +6,7 @@ using RequestFiend.Models;
 using RequestFiend.UI.Messages;
 using System;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<RequestTemplateModel> {
     private readonly RequestTemplate request;

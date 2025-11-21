@@ -2,6 +2,7 @@
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.UI.Messages;
+using RequestFiend.UI.Views;
 using System;
 using System.IO;
 using System.Linq;

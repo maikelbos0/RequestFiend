@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<local:RequestTemplateCollectionPageBase
+<views:RequestTemplateCollectionPageBase
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
-    xmlns:local="clr-namespace:RequestFiend.UI"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
-    x:Class="RequestFiend.UI.RequestTemplateCollectionPage"
+    x:Class="RequestFiend.UI.Views.RequestTemplateCollectionPage"
     x:DataType="models:RequestTemplateCollectionModel"
     x:TypeArguments="models:RequestTemplateCollectionModel">
     
     <ContentPage.Resources>
         <ResourceDictionary>
-            <local:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
+            <views:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -110,4 +109,4 @@
 
         <views:Message x:Name="SuccessMessage" Grid.Row="1"/>
     </Grid>
-</local:RequestTemplateCollectionPageBase>
+</views:RequestTemplateCollectionPageBase>

@@ -2,7 +2,7 @@
 using System;
 using System.Globalization;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public class GreaterThanZeroConverter : IValueConverter {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

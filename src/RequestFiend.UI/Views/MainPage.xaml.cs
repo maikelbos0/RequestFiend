@@ -13,7 +13,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public MainPage() {

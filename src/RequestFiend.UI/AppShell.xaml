@@ -3,7 +3,7 @@
     x:Class="RequestFiend.UI.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:RequestFiend.UI"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
     Title="RequestFiend">
     
     <Shell.TitleView>
@@ -21,5 +21,5 @@
         </Grid>
     </Shell.TitleView>
     
-    <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
+    <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
 </Shell>

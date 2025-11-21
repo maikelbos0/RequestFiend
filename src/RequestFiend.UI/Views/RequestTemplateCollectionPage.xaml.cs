@@ -4,7 +4,7 @@ using RequestFiend.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPageBase<RequestTemplateCollectionModel> {
     public RequestTemplateCollectionPage(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {

@@ -4,7 +4,7 @@ using RequestFiend.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public partial class ContentPage<TModel> : ContentPage where TModel : BoundModelBase {
     public TModel Model {
@@ -18,6 +18,6 @@ public partial class ContentPage<TModel> : ContentPage where TModel : BoundModel
     }
 
     public async Task ShowError(string message) {
-        await this.ShowPopupAsync(new Views.ErrorPopup(message));
+        await this.ShowPopupAsync(new ErrorPopup(message));
     }
 }

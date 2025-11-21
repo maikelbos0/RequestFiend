@@ -6,7 +6,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TModel> where TModel : BoundModelBase {
     protected readonly string filePath;

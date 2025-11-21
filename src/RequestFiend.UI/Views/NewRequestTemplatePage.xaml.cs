@@ -3,7 +3,7 @@ using RequestFiend.Core;
 using RequestFiend.Models;
 using System;
 
-namespace RequestFiend.UI;
+namespace RequestFiend.UI.Views;
 
 public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<NewRequestTemplateModel> {
     private readonly ShellItem collectionItem;

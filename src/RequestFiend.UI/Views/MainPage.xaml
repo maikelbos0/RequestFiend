@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:ContentPage
+<views:ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
-    xmlns:local="clr-namespace:RequestFiend.UI"
-    x:Class="RequestFiend.UI.MainPage"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.MainPage"
     x:DataType="models:MainPageModel"
     x:TypeArguments="models:MainPageModel">
 
@@ -42,4 +42,4 @@
             </Border>
         </VerticalStackLayout>
     </ScrollView>
-</local:ContentPage>
+</views:ContentPage>

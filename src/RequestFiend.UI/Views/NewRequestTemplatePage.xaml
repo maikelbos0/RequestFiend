@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<local:RequestTemplateCollectionPageBase
+<views:RequestTemplateCollectionPageBase
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
-    xmlns:local="clr-namespace:RequestFiend.UI"
-    x:Class="RequestFiend.UI.NewRequestTemplatePage"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.NewRequestTemplatePage"
     Title="New request"
     x:DataType="models:NewRequestTemplateModel"
     x:TypeArguments="models:NewRequestTemplateModel">
@@ -52,4 +52,4 @@
             </Border>
         </VerticalStackLayout>
     </ScrollView>
-</local:RequestTemplateCollectionPageBase>
+</views:RequestTemplateCollectionPageBase>
