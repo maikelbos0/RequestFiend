@@ -33,10 +33,7 @@ public class RequestTemplateModel : BoundModelBase {
         request.Name = Name;
         request.Method = Method;
         request.Url = Url;
-        request.Headers = Headers.Select(header => new NameValuePair() {
-            Name = header.Name,
-            Value = header.Value
-        }).ToList();
+        request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name, Value = header.Value })];
         return true;
     }
 }
