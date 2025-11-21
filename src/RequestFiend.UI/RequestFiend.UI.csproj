@@ -8,7 +8,7 @@
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<Nullable>enable</Nullable>
-		<NoWarn>$(NoWarn);IDE0290</NoWarn>
+		<NoWarn>$(NoWarn);IDE0290;XC0025</NoWarn>
 
 		<!-- Display name -->
 		<ApplicationTitle>RequestFiend.UI</ApplicationTitle>

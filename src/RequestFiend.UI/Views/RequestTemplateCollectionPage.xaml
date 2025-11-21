@@ -29,79 +29,11 @@
 
                         <Label Text="Default headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <CollectionView ItemsSource="{Binding DefaultHeaders}">
-                            <CollectionView.Header>
-                                <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding DefaultHeaders.Count, Converter={StaticResource GreaterThanZeroConverter}}">
-                                    <Label Text="Name" Style="{StaticResource TableHeader}"/>
-
-                                    <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
-                                </Grid>
-                            </CollectionView.Header>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:NameValuePairModel">
-                                    <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
-                                        <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
-                                            <Entry.Triggers>
-                                                <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
-                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                                                </DataTrigger>
-                                            </Entry.Triggers>
-                                        </Entry>
-
-                                        <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1">
-                                            <Entry.Triggers>
-                                                <DataTrigger TargetType="Entry" Binding="{Binding Value.IsValid}" Value="False">
-                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                                                </DataTrigger>
-                                            </Entry.Triggers>
-                                        </Entry>
-
-                                        <Button Text="🗙" Clicked="OnRemoveDefaultHeaderClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="Delete" />
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                            <CollectionView.Footer>
-                                <Button Text="Add default header" Clicked="OnAddDefaultHeaderClicked" Style="{StaticResource TableButton}"/>
-                            </CollectionView.Footer>
-                        </CollectionView>
-
+                        <views:NameValuePairCollection ItemsSource="{Binding DefaultHeaders}" DeleteButtonText="Delete default header" AddButtonText="Add default header"/>
+                        
                         <Label Text="Variables" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <CollectionView ItemsSource="{Binding Variables}">
-                            <CollectionView.Header>
-                                <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding Variables.Count, Converter={StaticResource GreaterThanZeroConverter}}">
-                                    <Label Text="Name" Style="{StaticResource TableHeader}"/>
-
-                                    <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
-                                </Grid>
-                            </CollectionView.Header>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:NameValuePairModel">
-                                    <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
-                                        <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
-                                            <Entry.Triggers>
-                                                <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
-                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                                                </DataTrigger>
-                                            </Entry.Triggers>
-                                        </Entry>
-
-                                        <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1">
-                                            <Entry.Triggers>
-                                                <DataTrigger TargetType="Entry" Binding="{Binding Value.IsValid}" Value="False">
-                                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                                                </DataTrigger>
-                                            </Entry.Triggers>
-                                        </Entry>
-
-                                        <Button Text="🗙" Clicked="OnRemoveVariableClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="Delete" />
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                            <CollectionView.Footer>
-                                <Button Text="Add variable" Clicked="OnAddVariableClicked" Style="{StaticResource TableButton}"/>
-                            </CollectionView.Footer>
-                        </CollectionView>
+                        <views:NameValuePairCollection ItemsSource="{Binding Variables}" DeleteButtonText="Delete variable" AddButtonText="Add variable"/>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
