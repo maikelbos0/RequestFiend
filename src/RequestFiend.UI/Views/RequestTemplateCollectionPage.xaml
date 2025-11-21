@@ -8,12 +8,6 @@
     x:DataType="models:RequestTemplateCollectionModel"
     x:TypeArguments="models:RequestTemplateCollectionModel">
     
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <views:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <Grid RowDefinitions="*,Auto" RowSpacing="0">
         <ScrollView>
             <VerticalStackLayout>

@@ -1,6 +1,5 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace RequestFiend.Models;
@@ -10,13 +9,13 @@ public class RequestTemplateModel : BoundModelBase {
     public RequiredString Name { get; set; }
     public RequiredString Method { get; set; }
     public RequiredString Url { get; set; }
-    public ObservableCollection<NameValuePairModel> Headers { get; set; }
+    public NameValuePairModelCollection Headers { get; set; }
 
     public RequestTemplateModel(RequestTemplate request) {
         Name = new(() => request.Name);
         Method = new(() => request.Method);
         Url = new(() => request.Url);
-        Headers = new(request.Headers.Select(pair => new NameValuePairModel(pair)));
+        Headers = [.. request.Headers.Select(pair => new NameValuePairModel(pair))];
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {

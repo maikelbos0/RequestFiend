@@ -1,42 +1,44 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<CollectionView 
+<ContentView 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     x:Class="RequestFiend.UI.Views.NameValuePairCollection"
     x:Name="Root">
 
-    <CollectionView.Header>
-        <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding ItemsSource.Count, Source={x:Reference Root}, Converter={StaticResource GreaterThanZeroConverter}}">
-            <Label Text="Name" Style="{StaticResource TableHeader}"/>
+    <CollectionView SelectionMode="None" ItemsSource="{Binding ItemsSource, Source={x:Reference Root}}">
+        <CollectionView.Header>
+            <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding ItemsSource.HasItems, Source={x:Reference Root}}">
+                <Label Text="Name" Style="{StaticResource TableHeader}"/>
 
-            <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
-        </Grid>
-    </CollectionView.Header>
-    <CollectionView.ItemTemplate>
-        <DataTemplate x:DataType="models:NameValuePairModel">
-            <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
-                <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
-                    <Entry.Triggers>
-                        <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
-                            <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                        </DataTrigger>
-                    </Entry.Triggers>
-                </Entry>
-
-                <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1">
-                    <Entry.Triggers>
-                        <DataTrigger TargetType="Entry" Binding="{Binding Value.IsValid}" Value="False">
-                            <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                        </DataTrigger>
-                    </Entry.Triggers>
-                </Entry>
-
-                <Button Text="🗙" Clicked="OnRemoveClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="{Binding DeleteButtonText, Source={x:Reference Root}}" />
+                <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
             </Grid>
-        </DataTemplate>
-    </CollectionView.ItemTemplate>
-    <CollectionView.Footer>
-        <Button Text="{Binding AddButtonText, Source={x:Reference Root}}" Clicked="OnAddClicked" Style="{StaticResource TableButton}"/>
-    </CollectionView.Footer>
-</CollectionView>
+        </CollectionView.Header>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:NameValuePairModel">
+                <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}">
+                    <Entry Text="{Binding Name.Value}" Style="{StaticResource TableEntry}">
+                        <Entry.Triggers>
+                            <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
+                                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                            </DataTrigger>
+                        </Entry.Triggers>
+                    </Entry>
+
+                    <Entry Text="{Binding Value.Value}" Style="{StaticResource TableEntry}" Grid.Column="1">
+                        <Entry.Triggers>
+                            <DataTrigger TargetType="Entry" Binding="{Binding Value.IsValid}" Value="False">
+                                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+                            </DataTrigger>
+                        </Entry.Triggers>
+                    </Entry>
+
+                    <Button Text="🗙" Clicked="OnRemoveClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="{Binding DeleteButtonText, Source={x:Reference Root}}" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.Footer>
+            <Button Text="{Binding AddButtonText, Source={x:Reference Root}}" Clicked="OnAddClicked" Style="{StaticResource TableButton}"/>
+        </CollectionView.Footer>
+    </CollectionView>
+</ContentView>
