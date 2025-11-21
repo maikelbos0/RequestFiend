@@ -1,4 +1,3 @@
-using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using System;
@@ -25,22 +24,6 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
 
         await SuccessMessage.Show("Changes have been saved");
     }
-
-    public void OnRemoveDefaultHeaderClicked(object sender, EventArgs e) {
-        var button = (Button)sender;
-
-        Model.DefaultHeaders.Remove((NameValuePairModel)button.BindingContext);
-    }
-
-    public void OnAddDefaultHeaderClicked(object sender, EventArgs e) => Model.DefaultHeaders.Add(new());
-
-    public void OnRemoveVariableClicked(object sender, EventArgs e) {
-        var button = (Button)sender;
-
-        Model.Variables.Remove((NameValuePairModel)button.BindingContext);
-    }
-
-    public void OnAddVariableClicked(object sender, EventArgs e) => Model.Variables.Add(new());
 
     public Task ShowMessage(string text) => SuccessMessage.Show(text);
 }
