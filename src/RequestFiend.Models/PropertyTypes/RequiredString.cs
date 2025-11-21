@@ -11,14 +11,15 @@ public class RequiredString : ObservableObject {
 
     private string? value;
     private bool isModified;
-    private bool? isValid;
+    private bool isValid;
     private readonly Func<string?> defaultValueProvider;
 
     public string? Value {
         get => value;
         set {
-            IsModified = SetProperty(ref this.value, value);
-            Validate();
+            if (IsModified = SetProperty(ref this.value, value)) {
+                IsValid = !string.IsNullOrWhiteSpace(value);
+            }
         }
     }
 
@@ -28,7 +29,7 @@ public class RequiredString : ObservableObject {
         set => SetProperty(ref isModified, value);
     }
 
-    public bool? IsValid {
+    public bool IsValid {
         get => isValid;
         private set => SetProperty(ref isValid, value);
     }
@@ -40,15 +41,8 @@ public class RequiredString : ObservableObject {
         Reset();
     }
 
-    public bool Validate() {
-        var isValid = !string.IsNullOrWhiteSpace(value);
-        IsValid = isValid;
-        return isValid;
-    }
-
     public void Reset() {
         Value = defaultValueProvider();
         IsModified = false;
-        IsValid = null;
     }
 }

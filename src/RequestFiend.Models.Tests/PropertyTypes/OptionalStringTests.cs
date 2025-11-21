@@ -20,10 +20,10 @@ public class OptionalStringTests {
     [InlineData("Initial", "Initial", false)]
     [InlineData("Initial", "Changed", true)]
     [InlineData("Initial", null, true)]
-    public void Value_And_IsModified(string? initialValue, string? newValue, bool expectedIsModified) {
-        var subject = new OptionalString(() => initialValue);
-
-        subject.Value = newValue;
+    public void Value(string? initialValue, string? newValue, bool expectedIsModified) {
+        var subject = new OptionalString(() => initialValue) {
+            Value = newValue
+        };
 
         Assert.Equal(newValue, subject.Value);
         Assert.Equal(expectedIsModified, subject.IsModified);
@@ -33,9 +33,10 @@ public class OptionalStringTests {
     public void Reset() {
         const string initialValue = "Initial";
 
-        var subject = new OptionalString(() => initialValue);
+        var subject = new OptionalString(() => initialValue) {
+            Value = "Changed"
+        };
 
-        subject.Value = "Changed";
         subject.Reset();
 
         Assert.Equal(initialValue, subject.Value);

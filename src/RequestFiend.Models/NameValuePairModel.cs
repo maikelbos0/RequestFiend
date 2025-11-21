@@ -6,6 +6,7 @@ namespace RequestFiend.Models;
 public class NameValuePairModel {
     public RequiredString Name { get; set; }
     public RequiredString Value { get; set; }
+    public bool IsValid => Name.IsValid && Value.IsValid;
 
     public NameValuePairModel() {
         Name = new();

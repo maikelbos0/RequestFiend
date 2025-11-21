@@ -16,17 +16,7 @@ public class RequestTemplateCollectionModel : BoundModelBase {
     }
 
     public bool TryUpdateRequestTemplateCollection(RequestTemplateCollection collection) {
-        var isValid = true;
-
-        foreach (var header in DefaultHeaders) {
-            isValid = isValid & header.Name.Validate() & header.Value.Validate();
-        }
-
-        foreach (var variable in Variables) {
-            isValid = isValid & variable.Name.Validate() & variable.Value.Validate();
-        }
-
-        if (!isValid) {
+        if (DefaultHeaders.Any(defaultHeader => !defaultHeader.IsValid) || Variables.Any(variable => !variable.IsValid)) {
             return false;
         }
 

@@ -4,40 +4,33 @@ using Xunit;
 namespace RequestFiend.Models.Tests.PropertyTypes;
 
 public class RequiredStringTests {
-    [Fact]
-    public void Constructor() {
-        const string initialValue = "Initial";
-
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("", false)]
+    [InlineData("Value", true)]
+    public void Constructor(string? initialValue, bool expectedIsValid) {
         var subject = new RequiredString(() => initialValue);
 
         Assert.Equal(initialValue, subject.Value);
         Assert.False(subject.IsModified);
+        Assert.Equal(expectedIsValid, subject.IsValid);
     }
 
     [Theory]
-    [InlineData(null, null, false)]
-    [InlineData(null, "Changed", true)]
-    [InlineData("Initial", "Initial", false)]
-    [InlineData("Initial", "Changed", true)]
-    [InlineData("Initial", null, true)]
-    public void Value_And_IsModified(string? initialValue, string? newValue, bool expectedIsModified) {
-        var subject = new RequiredString(() => initialValue);
-
-        subject.Value = newValue;
+    [InlineData(null, null, false, false)]
+    [InlineData(null, "", true, false)]
+    [InlineData(null, "Changed", true, true)]
+    [InlineData("Initial", "Initial", false, true)]
+    [InlineData("Initial", "Changed", true, true)]
+    [InlineData("Initial", null, true, false)]
+    [InlineData("Initial", "", true, false)]
+    public void Value(string? initialValue, string? newValue, bool expectedIsModified, bool expectedIsValid) {
+        var subject = new RequiredString(() => initialValue) {
+            Value = newValue
+        };
 
         Assert.Equal(newValue, subject.Value);
         Assert.Equal(expectedIsModified, subject.IsModified);
-    }
-
-    [Theory]
-    [InlineData(null, false)]
-    [InlineData("", false)]
-    [InlineData(" ", false)]
-    [InlineData("Value", true)]
-    public void IsValid(string? value, bool expectedIsValid) {
-        var subject = new RequiredString();
-
-        subject.Value = value;
 
         Assert.Equal(expectedIsValid, subject.IsValid);
     }
@@ -46,9 +39,10 @@ public class RequiredStringTests {
     public void Reset() {
         const string initialValue = "Initial";
 
-        var subject = new RequiredString(() => initialValue);
+        var subject = new RequiredString(() => initialValue) {
+            Value = "Changed"
+        };
 
-        subject.Value = "Changed";
         subject.Reset();
 
         Assert.Equal(initialValue, subject.Value);

@@ -19,13 +19,7 @@ public class RequestTemplateModel : BoundModelBase {
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
-        var isValid = Name.Validate() & Method.Validate() & Url.Validate();
-
-        foreach (var header in Headers) {
-            isValid = isValid & header.Name.Validate() & header.Value.Validate();
-        }
-
-        if (!isValid) {
+        if (!Name.IsValid || !Method.IsValid || !Url.IsValid || Headers.Any(header => !header.IsValid)) {
             return false;
         }
 

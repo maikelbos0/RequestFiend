@@ -14,7 +14,7 @@ public class NewRequestTemplateModel : BoundModelBase {
     }
 
     public bool TryCreateRequestTemplate([NotNullWhen(true)] out RequestTemplate? request) {
-        if (!Name.Validate() | !Method.Validate() | !Url.Validate()) {
+        if (!Name.IsValid || !Method.IsValid || !Url.IsValid) {
             request = null;
             return false;
         }
