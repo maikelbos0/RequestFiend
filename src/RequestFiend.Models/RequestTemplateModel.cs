@@ -5,10 +5,15 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public class RequestTemplateModel : BoundModelBase {
+    private ContentType contentType;
+
     public RequiredString Name { get; set; }
     public RequiredString Method { get; set; }
     public RequiredString Url { get; set; }
-    public ContentType ContentType { get; set; }
+    public ContentType ContentType { 
+        get => contentType;
+        set => SetProperty(ref contentType, value); 
+    }
     public NameValuePairModelCollection Headers { get; set; }
 
     public RequestTemplateModel(RequestTemplate request) {
