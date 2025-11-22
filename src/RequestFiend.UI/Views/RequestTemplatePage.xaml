@@ -56,13 +56,17 @@
 
                         <views:NameValuePairCollection ItemsSource="{Binding Headers}" DeleteButtonText="Delete header" AddButtonText="Add header"/>
 
-                        <Label Text="Content" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+                        <Label Text="Body" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <HorizontalStackLayout RadioButtonGroup.GroupName="ContentTypeGroup" RadioButtonGroup.SelectedValue="{Binding ContentType}" >
+                        <HorizontalStackLayout RadioButtonGroup.GroupName="ContentTypeGroup" RadioButtonGroup.SelectedValue="{Binding ContentType}">
                             <RadioButton Content="None" Value="{x:Static core:ContentType.None}"/>
                             <RadioButton Content="Text" Value="{x:Static core:ContentType.Text}"/>
                             <RadioButton Content="JSON" Value="{x:Static core:ContentType.Json}"/>
                         </HorizontalStackLayout>
+
+                        <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
+
+                        <Editor Text="{Binding StringContent.Value}" IsVisible="{Binding UsesStringContent}" Style="{StaticResource ContentEditor}"/>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>

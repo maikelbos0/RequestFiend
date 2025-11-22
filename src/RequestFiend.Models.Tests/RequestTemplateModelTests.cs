@@ -1,10 +1,26 @@
-﻿using Microsoft.Maui.Platform;
-using RequestFiend.Core;
+﻿using RequestFiend.Core;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
+    [Theory]
+    [InlineData(ContentType.None, false)]
+    [InlineData(ContentType.Text, true)]
+    [InlineData(ContentType.Json, true)]
+    public void SetContentType(ContentType contentType, bool expectedUsesStringContent) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var subject = new RequestTemplateModel(request);
+
+        subject.ContentType = contentType;
+
+        Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
+    }
+
     [Fact]
     public void Constructor() {
         var request = new RequestTemplate() {
@@ -27,6 +43,7 @@ public class RequestTemplateModelTests {
         const string headerName = "Name";
         const string headerValue = "Value";
         const ContentType contentType = ContentType.Json;
+        const string stringContent = "Content";
 
         var request = new RequestTemplate() {
             Name = "Old",
@@ -36,7 +53,8 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             Content = {
-                Type = ContentType.Text
+                Type = ContentType.Text,
+                StringContent = "PreviousContent"
             }
         };
         var subject = new RequestTemplateModel(request); 
@@ -47,6 +65,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType = contentType;
+        subject.StringContent.Value = stringContent;
 
         var result = subject.TryUpdateRequestTemplate(request);
 
@@ -57,6 +76,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerName, request.Headers[0].Name);
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(contentType, request.Content.Type);
+        Assert.Equal(stringContent, request.Content.StringContent);
     }
 
     [Theory]
@@ -68,6 +88,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "https://url", "Name", null)]
     public void TryUpdateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue) {
         const ContentType contentType = ContentType.Json;
+        const string stringContent = "Content";
 
         var request = new RequestTemplate() {
             Name = "Old",
@@ -75,6 +96,10 @@ public class RequestTemplateModelTests {
             Url = "https://previous",
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Content = {
+                Type = ContentType.Text,
+                StringContent = "PreviousContent"
             }
         };
         var subject = new RequestTemplateModel(request);
@@ -85,6 +110,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType = contentType;
+        subject.StringContent.Value = stringContent;
 
         var result = subject.TryUpdateRequestTemplate(request);
 
@@ -95,5 +121,6 @@ public class RequestTemplateModelTests {
         Assert.NotEqual(headerName, request.Headers[0].Name);
         Assert.NotEqual(headerValue, request.Headers[0].Value);
         Assert.NotEqual(contentType, request.Content.Type);
+        Assert.NotEqual(stringContent, request.Content.StringContent);
     }
 }
