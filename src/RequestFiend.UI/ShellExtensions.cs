@@ -34,7 +34,7 @@ public static class ShellExtensions {
                 Title = "New request",
                 Icon = "plus_solid_full.png",
                 Items = {
-                    new NewRequestTemplatePage(filePath, collection, collectionItem)
+                    new NewRequestTemplatePage(filePath, collection)
                 }
             });
 

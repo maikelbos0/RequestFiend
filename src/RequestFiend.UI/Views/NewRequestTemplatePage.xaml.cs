@@ -6,10 +6,7 @@ using System;
 namespace RequestFiend.UI.Views;
 
 public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<NewRequestTemplateModel> {
-    private readonly ShellItem collectionItem;
-
-    public NewRequestTemplatePage(string filePath, RequestTemplateCollection collection, ShellItem collectionItem) : base(filePath, collection) {
-        this.collectionItem = collectionItem;
+    public NewRequestTemplatePage(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
         // TODO if collection default url changes, trigger reset of url maybe only if equal to default url?
         Model = new(collection);
         InitializeComponent();
