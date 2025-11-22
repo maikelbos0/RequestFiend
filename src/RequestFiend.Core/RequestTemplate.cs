@@ -12,7 +12,7 @@ public class RequestTemplate
     public required string Method { get; set; }
     public required string Url { get; set; }
     public List<NameValuePair> Headers { get; set; } = [];
-    public IContentTemplate? Content { get; set; }
+    public ContentTemplate Content { get; set; } = new();
 
     public bool TryCreateMessage(RequestTemplateCollection collection, [NotNullWhen(true)] out HttpRequestMessage? message) {
         if (!Uri.TryCreate(collection.ApplyVariables(Url), UriKind.Absolute, out var uri)) {
@@ -29,11 +29,7 @@ public class RequestTemplate
         }
 
         if (Content != null) {
-            message.Content = new ByteArrayContent(Content.GetContent(collection)) {
-                Headers = {
-                      ContentType = new(Content.MediaType, Content.CharSet)
-                }
-            };
+            message.Content = Content.GetContent(collection);
         }
 
         return true;

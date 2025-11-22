@@ -182,23 +182,20 @@ public class RequestTemplateTests {
 
     [Fact]
     public void TryCreateMessage_Adds_Content_If_Available() {
-        var contentTemplate = Substitute.For<IContentTemplate>();
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
             Url = "https://localhost:7001/",
-            Content = contentTemplate
+            Content = {
+                Type = ContentType.Text,
+                StringContent = "Just a piece of text"
+            }
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject]
         };
-        contentTemplate.MediaType.Returns("application/json");
-        contentTemplate.CharSet.Returns("utf-8");
 
         Assert.True(subject.TryCreateMessage(collection, out var message));
-        Assert.IsType<ByteArrayContent>(message.Content);
-        Assert.NotNull(message.Content.Headers.ContentType);
-        Assert.Equal("application/json", message.Content.Headers.ContentType.MediaType);
-        Assert.Equal("utf-8", message.Content.Headers.ContentType.CharSet);
+        Assert.IsType<StringContent>(message.Content);
     }
 }
