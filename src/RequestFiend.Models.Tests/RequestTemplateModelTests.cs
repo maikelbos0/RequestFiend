@@ -26,6 +26,7 @@ public class RequestTemplateModelTests {
         const string url = "https://url";
         const string headerName = "Name";
         const string headerValue = "Value";
+        const ContentType contentType = ContentType.Json;
 
         var request = new RequestTemplate() {
             Name = "Old",
@@ -33,6 +34,9 @@ public class RequestTemplateModelTests {
             Url = "https://previous",
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Content = {
+                Type = ContentType.Text
             }
         };
         var subject = new RequestTemplateModel(request); 
@@ -42,6 +46,7 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
+        subject.ContentType = contentType;
 
         var result = subject.TryUpdateRequestTemplate(request);
 
@@ -51,6 +56,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(url, request.Url);
         Assert.Equal(headerName, request.Headers[0].Name);
         Assert.Equal(headerValue, request.Headers[0].Value);
+        Assert.Equal(contentType, request.Content.Type);
     }
 
     [Theory]
@@ -61,6 +67,8 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "https://url", null, "Value")]
     [InlineData("Name", "GET", "https://url", "Name", null)]
     public void TryUpdateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue) {
+        const ContentType contentType = ContentType.Json;
+
         var request = new RequestTemplate() {
             Name = "Old",
             Method = "POST",
@@ -76,6 +84,7 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
+        subject.ContentType = contentType;
 
         var result = subject.TryUpdateRequestTemplate(request);
 
@@ -85,5 +94,6 @@ public class RequestTemplateModelTests {
         Assert.NotEqual(url, request.Url);
         Assert.NotEqual(headerName, request.Headers[0].Name);
         Assert.NotEqual(headerValue, request.Headers[0].Value);
+        Assert.NotEqual(contentType, request.Content.Type);
     }
 }

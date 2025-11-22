@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    xmlns:converters="clr-namespace:RequestFiend.UI.Converters"
+    xmlns:core="clr-namespace:RequestFiend.Core;assembly=RequestFiend.Core"
     x:Class="RequestFiend.UI.Views.RequestTemplatePage"
     x:DataType="models:RequestTemplateModel"
     x:TypeArguments="models:RequestTemplateModel">
@@ -54,6 +56,18 @@
                         <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                         <views:NameValuePairCollection ItemsSource="{Binding Headers}" DeleteButtonText="Delete header" AddButtonText="Add header"/>
+
+                        <Label Text="Content" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+
+                        <HorizontalStackLayout>
+                            <HorizontalStackLayout.Resources>
+                                <converters:ComparisonConverter x:Key="ComparisonConverter" />
+                            </HorizontalStackLayout.Resources>
+
+                            <RadioButton Content="None" IsChecked="{Binding ContentType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static core:ContentType.None}}"/>
+                            <RadioButton Content="Text" IsChecked="{Binding ContentType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static core:ContentType.Text}}"/>
+                            <RadioButton Content="JSON" IsChecked="{Binding ContentType, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static core:ContentType.Json}}"/>
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
