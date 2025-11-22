@@ -22,5 +22,6 @@ public partial class RequestTemplateCollectionPageBase<TModel> : ContentPage<TMo
         await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
 
         WeakReferenceMessenger.Default.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection));
+        WeakReferenceMessenger.Default.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection), filePath);
     }
 }

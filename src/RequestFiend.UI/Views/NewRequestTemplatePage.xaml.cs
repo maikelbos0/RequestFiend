@@ -1,15 +1,17 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.Models;
+using RequestFiend.UI.Messages;
 using System;
 
 namespace RequestFiend.UI.Views;
 
-public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<NewRequestTemplateModel> {
+public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<NewRequestTemplateModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public NewRequestTemplatePage(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
-        // TODO if collection default url changes, trigger reset of url maybe only if equal to default url?
         Model = new(collection);
         InitializeComponent();
+        WeakReferenceMessenger.Default.Register(this, filePath);
     }
 
     private async void OnCreateRequestTemplateClicked(object sender, EventArgs e) {
@@ -22,5 +24,11 @@ public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<
         await Shell.Current.OpenRequest(filePath, collection, request);
 
         Model.Reset();
+    }
+
+    public void Receive(RequestTemplateCollectionUpdatedMessage message) {
+        if (!Model.Url.IsModified) {
+            Model.Url.Reset();
+        }
     }
 }
