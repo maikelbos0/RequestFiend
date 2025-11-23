@@ -141,6 +141,7 @@
         <Setter Property="IsSpellCheckEnabled" Value="False"/>
         <Setter Property="IsTextPredictionEnabled" Value="False"/>
         <Setter Property="HeightRequest" Value="300"/>
+        <Setter Property="FontFamily" Value="FiraCodeRegular"/>
     </Style>
 
     <Style TargetType="Entry">
