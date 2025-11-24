@@ -122,7 +122,8 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, false)]
+    [InlineData(null, true)]
+    [InlineData("", true)]
     [InlineData("Text", false)]
     [InlineData("\"Field\":\"Value\"", false)]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}", true)]
@@ -148,7 +149,8 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, false, null)]
+    [InlineData(null, true, null)]
+    [InlineData("", true, "")]
     [InlineData("Text", false, "Text")]
     [InlineData("\"Field\":\"Value\"", false, "\"Field\":\"Value\"")]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}", true, "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]

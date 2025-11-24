@@ -62,7 +62,9 @@ public class RequestTemplateModel : BoundModelBase {
 
     public bool ValidateJson([NotNullWhen(false)] out Exception? exception) {
         try {
-            _ = JsonDocument.Parse(StringContent.Value ?? "");
+            if (!string.IsNullOrEmpty(StringContent.Value)) {
+                _ = JsonDocument.Parse(StringContent.Value ?? "");
+            }
             exception = null;
             return true;
         }
@@ -74,8 +76,10 @@ public class RequestTemplateModel : BoundModelBase {
 
     public bool FormatJson([NotNullWhen(false)] out Exception? exception) {
         try {
-            var document = JsonDocument.Parse(StringContent.Value ?? "");
-            StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
+            if (!string.IsNullOrEmpty(StringContent.Value)) {
+                var document = JsonDocument.Parse(StringContent.Value ?? "");
+                StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
+            }
             exception = null;
             return true;
         }

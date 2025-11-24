@@ -25,4 +25,20 @@ public class JsonContentManagerTests {
         Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("[{\"Meaning\": 42}, {\"Meaning\": 42}]", await result.ReadAsStringAsync());
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void GetContent_Without_StringContent(string? stringContent) {
+        var subject = new JsonContentManager();
+        var request = new RequestTemplate() {
+            Name = "Request",
+            Method = "GET",
+            Url = "https://localhost",
+            StringContent = stringContent
+        };
+        var collection = new RequestTemplateCollection();
+
+        Assert.Null(subject.GetContent(request, collection));
+    }
 }
