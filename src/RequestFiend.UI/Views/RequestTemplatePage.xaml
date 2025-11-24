@@ -64,6 +64,10 @@
                             <RadioButton Content="JSON" Value="{x:Static core:ContentType.Json}"/>
                         </HorizontalStackLayout>
 
+                        <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
+                            <Button Text="Validate JSON" Clicked="OnValidateJsonClicked"/>
+                        </StackLayout>
+                        
                         <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
 
                         <Editor Text="{Binding StringContent.Value}" IsVisible="{Binding UsesStringContent}" Style="{StaticResource ContentEditor}"/>

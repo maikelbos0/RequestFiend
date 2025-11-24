@@ -4,6 +4,7 @@ using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.UI.Messages;
 using System;
+using System.Text.Json;
 
 namespace RequestFiend.UI.Views;
 
@@ -28,12 +29,27 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
     }
 
     private async void OnDeleteRequestClicked(object sender, EventArgs e) {
-        var popupResult = await this.ShowPopupAsync<bool>(new Views.ConfirmPopup("Are you sure you want to delete this request?"));
+        var popupResult = await this.ShowPopupAsync<bool>(new ConfirmPopup("Are you sure you want to delete this request?"));
 
         if (!popupResult.WasDismissedByTappingOutsideOfPopup && popupResult.Result) {
             collection.Requests.Remove(request);
             await SaveCollection();
             WeakReferenceMessenger.Default.Send(new RequestTemplateDeletedMessage(), request.Id);
+        }
+    }
+
+    private async void OnValidateJsonClicked(object sender, EventArgs e) {
+        if (Model.StringContent.Value != null) {
+            try {
+                _ = JsonDocument.Parse(Model.StringContent.Value);
+                await SuccessMessage.Show("JSON content has been validated");
+            }
+            catch (Exception ex) {
+                await ShowError($"Failed to validate JSON content: {ex.Message}");
+            }
+        }
+        else {
+            await ShowError($"Failed to validate JSON content: found empty .");
         }
     }
 }

@@ -7,6 +7,7 @@ namespace RequestFiend.Models;
 public class RequestTemplateModel : BoundModelBase {
     private ContentType contentType;
     private bool usesStringContent;
+    private bool usesJsonContent;
 
     public RequiredString Name { get; set; }
     public RequiredString Method { get; set; }
@@ -17,12 +18,17 @@ public class RequestTemplateModel : BoundModelBase {
         set {
             if (SetProperty(ref contentType, value)) {
                 UsesStringContent = contentType is ContentType.Text or ContentType.Json;
+                UsesJsonContent = contentType is ContentType.Json;
             }
         }
     }
     public bool UsesStringContent {
         get => usesStringContent;
         set => SetProperty(ref usesStringContent, value);
+    }
+    public bool UsesJsonContent {
+        get => usesJsonContent;
+        set => SetProperty(ref usesJsonContent, value);
     }
     public OptionalString StringContent { get; set; }
 

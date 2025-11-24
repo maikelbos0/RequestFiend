@@ -5,10 +5,10 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(ContentType.None, false)]
-    [InlineData(ContentType.Text, true)]
-    [InlineData(ContentType.Json, true)]
-    public void SetContentType(ContentType contentType, bool expectedUsesStringContent) {
+    [InlineData(ContentType.None, false, false)]
+    [InlineData(ContentType.Text, true, false)]
+    [InlineData(ContentType.Json, true, true)]
+    public void SetContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -19,6 +19,7 @@ public class RequestTemplateModelTests {
         subject.ContentType = contentType;
 
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
+        Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
     }
 
     [Fact]
@@ -57,7 +58,7 @@ public class RequestTemplateModelTests {
                 StringContent = "PreviousContent"
             }
         };
-        var subject = new RequestTemplateModel(request); 
+        var subject = new RequestTemplateModel(request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
