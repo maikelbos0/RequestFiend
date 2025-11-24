@@ -1,6 +1,9 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json;
 
 namespace RequestFiend.Models;
 
@@ -53,5 +56,17 @@ public class RequestTemplateModel : BoundModelBase {
         request.Content.Type = ContentType;
         request.Content.StringContent = StringContent!;
         return true;
+    }
+
+    public bool ValidateJson([NotNullWhen(false)] out Exception? exception) {
+        try {
+            _ = JsonDocument.Parse(StringContent.Value ?? "");
+            exception = null;
+            return true;
+        }
+        catch (Exception ex) {
+            exception = ex;
+            return false;
+        }
     }
 }

@@ -39,17 +39,11 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
     }
 
     private async void OnValidateJsonClicked(object sender, EventArgs e) {
-        if (Model.StringContent.Value != null) {
-            try {
-                _ = JsonDocument.Parse(Model.StringContent.Value);
+        if (Model.ValidateJson(out var exception)) {
                 await SuccessMessage.Show("JSON content has been validated");
             }
-            catch (Exception ex) {
-                await ShowError($"Failed to validate JSON content: {ex.Message}");
-            }
-        }
         else {
-            await ShowError($"Failed to validate JSON content: found empty .");
+            await ShowError($"Failed to validate JSON content: {exception.Message}");
         }
     }
 }

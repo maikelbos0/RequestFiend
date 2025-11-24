@@ -124,4 +124,31 @@ public class RequestTemplateModelTests {
         Assert.NotEqual(contentType, request.Content.Type);
         Assert.NotEqual(stringContent, request.Content.StringContent);
     }
+
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("Text", false)]
+    [InlineData("\"Field\": \"Value\"", false)]
+    [InlineData("{\"Field\": \"Value\"}", true)]
+    [InlineData("[0, 1, 2, 3, 4, 5]", true)]
+    public void ValidateJson(string? stringContent, bool expectedResult) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url",
+            Content = {
+                StringContent = stringContent
+            }
+        };
+        var subject = new RequestTemplateModel(request);
+
+        Assert.Equal(expectedResult, subject.ValidateJson(out var exception));
+
+        if (expectedResult) {
+            Assert.Null(exception);
+        }
+        else {
+            Assert.NotNull(exception);
+        }
+    }
 }
