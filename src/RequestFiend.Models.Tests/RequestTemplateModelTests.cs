@@ -14,9 +14,9 @@ public class RequestTemplateModelTests {
             Method = "GET",
             Url = "https://url"
         };
-        var subject = new RequestTemplateModel(request);
-
-        subject.ContentType = contentType;
+        var subject = new RequestTemplateModel(request) {
+            ContentType = contentType
+        };
 
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
@@ -53,10 +53,8 @@ public class RequestTemplateModelTests {
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            Content = {
-                Type = ContentType.Text,
-                StringContent = "PreviousContent"
-            }
+            ContentType = ContentType.Text,
+            StringContent = "PreviousContent"
         };
         var subject = new RequestTemplateModel(request);
 
@@ -76,8 +74,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(url, request.Url);
         Assert.Equal(headerName, request.Headers[0].Name);
         Assert.Equal(headerValue, request.Headers[0].Value);
-        Assert.Equal(contentType, request.Content.Type);
-        Assert.Equal(stringContent, request.Content.StringContent);
+        Assert.Equal(contentType, request.ContentType);
+        Assert.Equal(stringContent, request.StringContent);
     }
 
     [Theory]
@@ -98,10 +96,8 @@ public class RequestTemplateModelTests {
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            Content = {
-                Type = ContentType.Text,
-                StringContent = "PreviousContent"
-            }
+            ContentType = ContentType.Text,
+            StringContent = "PreviousContent"
         };
         var subject = new RequestTemplateModel(request);
 
@@ -121,8 +117,8 @@ public class RequestTemplateModelTests {
         Assert.NotEqual(url, request.Url);
         Assert.NotEqual(headerName, request.Headers[0].Name);
         Assert.NotEqual(headerValue, request.Headers[0].Value);
-        Assert.NotEqual(contentType, request.Content.Type);
-        Assert.NotEqual(stringContent, request.Content.StringContent);
+        Assert.NotEqual(contentType, request.ContentType);
+        Assert.NotEqual(stringContent, request.StringContent);
     }
 
     [Theory]
@@ -136,9 +132,8 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://url",
-            Content = {
-                StringContent = stringContent
-            }
+            ContentType = ContentType.Json,
+            StringContent = stringContent
         };
         var subject = new RequestTemplateModel(request);
 
@@ -163,9 +158,8 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://url",
-            Content = {
-                StringContent = stringContent
-            }
+            ContentType = ContentType.Json,
+            StringContent = stringContent
         };
         var subject = new RequestTemplateModel(request);
 

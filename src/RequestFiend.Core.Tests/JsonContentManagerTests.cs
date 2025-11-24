@@ -8,7 +8,10 @@ public class JsonContentManagerTests {
     [Fact]
     public async Task GetContent() {
         var subject = new JsonContentManager();
-        var content = new ContentTemplate() {
+        var request = new RequestTemplate() {
+            Name = "Request",
+            Method = "GET",
+            Url = "https://localhost",
             StringContent = "[{{Node}}, {{Node}}]"
         };
         var collection = new RequestTemplateCollection() {
@@ -17,7 +20,7 @@ public class JsonContentManagerTests {
             }
         };
 
-        var result = Assert.IsType<StringContent>(subject.GetContent(content, collection));
+        var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
 
         Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("[{\"Meaning\": 42}, {\"Meaning\": 42}]", await result.ReadAsStringAsync());

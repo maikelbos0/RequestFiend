@@ -42,8 +42,8 @@ public class RequestTemplateModel : BoundModelBase {
         Method = new(() => request.Method);
         Url = new(() => request.Url);
         Headers = [.. request.Headers.Select(pair => new NameValuePairModel(pair))];
-        ContentType = request.Content.Type;
-        StringContent = new(() => request.Content.StringContent);
+        ContentType = request.ContentType;
+        StringContent = new(() => request.StringContent);
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
@@ -55,8 +55,8 @@ public class RequestTemplateModel : BoundModelBase {
         request.Method = Method;
         request.Url = Url;
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name, Value = header.Value })];
-        request.Content.Type = ContentType;
-        request.Content.StringContent = StringContent!;
+        request.ContentType = ContentType;
+        request.StringContent = StringContent;
         return true;
     }
 

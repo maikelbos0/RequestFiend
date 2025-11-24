@@ -1,10 +1,26 @@
-using NSubstitute;
+using System;
 using System.Net.Http;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateTests {
+
+    [Theory]
+    [InlineData(ContentType.None, typeof(NoneContentManager))]
+    [InlineData(ContentType.Text, typeof(TextContentManager))]
+    [InlineData(ContentType.Json, typeof(JsonContentManager))]
+    public void Manager(ContentType type, Type expectedManagerType) {
+        var subject = new RequestTemplate() {
+            Name = "Request",
+            Method = "GET",
+            Url = "https://localhost",
+            ContentType = type
+        };
+
+        Assert.Equal(expectedManagerType, subject.ContentManager.GetType());
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("localhost")]
@@ -186,10 +202,8 @@ public class RequestTemplateTests {
             Name = "Request",
             Method = "GET",
             Url = "https://localhost:7001/",
-            Content = {
-                Type = ContentType.Text,
-                StringContent = "Just a piece of text"
-            }
+            ContentType = ContentType.Text,
+            StringContent = "Just a piece of text"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject]

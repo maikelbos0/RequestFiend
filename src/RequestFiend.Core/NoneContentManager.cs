@@ -3,6 +3,6 @@
 namespace RequestFiend.Core;
 
 public class NoneContentManager : IContentManager {
-    public HttpContent? GetContent(ContentTemplate contentTemplate, RequestTemplateCollection collection)
+    public HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection)
         => null;
 }

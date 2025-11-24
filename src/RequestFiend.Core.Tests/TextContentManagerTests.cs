@@ -8,7 +8,10 @@ public class TextContentManagerTests {
     [Fact]
     public async Task GetContent() {
         var subject = new TextContentManager();
-        var content = new ContentTemplate() {
+        var request = new RequestTemplate() {
+            Name = "Request",
+            Method = "GET",
+            Url = "https://localhost",
             StringContent = "The {{first}} and {{second}} get replaced"
         };
         var collection = new RequestTemplateCollection() {
@@ -18,7 +21,7 @@ public class TextContentManagerTests {
             }
         };
 
-        var result = Assert.IsType<StringContent>(subject.GetContent(content, collection));
+        var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
 
         Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await result.ReadAsStringAsync());
