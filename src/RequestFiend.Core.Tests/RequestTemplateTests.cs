@@ -5,12 +5,11 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateTests {
-
     [Theory]
     [InlineData(ContentType.None, typeof(NoneContentManager))]
     [InlineData(ContentType.Text, typeof(TextContentManager))]
     [InlineData(ContentType.Json, typeof(JsonContentManager))]
-    public void Manager(ContentType type, Type expectedManagerType) {
+    public void GetContentManager(ContentType type, Type expectedManagerType) {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -18,7 +17,7 @@ public class RequestTemplateTests {
             ContentType = type
         };
 
-        Assert.Equal(expectedManagerType, subject.ContentManager.GetType());
+        Assert.Equal(expectedManagerType, subject.GetContentManager().GetType());
     }
 
     [Theory]
