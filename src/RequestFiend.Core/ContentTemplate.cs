@@ -17,14 +17,6 @@ public class ContentTemplate {
     // TODO could this be nullable anyway?
     public string StringContent { get; set; } = string.Empty;
 
-    // TODO this will only be used in the UI, does it make sense here?
-    public bool Validate(RequestTemplateCollection collection)
-        => Manager.Validate(this, collection);
-
-    // TODO this will only be used in the UI, does it make sense here?
-    public bool Format(RequestTemplateCollection collection)
-        => Manager.Format(this, collection);
-
     public HttpContent? GetContent(RequestTemplateCollection collection)
         => Manager.GetContent(this, collection);
 }
