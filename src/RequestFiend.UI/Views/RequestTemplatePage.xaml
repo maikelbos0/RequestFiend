@@ -66,6 +66,8 @@
 
                         <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
                             <Button Text="Validate JSON" Clicked="OnValidateJsonClicked"/>
+                            
+                            <Button Text="Format JSON" Clicked="OnFormatJsonClicked"/>
                         </StackLayout>
                         
                         <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>

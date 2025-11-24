@@ -128,9 +128,9 @@ public class RequestTemplateModelTests {
     [Theory]
     [InlineData(null, false)]
     [InlineData("Text", false)]
-    [InlineData("\"Field\": \"Value\"", false)]
-    [InlineData("{\"Field\": \"Value\"}", true)]
-    [InlineData("[0, 1, 2, 3, 4, 5]", true)]
+    [InlineData("\"Field\":\"Value\"", false)]
+    [InlineData("{\"Object\":{\"Field\":\"Value\"}}", true)]
+    [InlineData("{\"Array\":[0,1,2,3,4,5]}", true)]
     public void ValidateJson(string? stringContent, bool expectedResult) {
         var request = new RequestTemplate() {
             Name = "Name",
@@ -143,6 +143,34 @@ public class RequestTemplateModelTests {
         var subject = new RequestTemplateModel(request);
 
         Assert.Equal(expectedResult, subject.ValidateJson(out var exception));
+
+        if (expectedResult) {
+            Assert.Null(exception);
+        }
+        else {
+            Assert.NotNull(exception);
+        }
+    }
+
+    [Theory]
+    [InlineData(null, false, null)]
+    [InlineData("Text", false, "Text")]
+    [InlineData("\"Field\":\"Value\"", false, "\"Field\":\"Value\"")]
+    [InlineData("{\"Object\":{\"Field\":\"Value\"}}", true, "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
+    [InlineData("{\"Array\":[0,1,2,3,4,5]}", true, "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
+    public void FormatJson(string? stringContent, bool expectedResult, string? expectedStringContent) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url",
+            Content = {
+                StringContent = stringContent
+            }
+        };
+        var subject = new RequestTemplateModel(request);
+
+        Assert.Equal(expectedResult, subject.FormatJson(out var exception));
+        Assert.Equal(subject.StringContent.Value, expectedStringContent);
 
         if (expectedResult) {
             Assert.Null(exception);

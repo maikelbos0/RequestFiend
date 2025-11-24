@@ -40,10 +40,19 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     private async void OnValidateJsonClicked(object sender, EventArgs e) {
         if (Model.ValidateJson(out var exception)) {
-                await SuccessMessage.Show("JSON content has been validated");
-            }
+            await SuccessMessage.Show("JSON content has been validated");
+        }
         else {
             await ShowError($"Failed to validate JSON content: {exception.Message}");
+        }
+    }
+
+    private async void OnFormatJsonClicked(object sender, EventArgs e) {
+        if (Model.FormatJson(out var exception)) {
+            await SuccessMessage.Show("JSON content has been formatted");
+        }
+        else {
+            await ShowError($"Failed to format JSON content: {exception.Message}");
         }
     }
 }

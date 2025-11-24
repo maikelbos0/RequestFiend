@@ -8,6 +8,8 @@ using System.Text.Json;
 namespace RequestFiend.Models;
 
 public class RequestTemplateModel : BoundModelBase {
+    private static JsonSerializerOptions jsonSerializerOptions { get; } = new() { WriteIndented = true };
+
     private ContentType contentType;
     private bool usesStringContent;
     private bool usesJsonContent;
@@ -61,6 +63,19 @@ public class RequestTemplateModel : BoundModelBase {
     public bool ValidateJson([NotNullWhen(false)] out Exception? exception) {
         try {
             _ = JsonDocument.Parse(StringContent.Value ?? "");
+            exception = null;
+            return true;
+        }
+        catch (Exception ex) {
+            exception = ex;
+            return false;
+        }
+    }
+
+    public bool FormatJson([NotNullWhen(false)] out Exception? exception) {
+        try {
+            var document = JsonDocument.Parse(StringContent.Value ?? "");
+            StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
             exception = null;
             return true;
         }
