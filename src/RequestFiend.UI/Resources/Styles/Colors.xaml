@@ -13,8 +13,14 @@
     <Color x:Key="SecondaryDarkText">#0089C4</Color>
     <Color x:Key="Tertiary">#99C5E4</Color>
     <Color x:Key="TertiaryDark">#145371</Color>
-    <Color x:Key="Error">#FFC0D0</Color>
-    <Color x:Key="ErrorDark">#700020</Color>
+    <Color x:Key="Error">#FFD0E0</Color>
+    <Color x:Key="ErrorDark">#300010</Color>
+    <Color x:Key="ErrorIcon">#C05030</Color>
+    <Color x:Key="ErrorIconDark">#C05030</Color>
+    <Color x:Key="Modified">#C0E0FF</Color>
+    <Color x:Key="ModifiedDark">#001030</Color>
+    <Color x:Key="ModifiedIcon">#4B6EAE</Color>
+    <Color x:Key="ModifiedIconDark">#4B6EAE</Color>
     <Color x:Key="Success">#40e080</Color>
     <Color x:Key="SuccessDark">#007020</Color>
     <Color x:Key="Danger">#C05060</Color>
@@ -33,4 +39,5 @@
     <Color x:Key="Gray950">#141414</Color>
 
     <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}" />
+    <SolidColorBrush x:Key="ModifiedBackgroundBrush" Color="{AppThemeBinding Light={StaticResource Modified}, Dark={StaticResource ModifiedDark}}" />
 </ResourceDictionary>

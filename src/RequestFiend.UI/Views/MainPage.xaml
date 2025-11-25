@@ -16,6 +16,18 @@
             
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <AbsoluteLayout HorizontalOptions="Fill">
+                        <Entry Text="Test" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize" Background="{x:StaticResource ErrorBackgroundBrush}" />
+                        <Label Text="▲" TextColor="{x:StaticResource ErrorIcon}" HorizontalTextAlignment="Center" FontSize="20" AbsoluteLayout.LayoutFlags="XProportional"  AbsoluteLayout.LayoutBounds="1,5,44,AutoSize"/>
+                    </AbsoluteLayout>
+                    
+                    <AbsoluteLayout HorizontalOptions="Fill">
+                        <Entry Text="Test" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize" Background="{x:StaticResource ModifiedBackgroundBrush}" />
+                        <Label Text="●" TextColor="{x:StaticResource ModifiedIcon}" HorizontalTextAlignment="Center" FontSize="28" AbsoluteLayout.LayoutFlags="XProportional"  AbsoluteLayout.LayoutBounds="1,0,44,AutoSize"/>
+                    </AbsoluteLayout>
+
+                    <Entry Text="Test" />
+                    
                     <Label Text="Create a new collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                     <Button Text="Choose file location and create" Clicked="OnCreateNewCollectionClicked" HorizontalOptions="Fill"/>
