@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RequestFiend.Models.PropertyTypes;
+using System.Collections.Generic;
 
 namespace RequestFiend.Models;
 
@@ -9,4 +10,5 @@ public partial class MainPageModel : BoundModelBase {
         get => recentCollections;
         set => SetProperty(ref recentCollections, value);
     }
+    public Text ExampleText { get; set; } = new(true, () => "Initial");
 }

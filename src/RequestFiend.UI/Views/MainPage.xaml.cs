@@ -32,6 +32,7 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
 
         var saveResult = await FileSaver.Default.SaveAsync(".json", stream);
 
+        // TODO allow cancel
         if (saveResult.IsSuccessful) {
             await Shell.Current.OpenCollection(saveResult.FilePath, collection);
             Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
@@ -50,7 +51,7 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
                 { DevicePlatform.WinUI, ["*.json"] },
             })
         });
-
+        
         if (file != null) {
             await OpenCollectionFromFile(file.FullPath);
         }

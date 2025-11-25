@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AbsoluteLayout
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.ValidatableEntry"
+    HorizontalOptions="Fill"
+    x:Name="Root">
+
+    <Entry
+        Text="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}}"
+        AbsoluteLayout.LayoutFlags="WidthProportional"
+        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+
+        <Entry.Triggers>
+            <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModified, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
+            </DataTrigger>
+        </Entry.Triggers>
+    </Entry>
+    
+    <Label
+        Text="▲"
+        TextColor="{x:StaticResource ErrorIcon}"
+        IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}"
+        HorizontalTextAlignment="Center"
+        FontSize="20"
+        AbsoluteLayout.LayoutFlags="XProportional"
+        AbsoluteLayout.LayoutBounds="1,5,44,AutoSize"/>
+    
+    <Label
+        Text="●"
+        TextColor="{x:StaticResource ModifiedIcon}"
+        IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModified, Source={x:Reference Root}}"
+        HorizontalTextAlignment="Center"
+        FontSize="28"
+        AbsoluteLayout.LayoutFlags="XProportional"
+        AbsoluteLayout.LayoutBounds="1,0,44,AutoSize"/>
+</AbsoluteLayout>
