@@ -14,4 +14,12 @@ public partial class ValidatableEntry : AbsoluteLayout {
     public ValidatableEntry() {
         InitializeComponent();
     }
+
+    private void OnIconTapped(object sender, TappedEventArgs e) {
+        Entry.Focus();
+    }
+
+    private void OnIconPointerPressed(object sender, PointerEventArgs e) {
+        Entry.Focus();
+    }
 }

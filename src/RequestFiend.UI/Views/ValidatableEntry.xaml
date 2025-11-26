@@ -8,6 +8,7 @@
     x:Name="Root">
 
     <Entry
+        x:Name="Entry"
         Text="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}}"
         AbsoluteLayout.LayoutFlags="WidthProportional"
         AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
@@ -21,7 +22,7 @@
             </DataTrigger>
         </Entry.Triggers>
     </Entry>
-    
+
     <Label
         Text="▲"
         TextColor="{x:StaticResource ErrorIcon}"
@@ -29,8 +30,14 @@
         HorizontalTextAlignment="Center"
         FontSize="20"
         AbsoluteLayout.LayoutFlags="XProportional"
-        AbsoluteLayout.LayoutBounds="1,5,44,AutoSize"/>
-    
+        AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
+        
+        <Label.GestureRecognizers>
+            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnIconTapped"/>
+        </Label.GestureRecognizers>
+    </Label>
+
     <Label
         Text="●"
         TextColor="{x:StaticResource ModifiedIcon}"
@@ -38,5 +45,11 @@
         HorizontalTextAlignment="Center"
         FontSize="28"
         AbsoluteLayout.LayoutFlags="XProportional"
-        AbsoluteLayout.LayoutBounds="1,0,44,AutoSize"/>
+        AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
+
+        <Label.GestureRecognizers>
+            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnIconTapped"/>
+        </Label.GestureRecognizers>
+    </Label>
 </AbsoluteLayout>
