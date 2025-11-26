@@ -3,8 +3,8 @@ using System;
 
 namespace RequestFiend.Models.PropertyTypes;
 
-public class Text : ObservableObject {
-    public static implicit operator string?(Text text) => text.Value;
+public class ValidatableString : ObservableObject {
+    public static implicit operator string?(ValidatableString text) => text.Value;
 
     private string? initialValue;
     private string? value;
@@ -34,9 +34,9 @@ public class Text : ObservableObject {
         private set => SetProperty(ref hasError, value);
     }
 
-    public Text(bool isRequired) : this(isRequired, () => null) { }
+    public ValidatableString(bool isRequired) : this(isRequired, () => null) { }
 
-    public Text(bool isRequired, Func<string?> defaultValueProvider) {
+    public ValidatableString(bool isRequired, Func<string?> defaultValueProvider) {
         IsRequired = isRequired;
         DefaultValueProvider = defaultValueProvider;
         Reset();

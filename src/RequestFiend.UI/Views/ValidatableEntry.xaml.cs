@@ -4,10 +4,10 @@ using RequestFiend.Models.PropertyTypes;
 namespace RequestFiend.UI.Views;
 
 public partial class ValidatableEntry : AbsoluteLayout {
-    public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(Text), typeof(ValidatableEntry), default(Text));
+    public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(ValidatableString), typeof(ValidatableEntry), default(ValidatableString));
 
-    public Text Text {
-        get => (Text)GetValue(TextProperty);
+    public ValidatableString Text {
+        get => (ValidatableString)GetValue(TextProperty);
         set => SetValue(TextProperty, value);
     }
 
