@@ -32,13 +32,12 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
 
         var saveResult = await FileSaver.Default.SaveAsync(".json", stream);
 
-        // TODO allow cancel
         if (saveResult.IsSuccessful) {
             await Shell.Current.OpenCollection(saveResult.FilePath, collection);
             Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
         }
-        else {
-            await ShowError("Failed to create collection.");
+        else if (saveResult.Exception != null) {
+            await ShowError($"Failed to create collection: {saveResult.Exception.Message}");
         }
     }
 
