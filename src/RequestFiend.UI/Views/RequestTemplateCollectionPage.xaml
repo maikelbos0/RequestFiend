@@ -23,16 +23,16 @@
 
                         <Label Text="Default headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <views:NameValuePairCollection ItemsSource="{Binding DefaultHeaders}" DeleteButtonText="Delete default header" AddButtonText="Add default header"/>
+                        <views:NameValuePairCollectionView ItemsSource="{Binding DefaultHeaders}" DeleteButtonText="Delete default header" AddButtonText="Add default header"/>
                         
                         <Label Text="Variables" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <views:NameValuePairCollection ItemsSource="{Binding Variables}" DeleteButtonText="Delete variable" AddButtonText="Add variable"/>
+                        <views:NameValuePairCollectionView ItemsSource="{Binding Variables}" DeleteButtonText="Delete variable" AddButtonText="Add variable"/>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
         </ScrollView>
 
-        <views:Message x:Name="SuccessMessage" Grid.Row="1"/>
+        <views:MessageLabel x:Name="MessageLabel" Grid.Row="1"/>
     </Grid>
 </views:RequestTemplateCollectionPageBase>

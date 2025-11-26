@@ -54,7 +54,7 @@
 
                         <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <views:NameValuePairCollection ItemsSource="{Binding Headers}" DeleteButtonText="Delete header" AddButtonText="Add header"/>
+                        <views:NameValuePairCollectionView ItemsSource="{Binding Headers}" DeleteButtonText="Delete header" AddButtonText="Add header"/>
 
                         <Label Text="Body" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
@@ -78,6 +78,6 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <views:Message x:Name="SuccessMessage" Grid.Row="1" />
+        <views:MessageLabel x:Name="MessageLabel" Grid.Row="1" />
     </Grid>
 </views:RequestTemplateCollectionPageBase>

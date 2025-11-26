@@ -4,12 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
-    x:Class="RequestFiend.UI.Views.NameValuePairCollection"
+    x:Class="RequestFiend.UI.Views.NameValuePairCollectionView"
     x:Name="Root">
 
-    <CollectionView SelectionMode="None" ItemsSource="{Binding x:DataType='views:NameValuePairCollection', Path=ItemsSource, Source={x:Reference Root}}">
+    <CollectionView SelectionMode="None" ItemsSource="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource, Source={x:Reference Root}}">
         <CollectionView.Header>
-            <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding x:DataType='views:NameValuePairCollection', Path=ItemsSource.HasItems, Source={x:Reference Root}}">
+            <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" IsVisible="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource.HasItems, Source={x:Reference Root}}">
                 <Label Text="Name" Style="{StaticResource TableHeader}"/>
 
                 <Label Text="Value" Style="{StaticResource TableHeader}" Grid.Column="1"/>
@@ -34,12 +34,12 @@
                         </Entry.Triggers>
                     </Entry>
 
-                    <Button Text="🗙" Clicked="OnRemoveClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="{Binding x:DataType='views:NameValuePairCollection', Path=DeleteButtonText, Source={x:Reference Root}}" />
+                    <Button Text="🗙" Clicked="OnRemoveClicked" Style="{StaticResource TableButton}" Grid.Column="2" SemanticProperties.Description="{Binding x:DataType='views:NameValuePairCollectionView', Path=DeleteButtonText, Source={x:Reference Root}}" />
                 </Grid>
             </DataTemplate>
         </CollectionView.ItemTemplate>
         <CollectionView.Footer>
-            <Button Text="{Binding x:DataType='views:NameValuePairCollection', Path=AddButtonText, Source={x:Reference Root}}" Clicked="OnAddClicked" Style="{StaticResource TableButton}"/>
+            <Button Text="{Binding x:DataType='views:NameValuePairCollectionView', Path=AddButtonText, Source={x:Reference Root}}" Clicked="OnAddClicked" Style="{StaticResource TableButton}"/>
         </CollectionView.Footer>
     </CollectionView>
 </ContentView>

@@ -22,8 +22,8 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
 
         await SaveCollection();
 
-        await SuccessMessage.Show("Changes have been saved");
+        await MessageLabel.Show("Changes have been saved");
     }
 
-    public Task ShowMessage(string text) => SuccessMessage.Show(text);
+    public Task ShowMessage(string text) => MessageLabel.Show(text);
 }

@@ -25,7 +25,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         await SaveCollection();
         WeakReferenceMessenger.Default.Send(new RequestTemplateUpdatedMessage(request), request.Id);
 
-        await SuccessMessage.Show("Changes have been saved");
+        await MessageLabel.Show("Changes have been saved");
     }
 
     private async void OnDeleteRequestClicked(object sender, EventArgs e) {
@@ -40,7 +40,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     private async void OnValidateJsonClicked(object sender, EventArgs e) {
         if (Model.ValidateJson(out var exception)) {
-            await SuccessMessage.Show("JSON content has been validated");
+            await MessageLabel.Show("JSON content has been validated");
         }
         else {
             await ShowError($"Failed to validate JSON content: {exception.Message}");
@@ -49,7 +49,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     private async void OnFormatJsonClicked(object sender, EventArgs e) {
         if (Model.FormatJson(out var exception)) {
-            await SuccessMessage.Show("JSON content has been formatted");
+            await MessageLabel.Show("JSON content has been formatted");
         }
         else {
             await ShowError($"Failed to format JSON content: {exception.Message}");

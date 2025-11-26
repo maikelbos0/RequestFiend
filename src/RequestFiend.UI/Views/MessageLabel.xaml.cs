@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI.Views;
 
-public partial class Message : Label {
+public partial class MessageLabel : Label {
     private CancellationTokenSource? messageCancellationTokenSource;
 
-    public Message() {
+    public MessageLabel() {
         InitializeComponent();
     }
 
