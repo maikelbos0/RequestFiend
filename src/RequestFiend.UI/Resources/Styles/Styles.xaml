@@ -68,15 +68,6 @@
         <Setter Property="MinimumWidthRequest" Value="44"/>
     </Style>
 
-    <Style TargetType="Button" x:Key="TableButton">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource TertiaryDark}}" />
-        <Setter Property="Margin" Value="0, 10, 0, 0"/>
-        <Setter Property="MinimumWidthRequest" Value="-1"/>
-        <Setter Property="HorizontalOptions" Value="Fill"/>
-        <Setter Property="CornerRadius" Value="4"/>
-    </Style>
-
     <Style TargetType="CheckBox">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
         <Setter Property="MinimumWidthRequest" Value="44"/>
@@ -496,24 +487,6 @@
     <Style TargetType="Grid">
         <Setter Property="ColumnSpacing" Value="25"/>
         <Setter Property="RowSpacing" Value="25"/>
-    </Style>
-
-    <Style TargetType="Grid" x:Key="Table">
-        <Setter Property="ColumnSpacing" Value="10"/>
-    </Style>
-
-    <Style TargetType="Label" x:Key="EntryLabel">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryDark}, Dark={StaticResource Secondary}}" />
-        <Setter Property="Margin" Value="10, 0, 0, -15"/>
-    </Style>
-
-    <Style TargetType="Label" x:Key="TableHeader">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryDark}, Dark={StaticResource Secondary}}" />
-        <Setter Property="Margin" Value="10, 0, 0, 0"/>
-    </Style>
-
-    <Style TargetType="View" x:Key="TableEntry" ApplyToDerivedTypes="true">
-        <Setter Property="Margin" Value="0, 10, 0, 0"/>
     </Style>
 
 </ResourceDictionary>

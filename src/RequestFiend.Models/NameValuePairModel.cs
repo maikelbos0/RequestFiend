@@ -4,17 +4,17 @@ using RequestFiend.Models.PropertyTypes;
 namespace RequestFiend.Models;
 
 public class NameValuePairModel {
-    public RequiredString Name { get; set; }
-    public RequiredString Value { get; set; }
-    public bool IsValid => Name.IsValid && Value.IsValid;
+    public ValidatableString Name { get; set; }
+    public ValidatableString Value { get; set; }
+    public bool IsValid => !Name.HasError && !Value.HasError;
 
     public NameValuePairModel() {
-        Name = new();
-        Value = new();
+        Name = new(true);
+        Value = new(true);
     }
 
     public NameValuePairModel(NameValuePair pair) {
-        Name = new(() => pair.Name);
-        Value = new(() => pair.Value);
+        Name = new(true, () => pair.Name);
+        Value = new(true, () => pair.Value);
     }
 }

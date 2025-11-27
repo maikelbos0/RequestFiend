@@ -19,7 +19,7 @@ public class RequestTemplateCollectionModelTests {
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
         foreach (var header in collection.DefaultHeaders) {
-            Assert.Equal(header.Value, Assert.Single(subject.DefaultHeaders, headerModel => headerModel.Name == header.Name).Value);
+            Assert.Equal(header.Value, Assert.Single(subject.DefaultHeaders, headerModel => headerModel.Name.Value == header.Name).Value.Value);
         }
     }
 

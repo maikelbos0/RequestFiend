@@ -54,7 +54,7 @@ public class RequestTemplateModel : BoundModelBase {
         request.Name = Name;
         request.Method = Method;
         request.Url = Url;
-        request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name, Value = header.Value })];
+        request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = ContentType;
         request.StringContent = StringContent;
         return true;
