@@ -4,8 +4,6 @@ using System;
 namespace RequestFiend.Models.PropertyTypes;
 
 public class ValidatableString : ObservableObject {
-    public static implicit operator string?(ValidatableString text) => text.Value;
-
     private string? initialValue;
     private string? value;
     private bool isModified;
