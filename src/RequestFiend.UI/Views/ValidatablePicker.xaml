@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AbsoluteLayout
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.ValidatablePicker"
+    HorizontalOptions="Fill"
+    x:Name="Root">
+
+    <Picker
+        x:Name="Picker"
+        SelectedItem="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.Value, Source={x:Reference Root}}"
+        ItemsSource="{Binding x:DataType='views:ValidatablePicker', Path=ItemsSource, Source={x:Reference Root}}"
+        AbsoluteLayout.LayoutFlags="WidthProportional"
+        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+
+        <Picker.Triggers>
+            <DataTrigger TargetType="Picker" Binding="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.HasError, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger TargetType="Picker" Binding="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModified, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
+            </DataTrigger>
+        </Picker.Triggers>
+    </Picker>
+
+    <Label
+        Text="▲"
+        TextColor="{x:StaticResource ErrorIcon}"
+        IsVisible="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.HasError, Source={x:Reference Root}}"
+        HorizontalTextAlignment="Center"
+        FontSize="20"
+        AbsoluteLayout.LayoutFlags="XProportional"
+        AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
+
+        <Label.GestureRecognizers>
+            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnIconTapped"/>
+        </Label.GestureRecognizers>
+    </Label>
+
+    <Label
+        Text="●"
+        TextColor="{x:StaticResource ModifiedIcon}"
+        IsVisible="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModified, Source={x:Reference Root}}"
+        HorizontalTextAlignment="Center"
+        FontSize="28"
+        AbsoluteLayout.LayoutFlags="XProportional"
+        AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
+
+        <Label.GestureRecognizers>
+            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnIconTapped"/>
+        </Label.GestureRecognizers>
+    </Label>
+</AbsoluteLayout>

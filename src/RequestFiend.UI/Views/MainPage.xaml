@@ -20,6 +20,8 @@
 
                     <views:ValidatableContentEditor Text="{Binding ExampleText}"/>
 
+                    <views:ValidatablePicker SelectedItem="{Binding ExampleText}" ItemsSource="{x:Static models:Options.Methods}"/>
+
                     <Label Text="Create a new collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                     <Button Text="Choose file location and create" Clicked="OnCreateNewCollectionClicked" HorizontalOptions="Fill"/>
