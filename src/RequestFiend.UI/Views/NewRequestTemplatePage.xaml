@@ -19,34 +19,16 @@
 
                     <Label Text="Name" Style="{StaticResource EntryLabel}"/>
 
-                    <Entry Text="{Binding Name.Value}">
-                        <Entry.Triggers>
-                            <DataTrigger TargetType="Entry" Binding="{Binding Name.IsValid}" Value="False">
-                                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                            </DataTrigger>
-                        </Entry.Triggers>
-                    </Entry>
+                    <views:ValidatableEntry Text="{Binding Name}"/>
 
                     <Grid ColumnDefinitions="*,3*">
                         <Label Text="Method" Style="{StaticResource EntryLabel}"/>
 
                         <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>
 
-                        <Picker SelectedItem="{Binding Method.Value}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1">
-                            <Picker.Triggers>
-                                <DataTrigger TargetType="Picker" Binding="{Binding Method.IsValid}" Value="False">
-                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                                </DataTrigger>
-                            </Picker.Triggers>
-                        </Picker>
+                        <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
 
-                        <Entry Text="{Binding Url.Value}" Grid.Row="1" Grid.Column="1">
-                            <Entry.Triggers>
-                                <DataTrigger TargetType="Entry" Binding="{Binding Url.IsValid}" Value="False">
-                                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
-                                </DataTrigger>
-                            </Entry.Triggers>
-                        </Entry>
+                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" />
                     </Grid>
                 </VerticalStackLayout>
             </Border>
