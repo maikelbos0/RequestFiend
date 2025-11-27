@@ -17,7 +17,9 @@
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <views:ValidatableEntry Text="{Binding ExampleText}"/>
-                    
+
+                    <views:ValidatableContentEditor Text="{Binding ExampleText}"/>
+
                     <Label Text="Create a new collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                     <Button Text="Choose file location and create" Clicked="OnCreateNewCollectionClicked" HorizontalOptions="Fill"/>
