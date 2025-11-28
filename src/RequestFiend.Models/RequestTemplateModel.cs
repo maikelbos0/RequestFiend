@@ -14,9 +14,9 @@ public class RequestTemplateModel : BoundModelBase {
     private bool usesStringContent;
     private bool usesJsonContent;
 
-    public RequiredString Name { get; set; }
-    public RequiredString Method { get; set; }
-    public RequiredString Url { get; set; }
+    public ValidatableString Name { get; set; }
+    public ValidatableString Method { get; set; }
+    public ValidatableString Url { get; set; }
     public NameValuePairModelCollection Headers { get; set; }
     public ContentType ContentType {
         get => contentType;
@@ -35,28 +35,28 @@ public class RequestTemplateModel : BoundModelBase {
         get => usesJsonContent;
         set => SetProperty(ref usesJsonContent, value);
     }
-    public OptionalString StringContent { get; set; }
+    public ValidatableString StringContent { get; set; }
 
     public RequestTemplateModel(RequestTemplate request) {
-        Name = new(() => request.Name);
-        Method = new(() => request.Method);
-        Url = new(() => request.Url);
+        Name = new(true, () => request.Name);
+        Method = new(true, () => request.Method);
+        Url = new(true, () => request.Url);
         Headers = [.. request.Headers.Select(pair => new NameValuePairModel(pair))];
         ContentType = request.ContentType;
-        StringContent = new(() => request.StringContent);
+        StringContent = new(false, () => request.StringContent);
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
-        if (!Name.IsValid || !Method.IsValid || !Url.IsValid || Headers.Any(header => !header.IsValid)) {
+        if (Name.HasError || Method.HasError || Url.HasError|| Headers.Any(header => !header.IsValid)) {
             return false;
         }
 
-        request.Name = Name;
-        request.Method = Method;
-        request.Url = Url;
+        request.Name = Name.Value!;
+        request.Method = Method.Value!;
+        request.Url = Url.Value!;
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = ContentType;
-        request.StringContent = StringContent;
+        request.StringContent = StringContent.Value;
         return true;
     }
 
