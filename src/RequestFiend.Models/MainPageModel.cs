@@ -10,5 +10,4 @@ public partial class MainPageModel : BoundModelBase {
         get => recentCollections;
         set => SetProperty(ref recentCollections, value);
     }
-    public ValidatableString ExampleText { get; set; } = new(true, () => "Initial");
 }
