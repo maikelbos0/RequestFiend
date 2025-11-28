@@ -5,12 +5,12 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public class RequestTemplateCollectionModel : BoundModelBase {
-    public OptionalString DefaultUrl { get; set; }
+    public ValidatableString DefaultUrl { get; set; }
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
 
     public RequestTemplateCollectionModel(RequestTemplateCollection collection) {
-        DefaultUrl = new(() => collection.DefaultUrl);
+        DefaultUrl = new(false, () => collection.DefaultUrl);
         DefaultHeaders = [.. collection.DefaultHeaders.Select(variable => new NameValuePairModel(variable))];
         Variables = [.. collection.Variables.Select(header => new NameValuePairModel(header))];
     }
@@ -20,7 +20,7 @@ public class RequestTemplateCollectionModel : BoundModelBase {
             return false;
         }
 
-        collection.DefaultUrl = DefaultUrl;
+        collection.DefaultUrl = DefaultUrl.Value;
         collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
 

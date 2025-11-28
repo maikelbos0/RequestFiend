@@ -19,7 +19,7 @@
 
                         <Label Text="Default url (optional)" Style="{StaticResource EntryLabel}"/>
 
-                        <Entry Text="{Binding DefaultUrl.Value}" />
+                        <views:ValidatableEntry Text="{Binding DefaultUrl}" />
 
                         <Label Text="Default headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
