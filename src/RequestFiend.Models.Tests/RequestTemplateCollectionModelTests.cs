@@ -56,6 +56,11 @@ public class RequestTemplateCollectionModelTests {
         Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
         Assert.Equal(variableName, collection.Variables[0].Name);
         Assert.Equal(variableValue, collection.Variables[0].Value);
+        Assert.False(subject.DefaultUrl.IsModified);
+        Assert.False(subject.DefaultHeaders[0].Name.IsModified);
+        Assert.False(subject.DefaultHeaders[0].Value.IsModified);
+        Assert.False(subject.Variables[0].Name.IsModified);
+        Assert.False(subject.Variables[0].Value.IsModified);
     }
 
     [Theory]

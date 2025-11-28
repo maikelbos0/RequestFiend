@@ -11,8 +11,8 @@ public class RequestTemplateCollectionModel : BoundModelBase {
 
     public RequestTemplateCollectionModel(RequestTemplateCollection collection) {
         DefaultUrl = new(false, () => collection.DefaultUrl);
-        DefaultHeaders = [.. collection.DefaultHeaders.Select(variable => new NameValuePairModel(variable))];
-        Variables = [.. collection.Variables.Select(header => new NameValuePairModel(header))];
+        DefaultHeaders = new(collection.DefaultHeaders);
+        Variables = new(collection.Variables);
     }
 
     public bool TryUpdateRequestTemplateCollection(RequestTemplateCollection collection) {
@@ -23,6 +23,10 @@ public class RequestTemplateCollectionModel : BoundModelBase {
         collection.DefaultUrl = DefaultUrl.Value;
         collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
+
+        DefaultUrl.IsModified = false;
+        DefaultHeaders.Reinitialize(collection.DefaultHeaders);
+        Variables.Reinitialize(collection.Variables);
 
         return true;
     }

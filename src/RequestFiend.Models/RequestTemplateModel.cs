@@ -41,13 +41,13 @@ public class RequestTemplateModel : BoundModelBase {
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
-        Headers = [.. request.Headers.Select(pair => new NameValuePairModel(pair))];
+        Headers = new(request.Headers);
         ContentType = request.ContentType;
         StringContent = new(false, () => request.StringContent);
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
-        if (Name.HasError || Method.HasError || Url.HasError|| Headers.Any(header => !header.IsValid)) {
+        if (Name.HasError || Method.HasError || Url.HasError || Headers.Any(header => !header.IsValid)) {
             return false;
         }
 
@@ -57,6 +57,13 @@ public class RequestTemplateModel : BoundModelBase {
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = ContentType;
         request.StringContent = StringContent.Value;
+
+        Name.IsModified = false;
+        Method.IsModified = false;
+        Url.IsModified = false;
+        Headers.Reinitialize(request.Headers);
+        StringContent.IsModified = false;
+
         return true;
     }
 

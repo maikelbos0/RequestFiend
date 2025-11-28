@@ -76,6 +76,12 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(contentType, request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
+        Assert.False(subject.Name.IsModified);
+        Assert.False(subject.Method.IsModified);
+        Assert.False(subject.Url.IsModified);
+        Assert.False(subject.Headers[0].Name.IsModified);
+        Assert.False(subject.Headers[0].Value.IsModified);
+        Assert.False(subject.StringContent.IsModified);
     }
 
     [Theory]
