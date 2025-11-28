@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace RequestFiend.Models;
 
 public class NameValuePairModelCollection : ObservableCollection<NameValuePairModel> {
     public bool HasItems => Count > 0;
-
-    [Obsolete]
-    public NameValuePairModelCollection() : this([]) { }
+    public bool HasError => this.Any(item => item.HasError);
 
     public NameValuePairModelCollection(List<NameValuePair> collection) {
         CollectionChanged += (sender, e) => OnPropertyChanged(new(nameof(HasItems)));

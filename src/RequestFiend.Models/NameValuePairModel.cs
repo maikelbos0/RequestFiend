@@ -6,7 +6,7 @@ namespace RequestFiend.Models;
 public class NameValuePairModel {
     public ValidatableString Name { get; set; }
     public ValidatableString Value { get; set; }
-    public bool IsValid => !Name.HasError && !Value.HasError;
+    public bool HasError => Name.HasError || Value.HasError;
 
     public NameValuePairModel() {
         Name = new(true);

@@ -24,6 +24,24 @@ public class NameValuePairModelCollectionTests {
         }
     }
 
+    [Theory]
+    [InlineData(new string?[] {}, false)]
+    [InlineData(new string?[] { "Value", null }, true)]
+    [InlineData(new string?[] { "Value", "" }, true)]
+    [InlineData(new string?[] { "Value", "Value" }, false)]
+    public void HasError(string?[] values, bool expectedResult) {
+        var subject = new NameValuePairModelCollection([]);
+
+        foreach (var value in values) {
+            subject.Add(new() {
+                Name = { Value = "Name" },
+                Value = { Value = value }
+            });
+        }
+
+        Assert.Equal(expectedResult, subject.HasError);
+    }
+
     [Fact]
     public void Reinitialize() {
         var subject = new NameValuePairModelCollection([]) {

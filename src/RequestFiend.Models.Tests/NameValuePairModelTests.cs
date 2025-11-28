@@ -4,6 +4,21 @@ using Xunit;
 namespace RequestFiend.Models.Tests;
 
 public class NameValuePairModelTests {
+    [Theory]
+    [InlineData(null, null, true)]
+    [InlineData("", "", true)]
+    [InlineData("Name", null, true)]
+    [InlineData(null, "Value", true)]
+    [InlineData("Name", "Value", false)]
+    public void HasError(string? name, string? value, bool expectedResult) {
+        var subject = new NameValuePairModel() {
+            Name = { Value = name },
+            Value = { Value = value }
+        };
+
+        Assert.Equal(expectedResult, subject.HasError);
+    }
+
     [Fact]
     public void Reinitialize() {
         var subject = new NameValuePairModel(new() { Name = "PreviousName", Value = "PreviousValue" });
