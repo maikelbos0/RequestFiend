@@ -17,4 +17,9 @@ public class NameValuePairModel {
         Name = new(true, () => pair.Name);
         Value = new(true, () => pair.Value);
     }
+
+    public void Reinitialize(NameValuePair pair) {
+        Name.Reinitialize(() => pair.Name);
+        Value.Reinitialize(() => pair.Value);
+    }
 }

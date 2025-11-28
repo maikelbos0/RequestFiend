@@ -58,4 +58,17 @@ public class ValidatableStringTests {
         Assert.Equal(initialValue, subject.Value);
         Assert.False(subject.IsModified);
     }
+
+    [Fact]
+    public void Reinitialize() {
+        const string initialValue = "Initial";
+        const string reinitializedValue = "Reinitialized";
+
+        var subject = new ValidatableString(false, () => initialValue);
+
+        subject.Reinitialize(() => reinitializedValue);
+
+        Assert.Equal(reinitializedValue, subject.Value);
+        Assert.False(subject.IsModified);
+    }
 }

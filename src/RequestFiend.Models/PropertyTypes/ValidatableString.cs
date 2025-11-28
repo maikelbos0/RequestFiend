@@ -4,29 +4,24 @@ using System;
 namespace RequestFiend.Models.PropertyTypes;
 
 public class ValidatableString : ObservableObject {
-    private string? initialValue;
     private string? value;
     private bool isModified;
     private bool hasError;
     
     public bool IsRequired { get; }
-
-    public Func<string?> DefaultValueProvider { get; }
-
+    public Func<string?> DefaultValueProvider { get; private set; }
     public string? Value {
         get => value;
         set {
             SetProperty(ref this.value, value);
             HasError = IsRequired && string.IsNullOrWhiteSpace(value);
-            IsModified = !HasError && value != initialValue;
+            IsModified = !HasError && value != DefaultValueProvider();
         }
     }
-
     public bool IsModified {
         get => isModified;
         set => SetProperty(ref isModified, value);
     }
-
     public bool HasError {
         get => hasError;
         private set => SetProperty(ref hasError, value);
@@ -41,6 +36,11 @@ public class ValidatableString : ObservableObject {
     }
 
     public void Reset() {
-        Value = initialValue = DefaultValueProvider();
+        Value = DefaultValueProvider();
+    }
+
+    public void Reinitialize(Func<string?> defaultValueProvider) {
+        DefaultValueProvider = defaultValueProvider;
+        Value = defaultValueProvider();
     }
 }
