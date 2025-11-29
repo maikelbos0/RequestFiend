@@ -18,28 +18,56 @@ public class NameValuePairModelCollectionTests {
 
         Assert.Equal(collection.Count, subject.Count);
 
-        for(var i = 0; i < collection.Count; i++) {
+        for (var i = 0; i < collection.Count; i++) {
             Assert.Equal(collection[i].Name, subject[i].Name.Value);
             Assert.Equal(collection[i].Value, subject[i].Value.Value);
         }
     }
 
     [Theory]
-    [InlineData(new string?[] {}, false)]
-    [InlineData(new string?[] { "Value", null }, true)]
-    [InlineData(new string?[] { "Value", "" }, true)]
-    [InlineData(new string?[] { "Value", "Value" }, false)]
-    public void HasError(string?[] values, bool expectedResult) {
-        var subject = new NameValuePairModelCollection([]);
+    [InlineData("", true)]
+    [InlineData("Value", false)]
+    public void Constructor_HasError(string value, bool expectedHasError) {
+        var collection = new List<NameValuePair>() {
+            new() { Name = "Name", Value = value }
+        };
 
-        foreach (var value in values) {
-            subject.Add(new() {
+        var subject = new NameValuePairModelCollection(collection);
+
+        Assert.Equal(expectedHasError, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("Value", false)]
+    public void Add(string? value, bool expectedHasError) {
+        var subject = new NameValuePairModelCollection([]) {
+            new() {
                 Name = { Value = "Name" },
                 Value = { Value = value }
-            });
-        }
+            }
+        };
 
-        Assert.Equal(expectedResult, subject.HasError);
+        Assert.Equal(expectedHasError, subject.HasError);
+        Assert.True(subject.HasItems);
+    }
+
+    [Fact]
+    public void Remove() {
+        var item = new NameValuePairModel() {
+            Name = { Value = "Name" },
+            Value = { Value = null }
+        };
+
+        var subject = new NameValuePairModelCollection([]) {
+            item
+        };
+
+        subject.Remove(item);
+
+        Assert.False(subject.HasError);
+        Assert.False(subject.HasItems);
     }
 
     [Fact]
@@ -62,7 +90,7 @@ public class NameValuePairModelCollectionTests {
         var subject = new NameValuePairModelCollection([]);
 
         subject.OnAddClicked();
-        
+
         Assert.Single(subject);
     }
 

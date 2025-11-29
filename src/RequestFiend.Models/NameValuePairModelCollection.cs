@@ -3,19 +3,39 @@ using RequestFiend.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 
 namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel> {
-    public bool HasItems => Count > 0;
-    public bool HasError => this.Any(item => item.HasError);
+    public bool HasItems {
+        get => field;
+        set {
+            if (field != value) {
+                field = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
+            }
+        }
+    }
+    public bool HasError {
+        get => field;
+        set {
+            if (field != value) {
+                field = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasError)));
+            }
+        }
+    }
     
     public NameValuePairModelCollection(List<NameValuePair> collection) {
-        CollectionChanged += (sender, e) => OnPropertyChanged(new(nameof(HasItems)));
+        CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            Add(new NameValuePairModel(item));
+            var pair = new NameValuePairModel(item);
+            Add(pair);
+            pair.PropertyChanged += OnItemPropertyChanged;
         }
     }
 
@@ -36,6 +56,29 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
         for (var i = 0; i < collection.Count; i++) {
             this[i].Reinitialize(collection[i]);
+        }
+    }
+
+    private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
+        HasItems = Count > 0;
+        HasError = this.Any(item => item.HasError);
+
+        if (e.OldItems != null) {
+            foreach (var item in e.OldItems) {
+                ((NameValuePairModel)item).PropertyChanged -= OnItemPropertyChanged;
+            }
+        }
+
+        if (e.NewItems != null) {
+            foreach (var item in e.NewItems) {
+                ((NameValuePairModel)item).PropertyChanged += OnItemPropertyChanged;
+            }
+        }
+    }
+
+    private void OnItemPropertyChanged(object? _, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(NameValuePairModel.HasError)) {
+            HasError = this.Any(item => item.HasError);
         }
     }
 }
