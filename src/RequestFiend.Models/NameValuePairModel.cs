@@ -8,6 +8,10 @@ namespace RequestFiend.Models;
 public class NameValuePairModel : ObservableObject {
     public ValidatableString Name { get; set; }
     public ValidatableString Value { get; set; }
+    public bool IsModified {
+        get => field;
+        set => SetProperty(ref field, value);
+    }
     public bool HasError {
         get => field;
         set => SetProperty(ref field, value);
@@ -21,6 +25,7 @@ public class NameValuePairModel : ObservableObject {
         Name = name;
         Value = value;
         HasError = Name.HasError || Value.HasError;
+        IsModified = Name.IsModified || Value.IsModified;
 
         Name.PropertyChanged += OnPropertyChanged;
         Value.PropertyChanged += OnPropertyChanged;
@@ -34,6 +39,9 @@ public class NameValuePairModel : ObservableObject {
     private void OnPropertyChanged(object? _, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(ValidatableString.HasError)) {
             HasError = Name.HasError || Value.HasError;
+        }
+        if (e.PropertyName == nameof(ValidatableString.IsModified)) {
+            IsModified = Name.IsModified || Value.IsModified;
         }
     }
 }

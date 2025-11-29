@@ -1,4 +1,5 @@
-﻿using RequestFiend.Core;
+﻿using Newtonsoft.Json.Linq;
+using RequestFiend.Core;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -9,39 +10,56 @@ public class NameValuePairModelTests {
     [InlineData("", "Value", true)]
     [InlineData("Name", "", true)]
     [InlineData("Name", "Value", false)]
-    public void Constructor_HasError(string name, string value, bool expectedResult) {
+    public void Constructor_NameValuePair(string name, string value, bool expectedHasError) {
         var subject = new NameValuePairModel(new() {
             Name = name,
             Value = value
         });
 
-        Assert.Equal(expectedResult, subject.HasError);
+        Assert.False(subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
+    }
+
+    [Fact]
+    public void Constructor_Empty() {
+        var subject = new NameValuePairModel();
+
+        Assert.True(subject.HasError);
+        Assert.False(subject.IsModified);
     }
 
     [Theory]
-    [InlineData(null, true)]
-    [InlineData("", true)]
-    [InlineData("Name", false)]
-    public void Name_HasError(string? name, bool expectedResult) {
-        var subject = new NameValuePairModel() {
-            Name = { Value = name },
-            Value = { Value = "Value" }
+    [InlineData("", false, true)]
+    [InlineData("Name", true, false)]
+    public void Name(string? name, bool expectedIsModified, bool expectedHasError) {
+        var subject = new NameValuePairModel(new() {
+            Name = "",
+            Value = "Value"
+        }) {
+            Name = {
+                Value = name
+            }
         };
 
-        Assert.Equal(expectedResult, subject.HasError);
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
     }
 
     [Theory]
-    [InlineData(null, true)]
-    [InlineData("", true)]
-    [InlineData("Value", false)]
-    public void Value_HasError(string? value, bool expectedResult) {
-        var subject = new NameValuePairModel() {
-            Name = { Value = "Name" },
-            Value = { Value = value }
+    [InlineData("", false, true)]
+    [InlineData("Value", true, false)]
+    public void Value(string? value, bool expectedIsModified, bool expectedHasError) {
+        var subject = new NameValuePairModel(new() {
+            Name = "Name",
+            Value = ""
+        }) {
+            Value = {
+                Value = value
+            }
         };
 
-        Assert.Equal(expectedResult, subject.HasError);
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
     }
 
     [Fact]
@@ -59,5 +77,6 @@ public class NameValuePairModelTests {
         Assert.False(subject.Name.IsModified);
         Assert.Equal(reinitializedPair.Value, subject.Value.Value);
         Assert.False(subject.Value.IsModified);
+        Assert.False(subject.IsModified);
     }
 }
