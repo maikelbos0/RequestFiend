@@ -10,12 +10,23 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel> {
+    private bool isCollectionModified = false;
+
     public bool HasItems {
         get => field;
         set {
             if (field != value) {
                 field = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
+            }
+        }
+    }
+    public bool IsModified {
+        get => field;
+        set {
+            if (field != value) {
+                field = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsModified)));
             }
         }
     }
@@ -33,10 +44,10 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            var pair = new NameValuePairModel(item);
-            Add(pair);
-            pair.PropertyChanged += OnItemPropertyChanged;
+            Add(new NameValuePairModel(item));
         }
+
+        IsModified = isCollectionModified = false;
     }
 
     [RelayCommand]
@@ -57,11 +68,14 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         for (var i = 0; i < collection.Count; i++) {
             this[i].Reinitialize(collection[i]);
         }
+
+        IsModified = isCollectionModified = false;
     }
 
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         HasItems = Count > 0;
         HasError = this.Any(item => item.HasError);
+        IsModified = isCollectionModified = true;
 
         if (e.OldItems != null) {
             foreach (var item in e.OldItems) {
@@ -79,6 +93,10 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     private void OnItemPropertyChanged(object? _, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(NameValuePairModel.HasError)) {
             HasError = this.Any(item => item.HasError);
+        }
+
+        if (e.PropertyName == nameof(NameValuePairModel.IsModified)) {
+            IsModified = isCollectionModified || this.Any(item => item.IsModified);
         }
     }
 }
