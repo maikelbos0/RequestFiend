@@ -5,14 +5,39 @@ namespace RequestFiend.Models.Tests;
 
 public class NameValuePairModelTests {
     [Theory]
-    [InlineData(null, null, true)]
     [InlineData("", "", true)]
-    [InlineData("Name", null, true)]
-    [InlineData(null, "Value", true)]
+    [InlineData("", "Value", true)]
+    [InlineData("Name", "", true)]
     [InlineData("Name", "Value", false)]
-    public void HasError(string? name, string? value, bool expectedResult) {
+    public void Constructor_HasError(string name, string value, bool expectedResult) {
+        var subject = new NameValuePairModel(new() {
+            Name = name,
+            Value = value
+        });
+
+        Assert.Equal(expectedResult, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("Name", false)]
+    public void Name_HasError(string? name, bool expectedResult) {
         var subject = new NameValuePairModel() {
             Name = { Value = name },
+            Value = { Value = "Value" }
+        };
+
+        Assert.Equal(expectedResult, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("Value", false)]
+    public void Value_HasError(string? value, bool expectedResult) {
+        var subject = new NameValuePairModel() {
+            Name = { Value = "Name" },
             Value = { Value = value }
         };
 
