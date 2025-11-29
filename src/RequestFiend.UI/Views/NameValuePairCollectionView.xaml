@@ -24,7 +24,8 @@
 
                     <Button 
                         Text="🗙"
-                        Clicked="OnRemoveClicked"
+                        Command="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource.RemoveClickedCommand, Source={x:Reference Root}}"
+                        CommandParameter="{Binding .}"
                         Style="{StaticResource SecondaryButton}" 
                         Margin="0, 10, 0, 0"
                         HorizontalOptions="Fill"
@@ -38,7 +39,7 @@
         <CollectionView.Footer>
             <Button 
                 Text="{Binding x:DataType='views:NameValuePairCollectionView', Path=AddButtonText, Source={x:Reference Root}}"
-                Clicked="OnAddClicked"
+                Command="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource.AddClickedCommand, Source={x:Reference Root}}"
                 Style="{x:StaticResource SecondaryButton}"
                 Margin="0, 10, 0, 0"
                 HorizontalOptions="Fill"

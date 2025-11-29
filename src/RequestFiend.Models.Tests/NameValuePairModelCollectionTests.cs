@@ -43,6 +43,30 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
+    public void OnRemoveClicked() {
+        var pair = new NameValuePairModel();
+        var subject = new NameValuePairModelCollection([]) {
+            new(),
+            pair,
+            new()
+        };
+
+        subject.OnRemoveClicked(pair);
+
+        Assert.Equal(2, subject.Count);
+        Assert.DoesNotContain(pair, subject);
+    }
+
+    [Fact]
+    public void OnAddClicked() {
+        var subject = new NameValuePairModelCollection([]);
+
+        subject.OnAddClicked();
+        
+        Assert.Single(subject);
+    }
+
+    [Fact]
     public void Reinitialize() {
         var subject = new NameValuePairModelCollection([]) {
             new(),

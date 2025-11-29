@@ -4,7 +4,6 @@ using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.UI.Messages;
 using System;
-using System.Text.Json;
 
 namespace RequestFiend.UI.Views;
 

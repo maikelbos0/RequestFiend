@@ -27,14 +27,4 @@ public partial class NameValuePairCollectionView : ContentView {
     public NameValuePairCollectionView() {
         InitializeComponent();
     }
-
-    public void OnRemoveClicked(object sender, EventArgs e) {
-        var button = (Button)sender;
-
-        ItemsSource.Remove((NameValuePairModel)button.BindingContext);
-    }
-
-    public void OnAddClicked(object sender, EventArgs e) {
-        ItemsSource.Add(new());
-    }
 }
