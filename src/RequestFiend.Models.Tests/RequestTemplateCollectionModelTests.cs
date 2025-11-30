@@ -92,10 +92,10 @@ public class RequestTemplateCollectionModelTests {
         var result = subject.TryUpdateRequestTemplateCollection(collection);
 
         Assert.False(result);
-        Assert.NotEqual(defaultUrl, collection.DefaultUrl);
-        Assert.NotEqual(headerName, collection.DefaultHeaders[0].Name);
-        Assert.NotEqual(headerValue, collection.DefaultHeaders[0].Value);
-        Assert.NotEqual(variableName, collection.Variables[0].Name);
-        Assert.NotEqual(variableValue, collection.Variables[0].Value);
+        Assert.Equal("https://previous", collection.DefaultUrl);
+        Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
+        Assert.Equal("PreviousValue", collection.DefaultHeaders[0].Value);
+        Assert.Equal("PreviousName", collection.Variables[0].Name);
+        Assert.Equal("PreviousValue", collection.Variables[0].Value);
     }
 }
