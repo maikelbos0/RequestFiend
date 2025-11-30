@@ -1,6 +1,7 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
@@ -10,32 +11,36 @@ namespace RequestFiend.Models;
 public class RequestTemplateModel : BoundModelBase {
     private static JsonSerializerOptions JsonSerializerOptions { get; } = new() { WriteIndented = true };
 
-    private ContentType contentType;
-    private bool usesStringContent;
-    private bool usesJsonContent;
-
     public ValidatableString Name { get; set; }
     public ValidatableString Method { get; set; }
     public ValidatableString Url { get; set; }
     public NameValuePairModelCollection Headers { get; set; }
     public ContentType ContentType {
-        get => contentType;
+        get => field;
         set {
-            if (SetProperty(ref contentType, value)) {
-                UsesStringContent = contentType is ContentType.Text or ContentType.Json;
-                UsesJsonContent = contentType is ContentType.Json;
+            if (SetProperty(ref field, value)) {
+                UsesStringContent = field is ContentType.Text or ContentType.Json;
+                UsesJsonContent = field is ContentType.Json;
             }
         }
     }
     public bool UsesStringContent {
-        get => usesStringContent;
-        set => SetProperty(ref usesStringContent, value);
+        get => field;
+        set => SetProperty(ref field, value);
     }
     public bool UsesJsonContent {
-        get => usesJsonContent;
-        set => SetProperty(ref usesJsonContent, value);
+        get => field;
+        set => SetProperty(ref field, value);
     }
     public ValidatableString StringContent { get; set; }
+    public bool IsModified {
+        get => field;
+        set => SetProperty(ref field, value);
+    }
+    public bool HasError {
+        get => field;
+        set => SetProperty(ref field, value);
+    }
 
     public RequestTemplateModel(RequestTemplate request) {
         Name = new(true, () => request.Name);
@@ -44,6 +49,14 @@ public class RequestTemplateModel : BoundModelBase {
         Headers = new(request.Headers);
         ContentType = request.ContentType;
         StringContent = new(false, () => request.StringContent);
+        HasError = Name.HasError || Method.HasError || Url.HasError || Headers.HasError || StringContent.HasError;
+        IsModified = Name.IsModified || Method.IsModified || Url.IsModified || Headers.IsModified || StringContent.IsModified;
+
+        Name.PropertyChanged += OnPropertyChanged;
+        Method.PropertyChanged += OnPropertyChanged;
+        Url.PropertyChanged += OnPropertyChanged;
+        ((INotifyPropertyChanged)Headers).PropertyChanged += OnPropertyChanged;
+        StringContent.PropertyChanged += OnPropertyChanged;
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
@@ -93,6 +106,15 @@ public class RequestTemplateModel : BoundModelBase {
         catch (Exception ex) {
             exception = ex;
             return false;
+        }
+    }
+
+    private void OnPropertyChanged(object? _, PropertyChangedEventArgs e) {
+        if (e.PropertyName == Constants.IsModified) {
+            IsModified = Name.IsModified || Method.IsModified || Url.IsModified || Headers.IsModified || StringContent.IsModified;
+        }
+        if (e.PropertyName == Constants.HasError) {
+            HasError = Name.HasError || Method.HasError || Url.HasError || Headers.HasError || StringContent.HasError;
         }
     }
 }

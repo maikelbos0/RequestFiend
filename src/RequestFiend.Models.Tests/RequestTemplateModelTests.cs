@@ -5,10 +5,104 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(ContentType.None, false, false)]
-    [InlineData(ContentType.Text, true, false)]
-    [InlineData(ContentType.Json, true, true)]
-    public void SetContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
+    [InlineData(null, false, true)]
+    [InlineData("Name", false, false)]
+    [InlineData("NewName", true, false)]
+    public void Name(string? name, bool expectedIsModified, bool expectedHasError) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var subject = new RequestTemplateModel(request) {
+            Name = { Value = name }
+        };
+
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, false, true)]
+    [InlineData("GET", false, false)]
+    [InlineData("POST", true, false)]
+    public void Method(string? method, bool expectedIsModified, bool expectedHasError) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var subject = new RequestTemplateModel(request) {
+            Method = { Value = method }
+        };
+
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, false, true)]
+    [InlineData("https://url", false, false)]
+    [InlineData("https://newurl", true, false)]
+    public void Url(string? url, bool expectedIsModified, bool expectedHasError) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var subject = new RequestTemplateModel(request) {
+            Url = { Value = url }
+        };
+
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, false, true)]
+    [InlineData("Value", false, false)]
+    [InlineData("NewValue", true, false)]
+    public void Headers(string? value, bool expectedIsModified, bool expectedHasError) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url",
+            Headers = {
+                new() { Name = "Name", Value = "Value" }
+            }
+        };
+        var subject = new RequestTemplateModel(request);
+
+        subject.Headers[0].Value.Value = value;
+
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasError, subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("Content", false)]
+    [InlineData("New Content", true)]
+    public void StringContent(string? stringContent, bool expectedIsModified) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url",
+            StringContent = "Content"
+        };
+        var subject = new RequestTemplateModel(request) {
+            StringContent = { Value = stringContent }
+        };
+
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.False(subject.HasError);
+    }
+
+    [Theory]
+    [InlineData(Core.ContentType.None, false, false)]
+    [InlineData(Core.ContentType.Text, true, false)]
+    [InlineData(Core.ContentType.Json, true, true)]
+    public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -34,6 +128,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
+        Assert.False(subject.IsModified);
+        Assert.False(subject.HasError);
     }
 
     [Fact]
@@ -43,7 +139,7 @@ public class RequestTemplateModelTests {
         const string url = "https://url";
         const string headerName = "Name";
         const string headerValue = "Value";
-        const ContentType contentType = ContentType.Json;
+        const ContentType contentType = Core.ContentType.Json;
         const string stringContent = "Content";
 
         var request = new RequestTemplate() {
@@ -53,7 +149,7 @@ public class RequestTemplateModelTests {
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            ContentType = ContentType.Text,
+            ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
         var subject = new RequestTemplateModel(request);
@@ -82,6 +178,8 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Headers[0].Name.IsModified);
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
+        Assert.False(subject.IsModified);
+        Assert.False(subject.HasError);
     }
 
     [Theory]
@@ -92,7 +190,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "https://url", null, "Value")]
     [InlineData("Name", "GET", "https://url", "Name", null)]
     public void TryUpdateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue) {
-        const ContentType contentType = ContentType.Json;
+        const ContentType contentType = Core.ContentType.Json;
         const string stringContent = "Content";
 
         var request = new RequestTemplate() {
@@ -102,7 +200,7 @@ public class RequestTemplateModelTests {
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            ContentType = ContentType.Text,
+            ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
         var subject = new RequestTemplateModel(request);
@@ -125,6 +223,8 @@ public class RequestTemplateModelTests {
         Assert.NotEqual(headerValue, request.Headers[0].Value);
         Assert.NotEqual(contentType, request.ContentType);
         Assert.NotEqual(stringContent, request.StringContent);
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasError);
     }
 
     [Theory]
@@ -139,7 +239,7 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://url",
-            ContentType = ContentType.Json,
+            ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
         var subject = new RequestTemplateModel(request);
@@ -166,7 +266,7 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://url",
-            ContentType = ContentType.Json,
+            ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
         var subject = new RequestTemplateModel(request);

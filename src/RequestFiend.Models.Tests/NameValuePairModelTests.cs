@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using RequestFiend.Core;
+﻿using RequestFiend.Core;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;

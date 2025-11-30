@@ -39,7 +39,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
             }
         }
     }
-    
+
     public NameValuePairModelCollection(List<NameValuePair> collection) {
         CollectionChanged += OnCollectionChanged;
 
@@ -91,11 +91,11 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     }
 
     private void OnItemPropertyChanged(object? _, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(NameValuePairModel.HasError)) {
+        if (e.PropertyName == Constants.HasError) {
             HasError = this.Any(item => item.HasError);
         }
 
-        if (e.PropertyName == nameof(NameValuePairModel.IsModified)) {
+        if (e.PropertyName == Constants.IsModified) {
             IsModified = isCollectionModified || this.Any(item => item.IsModified);
         }
     }

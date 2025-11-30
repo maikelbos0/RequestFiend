@@ -37,11 +37,11 @@ public class NameValuePairModel : ObservableObject {
     }
 
     private void OnPropertyChanged(object? _, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(ValidatableString.HasError)) {
-            HasError = Name.HasError || Value.HasError;
-        }
-        if (e.PropertyName == nameof(ValidatableString.IsModified)) {
+        if (e.PropertyName == Constants.IsModified) {
             IsModified = Name.IsModified || Value.IsModified;
+        }
+        if (e.PropertyName == Constants.HasError) {
+            HasError = Name.HasError || Value.HasError;
         }
     }
 }
