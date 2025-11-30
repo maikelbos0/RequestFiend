@@ -14,16 +14,7 @@ public class RequestTemplateModel : BoundModelBase {
     public ValidatableString Method { get; set; }
     public ValidatableString Url { get; set; }
     public NameValuePairModelCollection Headers { get; set; }
-    public ContentType ContentType {
-        get => field;
-        set {
-            if (SetProperty(ref field, value)) {
-                UsesStringContent = field is ContentType.Text or ContentType.Json;
-                UsesJsonContent = field is ContentType.Json;
-                // TODO modified
-            }
-        }
-    }
+    public ValidatableString ContentType { get; set; }
     public bool UsesStringContent {
         get => field;
         private set => SetProperty(ref field, value);
@@ -39,12 +30,14 @@ public class RequestTemplateModel : BoundModelBase {
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
         Headers = new(request.Headers);
-        ContentType = request.ContentType;
+        ContentType = new(true,() => Options.ContentTypeMap[request.ContentType]);
         StringContent = new(false, () => request.StringContent);
+
+        ContentType.PropertyChanged += OnContentTypeChanged;
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
-        if (Name.HasError || Method.HasError || Url.HasError || Headers.Any(header => header.Name.HasError || header.Value.HasError)) {
+        if (Name.HasError || Method.HasError || Url.HasError || Headers.Any(header => header.Name.HasError || header.Value.HasError) || ContentType.HasError) {
             return false;
         }
 
@@ -52,7 +45,7 @@ public class RequestTemplateModel : BoundModelBase {
         request.Method = Method.Value!;
         request.Url = Url.Value!;
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
-        request.ContentType = ContentType;
+        request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
         Name.Reset();
@@ -91,5 +84,10 @@ public class RequestTemplateModel : BoundModelBase {
             exception = ex;
             return false;
         }
+    }
+
+    private void OnContentTypeChanged(object? sender, EventArgs e) {
+        UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
     }
 }

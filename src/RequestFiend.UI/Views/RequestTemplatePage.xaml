@@ -39,11 +39,7 @@
 
                     <Label Text="Body" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <HorizontalStackLayout RadioButtonGroup.GroupName="ContentTypeGroup" RadioButtonGroup.SelectedValue="{Binding ContentType}">
-                        <RadioButton Content="None" Value="{x:Static core:ContentType.None}"/>
-                        <RadioButton Content="Text" Value="{x:Static core:ContentType.Text}"/>
-                        <RadioButton Content="JSON" Value="{x:Static core:ContentType.Json}"/>
-                    </HorizontalStackLayout>
+                    <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}" Grid.Row="1" />
 
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
                         <Button Text="Validate JSON" Clicked="OnValidateJsonClicked"/>

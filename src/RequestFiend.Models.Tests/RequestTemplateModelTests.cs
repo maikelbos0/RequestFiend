@@ -15,7 +15,7 @@ public class RequestTemplateModelTests {
             Url = "https://url"
         };
         var subject = new RequestTemplateModel(request) {
-            ContentType = contentType
+            ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
@@ -43,7 +43,7 @@ public class RequestTemplateModelTests {
         const string url = "https://url";
         const string headerName = "Name";
         const string headerValue = "Value";
-        const ContentType contentType = Core.ContentType.Json;
+        const string contentType = "JSON";
         const string stringContent = "Content";
 
         var request = new RequestTemplate() {
@@ -63,7 +63,7 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
-        subject.ContentType = contentType;
+        subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
         var result = subject.TryUpdateRequestTemplate(request);
@@ -74,7 +74,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(url, request.Url);
         Assert.Equal(headerName, request.Headers[0].Name);
         Assert.Equal(headerValue, request.Headers[0].Value);
-        Assert.Equal(contentType, request.ContentType);
+        Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
@@ -85,14 +85,14 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, null, null, null, null)]
-    [InlineData(null, "GET", "https://url", "Name", "Value")]
-    [InlineData("Name", null, "https://url", "Name", "Value")]
-    [InlineData("Name", "GET", null, "Name", "Value")]
-    [InlineData("Name", "GET", "https://url", null, "Value")]
-    [InlineData("Name", "GET", "https://url", "Name", null)]
-    public void TryUpdateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue) {
-        const ContentType contentType = Core.ContentType.Json;
+    [InlineData(null, null, null, null, null, null)]
+    [InlineData(null, "GET", "https://url", "Name", "Value", "JSON")]
+    [InlineData("Name", null, "https://url", "Name", "Value", "JSON")]
+    [InlineData("Name", "GET", null, "Name", "Value", "JSON")]
+    [InlineData("Name", "GET", "https://url", null, "Value", "JSON")]
+    [InlineData("Name", "GET", "https://url", "Name", null, "JSON")]
+    [InlineData("Name", "GET", "https://url", "Name", "Value", null)]
+    public void TryUpdateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
         const string stringContent = "Content";
 
         var request = new RequestTemplate() {
@@ -112,19 +112,19 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
-        subject.ContentType = contentType;
+        subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
         var result = subject.TryUpdateRequestTemplate(request);
 
         Assert.False(result);
-        Assert.NotEqual(name, request.Name);
-        Assert.NotEqual(method, request.Method);
-        Assert.NotEqual(url, request.Url);
-        Assert.NotEqual(headerName, request.Headers[0].Name);
-        Assert.NotEqual(headerValue, request.Headers[0].Value);
-        Assert.NotEqual(contentType, request.ContentType);
-        Assert.NotEqual(stringContent, request.StringContent);
+        Assert.Equal("Old", request.Name);
+        Assert.Equal("POST", request.Method);
+        Assert.Equal("https://previous", request.Url);
+        Assert.Equal("PreviousName", request.Headers[0].Name);
+        Assert.Equal("PreviousValue", request.Headers[0].Value);
+        Assert.Equal(Core.ContentType.Text, request.ContentType);
+        Assert.Equal("PreviousContent", request.StringContent);
     }
 
     [Theory]
