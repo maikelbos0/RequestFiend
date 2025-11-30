@@ -22,18 +22,32 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
     }
 
-    [Fact]
-    public void Constructor() {
+    [Theory]
+    [InlineData(Core.ContentType.None, false, false)]
+    [InlineData(Core.ContentType.Text, true, false)]
+    [InlineData(Core.ContentType.Json, true, true)]
+    public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://url",
+            Headers = {
+                new() { Name = "Name", Value = "Value" }
+            },
+            ContentType = contentType,
+            StringContent = "Content"
         };
         var subject = new RequestTemplateModel(request);
 
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
+        Assert.Equal(request.Headers[0].Name, subject.Headers[0].Name.Value);
+        Assert.Equal(request.Headers[0].Value, subject.Headers[0].Value.Value);
+        Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
+        Assert.Equal(request.StringContent, subject.StringContent.Value);
+        Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
+        Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
     }
 
     [Fact]

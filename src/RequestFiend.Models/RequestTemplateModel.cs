@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace RequestFiend.Models;
 
 public class RequestTemplateModel : BoundModelBase {
-    private static JsonSerializerOptions JsonSerializerOptions { get; } = new() { WriteIndented = true };
+    private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
     public ValidatableString Name { get; set; }
     public ValidatableString Method { get; set; }
@@ -34,6 +34,8 @@ public class RequestTemplateModel : BoundModelBase {
         StringContent = new(false, () => request.StringContent);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
+        UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
@@ -75,7 +77,7 @@ public class RequestTemplateModel : BoundModelBase {
         try {
             if (!string.IsNullOrEmpty(StringContent.Value)) {
                 var document = JsonDocument.Parse(StringContent.Value ?? "");
-                StringContent.Value = JsonSerializer.Serialize(document, JsonSerializerOptions);
+                StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
             }
             exception = null;
             return true;
