@@ -16,7 +16,7 @@ public class ValidatableString : ObservableObject {
     }
     public bool IsModified {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
     public bool HasError {
         get => field;

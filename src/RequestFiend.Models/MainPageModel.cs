@@ -1,5 +1,4 @@
-﻿using RequestFiend.Models.PropertyTypes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RequestFiend.Models;
 

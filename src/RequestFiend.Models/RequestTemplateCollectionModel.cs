@@ -24,7 +24,7 @@ public class RequestTemplateCollectionModel : BoundModelBase {
         collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
 
-        DefaultUrl.IsModified = false;
+        DefaultUrl.Reset();
         DefaultHeaders.Reinitialize(collection.DefaultHeaders);
         Variables.Reinitialize(collection.Variables);
 

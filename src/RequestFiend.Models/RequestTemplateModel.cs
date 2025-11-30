@@ -21,25 +21,26 @@ public class RequestTemplateModel : BoundModelBase {
             if (SetProperty(ref field, value)) {
                 UsesStringContent = field is ContentType.Text or ContentType.Json;
                 UsesJsonContent = field is ContentType.Json;
+                // TODO modified
             }
         }
     }
     public bool UsesStringContent {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
     public bool UsesJsonContent {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
     public ValidatableString StringContent { get; set; }
     public bool IsModified {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
     public bool HasError {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
 
     public RequestTemplateModel(RequestTemplate request) {
@@ -71,11 +72,11 @@ public class RequestTemplateModel : BoundModelBase {
         request.ContentType = ContentType;
         request.StringContent = StringContent.Value;
 
-        Name.IsModified = false;
-        Method.IsModified = false;
-        Url.IsModified = false;
+        Name.Reset();
+        Method.Reset();
+        Url.Reset();
         Headers.Reinitialize(request.Headers);
-        StringContent.IsModified = false;
+        StringContent.Reset();
 
         return true;
     }

@@ -10,11 +10,11 @@ public class NameValuePairModel : ObservableObject {
     public ValidatableString Value { get; set; }
     public bool IsModified {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
     public bool HasError {
         get => field;
-        set => SetProperty(ref field, value);
+        private set => SetProperty(ref field, value);
     }
 
     public NameValuePairModel() : this(new(true), new(true)) { }
