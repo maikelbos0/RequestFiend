@@ -6,7 +6,7 @@ namespace RequestFiend.Models.Tests;
 public class BoundModelBaseTests {
     [Theory]
     [MemberData(nameof(PageWidth_Sets_StackOProperties_Data))]
-    public void PageWidth_Sets_StackOProperties(double pageWidth, LayoutOptions expectedStackHorizontalOptions, StackOrientation expectedStackOrientation) {
+    public void PageWidth_Sets_StackOProperties(double pageWidth, LayoutOptions expectedStackHorizontalOptions, StackOrientation expectedStackOrientation, bool expectedStackIsHorizontal, bool expectedStackIsVertical) {
         var subject = new BoundModelBase() {
             PageWidth = pageWidth
         };
@@ -15,11 +15,11 @@ public class BoundModelBaseTests {
         Assert.Equal(expectedStackOrientation, subject.StackOrientation);
     }
 
-    public static TheoryData<double, LayoutOptions, StackOrientation> PageWidth_Sets_StackOProperties_Data()
+    public static TheoryData<double, LayoutOptions, StackOrientation, bool, bool> PageWidth_Sets_StackOProperties_Data()
         => new() {
-            { 400, LayoutOptions.Fill, StackOrientation.Vertical },
-            { 674, LayoutOptions.Fill, StackOrientation.Vertical },
-            { 675, LayoutOptions.End, StackOrientation.Horizontal },
-            { 900, LayoutOptions.End, StackOrientation.Horizontal },
+            { 400, LayoutOptions.Fill, StackOrientation.Vertical, false, true },
+            { 674, LayoutOptions.Fill, StackOrientation.Vertical, false, true },
+            { 675, LayoutOptions.End, StackOrientation.Horizontal, true, false },
+            { 900, LayoutOptions.End, StackOrientation.Horizontal, true, false },
         };
 }

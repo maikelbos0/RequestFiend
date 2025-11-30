@@ -6,37 +6,43 @@ namespace RequestFiend.Models;
 public class BoundModelBase : ObservableObject {
     private const double widthBreakpoint = 675;
 
-    private double pageWidth;
-    private LayoutOptions stackHorizontalOptions = LayoutOptions.End;
-    private StackOrientation stackOrientation;
-
     public double PageWidth {
-        get => pageWidth;
+        get => field;
         set {
-            if (SetProperty(ref pageWidth, value)) {
+            if (SetProperty(ref field, value)) {
                 EvaluateResponsiveProperties();
             }
         }
     }
-
     public LayoutOptions StackHorizontalOptions {
-        get => stackHorizontalOptions; 
-        private set => SetProperty(ref stackHorizontalOptions, value);
+        get => field; 
+        private set => SetProperty(ref field, value);
     }
-
     public StackOrientation StackOrientation {
-        get => stackOrientation; 
-        private set => SetProperty(ref stackOrientation, value);
+        get => field; 
+        private set => SetProperty(ref field, value);
+    }
+    public bool StackIsHorizontal {
+        get => field;
+        private set => SetProperty(ref field, value);
+    }
+    public bool StackIsVertical {
+        get => field;
+        private set => SetProperty(ref field, value);
     }
 
     private void EvaluateResponsiveProperties() {
         if (PageWidth < widthBreakpoint) {
             StackHorizontalOptions = LayoutOptions.Fill;
             StackOrientation = StackOrientation.Vertical;
+            StackIsHorizontal = false;
+            StackIsVertical = true;
         }
         else {
             StackHorizontalOptions = LayoutOptions.End;
             StackOrientation = StackOrientation.Horizontal;
+            StackIsHorizontal = true;
+            StackIsVertical = false;
         }
     }
 }
