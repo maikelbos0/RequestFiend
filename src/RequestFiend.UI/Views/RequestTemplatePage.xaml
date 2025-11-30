@@ -9,57 +9,53 @@
     x:DataType="models:RequestTemplateModel"
     x:TypeArguments="models:RequestTemplateModel">
 
-    <Grid RowDefinitions="*,Auto" RowSpacing="0">
-        <ScrollView>
-            <VerticalStackLayout>
-                <Border>
-                    <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                        <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                            <Button Text="Save changes" Clicked="OnUpdateRequestClicked"/>
+    <ScrollView>
+        <VerticalStackLayout>
+            <Border>
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                        <Button Text="Save changes" Clicked="OnUpdateRequestClicked" IsEnabled="{Binding IsModified}"/>
 
-                            <Button Text="Delete" Clicked="OnDeleteRequestClicked" Style="{StaticResource DangerButton}"/>
-                        </StackLayout>
+                        <Button Text="Delete" Clicked="OnDeleteRequestClicked" Style="{StaticResource DangerButton}"/>
+                    </StackLayout>
 
-                        <Label Text="Name" Style="{StaticResource EntryLabel}"/>
+                    <Label Text="Name" Style="{StaticResource EntryLabel}"/>
 
-                        <views:ValidatableEntry Text="{Binding Name}"/>
+                    <views:ValidatableEntry Text="{Binding Name}"/>
 
-                        <Grid ColumnDefinitions="*,3*">
-                            <Label Text="Method" Style="{StaticResource EntryLabel}"/>
+                    <Grid ColumnDefinitions="*,3*">
+                        <Label Text="Method" Style="{StaticResource EntryLabel}"/>
 
-                            <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>
+                        <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>
 
-                            <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
+                        <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
 
-                            <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" />
-                        </Grid>
+                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" />
+                    </Grid>
 
-                        <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+                    <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <views:NameValuePairCollectionView ItemsSource="{Binding Headers}" DeleteButtonText="Delete header" AddButtonText="Add header"/>
+                    <views:NameValuePairCollectionView ItemsSource="{Binding Headers}" DeleteButtonText="Delete header" AddButtonText="Add header"/>
 
-                        <Label Text="Body" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+                    <Label Text="Body" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                        <HorizontalStackLayout RadioButtonGroup.GroupName="ContentTypeGroup" RadioButtonGroup.SelectedValue="{Binding ContentType}">
-                            <RadioButton Content="None" Value="{x:Static core:ContentType.None}"/>
-                            <RadioButton Content="Text" Value="{x:Static core:ContentType.Text}"/>
-                            <RadioButton Content="JSON" Value="{x:Static core:ContentType.Json}"/>
-                        </HorizontalStackLayout>
+                    <HorizontalStackLayout RadioButtonGroup.GroupName="ContentTypeGroup" RadioButtonGroup.SelectedValue="{Binding ContentType}">
+                        <RadioButton Content="None" Value="{x:Static core:ContentType.None}"/>
+                        <RadioButton Content="Text" Value="{x:Static core:ContentType.Text}"/>
+                        <RadioButton Content="JSON" Value="{x:Static core:ContentType.Json}"/>
+                    </HorizontalStackLayout>
 
-                        <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
-                            <Button Text="Validate JSON" Clicked="OnValidateJsonClicked"/>
+                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
+                        <Button Text="Validate JSON" Clicked="OnValidateJsonClicked"/>
 
-                            <Button Text="Format JSON" Clicked="OnFormatJsonClicked"/>
-                        </StackLayout>
+                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked"/>
+                    </StackLayout>
 
-                        <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
+                    <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
 
-                        <views:ValidatableContentEditor Text="{Binding StringContent}" IsVisible="{Binding UsesStringContent}"/>
-                    </VerticalStackLayout>
-                </Border>
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <views:MessageLabel x:Name="MessageLabel" Grid.Row="1" />
-    </Grid>
+                    <views:ValidatableContentEditor Text="{Binding StringContent}" IsVisible="{Binding UsesStringContent}"/>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
 </views:RequestTemplateCollectionPageBase>

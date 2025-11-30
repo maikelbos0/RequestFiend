@@ -1,7 +1,6 @@
 using RequestFiend.Core;
 using RequestFiend.Models;
 using System;
-using System.Threading.Tasks;
 
 namespace RequestFiend.UI.Views;
 
@@ -22,8 +21,6 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
 
         await SaveCollection();
 
-        await MessageLabel.Show("Changes have been saved");
+        await ShowSuccess("Changes have been saved");
     }
-
-    public Task ShowMessage(string text) => MessageLabel.Show(text);
 }

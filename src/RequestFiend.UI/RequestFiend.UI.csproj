@@ -61,5 +61,5 @@
 		<ProjectReference Include="..\RequestFiend.Core\RequestFiend.Core.csproj" />
 		<ProjectReference Include="..\RequestFiend.Models\RequestFiend.Models.csproj" />
 	</ItemGroup>
-	
+
 </Project>

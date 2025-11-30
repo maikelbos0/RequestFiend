@@ -17,7 +17,9 @@ public partial class ContentPage<TModel> : ContentPage where TModel : BoundModel
         Model.PageWidth = Width;
     }
 
-    public async Task ShowError(string message) {
-        await this.ShowPopupAsync(new ErrorPopup(message));
-    }
+    public Task ShowError(string message)
+        => this.ShowPopupAsync(new ErrorPopup(message));
+
+    public Task ShowSuccess(string message)
+        => this.ShowPopupAsync(new SuccessPopup(message));
 }
