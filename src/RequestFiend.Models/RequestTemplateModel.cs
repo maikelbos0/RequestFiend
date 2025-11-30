@@ -1,7 +1,6 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
@@ -34,14 +33,6 @@ public class RequestTemplateModel : BoundModelBase {
         private set => SetProperty(ref field, value);
     }
     public ValidatableString StringContent { get; set; }
-    public bool IsModified {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
-    public bool HasError {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
 
     public RequestTemplateModel(RequestTemplate request) {
         Name = new(true, () => request.Name);
@@ -50,18 +41,10 @@ public class RequestTemplateModel : BoundModelBase {
         Headers = new(request.Headers);
         ContentType = request.ContentType;
         StringContent = new(false, () => request.StringContent);
-        HasError = Name.HasError || Method.HasError || Url.HasError || Headers.HasError || StringContent.HasError;
-        IsModified = Name.IsModified || Method.IsModified || Url.IsModified || Headers.IsModified || StringContent.IsModified;
-
-        Name.PropertyChanged += OnPropertyChanged;
-        Method.PropertyChanged += OnPropertyChanged;
-        Url.PropertyChanged += OnPropertyChanged;
-        ((INotifyPropertyChanged)Headers).PropertyChanged += OnPropertyChanged;
-        StringContent.PropertyChanged += OnPropertyChanged;
     }
 
     public bool TryUpdateRequestTemplate(RequestTemplate request) {
-        if (Name.HasError || Method.HasError || Url.HasError || Headers.HasError) {
+        if (Name.HasError || Method.HasError || Url.HasError || Headers.Any(header => header.Name.HasError || header.Value.HasError)) {
             return false;
         }
 
@@ -107,15 +90,6 @@ public class RequestTemplateModel : BoundModelBase {
         catch (Exception ex) {
             exception = ex;
             return false;
-        }
-    }
-
-    private void OnPropertyChanged(object? _, PropertyChangedEventArgs e) {
-        if (e.PropertyName == Constants.IsModified) {
-            IsModified = Name.IsModified || Method.IsModified || Url.IsModified || Headers.IsModified || StringContent.IsModified;
-        }
-        if (e.PropertyName == Constants.HasError) {
-            HasError = Name.HasError || Method.HasError || Url.HasError || Headers.HasError || StringContent.HasError;
         }
     }
 }

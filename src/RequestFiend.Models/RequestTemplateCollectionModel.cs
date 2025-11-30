@@ -16,7 +16,7 @@ public class RequestTemplateCollectionModel : BoundModelBase {
     }
 
     public bool TryUpdateRequestTemplateCollection(RequestTemplateCollection collection) {
-        if (DefaultHeaders.HasError || Variables.HasError) {
+        if (DefaultHeaders.Any(defaultHeader => defaultHeader.Name.HasError || defaultHeader.Value.HasError) || Variables.Any(variable => variable.Name.HasError || variable.Value.HasError)) {
             return false;
         }
 

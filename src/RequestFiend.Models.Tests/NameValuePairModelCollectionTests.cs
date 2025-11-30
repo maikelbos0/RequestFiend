@@ -18,7 +18,6 @@ public class NameValuePairModelCollectionTests {
 
         Assert.Equal(collection.Count, subject.Count);
         Assert.True(subject.HasItems);
-        Assert.False(subject.IsModified);
 
         for (var i = 0; i < collection.Count; i++) {
             Assert.Equal(collection[i].Name, subject[i].Name.Value);
@@ -26,49 +25,16 @@ public class NameValuePairModelCollectionTests {
         }
     }
 
-    [Theory]
-    [InlineData("", true)]
-    [InlineData("Value", false)]
-    public void Constructor_HasError(string value, bool expectedHasError) {
-        var collection = new List<NameValuePair>() {
-            new() { Name = "Name", Value = value }
-        };
-
-        var subject = new NameValuePairModelCollection(collection);
-
-        Assert.Equal(expectedHasError, subject.HasError);
-    }
-
-    [Theory]
-    [InlineData("Name", "Value", false)]
-    [InlineData("Name", "NewValue", true)]
-    [InlineData("NewName", "Value", true)]
-    public void IsModified(string name, string value, bool expectedisModified) {
-        var subject = new NameValuePairModelCollection(new() {
-            new() { Name = "Name", Value = "Value" }
-        });
-
-        subject[0].Name.Value = name;
-        subject[0].Value.Value = value;
-
-        Assert.Equal(expectedisModified, subject.IsModified);
-    }
-
-    [Theory]
-    [InlineData(null, true)]
-    [InlineData("", true)]
-    [InlineData("Value", false)]
-    public void Add(string? value, bool expectedHasError) {
+    [Fact]
+    public void Add() {
         var subject = new NameValuePairModelCollection([]) {
             new() {
                 Name = { Value = "Name" },
-                Value = { Value = value }
+                Value = { Value = "Value" }
             }
         };
 
-        Assert.Equal(expectedHasError, subject.HasError);
         Assert.True(subject.HasItems);
-        Assert.True(subject.IsModified);
     }
 
     [Fact]
@@ -84,9 +50,7 @@ public class NameValuePairModelCollectionTests {
 
         subject.Remove(item);
 
-        Assert.False(subject.HasError);
         Assert.False(subject.HasItems);
-        Assert.True(subject.IsModified);
     }
 
     [Fact]
@@ -128,7 +92,6 @@ public class NameValuePairModelCollectionTests {
         subject.Reinitialize(collection);
 
         Assert.Equal(collection.Count, subject.Count);
-        Assert.False(subject.IsModified);
 
         for (var i = 0; i < collection.Count; i++) {
             Assert.Equal(collection[i].Name, subject[i].Name.Value);
