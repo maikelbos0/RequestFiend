@@ -23,12 +23,10 @@ public partial class ValidatablePicker : AbsoluteLayout {
     }
 
     private void OnIconTapped(object sender, TappedEventArgs e) {
-        // Maybe in .net 10 it will be possible to open it; see https://github.com/dotnet/maui/issues/8945
-        Picker.Focus();
+        Picker.IsOpen = true;
     }
 
     private void OnIconPointerPressed(object sender, PointerEventArgs e) {
-        // Maybe in .net 10 it will be possible to open it; see https://github.com/dotnet/maui/issues/8945
-        Picker.Focus();
+        Picker.IsOpen = true;
     }
 }
