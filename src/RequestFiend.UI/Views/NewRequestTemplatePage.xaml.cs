@@ -9,7 +9,7 @@ namespace RequestFiend.UI.Views;
 
 public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<NewRequestTemplateModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
     public NewRequestTemplatePage(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
-        Model = new(collection);
+        Model = new(filePath, collection);
         InitializeComponent();
         WeakReferenceMessenger.Default.Register(this, filePath);
     }

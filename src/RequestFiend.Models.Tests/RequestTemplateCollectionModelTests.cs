@@ -13,7 +13,7 @@ public class RequestTemplateCollectionModelTests {
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
             }
         };
-        var subject = new RequestTemplateCollectionModel(collection);
+        var subject = new RequestTemplateCollectionModel(@"C:\Documents\External data requests.json", collection);
 
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
@@ -40,7 +40,7 @@ public class RequestTemplateCollectionModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
-        var subject = new RequestTemplateCollectionModel(collection);
+        var subject = new RequestTemplateCollectionModel(@"C:\Documents\External data requests.json", collection);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -81,7 +81,7 @@ public class RequestTemplateCollectionModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
-        var subject = new RequestTemplateCollectionModel(collection);
+        var subject = new RequestTemplateCollectionModel(@"C:\Documents\External data requests.json", collection);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;

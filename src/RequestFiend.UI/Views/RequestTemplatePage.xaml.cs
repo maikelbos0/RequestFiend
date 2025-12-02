@@ -12,7 +12,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
-        Model = new(request);
+        Model = new(filePath, collection, request);
         InitializeComponent();
     }
 

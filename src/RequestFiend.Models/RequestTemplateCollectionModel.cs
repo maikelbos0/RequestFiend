@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace RequestFiend.Models;
 
-public class RequestTemplateCollectionModel : BoundModelBase {
+public class RequestTemplateCollectionModel : RequestTemplateCollectionModelBase {
     public ValidatableString DefaultUrl { get; set; }
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
 
-    public RequestTemplateCollectionModel(RequestTemplateCollection collection) {
+    public RequestTemplateCollectionModel(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
         DefaultUrl = new(false, () => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);

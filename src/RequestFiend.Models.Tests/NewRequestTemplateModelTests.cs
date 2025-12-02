@@ -9,7 +9,7 @@ public class NewRequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default"
         };
-        var subject = new NewRequestTemplateModel(collection);
+        var subject = new NewRequestTemplateModel(@"C:\Documents\External data requests.json", collection);
 
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
     }
@@ -20,7 +20,7 @@ public class NewRequestTemplateModelTests {
         const string method = "GET";
         const string url = "https://url";
 
-        var subject = new NewRequestTemplateModel(new RequestTemplateCollection());
+        var subject = new NewRequestTemplateModel(@"C:\Documents\External data requests.json", new RequestTemplateCollection());
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -41,7 +41,7 @@ public class NewRequestTemplateModelTests {
     [InlineData("Name", null, "https://url")]
     [InlineData("Name", "GET", null)]
     public void TryCreateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url) {
-        var subject = new NewRequestTemplateModel(new RequestTemplateCollection());
+        var subject = new NewRequestTemplateModel(@"C:\Documents\External data requests.json", new RequestTemplateCollection());
 
         subject.Name.Value = name;
         subject.Method.Value = method;

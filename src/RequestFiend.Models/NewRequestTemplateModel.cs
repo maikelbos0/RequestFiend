@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RequestFiend.Models;
 
-public class NewRequestTemplateModel : BoundModelBase {
+public class NewRequestTemplateModel : RequestTemplateCollectionModelBase {
     public ValidatableString Name { get; set; } = new(true);
     public ValidatableString Method { get; set; } = new(true);
     public ValidatableString Url { get; set; } 
 
-    public NewRequestTemplateModel(RequestTemplateCollection collection) {
+    public NewRequestTemplateModel(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
         Url = new(true, () => collection.DefaultUrl);
     }
 

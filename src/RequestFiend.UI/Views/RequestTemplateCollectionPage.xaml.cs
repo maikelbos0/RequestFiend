@@ -10,7 +10,7 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
             collection.DefaultHeaders.Add(new() { Name = "Accept", Value = "application/json" });
             collection.DefaultHeaders.Add(new() { Name = "X-api-key", Value = Guid.NewGuid().ToString() });
         }
-        Model = new(collection);
+        Model = new(filePath, collection);
         InitializeComponent();
     }
 

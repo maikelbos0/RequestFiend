@@ -1,13 +1,14 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 
 namespace RequestFiend.Models;
 
-public class RequestTemplateModel : BoundModelBase {
+public class RequestTemplateModel : RequestTemplateCollectionModelBase {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
     public ValidatableString Name { get; set; }
@@ -24,8 +25,12 @@ public class RequestTemplateModel : BoundModelBase {
         private set => SetProperty(ref field, value);
     }
     public ValidatableString StringContent { get; set; }
+    public bool CanBeSaved {
+        get => field;
+        private set => SetProperty(ref field, value);
+    }
 
-    public RequestTemplateModel(RequestTemplate request) {
+    public RequestTemplateModel(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
@@ -88,8 +93,14 @@ public class RequestTemplateModel : BoundModelBase {
         }
     }
 
-    private void OnContentTypeChanged(object? sender, EventArgs e) {
+    private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == Constants.IsModified) {
+
+        }
     }
 }
