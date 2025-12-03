@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models;
+using RequestFiend.Models.Messages;
 using RequestFiend.UI.Messages;
 using System;
 
@@ -23,8 +24,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
         await SaveCollection();
         WeakReferenceMessenger.Default.Send(new RequestTemplateUpdatedMessage(request), request.Id);
-
-        await ShowSuccess("Changes have been saved");
+        WeakReferenceMessenger.Default.Send(new SuccessMessage("Changes have been saved"));
     }
 
     private async void OnDeleteRequestClicked(object sender, EventArgs e) {
@@ -39,7 +39,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     private async void OnValidateJsonClicked(object sender, EventArgs e) {
         if (Model.ValidateJson(out var exception)) {
-            await ShowSuccess("JSON content has been validated");
+            WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been validated"));
         }
         else {
             await ShowError($"Failed to validate JSON content: {exception.Message}");
@@ -48,7 +48,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     private async void OnFormatJsonClicked(object sender, EventArgs e) {
         if (Model.FormatJson(out var exception)) {
-            await ShowSuccess("JSON content has been formatted");
+            WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been formatted"));
         }
         else {
             await ShowError($"Failed to format JSON content: {exception.Message}");

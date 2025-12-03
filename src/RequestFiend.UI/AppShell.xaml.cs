@@ -1,11 +1,18 @@
-﻿using Microsoft.Maui.Controls;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
+using RequestFiend.Models.Messages;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell {
+public partial class AppShell : Shell, IRecipient<SuccessMessage> {
+    private CancellationTokenSource? messageCancellationTokenSource;
+
     public AppShell() {
         InitializeComponent();
+        WeakReferenceMessenger.Default.Register(this);
     }
 
     protected override void OnNavigated(ShellNavigatedEventArgs args) {
@@ -17,5 +24,28 @@ public partial class AppShell : Shell {
         var currentItem = CurrentItem;
         await GoToAsync("//MainPage");
         Items.Remove(currentItem);
+    }
+
+    public async void Receive(SuccessMessage message) {
+        this.messageCancellationTokenSource?.Cancel();
+
+        var messageCancellationTokenSource = this.messageCancellationTokenSource = new();
+
+        SuccessLabel.Text = message.Text;
+        SuccessLabel.Opacity = 1;
+        SuccessLabel.IsVisible = true;
+
+        await Task.Delay(1000);
+
+        for (var i = 0; i < 25; i++) {
+            if (messageCancellationTokenSource.Token.IsCancellationRequested) {
+                return;
+            }
+
+            SuccessLabel.Opacity = (25 - i) / 25.0;
+            await Task.Delay(40);
+        }
+
+        SuccessLabel.IsVisible = false;
     }
 }

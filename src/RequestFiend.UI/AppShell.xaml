@@ -5,21 +5,37 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     Title="RequestFiend">
-    
-    <Shell.TitleView>
-        <Grid ColumnDefinitions="*,Auto" Padding="15,0,15,0">
-            <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}"/>
 
-            <Button
-                x:Name="CloseButton" 
-                Text="🗙"
-                SemanticProperties.Description="Close collection" 
-                Clicked="OnCloseClicked"
-                Style="{StaticResource TitleButton}"
-                Grid.Column="1" 
-                IsVisible="False"/>
-        </Grid>
+    <Shell.TitleView>
+        <AbsoluteLayout>
+            <Grid ColumnDefinitions="*,Auto" Padding="15,0,15,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}"/>
+
+                <Button
+                    x:Name="CloseButton" 
+                    Text="🗙"
+                    SemanticProperties.Description="Close collection" 
+                    Clicked="OnCloseClicked"
+                    Style="{StaticResource TitleButton}"
+                    Grid.Column="1" 
+                    IsVisible="False"/>
+            </Grid>
+
+            <Label
+                xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                x:Name="SuccessLabel"
+	            BackgroundColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"
+	            FontSize="18"
+	            HorizontalOptions="Fill"
+	            HorizontalTextAlignment="Center"
+                VerticalTextAlignment="Center"
+	            Padding="25,10,25,10"
+	            IsVisible="False"
+                AbsoluteLayout.LayoutFlags="All"
+                AbsoluteLayout.LayoutBounds="0,0,1,1"/>
+        </AbsoluteLayout>
     </Shell.TitleView>
-    
+
     <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
 </Shell>

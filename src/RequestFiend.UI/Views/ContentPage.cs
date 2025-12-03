@@ -19,7 +19,4 @@ public partial class ContentPage<TModel> : ContentPage where TModel : BoundModel
 
     public Task ShowError(string message)
         => this.ShowPopupAsync(new ErrorPopup(message));
-
-    public Task ShowSuccess(string message)
-        => this.ShowPopupAsync(new SuccessPopup(message));
 }
