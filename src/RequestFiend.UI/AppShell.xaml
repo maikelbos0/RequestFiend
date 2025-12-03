@@ -9,14 +9,23 @@
     <Shell.TitleView>
         <AbsoluteLayout>
             <Grid ColumnDefinitions="*,Auto" Padding="15,0,15,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-                <Label x:Name="TitleLabel" Text="Home" Style="{StaticResource Title}"/>
+                <Label 
+                    x:Name="TitleLabel" 
+                    Text="Home" 
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    FontSize="32"
+                    LineBreakMode="TailTruncation"/>
 
                 <Button
                     x:Name="CloseButton" 
                     Text="🗙"
+                    FontSize="32"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    BackgroundColor="Transparent"
+                    Padding="0"
+                    MinimumWidthRequest="44"
                     SemanticProperties.Description="Close collection" 
                     Clicked="OnCloseClicked"
-                    Style="{StaticResource TitleButton}"
                     Grid.Column="1" 
                     IsVisible="False"/>
             </Grid>
