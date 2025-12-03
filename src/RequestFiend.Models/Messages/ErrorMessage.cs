@@ -1,3 +1,3 @@
 ﻿namespace RequestFiend.Models.Messages;
 
-public record SuccessMessage(string Text);
+public record ErrorMessage(string Text);

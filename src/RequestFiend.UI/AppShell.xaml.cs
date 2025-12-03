@@ -1,18 +1,20 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using RequestFiend.Models.Messages;
+using RequestFiend.UI.Views;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell, IRecipient<SuccessMessage> {
+public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<ErrorMessage> {
     private CancellationTokenSource? messageCancellationTokenSource;
 
     public AppShell() {
         InitializeComponent();
-        WeakReferenceMessenger.Default.Register(this);
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     protected override void OnNavigated(ShellNavigatedEventArgs args) {
@@ -47,5 +49,9 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage> {
         }
 
         SuccessLabel.IsVisible = false;
+    }
+
+    public async void Receive(ErrorMessage message) {
+        await this.ShowPopupAsync(new ErrorPopup(message.Text));
     }
 }

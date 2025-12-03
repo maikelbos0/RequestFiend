@@ -5,6 +5,7 @@ using Microsoft.Maui.Devices;
 using Microsoft.Maui.Storage;
 using RequestFiend.Core;
 using RequestFiend.Models;
+using RequestFiend.Models.Messages;
 using RequestFiend.UI.Configuration;
 using RequestFiend.UI.Messages;
 using System;
@@ -37,7 +38,7 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
             Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
         }
         else if (saveResult.Exception != null) {
-            await ShowError($"Failed to create collection: {saveResult.Exception.Message}");
+            WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to create collection: {saveResult.Exception.Message}"));
         }
     }
 
@@ -72,15 +73,15 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
                     Model.RecentCollections = RecentCollections.Push(filePath);
                 }
                 else {
-                    await ShowError("Failed to load collection.");
+                    WeakReferenceMessenger.Default.Send(new ErrorMessage("Failed to load collection."));
                 }
             }
             catch (Exception ex) {
-                await ShowError($"Failed to load collection: {ex.Message}");
+                WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to load collection: {ex.Message}"));
             }
         }
         else {
-            await ShowError("Collection file does not exist.");
+            WeakReferenceMessenger.Default.Send(new ErrorMessage("Collection file does not exist."));
             Model.RecentCollections = RecentCollections.Remove(filePath);
         }
     }

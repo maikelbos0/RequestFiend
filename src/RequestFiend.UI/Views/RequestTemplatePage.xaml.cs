@@ -42,7 +42,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
             WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been validated"));
         }
         else {
-            await ShowError($"Failed to validate JSON content: {exception.Message}");
+            WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to validate JSON content: {exception.Message}"));
         }
     }
 
@@ -51,7 +51,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
             WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been formatted"));
         }
         else {
-            await ShowError($"Failed to format JSON content: {exception.Message}");
+            WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to format JSON content: {exception.Message}"));
         }
     }
 }
