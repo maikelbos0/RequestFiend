@@ -1,5 +1,6 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using RequestFiend.Models.Services;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -25,12 +26,8 @@ public class RequestTemplateModel : RequestTemplateCollectionModelBase {
         private set => SetProperty(ref field, value);
     }
     public ValidatableString StringContent { get; set; }
-    public bool CanBeSaved {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
 
-    public RequestTemplateModel(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
+    public RequestTemplateModel(IFileService fileService, string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(fileService, filePath, collection) {
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
@@ -96,11 +93,5 @@ public class RequestTemplateModel : RequestTemplateCollectionModelBase {
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == Constants.IsModified) {
-
-        }
     }
 }

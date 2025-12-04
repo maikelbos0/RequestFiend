@@ -1,5 +1,6 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using RequestFiend.Models.Services;
 using System.Diagnostics.CodeAnalysis;
 
 namespace RequestFiend.Models;
@@ -9,7 +10,7 @@ public class NewRequestTemplateModel : RequestTemplateCollectionModelBase {
     public ValidatableString Method { get; set; } = new(true);
     public ValidatableString Url { get; set; } 
 
-    public NewRequestTemplateModel(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
+    public NewRequestTemplateModel(IFileService fileService, string filePath, RequestTemplateCollection collection) : base(fileService, filePath, collection) {
         Url = new(true, () => collection.DefaultUrl);
     }
 

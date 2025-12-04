@@ -1,8 +1,10 @@
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
+using RequestFiend.Models.Services;
 using System;
 
 namespace RequestFiend.UI.Views;
@@ -12,7 +14,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
-        Model = new(filePath, collection, request);
+        Model = new(Shell.Current.GetRequiredService<IFileService>(), filePath, collection, request);
         InitializeComponent();
     }
 

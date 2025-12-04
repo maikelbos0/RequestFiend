@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
-using RequestFiend.UI.Messages;
+using RequestFiend.Models.Messages;
 using RequestFiend.UI.Views;
 using System;
 using System.IO;
@@ -11,6 +12,9 @@ using System.Threading.Tasks;
 namespace RequestFiend.UI;
 
 public static class ShellExtensions {
+    public static T GetRequiredService<T>(this Shell shell) where T : notnull
+        => (shell.Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
+
     public static async Task OpenCollection(this Shell _, string filePath, RequestTemplateCollection collection) {
         var collectionItem = Shell.Current.Items.SingleOrDefault(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
 

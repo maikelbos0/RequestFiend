@@ -1,4 +1,6 @@
-﻿using RequestFiend.Core;
+﻿using NSubstitute;
+using RequestFiend.Core;
+using RequestFiend.Models.Services;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -14,7 +16,7 @@ public class RequestTemplateModelTests {
             Method = "GET",
             Url = "https://url"
         };
-        var subject = new RequestTemplateModel(@"C:\Documents\External data requests.json", new(), request) {
+        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new(), request) {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
@@ -37,7 +39,7 @@ public class RequestTemplateModelTests {
             ContentType = contentType,
             StringContent = "Content"
         };
-        var subject = new RequestTemplateModel(@"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new(), request);
 
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
@@ -70,7 +72,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(@"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -119,7 +121,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(@"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -156,7 +158,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(@"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new(), request);
 
         Assert.Equal(expectedResult, subject.ValidateJson(out var exception));
 
@@ -183,7 +185,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(@"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new(), request);
 
         Assert.Equal(expectedResult, subject.FormatJson(out var exception));
         Assert.Equal(subject.StringContent.Value, expectedStringContent);

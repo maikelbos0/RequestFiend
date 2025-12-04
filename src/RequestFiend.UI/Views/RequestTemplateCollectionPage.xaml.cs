@@ -1,7 +1,9 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
+using RequestFiend.Models.Services;
 using System;
 
 namespace RequestFiend.UI.Views;
@@ -12,7 +14,7 @@ public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPa
             collection.DefaultHeaders.Add(new() { Name = "Accept", Value = "application/json" });
             collection.DefaultHeaders.Add(new() { Name = "X-api-key", Value = Guid.NewGuid().ToString() });
         }
-        Model = new(filePath, collection);
+        Model = new(Shell.Current.GetRequiredService<IFileService>(), filePath, collection);
         InitializeComponent();
     }
 

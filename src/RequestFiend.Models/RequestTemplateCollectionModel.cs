@@ -1,5 +1,6 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using RequestFiend.Models.Services;
 using System.Linq;
 
 namespace RequestFiend.Models;
@@ -9,7 +10,7 @@ public class RequestTemplateCollectionModel : RequestTemplateCollectionModelBase
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
 
-    public RequestTemplateCollectionModel(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
+    public RequestTemplateCollectionModel(IFileService fileService, string filePath, RequestTemplateCollection collection) : base(fileService, filePath, collection) {
         DefaultUrl = new(false, () => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
