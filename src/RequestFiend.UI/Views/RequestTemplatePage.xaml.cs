@@ -14,7 +14,7 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
 
     public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(filePath, collection) {
         this.request = request;
-        Model = new(Shell.Current.GetRequiredService<IFileService>(), filePath, collection, request);
+        Model = new(Shell.Current.GetRequiredService<IFileService>(), Shell.Current.GetRequiredService<IPopupService>(), filePath, collection, request);
         InitializeComponent();
     }
 
@@ -26,16 +26,6 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         await SaveCollection();
         WeakReferenceMessenger.Default.Send(new RequestTemplateUpdatedMessage(request), request.Id);
         WeakReferenceMessenger.Default.Send(new SuccessMessage("Changes have been saved"));
-    }
-
-    private async void OnDeleteRequestClicked(object sender, EventArgs e) {
-        var popupResult = await this.ShowPopupAsync<bool>(new ConfirmPopup("Are you sure you want to delete this request?"));
-
-        if (!popupResult.WasDismissedByTappingOutsideOfPopup && popupResult.Result) {
-            collection.Requests.Remove(request);
-            await SaveCollection();
-            WeakReferenceMessenger.Default.Send(new RequestTemplateDeletedMessage(), request.Id);
-        }
     }
 
     private async void OnValidateJsonClicked(object sender, EventArgs e) {

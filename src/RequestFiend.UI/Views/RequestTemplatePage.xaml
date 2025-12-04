@@ -16,7 +16,7 @@
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
                         <Button Text="Save changes" Clicked="OnUpdateRequestClicked"/>
 
-                        <Button Text="Delete" Clicked="OnDeleteRequestClicked" Style="{StaticResource DangerButton}"/>
+                        <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"/>
                     </StackLayout>
 
                     <Label Text="Name" Style="{StaticResource EntryLabel}"/>

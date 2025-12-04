@@ -1,4 +1,7 @@
-﻿using RequestFiend.Core;
+﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
@@ -6,11 +9,15 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public class RequestTemplateModel : RequestTemplateCollectionModelBase {
+public partial class RequestTemplateModel : RequestTemplateCollectionModelBase {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
+
+    private readonly IPopupService popupService;
+    private readonly RequestTemplate request;
 
     public ValidatableString Name { get; set; }
     public ValidatableString Method { get; set; }
@@ -27,12 +34,16 @@ public class RequestTemplateModel : RequestTemplateCollectionModelBase {
     }
     public ValidatableString StringContent { get; set; }
 
-    public RequestTemplateModel(IFileService fileService, string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(fileService, filePath, collection) {
+
+    public RequestTemplateModel(IFileService fileService, IPopupService popupService, string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(fileService, filePath, collection) {
+        this.popupService = popupService;
+        this.request = request;
+
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
         Headers = new(request.Headers);
-        ContentType = new(true,() => Options.ContentTypeMap[request.ContentType]);
+        ContentType = new(true, () => Options.ContentTypeMap[request.ContentType]);
         StringContent = new(false, () => request.StringContent);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
@@ -87,6 +98,15 @@ public class RequestTemplateModel : RequestTemplateCollectionModelBase {
         catch (Exception ex) {
             exception = ex;
             return false;
+        }
+    }
+
+    [RelayCommand]
+    public async Task Delete() {
+        if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
+            collection.Requests.Remove(request);
+            await SaveCollection();
+            WeakReferenceMessenger.Default.Send(new RequestTemplateDeletedMessage(), request.Id);
         }
     }
 
