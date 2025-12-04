@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.Models;
-using RequestFiend.UI.Messages;
+using RequestFiend.Models.Messages;
 using System;
 
 namespace RequestFiend.UI.Views;

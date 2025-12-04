@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
-using RequestFiend.UI.Messages;
 using System;
 
 namespace RequestFiend.UI.Views;

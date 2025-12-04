@@ -7,7 +7,6 @@ using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
 using RequestFiend.UI.Configuration;
-using RequestFiend.UI.Messages;
 using System;
 using System.Collections.Generic;
 using System.IO;

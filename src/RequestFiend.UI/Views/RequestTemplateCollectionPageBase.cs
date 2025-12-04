@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models;
-using RequestFiend.UI.Messages;
+using RequestFiend.Models.Messages;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
