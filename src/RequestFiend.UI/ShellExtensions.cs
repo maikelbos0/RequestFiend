@@ -2,7 +2,9 @@
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
+using RequestFiend.Models;
 using RequestFiend.Models.Messages;
+using RequestFiend.Models.Services;
 using RequestFiend.UI.Views;
 using System;
 using System.IO;
@@ -15,7 +17,7 @@ public static class ShellExtensions {
     public static T GetRequiredService<T>(this Shell shell) where T : notnull
         => (shell.Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
 
-    public static async Task OpenCollection(this Shell _, string filePath, RequestTemplateCollection collection) {
+    public static async Task OpenCollection(this Shell shell, string filePath, RequestTemplateCollection collection) {
         var collectionItem = Shell.Current.Items.SingleOrDefault(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
 
         if (collectionItem == null) {
@@ -43,7 +45,7 @@ public static class ShellExtensions {
             });
 
             foreach (var request in collection.Requests) {
-                collectionItem.Items.Add(CreateRequestTab(filePath, collection, request));
+                collectionItem.Items.Add(CreateRequestTab(shell, filePath, collection, request));
             }
 
             Shell.Current.Items.Add(collectionItem);
@@ -54,18 +56,26 @@ public static class ShellExtensions {
 
     public static async Task OpenRequest(this Shell shell, string filePath, RequestTemplateCollection collection, RequestTemplate request) {
         var collectionItem = shell.Items.Single(item => string.Equals(item.StyleId, filePath, StringComparison.OrdinalIgnoreCase));
-        var item = CreateRequestTab(filePath, collection, request);
-        
+        var item = CreateRequestTab(shell, filePath, collection, request);
+
         collectionItem.Items.Add(item);
         await Shell.Current.GoToAsync($"//{collectionItem.Route}/{item.Route}");
     }
 
-    private static Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
+    private static Tab CreateRequestTab(this Shell shell, string filePath, RequestTemplateCollection collection, RequestTemplate request) {
+        using var scope = shell.GetRequiredService<IRequestTemplateCollectionProvider>().CreateScope(filePath, collection);
+
+        var model = new RequestTemplateModel(
+            shell.GetRequiredService<IRequestTemplateCollectionService>(),
+            shell.GetRequiredService<IPopupService>(),
+            shell.GetRequiredService<IMessageService>(),
+            request
+        );
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,
             Items = {
-                new RequestTemplatePage(filePath, collection, request)
+                new RequestTemplatePage(filePath, collection, request, model)
             },
             Route = $"RequestTemplate_{request.Id}"
         };

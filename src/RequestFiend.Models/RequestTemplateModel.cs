@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -13,10 +12,12 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateModel : RequestTemplateCollectionModelBase {
+public partial class RequestTemplateModel : BoundModelBase {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
+    private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
+    private readonly IMessageService messageService;
     private readonly RequestTemplate request;
 
     public ValidatableString Name { get; set; }
@@ -35,8 +36,10 @@ public partial class RequestTemplateModel : RequestTemplateCollectionModelBase {
     public ValidatableString StringContent { get; set; }
 
 
-    public RequestTemplateModel(IFileService fileService, IPopupService popupService, string filePath, RequestTemplateCollection collection, RequestTemplate request) : base(fileService, filePath, collection) {
+    public RequestTemplateModel(IRequestTemplateCollectionService requestTemplateCollectionService, IPopupService popupService, IMessageService messageService, RequestTemplate request) {
+        this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
+        this.messageService = messageService;
         this.request = request;
 
         Name = new(true, () => request.Name);
@@ -104,9 +107,9 @@ public partial class RequestTemplateModel : RequestTemplateCollectionModelBase {
     [RelayCommand]
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
-            collection.Requests.Remove(request);
-            await SaveCollection();
-            WeakReferenceMessenger.Default.Send(new RequestTemplateDeletedMessage(), request.Id);
+            requestTemplateCollectionService.Collection.Requests.Remove(request);
+            await requestTemplateCollectionService.Save();
+            messageService.Send(new RequestTemplateDeletedMessage(), request.Id);
         }
     }
 

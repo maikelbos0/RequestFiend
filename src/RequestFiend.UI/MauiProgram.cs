@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
+using System.IO.Abstractions;
 
 namespace RequestFiend.UI;
 
@@ -27,8 +28,13 @@ public static class MauiProgram {
     }
 
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
+        mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPopupService, Services.PopupService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IFileService, Services.FileService>();
+        mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
+        mauiAppBuilder.Services.AddSingleton<Models.Services.IRequestTemplateCollectionProvider, Models.Services.RequestTemplateCollectionProvider>();
+
+        mauiAppBuilder.Services.AddTransient<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();
 
         return mauiAppBuilder;
     }

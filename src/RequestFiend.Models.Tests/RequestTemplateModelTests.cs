@@ -1,6 +1,8 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,7 +19,7 @@ public class RequestTemplateModelTests {
             Method = "GET",
             Url = "https://url"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), Substitute.For<IPopupService>(), @"C:\Documents\External data requests.json", new(), request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request) {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
@@ -40,7 +42,7 @@ public class RequestTemplateModelTests {
             ContentType = contentType,
             StringContent = "Content"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), Substitute.For<IPopupService>(), @"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
 
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
@@ -52,7 +54,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
     }
-
+    
     [Fact]
     public void TryUpdateRequestTemplate() {
         const string name = "Name";
@@ -73,7 +75,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), Substitute.For<IPopupService>(), @"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -100,7 +102,7 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
     }
-
+    
     [Theory]
     [InlineData(null, null, null, null, null, null)]
     [InlineData(null, "GET", "https://url", "Name", "Value", "JSON")]
@@ -122,7 +124,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), Substitute.For<IPopupService>(), @"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -159,7 +161,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), Substitute.For<IPopupService>(), @"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
 
         Assert.Equal(expectedResult, subject.ValidateJson(out var exception));
 
@@ -186,7 +188,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IFileService>(), Substitute.For<IPopupService>(), @"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
 
         Assert.Equal(expectedResult, subject.FormatJson(out var exception));
         Assert.Equal(subject.StringContent.Value, expectedStringContent);
@@ -198,40 +200,54 @@ public class RequestTemplateModelTests {
             Assert.NotNull(exception);
         }
     }
-
+    
     [Fact]
     public async Task Delete_And_Confirm() {
-        var fileService = Substitute.For<IFileService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        requestTemplateCollectionService.Collection.Returns(collection);
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
+        var messageService = Substitute.For<IMessageService>();
 
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://url"
-        };
-        var subject = new RequestTemplateModel(fileService, popupService, @"C:\Documents\External data requests.json", new(), request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, request);
 
         await subject.Delete();
 
-        await fileService.Received(1).WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
+        Assert.Empty(collection.Requests);
+        await requestTemplateCollectionService.Received(1).Save();
+        messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), request.Id);
     }
-
+    
     [Fact]
     public async Task Delete_Without_Confirming() {
-        var fileService = Substitute.For<IFileService>();
-        var popupService = Substitute.For<IPopupService>();
-        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
-
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
             Url = "https://url"
         };
-        var subject = new RequestTemplateModel(fileService, popupService, @"C:\Documents\External data requests.json", new(), request);
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        requestTemplateCollectionService.Collection.Returns(collection);
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
+        var messageService = Substitute.For<IMessageService>();
+
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, request);
 
         await subject.Delete();
 
-        await fileService.DidNotReceive().WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
+        Assert.Equal(request, Assert.Single(collection.Requests));
+        await requestTemplateCollectionService.DidNotReceive().Save();
+        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<Guid>());
     }
 }
