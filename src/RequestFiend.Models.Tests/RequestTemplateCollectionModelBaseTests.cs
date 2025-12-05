@@ -1,7 +1,6 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Services;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -32,6 +31,6 @@ public class RequestTemplateCollectionModelBaseTests {
 
         await subject.SaveCollection();
 
-        await fileService.Received().WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
+        await fileService.Received(1).WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
     }
 }

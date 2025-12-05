@@ -214,7 +214,7 @@ public class RequestTemplateModelTests {
 
         await subject.Delete();
 
-        await fileService.Received().WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
+        await fileService.Received(1).WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Fact]
