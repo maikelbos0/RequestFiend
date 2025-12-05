@@ -44,9 +44,9 @@
                     <Grid IsVisible="{Binding StackIsHorizontal}" ColumnDefinitions="*,Auto,Auto">
                         <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
 
-                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" IsVisible="{Binding UsesJsonContent}" Grid.Column="1"/>
+                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" IsEnabled="{Binding UsesJsonContent}" Grid.Column="1"/>
 
-                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked" IsVisible="{Binding UsesJsonContent}"  Grid.Column="2"/>
+                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked" IsEnabled="{Binding UsesJsonContent}"  Grid.Column="2"/>
                     </Grid>
 
                     <Label Text="Content type" Style="{StaticResource EntryLabel}" IsVisible="{Binding StackIsVertical}"/>
@@ -54,9 +54,9 @@
                     <VerticalStackLayout Padding="0" IsVisible="{Binding StackIsVertical}">
                         <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
 
-                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" HorizontalOptions="Fill" IsVisible="{Binding UsesJsonContent}"/>
+                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
 
-                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked" HorizontalOptions="Fill" IsVisible="{Binding UsesJsonContent}"/>
+                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
                     </VerticalStackLayout>
 
                     <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
