@@ -24,13 +24,4 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         WeakReferenceMessenger.Default.Send(new RequestTemplateUpdatedMessage(request), request.Id);
         WeakReferenceMessenger.Default.Send(new SuccessMessage("Changes have been saved"));
     }
-
-    private async void OnFormatJsonClicked(object sender, EventArgs e) {
-        if (Model.FormatJson(out var exception)) {
-            WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been formatted"));
-        }
-        else {
-            WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to format JSON content: {exception.Message}"));
-        }
-    }
 }

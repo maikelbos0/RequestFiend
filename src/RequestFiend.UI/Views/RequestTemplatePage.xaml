@@ -46,7 +46,7 @@
 
                         <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" IsEnabled="{Binding UsesJsonContent}" Grid.Column="1"/>
 
-                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked" IsEnabled="{Binding UsesJsonContent}"  Grid.Column="2"/>
+                        <Button Text="Format JSON" Command="{Binding FormatJsonCommand}" IsEnabled="{Binding UsesJsonContent}"  Grid.Column="2"/>
                     </Grid>
 
                     <Label Text="Content type" Style="{StaticResource EntryLabel}" IsVisible="{Binding StackIsVertical}"/>
@@ -56,7 +56,7 @@
 
                         <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
 
-                        <Button Text="Format JSON" Clicked="OnFormatJsonClicked" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
+                        <Button Text="Format JSON" Command="{Binding FormatJsonCommand}" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
                     </VerticalStackLayout>
 
                     <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>

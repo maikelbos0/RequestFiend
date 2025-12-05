@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -7,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -77,7 +79,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     [RelayCommand]
-    public void ValidateJson() {
+    public async Task ValidateJson() {
         try {
             if (!string.IsNullOrEmpty(StringContent.Value)) {
                 _ = JsonDocument.Parse(StringContent.Value);
@@ -85,23 +87,21 @@ public partial class RequestTemplateModel : BoundModelBase {
             messageService.Send(new SuccessMessage("JSON content has been validated"));
         }
         catch (Exception exception) {
-            popupService.ShowErrorPopup($"Failed to validate JSON content: {exception.Message}");
-            
+            await popupService.ShowErrorPopup($"Failed to validate JSON content: {exception.Message}");
         }
     }
 
-    public bool FormatJson([NotNullWhen(false)] out Exception? exception) {
+    [RelayCommand]
+    public async Task FormatJson() {
         try {
             if (!string.IsNullOrEmpty(StringContent.Value)) {
                 var document = JsonDocument.Parse(StringContent.Value ?? "");
                 StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
             }
-            exception = null;
-            return true;
+            messageService.Send(new SuccessMessage("JSON content has been formatted"));
         }
-        catch (Exception ex) {
-            exception = ex;
-            return false;
+        catch (Exception exception) {
+            await popupService.ShowErrorPopup($"Failed to format JSON content: {exception.Message}");
         }
     }
 

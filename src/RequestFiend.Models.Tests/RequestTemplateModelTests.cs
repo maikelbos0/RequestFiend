@@ -151,7 +151,7 @@ public class RequestTemplateModelTests {
     [InlineData("")]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
-    public void ValidateJson_When_Valid(string? stringContent) {
+    public async Task ValidateJson_When_Valid(string? stringContent) {
         var popupService = Substitute.For<IPopupService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -163,16 +163,16 @@ public class RequestTemplateModelTests {
         };
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
 
-        subject.ValidateJson();
+        await subject.ValidateJson();
 
-        popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
-    public void ValidateJson_When_Invalid(string? stringContent) {
+    public async Task ValidateJson_When_Invalid(string? stringContent) {
         var popupService = Substitute.For<IPopupService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -184,20 +184,20 @@ public class RequestTemplateModelTests {
         };
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
 
-        subject.ValidateJson();
+        await subject.ValidateJson();
 
-        popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
+        await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
-    [InlineData(null, true, null)]
-    [InlineData("", true, "")]
-    [InlineData("Text", false, "Text")]
-    [InlineData("\"Field\":\"Value\"", false, "\"Field\":\"Value\"")]
-    [InlineData("{\"Object\":{\"Field\":\"Value\"}}", true, "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
-    [InlineData("{\"Array\":[0,1,2,3,4,5]}", true, "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
-    public void FormatJson(string? stringContent, bool expectedResult, string? expectedStringContent) {
+    [InlineData(null, null)]
+    [InlineData("", "")]
+    [InlineData("{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
+    [InlineData("{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
+    public async Task FormatJson_When_Valid(string? stringContent, string? expectedStringContent) {
+        var popupService = Substitute.For<IPopupService>();
+        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -205,17 +205,37 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
 
-        Assert.Equal(expectedResult, subject.FormatJson(out var exception));
+        await subject.FormatJson();
+
         Assert.Equal(subject.StringContent.Value, expectedStringContent);
 
-        if (expectedResult) {
-            Assert.Null(exception);
-        }
-        else {
-            Assert.NotNull(exception);
-        }
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Theory]
+    [InlineData("Text")]
+    [InlineData("\"Field\":\"Value\"")]
+    public async Task FormatJson_When_Invalid(string? stringContent) {
+        var popupService = Substitute.For<IPopupService>();
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url",
+            ContentType = Core.ContentType.Json,
+            StringContent = stringContent
+        };
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
+
+        await subject.FormatJson();
+
+        Assert.Equal(stringContent, subject.StringContent.Value);
+
+        await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 
     [Fact]
