@@ -4,6 +4,8 @@ using System;
 namespace RequestFiend.Models.Services;
 
 public class RequestTemplateCollectionProvider : IRequestTemplateCollectionProvider {
+    private (string FilePath, RequestTemplateCollection Collection)? data;
+
     private class Scope : IDisposable {
         private readonly RequestTemplateCollectionProvider provider;
 
@@ -16,8 +18,6 @@ public class RequestTemplateCollectionProvider : IRequestTemplateCollectionProvi
             provider.data = null;
         }
     }
-
-    private (string FilePath, RequestTemplateCollection Collection)? data;
 
     public IDisposable CreateScope(string filePath, RequestTemplateCollection collection) {
         if (data != null) {

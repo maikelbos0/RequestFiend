@@ -25,15 +25,6 @@ public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<Req
         WeakReferenceMessenger.Default.Send(new SuccessMessage("Changes have been saved"));
     }
 
-    private async void OnValidateJsonClicked(object sender, EventArgs e) {
-        if (Model.ValidateJson(out var exception)) {
-            WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been validated"));
-        }
-        else {
-            WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to validate JSON content: {exception.Message}"));
-        }
-    }
-
     private async void OnFormatJsonClicked(object sender, EventArgs e) {
         if (Model.FormatJson(out var exception)) {
             WeakReferenceMessenger.Default.Send(new SuccessMessage("JSON content has been formatted"));

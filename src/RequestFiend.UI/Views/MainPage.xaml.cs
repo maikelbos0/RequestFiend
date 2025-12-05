@@ -87,5 +87,5 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
 
     public void Receive(RequestTemplateCollectionUpdatedMessage message) {
         Model.RecentCollections = RecentCollections.Push(message.FilePath);
-    }
+    }   
 }

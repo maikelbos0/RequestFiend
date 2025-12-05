@@ -75,17 +75,17 @@ public partial class RequestTemplateModel : BoundModelBase {
         return true;
     }
 
-    public bool ValidateJson([NotNullWhen(false)] out Exception? exception) {
+    [RelayCommand]
+    public void ValidateJson() {
         try {
             if (!string.IsNullOrEmpty(StringContent.Value)) {
-                _ = JsonDocument.Parse(StringContent.Value ?? "");
+                _ = JsonDocument.Parse(StringContent.Value);
             }
-            exception = null;
-            return true;
+            messageService.Send(new SuccessMessage("JSON content has been validated"));
         }
-        catch (Exception ex) {
-            exception = ex;
-            return false;
+        catch (Exception exception) {
+            popupService.ShowErrorPopup($"Failed to validate JSON content: {exception.Message}");
+            
         }
     }
 

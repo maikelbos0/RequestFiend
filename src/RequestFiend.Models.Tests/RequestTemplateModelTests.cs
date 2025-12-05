@@ -54,7 +54,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
     }
-    
+
     [Fact]
     public void TryUpdateRequestTemplate() {
         const string name = "Name";
@@ -102,7 +102,7 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
     }
-    
+
     [Theory]
     [InlineData(null, null, null, null, null, null)]
     [InlineData(null, "GET", "https://url", "Name", "Value", "JSON")]
@@ -147,13 +147,13 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, true)]
-    [InlineData("", true)]
-    [InlineData("Text", false)]
-    [InlineData("\"Field\":\"Value\"", false)]
-    [InlineData("{\"Object\":{\"Field\":\"Value\"}}", true)]
-    [InlineData("{\"Array\":[0,1,2,3,4,5]}", true)]
-    public void ValidateJson(string? stringContent, bool expectedResult) {
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
+    [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
+    public void ValidateJson_When_Valid(string? stringContent) {
+        var popupService = Substitute.For<IPopupService>();
+        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -161,16 +161,33 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
 
-        Assert.Equal(expectedResult, subject.ValidateJson(out var exception));
+        subject.ValidateJson();
 
-        if (expectedResult) {
-            Assert.Null(exception);
-        }
-        else {
-            Assert.NotNull(exception);
-        }
+        popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Theory]
+    [InlineData("Text")]
+    [InlineData("\"Field\":\"Value\"")]
+    public void ValidateJson_When_Invalid(string? stringContent) {
+        var popupService = Substitute.For<IPopupService>();
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url",
+            ContentType = Core.ContentType.Json,
+            StringContent = stringContent
+        };
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
+
+        subject.ValidateJson();
+
+        popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
@@ -200,7 +217,7 @@ public class RequestTemplateModelTests {
             Assert.NotNull(exception);
         }
     }
-    
+
     [Fact]
     public async Task Delete_And_Confirm() {
         var request = new RequestTemplate() {
@@ -225,7 +242,7 @@ public class RequestTemplateModelTests {
         await requestTemplateCollectionService.Received(1).Save();
         messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), request.Id);
     }
-    
+
     [Fact]
     public async Task Delete_Without_Confirming() {
         var request = new RequestTemplate() {
