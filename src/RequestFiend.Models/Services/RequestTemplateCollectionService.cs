@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using RequestFiend.Core;
+﻿using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using System.IO.Abstractions;
 using System.Text.Json;
@@ -15,11 +14,11 @@ public class RequestTemplateCollectionService : IRequestTemplateCollectionServic
     public RequestTemplateCollection Collection { get; }
     public string Title { get; }
 
-    public RequestTemplateCollectionService(IMessageService messageService, IFileSystem fileSystem, (string FilePath, RequestTemplateCollection Collection) data) {
+    public RequestTemplateCollectionService(IMessageService messageService, IFileSystem fileSystem, IRequestTemplateCollectionProvider requestTemplateCollectionProvider) {
         this.messageService = messageService;
         this.fileSystem = fileSystem;
-        filePath = data.FilePath;
-        Collection = data.Collection;
+
+        (filePath, Collection) = requestTemplateCollectionProvider.GetData();
         Title = fileSystem.Path.GetFileNameWithoutExtension(filePath);
     }
 

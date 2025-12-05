@@ -3,27 +3,35 @@ using System;
 
 namespace RequestFiend.Models.Services;
 
-public class RequestTemplateCollectionProvider {
+public class RequestTemplateCollectionProvider : IRequestTemplateCollectionProvider {
     private class Scope : IDisposable {
         private readonly RequestTemplateCollectionProvider provider;
 
         public Scope(RequestTemplateCollectionProvider provider, string filePath, RequestTemplateCollection collection) {
             this.provider = provider;
-            provider.Data = (filePath, collection);
+            provider.data = (filePath, collection);
         }
 
         public void Dispose() {
-            provider.Data = null;
+            provider.data = null;
         }
     }
 
-    public (string FilePath, RequestTemplateCollection Collection)? Data { get; private set; }
+    private (string FilePath, RequestTemplateCollection Collection)? data;
 
     public IDisposable CreateScope(string filePath, RequestTemplateCollection collection) {
-        if (Data != null) {
-            throw new InvalidOperationException("Only one scope at a time is allowed; ensure previous scopes are disposed of");
+        if (data != null) {
+            throw new InvalidOperationException("Only one scope at a time is allowed.");
         }
 
         return new Scope(this, filePath, collection);
+    }
+
+    public (string FilePath, RequestTemplateCollection Collection) GetData() {
+        if (data == null) {
+            throw new InvalidOperationException("A scope is required.");
+        }
+
+        return data.Value;
     }
 }

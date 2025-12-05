@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Media;
-using NSubstitute;
+﻿using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -19,10 +17,14 @@ public class RequestTemplateCollectionServiceTests {
 
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.Path.GetFileNameWithoutExtension(filePath).Returns(title);
+        var collection = new RequestTemplateCollection();
+        var requestTemplateCollectionProvider = Substitute.For<IRequestTemplateCollectionProvider>();
+        requestTemplateCollectionProvider.GetData().Returns((filePath, collection));
 
-        var subject = new RequestTemplateCollectionService(Substitute.For<IMessageService>(), fileSystem, (filePath, new()));
+        var subject = new RequestTemplateCollectionService(Substitute.For<IMessageService>(), fileSystem, requestTemplateCollectionProvider);
 
         Assert.Equal("External data requests", subject.Title);
+        Assert.Equal(collection, subject.Collection);
     }
 
     [Fact]
@@ -37,8 +39,10 @@ public class RequestTemplateCollectionServiceTests {
                 new() { Name = "{{DefaultHeader}}", Value = "application/json" }
             ]
         };
+        var requestTemplateCollectionProvider = Substitute.For<IRequestTemplateCollectionProvider>();
+        requestTemplateCollectionProvider.GetData().Returns((filePath, collection));
 
-        var subject = new RequestTemplateCollectionService(messageService, fileSystem, (filePath, collection));
+        var subject = new RequestTemplateCollectionService(messageService, fileSystem, requestTemplateCollectionProvider);
 
         await subject.Save();
 

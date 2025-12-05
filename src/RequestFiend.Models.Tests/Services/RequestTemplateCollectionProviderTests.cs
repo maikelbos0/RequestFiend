@@ -7,19 +7,18 @@ namespace RequestFiend.Models.Tests.Services;
 
 public class RequestTemplateCollectionProviderTests {
     [Fact]
-    public void CreateScope_Sets_And_Clear_Data() {
+    public void CreateScope_And_GetData() {
         const string filePath = @"C:\Documents\External data requests.json";
         var collection = new RequestTemplateCollection();
 
         var subject = new RequestTemplateCollectionProvider();
 
         using (subject.CreateScope(filePath, collection)) {
-            Assert.True(subject.Data.HasValue);
-            Assert.Equal(filePath, subject.Data.Value.FilePath);
-            Assert.Equal(collection, subject.Data.Value.Collection);
-        }
+            var (filePathResult, collectionResult) = subject.GetData();
 
-        Assert.False(subject.Data.HasValue);
+            Assert.Equal(filePath, filePathResult);
+            Assert.Equal(collection, collectionResult);
+        }
     }
 
     [Fact]
@@ -32,5 +31,12 @@ public class RequestTemplateCollectionProviderTests {
         using (subject.CreateScope(filePath, collection)) {
             Assert.Throws<InvalidOperationException>(() => subject.CreateScope(filePath, collection));
         }
+    }
+
+    [Fact]
+    public void GetData_Throws_When_Outside_Scope() {
+        var subject = new RequestTemplateCollectionProvider();
+
+        Assert.Throws<InvalidOperationException>(() => subject.GetData());
     }
 }
