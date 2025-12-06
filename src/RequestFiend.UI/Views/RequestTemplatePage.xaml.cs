@@ -1,10 +1,9 @@
-using RequestFiend.Core;
 using RequestFiend.Models;
 
 namespace RequestFiend.UI.Views;
 
-public partial class RequestTemplatePage : RequestTemplateCollectionPageBase<RequestTemplateModel> {
-    public RequestTemplatePage(string filePath, RequestTemplateCollection collection, RequestTemplateModel model) : base(filePath, collection) {
+public partial class RequestTemplatePage : ContentPage<RequestTemplateModel> {
+    public RequestTemplatePage(RequestTemplateModel model) {
         Model = model;
         InitializeComponent();
     }
