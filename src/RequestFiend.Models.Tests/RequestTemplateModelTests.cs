@@ -56,7 +56,7 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
-    public void TryUpdateRequestTemplate() {
+    public async Task Update() {
         const string name = "Name";
         const string method = "GET";
         const string url = "https://url";
@@ -65,6 +65,8 @@ public class RequestTemplateModelTests {
         const string contentType = "JSON";
         const string stringContent = "Content";
 
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Old",
             Method = "POST",
@@ -75,7 +77,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -84,10 +86,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+    
+        await subject.Update();
 
-        var result = subject.TryUpdateRequestTemplate(request);
-
-        Assert.True(result);
         Assert.Equal(name, request.Name);
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);
@@ -101,6 +102,10 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Headers[0].Name.IsModified);
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
+
+        await requestTemplateCollectionService.Received(1).Save();
+        messageService.Received(1).Send(Arg.Is<RequestTemplateUpdatedMessage>(x => x.Request == request), request.Id);
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
@@ -111,9 +116,11 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "https://url", null, "Value", "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", null, "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", "Value", null)]
-    public void TryUpdateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
+    public async Task Update_Does_Nothing_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
         const string stringContent = "Content";
 
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Old",
             Method = "POST",
@@ -124,7 +131,7 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -134,9 +141,8 @@ public class RequestTemplateModelTests {
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
-        var result = subject.TryUpdateRequestTemplate(request);
+        await subject.Update();
 
-        Assert.False(result);
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);
         Assert.Equal("https://previous", request.Url);
@@ -144,6 +150,10 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
+
+        await requestTemplateCollectionService.DidNotReceive().Save();
+        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateUpdatedMessage>(), Arg.Any<Guid>());
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]

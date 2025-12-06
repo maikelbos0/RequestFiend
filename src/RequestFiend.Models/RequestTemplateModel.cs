@@ -56,9 +56,10 @@ public partial class RequestTemplateModel : BoundModelBase {
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
     }
 
-    public bool TryUpdateRequestTemplate(RequestTemplate request) {
+    [RelayCommand]
+    public async Task Update() {
         if (Name.HasError || Method.HasError || Url.HasError || Headers.Any(header => header.Name.HasError || header.Value.HasError) || ContentType.HasError) {
-            return false;
+            return;
         }
 
         request.Name = Name.Value!;
@@ -75,7 +76,9 @@ public partial class RequestTemplateModel : BoundModelBase {
         ContentType.Reset();
         StringContent.Reset();
 
-        return true;
+        await requestTemplateCollectionService.Save();
+        messageService.Send(new RequestTemplateUpdatedMessage(request), request.Id);
+        messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 
     [RelayCommand]

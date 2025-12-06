@@ -14,7 +14,7 @@
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                        <Button Text="Save changes" Clicked="OnUpdateRequestClicked"/>
+                        <Button Text="Save changes" Command="{Binding UpdateCommand}"/>
 
                         <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"/>
                     </StackLayout>

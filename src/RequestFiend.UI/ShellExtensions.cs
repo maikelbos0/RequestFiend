@@ -75,7 +75,7 @@ public static class ShellExtensions {
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,
             Items = {
-                new RequestTemplatePage(filePath, collection, request, model)
+                new RequestTemplatePage(filePath, collection, model)
             },
             Route = $"RequestTemplate_{request.Id}"
         };
