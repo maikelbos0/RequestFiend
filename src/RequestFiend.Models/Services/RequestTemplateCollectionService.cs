@@ -14,11 +14,11 @@ public class RequestTemplateCollectionService : IRequestTemplateCollectionServic
     public RequestTemplateCollection Collection { get; }
     public string Title { get; }
 
-    public RequestTemplateCollectionService(IMessageService messageService, IFileSystem fileSystem, IRequestTemplateCollectionProvider requestTemplateCollectionProvider) {
+    public RequestTemplateCollectionService(IMessageService messageService, IFileSystem fileSystem, ITransientDataProvider<(string, RequestTemplateCollection)> transientDataProvider) {
         this.messageService = messageService;
         this.fileSystem = fileSystem;
 
-        (filePath, Collection) = requestTemplateCollectionProvider.GetData();
+        (filePath, Collection) = transientDataProvider.GetData();
         Title = fileSystem.Path.GetFileNameWithoutExtension(filePath);
     }
 

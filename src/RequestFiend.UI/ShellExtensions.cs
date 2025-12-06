@@ -63,14 +63,10 @@ public static class ShellExtensions {
     }
 
     private static Tab CreateRequestTab(this Shell shell, string filePath, RequestTemplateCollection collection, RequestTemplate request) {
-        using var scope = shell.GetRequiredService<IRequestTemplateCollectionProvider>().CreateScope(filePath, collection);
+        using var _1 = shell.GetRequiredService<ITransientDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
+        using var _2 = shell.GetRequiredService<ITransientDataProvider<RequestTemplate>>().CreateScope(request);
 
-        var model = new RequestTemplateModel(
-            shell.GetRequiredService<IRequestTemplateCollectionService>(),
-            shell.GetRequiredService<IPopupService>(),
-            shell.GetRequiredService<IMessageService>(),
-            request
-        );
+        var model = shell.GetRequiredService<RequestTemplateModel>();
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,

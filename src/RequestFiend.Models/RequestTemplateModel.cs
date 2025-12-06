@@ -35,11 +35,11 @@ public partial class RequestTemplateModel : BoundModelBase {
     public ValidatableString StringContent { get; set; }
 
 
-    public RequestTemplateModel(IRequestTemplateCollectionService requestTemplateCollectionService, IPopupService popupService, IMessageService messageService, RequestTemplate request) {
+    public RequestTemplateModel(IRequestTemplateCollectionService requestTemplateCollectionService, IPopupService popupService, IMessageService messageService, ITransientDataProvider<RequestTemplate> requestTemplateProvider) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        this.request = request;
+        this.request = requestTemplateProvider.GetData();
 
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
