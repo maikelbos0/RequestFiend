@@ -42,12 +42,12 @@ public partial class RequestTemplateModel : BoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
-        IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)> requestTemplateProvider
+        IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)> modelDataProvider
     ) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        (filePath, collection, request) = requestTemplateProvider.GetData();
+        (filePath, collection, request) = modelDataProvider.GetData();
         
         Title = Path.GetFileNameWithoutExtension(filePath);
         Name = new(true, () => request.Name);

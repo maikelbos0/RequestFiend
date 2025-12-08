@@ -23,11 +23,11 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
     public RequestTemplateCollectionModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IMessageService messageService, 
-        IModelDataProvider<(string, RequestTemplateCollection)> requestTemplateProvider
+        IModelDataProvider<(string, RequestTemplateCollection)> modelDataProvider
     ) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.messageService = messageService;
-        (filePath, collection) = requestTemplateProvider.GetData();
+        (filePath, collection) = modelDataProvider.GetData();
 
         Title = Path.GetFileNameWithoutExtension(filePath);
         DefaultUrl = new(false, () => collection.DefaultUrl);
