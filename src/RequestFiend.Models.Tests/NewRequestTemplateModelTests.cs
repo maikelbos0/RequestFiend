@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -12,15 +13,18 @@ public class NewRequestTemplateModelTests {
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";
 
+        var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default"
         };
         var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
         modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
+        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, modelDataProvider);
 
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
+
+        messageService.Received().Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
     }
 
     [Fact]

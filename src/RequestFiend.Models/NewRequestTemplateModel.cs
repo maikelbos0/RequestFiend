@@ -3,7 +3,6 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -28,6 +27,11 @@ public partial class NewRequestTemplateModel : BoundModelBase {
         (filePath, collection) = modelDataProvider.GetData();
 
         Url = new(true, () => collection.DefaultUrl);
+        messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, filePath, (model, _) => {
+            if (!model.Url.IsModified) {
+                model.Url.Reset();
+            }
+        });
     }
 
     [RelayCommand]
