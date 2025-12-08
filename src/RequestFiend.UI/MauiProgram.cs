@@ -42,3 +42,6 @@ public static class MauiProgram {
         return mauiAppBuilder;
     }
 }
+
+// TODO register pages in service collection
+// TODO structure page/shell item titles

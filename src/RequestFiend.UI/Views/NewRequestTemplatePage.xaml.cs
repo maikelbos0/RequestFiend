@@ -22,7 +22,7 @@ public partial class NewRequestTemplatePage : RequestTemplateCollectionPageBase<
 
         collection.Requests.Add(request);
         await SaveCollection();
-        await Shell.Current.OpenRequest(filePath, collection, request);
+        WeakReferenceMessenger.Default.Send(new OpenTemplateRequestMessage(filePath, collection, request));
 
         Model.Reset();
     }

@@ -33,7 +33,7 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
         var saveResult = await FileSaver.Default.SaveAsync(".json", stream);
 
         if (saveResult.IsSuccessful) {
-            await Shell.Current.OpenCollection(saveResult.FilePath, collection);
+            WeakReferenceMessenger.Default.Send(new OpenCollectionRequestMessage(saveResult.FilePath, collection));
             Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
         }
         else if (saveResult.Exception != null) {
@@ -68,7 +68,7 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
                 var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(File.ReadAllText(filePath));
 
                 if (collection != null) {
-                    await Shell.Current.OpenCollection(filePath, collection);
+                    WeakReferenceMessenger.Default.Send(new OpenCollectionRequestMessage(filePath, collection));
                     Model.RecentCollections = RecentCollections.Push(filePath);
                 }
                 else {
