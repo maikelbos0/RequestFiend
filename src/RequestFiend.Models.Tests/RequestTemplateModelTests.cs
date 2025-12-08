@@ -314,6 +314,7 @@ public class RequestTemplateModelTests {
         Assert.Empty(collection.Requests);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), request.Id);
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Fact]
@@ -342,5 +343,6 @@ public class RequestTemplateModelTests {
         Assert.Equal(request, Assert.Single(collection.Requests));
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<Guid>());
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 }
