@@ -63,8 +63,7 @@ public static class ShellExtensions {
     }
 
     private static Tab CreateRequestTab(this Shell shell, string filePath, RequestTemplateCollection collection, RequestTemplate request) {
-        using var _1 = shell.GetRequiredService<ITransientDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
-        using var _2 = shell.GetRequiredService<ITransientDataProvider<RequestTemplate>>().CreateScope(request);
+        using var _ = shell.GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>().CreateScope((filePath, collection, request));
 
         var model = shell.GetRequiredService<RequestTemplateModel>();
         var item = new Tab() {

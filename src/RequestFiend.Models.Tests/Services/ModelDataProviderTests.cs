@@ -4,12 +4,12 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Services;
 
-public class TransientDataProviderTests {
+public class ModelDataProviderTests {
     [Fact]
     public void CreateScope_And_GetData() {
         const int value = 42;
 
-        var subject = new TransientDataProvider<int>();
+        var subject = new ModelDataProvider<int>();
 
         using (subject.CreateScope(value)) {
             var result = subject.GetData();
@@ -20,7 +20,7 @@ public class TransientDataProviderTests {
 
     [Fact]
     public void CreateScope_Throws_For_Double_Scope() {
-        var subject = new TransientDataProvider<int>();
+        var subject = new ModelDataProvider<int>();
 
         using (subject.CreateScope(42)) {
             Assert.Throws<InvalidOperationException>(() => subject.CreateScope(42));
@@ -29,7 +29,7 @@ public class TransientDataProviderTests {
 
     [Fact]
     public void GetData_Throws_When_Outside_Scope() {
-        var subject = new TransientDataProvider<int>();
+        var subject = new ModelDataProvider<int>();
 
         Assert.Throws<InvalidOperationException>(() => subject.GetData());
     }

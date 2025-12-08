@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace RequestFiend.Models.Services;
 
-public class TransientDataProvider<TData> : ITransientDataProvider<TData> {
+public class ModelDataProvider<TData> : IModelDataProvider<TData> {
     private TData? data;
 
     private class Scope : IDisposable {
-        private readonly TransientDataProvider<TData> provider;
+        private readonly ModelDataProvider<TData> provider;
 
-        public Scope(TransientDataProvider<TData> provider, TData data) {
+        public Scope(ModelDataProvider<TData> provider, TData data) {
             this.provider = provider;
             provider.data = data;
         }

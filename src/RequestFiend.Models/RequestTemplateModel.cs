@@ -5,6 +5,7 @@ using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -17,8 +18,11 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
+    private readonly string filePath;
+    private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
+    public string Title { get; }
     public ValidatableString Name { get; set; }
     public ValidatableString Method { get; set; }
     public ValidatableString Url { get; set; }
@@ -34,13 +38,18 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
     public ValidatableString StringContent { get; set; }
 
-
-    public RequestTemplateModel(IRequestTemplateCollectionService requestTemplateCollectionService, IPopupService popupService, IMessageService messageService, ITransientDataProvider<RequestTemplate> requestTemplateProvider) {
+    public RequestTemplateModel(
+        IRequestTemplateCollectionService requestTemplateCollectionService,
+        IPopupService popupService,
+        IMessageService messageService,
+        IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)> requestTemplateProvider
+    ) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        this.request = requestTemplateProvider.GetData();
-
+        (filePath, collection, request) = requestTemplateProvider.GetData();
+        
+        Title = Path.GetFileNameWithoutExtension(filePath);
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
@@ -73,7 +82,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         ContentType.Reset();
         StringContent.Reset();
 
-        await requestTemplateCollectionService.Save();
+        await requestTemplateCollectionService.Save(filePath, collection);
         messageService.Send(new RequestTemplateUpdatedMessage(request), request.Id);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
@@ -108,8 +117,8 @@ public partial class RequestTemplateModel : BoundModelBase {
     [RelayCommand]
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
-            requestTemplateCollectionService.Collection.Requests.Remove(request);
-            await requestTemplateCollectionService.Save();
+            collection.Requests.Remove(request);
+            await requestTemplateCollectionService.Save(filePath, collection);
             messageService.Send(new RequestTemplateDeletedMessage(), request.Id);
         }
     }

@@ -3,6 +3,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,12 +15,20 @@ public class RequestTemplateModelTests {
     [InlineData(Core.ContentType.Text, true, false)]
     [InlineData(Core.ContentType.Json, true, true)]
     public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
             Url = "https://url"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request) {
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((filePath, collection, request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider) {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
@@ -32,6 +41,8 @@ public class RequestTemplateModelTests {
     [InlineData(Core.ContentType.Text, true, false)]
     [InlineData(Core.ContentType.Json, true, true)]
     public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -42,8 +53,15 @@ public class RequestTemplateModelTests {
             ContentType = contentType,
             StringContent = "Content"
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), request);
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((filePath, collection, request));
 
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider);
+
+        Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.Title);
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -57,6 +75,7 @@ public class RequestTemplateModelTests {
 
     [Fact]
     public async Task Update() {
+        const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
         const string url = "https://url";
@@ -77,7 +96,13 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, request);
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((filePath, collection, request));
+
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, modelDataProvider);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -86,7 +111,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
-    
+
         await subject.Update();
 
         Assert.Equal(name, request.Name);
@@ -103,7 +128,7 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
 
-        await requestTemplateCollectionService.Received(1).Save();
+        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Is<RequestTemplateUpdatedMessage>(x => x.Request == request), request.Id);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
@@ -131,7 +156,10 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, request);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, modelDataProvider);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -151,7 +179,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
 
-        await requestTemplateCollectionService.DidNotReceive().Save();
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateUpdatedMessage>(), Arg.Any<Guid>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
@@ -171,7 +199,10 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
 
         await subject.ValidateJson();
 
@@ -192,7 +223,10 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
 
         await subject.ValidateJson();
 
@@ -215,7 +249,10 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
 
         await subject.FormatJson();
 
@@ -238,7 +275,10 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, request);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
 
         await subject.FormatJson();
 
@@ -250,6 +290,12 @@ public class RequestTemplateModelTests {
 
     [Fact]
     public async Task Delete_And_Confirm() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
+        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -258,23 +304,26 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
-        requestTemplateCollectionService.Collection.Returns(collection);
-        var popupService = Substitute.For<IPopupService>();
-        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
-        var messageService = Substitute.For<IMessageService>();
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, modelDataProvider);
 
         await subject.Delete();
 
         Assert.Empty(collection.Requests);
-        await requestTemplateCollectionService.Received(1).Save();
+        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), request.Id);
     }
 
     [Fact]
     public async Task Delete_Without_Confirming() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
+        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -283,18 +332,15 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
-        requestTemplateCollectionService.Collection.Returns(collection);
-        var popupService = Substitute.For<IPopupService>();
-        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
-        var messageService = Substitute.For<IMessageService>();
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
 
         await subject.Delete();
 
         Assert.Equal(request, Assert.Single(collection.Requests));
-        await requestTemplateCollectionService.DidNotReceive().Save();
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<Guid>());
     }
 }
