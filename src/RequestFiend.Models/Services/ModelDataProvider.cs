@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace RequestFiend.Models.Services;
 
-public class ModelDataProvider<TData> : IModelDataProvider<TData> {
+public class ModelDataProvider<TData> : IModelDataProvider<TData> where TData : struct {
     private TData? data;
 
     private class Scope : IDisposable {
@@ -20,7 +19,7 @@ public class ModelDataProvider<TData> : IModelDataProvider<TData> {
     }
 
     public IDisposable CreateScope(TData data) {
-        if (!EqualityComparer<TData>.Default.Equals(this.data, default)) {
+        if (this.data.HasValue) {
             throw new InvalidOperationException("Only one scope at a time is allowed.");
         }
 
@@ -28,10 +27,10 @@ public class ModelDataProvider<TData> : IModelDataProvider<TData> {
     }
 
     public TData GetData() {
-        if (EqualityComparer<TData>.Default.Equals(this.data, default)) {
+        if (!data.HasValue) {
             throw new InvalidOperationException("A scope is required.");
         }
 
-        return data!;
+        return data.Value;
     }
 }
