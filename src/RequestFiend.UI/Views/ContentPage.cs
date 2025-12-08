@@ -4,6 +4,7 @@ using System;
 
 namespace RequestFiend.UI.Views;
 
+// TODO simplify this - pass model in ctor?
 public partial class ContentPage<TModel> : ContentPage where TModel : BoundModelBase {
     public TModel Model {
         get => BindingContext as TModel ?? throw new InvalidOperationException();

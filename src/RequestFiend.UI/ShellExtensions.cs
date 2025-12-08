@@ -28,13 +28,16 @@ public static class ShellExtensions {
                 StyleId = filePath
             };
 
-            collectionItem.Items.Add(new Tab() {
-                Title = "Collection settings",
-                Icon = "bars_solid_full.png",
-                Items = {
-                    new RequestTemplateCollectionPage(filePath, collection)
+            // TODO register pages in service collection?
+            using (shell.GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection))) {
+                collectionItem.Items.Add(new Tab() {
+                    Title = "Collection settings",
+                    Icon = "bars_solid_full.png",
+                    Items = {
+                    new RequestTemplateCollectionPage(shell.GetRequiredService<RequestTemplateCollectionModel>())
                 }
-            });
+                });
+            }
 
             collectionItem.Items.Add(new Tab() {
                 Title = "New request",
@@ -65,12 +68,11 @@ public static class ShellExtensions {
     private static Tab CreateRequestTab(this Shell shell, string filePath, RequestTemplateCollection collection, RequestTemplate request) {
         using var _ = shell.GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>().CreateScope((filePath, collection, request));
 
-        var model = shell.GetRequiredService<RequestTemplateModel>();
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,
             Items = {
-                new RequestTemplatePage(model)
+                new RequestTemplatePage(shell.GetRequiredService<RequestTemplateModel>())
             },
             Route = $"RequestTemplate_{request.Id}"
         };

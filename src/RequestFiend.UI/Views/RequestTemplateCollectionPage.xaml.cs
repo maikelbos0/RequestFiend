@@ -1,30 +1,10 @@
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Controls;
-using RequestFiend.Core;
 using RequestFiend.Models;
-using RequestFiend.Models.Messages;
-using RequestFiend.Models.Services;
-using System;
 
 namespace RequestFiend.UI.Views;
 
-public partial class RequestTemplateCollectionPage : RequestTemplateCollectionPageBase<RequestTemplateCollectionModel> {
-    public RequestTemplateCollectionPage(string filePath, RequestTemplateCollection collection) : base(filePath, collection) {
-        if (collection.DefaultHeaders.Count == 0) {
-            collection.DefaultHeaders.Add(new() { Name = "Accept", Value = "application/json" });
-            collection.DefaultHeaders.Add(new() { Name = "X-api-key", Value = Guid.NewGuid().ToString() });
-        }
-        Model = new(Shell.Current.GetRequiredService<IFileService>(), filePath, collection);
+public partial class RequestTemplateCollectionPage : ContentPage<RequestTemplateCollectionModel> {
+    public RequestTemplateCollectionPage(RequestTemplateCollectionModel model) {
+        Model = model;
         InitializeComponent();
-    }
-
-    private async void OnUpdateCollectionClicked(object sender, EventArgs e) {
-        if (!Model.TryUpdateRequestTemplateCollection(collection)) {
-            return;
-        }
-
-        await SaveCollection();
-
-        WeakReferenceMessenger.Default.Send(new SuccessMessage("Changes have been saved"));
     }
 }

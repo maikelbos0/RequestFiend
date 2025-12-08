@@ -1,6 +1,11 @@
-﻿using NSubstitute;
+﻿using Microsoft.Win32.SafeHandles;
+using NSubstitute;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -8,6 +13,8 @@ namespace RequestFiend.Models.Tests;
 public class RequestTemplateCollectionModelTests {
     [Fact]
     public void Constructor() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default",
             DefaultHeaders = {
@@ -15,8 +22,12 @@ public class RequestTemplateCollectionModelTests {
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
             }
         };
-        var subject = new RequestTemplateCollectionModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", collection);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((filePath, collection));
 
+        var subject = new RequestTemplateCollectionModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
+
+        Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.Title);
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
@@ -26,13 +37,16 @@ public class RequestTemplateCollectionModelTests {
     }
 
     [Fact]
-    public void TryUpdateRequestTemplateCollection() {
+    public async Task TryUpdateRequestTemplateCollection() {
+        const string filePath = @"C:\Documents\External data requests.json";
         const string defaultUrl = "https://default";
         const string headerName = "Name";
         const string headerValue = "Value";
         const string variableName = "Name";
         const string variableValue = "Value";
 
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             DefaultHeaders = {
@@ -42,7 +56,10 @@ public class RequestTemplateCollectionModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
-        var subject = new RequestTemplateCollectionModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", collection);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((filePath, collection));
+
+        var subject = new RequestTemplateCollectionModel(requestTemplateCollectionService, messageService, modelDataProvider);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -50,9 +67,8 @@ public class RequestTemplateCollectionModelTests {
         subject.Variables[0].Name.Value = variableName;
         subject.Variables[0].Value.Value = variableValue;
 
-        var result = subject.TryUpdateRequestTemplateCollection(collection);
+        await subject.Update();
 
-        Assert.True(result);
         Assert.Equal(defaultUrl, collection.DefaultUrl);
         Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
         Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
@@ -63,6 +79,9 @@ public class RequestTemplateCollectionModelTests {
         Assert.False(subject.DefaultHeaders[0].Value.IsModified);
         Assert.False(subject.Variables[0].Name.IsModified);
         Assert.False(subject.Variables[0].Value.IsModified);
+
+        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
@@ -71,9 +90,11 @@ public class RequestTemplateCollectionModelTests {
     [InlineData(null, "Value", "Name", "Value")]
     [InlineData("Name", "Value", null, "Value")]
     [InlineData("Name", "Value", "Name", null)]
-    public void TryUpdateRequestTemplateCollection_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
+    public async Task TryUpdateRequestTemplateCollection_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
         const string defaultUrl = "https://default";
 
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             DefaultHeaders = {
@@ -83,7 +104,10 @@ public class RequestTemplateCollectionModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
-        var subject = new RequestTemplateCollectionModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", collection);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", collection));
+
+        var subject = new RequestTemplateCollectionModel(requestTemplateCollectionService, messageService, modelDataProvider);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -91,13 +115,15 @@ public class RequestTemplateCollectionModelTests {
         subject.Variables[0].Name.Value = variableName;
         subject.Variables[0].Value.Value = variableValue;
 
-        var result = subject.TryUpdateRequestTemplateCollection(collection);
+        await subject.Update();
 
-        Assert.False(result);
         Assert.Equal("https://previous", collection.DefaultUrl);
         Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
         Assert.Equal("PreviousValue", collection.DefaultHeaders[0].Value);
         Assert.Equal("PreviousName", collection.Variables[0].Name);
         Assert.Equal("PreviousValue", collection.Variables[0].Value);
+
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 }
