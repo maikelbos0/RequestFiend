@@ -1,6 +1,8 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -8,33 +10,54 @@ namespace RequestFiend.Models.Tests;
 public class NewRequestTemplateModelTests {
     [Fact]
     public void Constructor() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default"
         };
-        var subject = new NewRequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", collection);
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((filePath, collection));
+
+        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
     }
 
     [Fact]
-    public void TryCreateRequestTemplate() {
+    public async Task Create() {
+        const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
         const string url = "https://url";
 
-        var subject = new NewRequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new RequestTemplateCollection());
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
+        var collection = new RequestTemplateCollection() {
+            DefaultUrl = "https://default"
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((filePath, collection));
+
+        var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, modelDataProvider);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
         subject.Url.Value = url;
 
-        var result = subject.TryCreateRequestTemplate(out var request);
+        await subject.Create();
 
-        Assert.True(result);
+        var request = Assert.Single(collection.Requests);
         Assert.NotNull(request);
         Assert.Equal(name, request.Name);
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);
+
+        Assert.False(subject.Name.IsModified);
+        Assert.False(subject.Method.IsModified);
+        Assert.False(subject.Url.IsModified);
+
+        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
@@ -42,17 +65,33 @@ public class NewRequestTemplateModelTests {
     [InlineData(null, "GET", "https://url")]
     [InlineData("Name", null, "https://url")]
     [InlineData("Name", "GET", null)]
-    public void TryCreateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url) {
-        var subject = new NewRequestTemplateModel(Substitute.For<IFileService>(), @"C:\Documents\External data requests.json", new RequestTemplateCollection());
+    public async Task TryCreateRequestTemplate_Fails_When_Invalid(string? name, string? method, string? url) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
+        var collection = new RequestTemplateCollection() {
+            DefaultUrl = "https://default"
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((filePath, collection));
+
+        var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, modelDataProvider);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
         subject.Url.Value = url;
 
-        var result = subject.TryCreateRequestTemplate(out var request);
+        await subject.Create();
+        
+        Assert.Empty(collection.Requests);
 
-        Assert.False(result);
-        Assert.Null(request);
+        Assert.Equal(name, subject.Name.Value);
+        Assert.Equal(method, subject.Method.Value);
+        Assert.Equal(url, subject.Url.Value);
+
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 }
 

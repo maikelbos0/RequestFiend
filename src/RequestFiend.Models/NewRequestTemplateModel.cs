@@ -1,36 +1,54 @@
-﻿using RequestFiend.Core;
+﻿using CommunityToolkit.Mvvm.Input;
+using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public class NewRequestTemplateModel : RequestTemplateCollectionModelBase {
+public partial class NewRequestTemplateModel : BoundModelBase {
+    private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
+    private readonly IMessageService messageService;
+    private readonly string filePath;
+    private readonly RequestTemplateCollection collection;
+
     public ValidatableString Name { get; set; } = new(true);
     public ValidatableString Method { get; set; } = new(true);
-    public ValidatableString Url { get; set; } 
+    public ValidatableString Url { get; set; }
 
-    public NewRequestTemplateModel(IFileService fileService, string filePath, RequestTemplateCollection collection) : base(fileService, filePath, collection) {
+    public NewRequestTemplateModel(
+        IRequestTemplateCollectionService requestTemplateCollectionService,
+        IMessageService messageService,
+        IModelDataProvider<(string, RequestTemplateCollection)> modelDataProvider
+    ) {
+        this.requestTemplateCollectionService = requestTemplateCollectionService;
+        this.messageService = messageService;
+        (filePath, collection) = modelDataProvider.GetData();
+
         Url = new(true, () => collection.DefaultUrl);
     }
 
-    public bool TryCreateRequestTemplate([NotNullWhen(true)] out RequestTemplate? request) {
+    [RelayCommand]
+    public async Task Create() {
         if (Name.HasError || Method.HasError || Url.HasError) {
-            request = null;
-            return false;
+            return;
         }
 
-        request = new() {
+        var request = new RequestTemplate() {
             Name = Name.Value!,
             Method = Method.Value!,
             Url = Url.Value!
         };
-        return true;
-    }
+        collection.Requests.Add(request);
 
-    public void Reset() {
         Name.Reset();
-        Method.Reset(); 
+        Method.Reset();
         Url.Reset();
+
+        await requestTemplateCollectionService.Save(filePath, collection);
+        messageService.Send(new OpenTemplateRequestMessage(filePath, collection, request));
+        messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 }

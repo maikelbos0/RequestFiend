@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<views:RequestTemplateCollectionPageBase
+<views:ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
@@ -14,7 +14,7 @@
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                        <Button Text="Create new request" Clicked="OnCreateRequestTemplateClicked"/>
+                        <Button Text="Create new request" Command="{Binding CreateCommand}"/>
                     </StackLayout>
 
                     <Label Text="Name" Style="{StaticResource EntryLabel}"/>
@@ -34,4 +34,4 @@
             </Border>
         </VerticalStackLayout>
     </ScrollView>
-</views:RequestTemplateCollectionPageBase>
+</views:ContentPage>

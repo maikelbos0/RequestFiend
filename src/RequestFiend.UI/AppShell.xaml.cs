@@ -80,15 +80,15 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Er
                     new RequestTemplateCollectionPage(GetRequiredService<RequestTemplateCollectionModel>())
                 }
                 });
-            }
 
-            collectionItem.Items.Add(new Tab() {
-                Title = "New request",
-                Icon = "plus_solid_full.png",
-                Items = {
-                    new NewRequestTemplatePage(message.FilePath, message.Collection)
+                collectionItem.Items.Add(new Tab() {
+                    Title = "New request",
+                    Icon = "plus_solid_full.png",
+                    Items = {
+                    new NewRequestTemplatePage(GetRequiredService<NewRequestTemplateModel>())
                 }
-            });
+                });
+            }
 
             foreach (var request in message.Collection.Requests) {
                 collectionItem.Items.Add(CreateRequestTab(message.FilePath, message.Collection, request));
