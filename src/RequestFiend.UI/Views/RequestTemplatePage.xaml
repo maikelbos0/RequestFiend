@@ -7,7 +7,6 @@
     xmlns:core="clr-namespace:RequestFiend.Core;assembly=RequestFiend.Core"
     x:Class="RequestFiend.UI.Views.RequestTemplatePage"
     x:DataType="models:RequestTemplateModel"
-    x:TypeArguments="models:RequestTemplateModel"
     Title="{Binding Title}">
 
     <ScrollView>

@@ -2,9 +2,8 @@ using RequestFiend.Models;
 
 namespace RequestFiend.UI.Views;
 
-public partial class RequestTemplatePage : ContentPage<RequestTemplateModel> {
-    public RequestTemplatePage(RequestTemplateModel model) {
-        Model = model;
+public partial class RequestTemplatePage : ContentPage {
+    public RequestTemplatePage(RequestTemplateModel model) : base(model) {
         InitializeComponent();
     }
 }

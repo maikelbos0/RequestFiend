@@ -15,11 +15,11 @@ public class BoundModelBase : ObservableObject {
         }
     }
     public LayoutOptions StackHorizontalOptions {
-        get => field; 
+        get => field;
         private set => SetProperty(ref field, value);
     }
     public StackOrientation StackOrientation {
-        get => field; 
+        get => field;
         private set => SetProperty(ref field, value);
     }
     public bool StackIsHorizontal {

@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
@@ -15,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<ErrorMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage> {
+public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage> {
     private CancellationTokenSource? messageCancellationTokenSource;
 
     public AppShell() {
@@ -55,10 +54,6 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Er
         }
 
         SuccessLabel.IsVisible = false;
-    }
-
-    public async void Receive(ErrorMessage message) {
-        await this.ShowPopupAsync(new ErrorPopup(message.Text));
     }
 
     public async void Receive(OpenCollectionRequestMessage message) {

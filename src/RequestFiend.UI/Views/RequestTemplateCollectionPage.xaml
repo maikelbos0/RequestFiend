@@ -6,7 +6,6 @@
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.RequestTemplateCollectionPage"
     x:DataType="models:RequestTemplateCollectionModel"
-    x:TypeArguments="models:RequestTemplateCollectionModel"
     Title="{Binding Title}">
 
     <ScrollView>

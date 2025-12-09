@@ -46,5 +46,5 @@ public static class MauiProgram {
 }
 
 // TODO register pages in service collection
-// TODO clean up old style stuff
 // TODO disable buttons when method not available
+// TODO decide what the fuck to do with the JSON buttons
