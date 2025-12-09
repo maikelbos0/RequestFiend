@@ -16,29 +16,10 @@ using System.Threading.Tasks;
 namespace RequestFiend.UI.Views;
 
 public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
-    public MainPage() {
-        Model = new() {
-            RecentCollections = RecentCollections.Get()
-        };
+    public MainPage(MainPageModel model) {
+        Model = model;
         InitializeComponent();
         WeakReferenceMessenger.Default.Register(this);
-    }
-
-    private async void OnCreateNewCollectionClicked(object sender, EventArgs e) {
-        var collection = new RequestTemplateCollection();
-        var stream = new MemoryStream();
-
-        JsonSerializer.Serialize(stream, collection);
-
-        var saveResult = await FileSaver.Default.SaveAsync(".json", stream);
-
-        if (saveResult.IsSuccessful) {
-            WeakReferenceMessenger.Default.Send(new OpenCollectionRequestMessage(saveResult.FilePath, collection));
-            Model.RecentCollections = RecentCollections.Push(saveResult.FilePath);
-        }
-        else if (saveResult.Exception != null) {
-            WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to create collection: {saveResult.Exception.Message}"));
-        }
     }
 
     private async void OnOpenExistingCollectionClicked(object sender, EventArgs e) {

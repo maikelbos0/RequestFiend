@@ -18,7 +18,7 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Create a new collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <Button Text="Choose file location and create" Clicked="OnCreateNewCollectionClicked" HorizontalOptions="Fill"/>
+                    <Button Text="Choose file location and create" Command="{Binding CreateNewCollectionCommand}" HorizontalOptions="Fill"/>
                 </VerticalStackLayout>
             </Border>
 
