@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 using RequestFiend.Models.Services;
 using RequestFiend.UI.Views;
 using System.IO;
@@ -20,4 +21,8 @@ public class PopupService : IPopupService {
 
     public Task<FileSaverResult> ShowSaveDialog(string fileName, Stream stream) 
         => FileSaver.Default.SaveAsync(fileName, stream);
+
+    public Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions)
+        => FilePicker.Default.PickAsync(pickOptions);
+
 }

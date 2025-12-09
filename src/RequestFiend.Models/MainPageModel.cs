@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Devices;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -45,6 +46,22 @@ public partial class MainPageModel : BoundModelBase {
         }
         else if (saveResult.Exception != null) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
+        }
+    }
+
+    [RelayCommand]
+    public async Task OpenExistingCollection() {
+        var file = await popupService.ShowPickFileDialog(new() {
+            FileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>() {
+                { DevicePlatform.Android, ["application/json"] },
+                { DevicePlatform.iOS, ["public.json"] },
+                { DevicePlatform.MacCatalyst, ["public.json"] },
+                { DevicePlatform.WinUI, ["*.json"] },
+            })
+        });
+
+        if (file != null) {
+            await OpenCollection(file.FullPath);
         }
     }
 

@@ -1,15 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Devices;
-using Microsoft.Maui.Storage;
-using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
 using RequestFiend.UI.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace RequestFiend.UI.Views;
 
@@ -18,44 +10,6 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
         Model = model;
         InitializeComponent();
         WeakReferenceMessenger.Default.Register(this);
-    }
-
-    private async void OnOpenExistingCollectionClicked(object sender, EventArgs e) {
-        var file = await FilePicker.Default.PickAsync(new() {
-            FileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>() {
-                { DevicePlatform.Android, ["application/json"] },
-                { DevicePlatform.iOS, ["public.json"] },
-                { DevicePlatform.MacCatalyst, ["public.json"] },
-                { DevicePlatform.WinUI, ["*.json"] },
-            })
-        });
-        
-        if (file != null) {
-            await OpenCollectionFromFile(file.FullPath);
-        }
-    }
-
-    private async Task OpenCollectionFromFile(string filePath) {
-        if (File.Exists(filePath)) {
-            try {
-                var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(File.ReadAllText(filePath));
-
-                if (collection != null) {
-                    WeakReferenceMessenger.Default.Send(new OpenCollectionRequestMessage(filePath, collection));
-                    Model.RecentCollections = RecentCollections.Push(filePath);
-                }
-                else {
-                    WeakReferenceMessenger.Default.Send(new ErrorMessage("Failed to load collection."));
-                }
-            }
-            catch (Exception ex) {
-                WeakReferenceMessenger.Default.Send(new ErrorMessage($"Failed to load collection: {ex.Message}"));
-            }
-        }
-        else {
-            WeakReferenceMessenger.Default.Send(new ErrorMessage("Collection file does not exist."));
-            Model.RecentCollections = RecentCollections.Remove(filePath);
-        }
     }
 
     public void Receive(RequestTemplateCollectionUpdatedMessage message) {

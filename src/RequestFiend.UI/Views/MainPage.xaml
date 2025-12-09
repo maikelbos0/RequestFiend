@@ -41,7 +41,7 @@
                         </BindableLayout.EmptyView>
                     </VerticalStackLayout>
 
-                    <Button Text="Choose collection file to open" Clicked="OnOpenExistingCollectionClicked" HorizontalOptions="Fill"/>
+                    <Button Text="Choose collection file to open" Command="{Binding OpenExistingCollectionCommand}" HorizontalOptions="Fill"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
