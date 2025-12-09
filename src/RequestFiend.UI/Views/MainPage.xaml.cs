@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Maui.Storage;
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Controls;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Storage;
 using RequestFiend.Core;
@@ -35,12 +33,6 @@ public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTe
         if (file != null) {
             await OpenCollectionFromFile(file.FullPath);
         }
-    }
-
-    private async void OnOpenRecentCollectionClicked(object sender, EventArgs e) {
-        var filePath = ((RecentCollectionModel)((Button)sender).BindingContext).FilePath;
-
-        await OpenCollectionFromFile(filePath);
     }
 
     private async Task OpenCollectionFromFile(string filePath) {

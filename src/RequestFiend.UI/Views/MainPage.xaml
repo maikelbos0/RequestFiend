@@ -29,7 +29,11 @@
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="10">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:RecentCollectionModel">
-                                <Button Text="{Binding Name}" Clicked="OnOpenRecentCollectionClicked" Style="{StaticResource SecondaryButton}" />
+                                <Button
+                                    Text="{Binding Name}"
+                                    Command="{Binding x:DataType='models:MainPageModel', Source={RelativeSource AncestorType={x:Type models:MainPageModel}}, Path=OpenCollectionCommand}"
+                                    CommandParameter="{Binding FilePath}"
+                                    Style="{StaticResource SecondaryButton}" />
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                         <BindableLayout.EmptyView>
