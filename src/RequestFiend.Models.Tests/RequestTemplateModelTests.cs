@@ -61,7 +61,7 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
-        Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.Title);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.Title);
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -114,6 +114,7 @@ public class RequestTemplateModelTests {
 
         await subject.Update();
 
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.Title);
         Assert.Equal(name, request.Name);
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);

@@ -3,6 +3,7 @@ using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
+using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,6 +23,7 @@ public class NewRequestTemplateModelTests {
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, modelDataProvider);
 
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.Title);
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received().Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());

@@ -25,7 +25,7 @@ public class RequestTemplateCollectionModelTests {
 
         var subject = new RequestTemplateCollectionModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
-        Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.Title);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.Title);
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 

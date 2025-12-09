@@ -46,4 +46,5 @@ public static class MauiProgram {
 }
 
 // TODO register pages in service collection
-// TODO structure page/shell item titles
+// TODO clean up old style stuff
+// TODO disable buttons when method not available

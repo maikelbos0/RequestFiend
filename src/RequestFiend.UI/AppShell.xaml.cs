@@ -77,16 +77,16 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Er
                     Title = "Collection settings",
                     Icon = "bars_solid_full.png",
                     Items = {
-                    new RequestTemplateCollectionPage(GetRequiredService<RequestTemplateCollectionModel>())
-                }
+                        new RequestTemplateCollectionPage(GetRequiredService<RequestTemplateCollectionModel>())
+                    }
                 });
 
                 collectionItem.Items.Add(new Tab() {
                     Title = "New request",
                     Icon = "plus_solid_full.png",
                     Items = {
-                    new NewRequestTemplatePage(GetRequiredService<NewRequestTemplateModel>())
-                }
+                        new NewRequestTemplatePage(GetRequiredService<NewRequestTemplateModel>())
+                    }
                 });
             }
 

@@ -22,7 +22,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
-    public string Title { get; }
+    public string Title { get => field; set => SetProperty(ref field, value); }
     public ValidatableString Name { get; set; }
     public ValidatableString Method { get; set; }
     public ValidatableString Url { get; set; }
@@ -48,8 +48,8 @@ public partial class RequestTemplateModel : BoundModelBase {
         this.popupService = popupService;
         this.messageService = messageService;
         (filePath, collection, request) = modelDataProvider.GetData();
-        
-        Title = Path.GetFileNameWithoutExtension(filePath);
+
+        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
         Name = new(true, () => request.Name);
         Method = new(true, () => request.Method);
         Url = new(true, () => request.Url);
@@ -75,6 +75,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
+        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
         Name.Reset();
         Method.Reset();
         Url.Reset();

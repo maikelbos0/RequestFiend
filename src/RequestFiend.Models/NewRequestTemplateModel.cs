@@ -3,6 +3,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -13,6 +14,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     private readonly string filePath;
     private readonly RequestTemplateCollection collection;
 
+    public string Title { get => field; set => SetProperty(ref field, value); }
     public ValidatableString Name { get; set; } = new(true);
     public ValidatableString Method { get; set; } = new(true);
     public ValidatableString Url { get; set; }
@@ -26,6 +28,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
         this.messageService = messageService;
         (filePath, collection) = modelDataProvider.GetData();
 
+        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - New request";
         Url = new(true, () => collection.DefaultUrl);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, filePath, (model, _) => {
             if (!model.Url.IsModified) {

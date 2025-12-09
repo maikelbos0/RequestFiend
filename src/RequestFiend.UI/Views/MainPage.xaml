@@ -6,7 +6,8 @@
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.MainPage"
     x:DataType="models:MainPageModel"
-    x:TypeArguments="models:MainPageModel">
+    x:TypeArguments="models:MainPageModel"
+    Title="Home">
 
     <ScrollView>
         <VerticalStackLayout>
