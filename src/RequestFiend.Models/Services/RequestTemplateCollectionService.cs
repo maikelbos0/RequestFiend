@@ -9,16 +9,18 @@ namespace RequestFiend.Models.Services;
 public class RequestTemplateCollectionService : IRequestTemplateCollectionService {
     private readonly IMessageService messageService;
     private readonly IFileSystem fileSystem;
+    private readonly IRecentCollectionService recentCollectionService;
 
-    public RequestTemplateCollectionService(IMessageService messageService, IFileSystem fileSystem) {
+    public RequestTemplateCollectionService(IMessageService messageService, IFileSystem fileSystem, IRecentCollectionService recentCollectionService) {
         this.messageService = messageService;
         this.fileSystem = fileSystem;
+        this.recentCollectionService = recentCollectionService;
     }
 
     public async Task Save(string filePath, RequestTemplateCollection collection) {
         await fileSystem.File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
 
-        messageService.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection));
         messageService.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection), filePath);
+        recentCollectionService.Push(filePath);
     }
 }

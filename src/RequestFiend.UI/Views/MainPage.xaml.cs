@@ -1,18 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using RequestFiend.Models;
-using RequestFiend.Models.Messages;
-using RequestFiend.UI.Configuration;
+﻿using RequestFiend.Models;
 
 namespace RequestFiend.UI.Views;
 
-public partial class MainPage : ContentPage<MainPageModel>, IRecipient<RequestTemplateCollectionUpdatedMessage> {
+public partial class MainPage : ContentPage<MainPageModel> {
     public MainPage(MainPageModel model) {
         Model = model;
         InitializeComponent();
-        WeakReferenceMessenger.Default.Register(this);
     }
-
-    public void Receive(RequestTemplateCollectionUpdatedMessage message) {
-        Model.RecentCollections = RecentCollections.Push(message.FilePath);
-    }   
 }

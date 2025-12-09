@@ -4,6 +4,9 @@ using System;
 namespace RequestFiend.Models.Services;
 
 public class MessageService : IMessageService {
+    public void Register<TRecipient, TMessage>(TRecipient recipient, MessageHandler<TRecipient, TMessage> messageHandler) where TRecipient : class where TMessage : class
+        => WeakReferenceMessenger.Default.Register(recipient, messageHandler);
+
     public void Register<TRecipient, TMessage, TToken>(TRecipient recipient, TToken token, MessageHandler<TRecipient, TMessage> messageHandler) where TRecipient : class where TMessage : class where TToken : IEquatable<TToken>
         => WeakReferenceMessenger.Default.Register(recipient, token, messageHandler);
 

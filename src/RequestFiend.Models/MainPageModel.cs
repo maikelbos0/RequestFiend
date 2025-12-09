@@ -28,7 +28,10 @@ public partial class MainPageModel : BoundModelBase {
         this.messageService = messageService;
         this.recentCollectionService = recentCollectionService;
         this.fileSystem = fileSystem;
+
         RecentCollections = recentCollectionService.Get();
+
+        messageService.Register<MainPageModel, RecentCollectionsChangedMessage>(this, (model, _) => model.RecentCollections = recentCollectionService.Get());
     }
 
     [RelayCommand]
@@ -42,7 +45,7 @@ public partial class MainPageModel : BoundModelBase {
 
         if (saveResult.IsSuccessful) {
             messageService.Send(new OpenCollectionRequestMessage(saveResult.FilePath, collection));
-            RecentCollections = recentCollectionService.Push(saveResult.FilePath);
+            recentCollectionService.Push(saveResult.FilePath);
         }
         else if (saveResult.Exception != null) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -73,7 +76,7 @@ public partial class MainPageModel : BoundModelBase {
 
                 if (collection != null) {
                     messageService.Send(new OpenCollectionRequestMessage(filePath, collection));
-                    RecentCollections = recentCollectionService.Push(filePath);
+                    recentCollectionService.Push(filePath);
                 }
                 else {
                     await popupService.ShowErrorPopup("Failed to load collection.");
@@ -85,7 +88,7 @@ public partial class MainPageModel : BoundModelBase {
         }
         else {
             await popupService.ShowErrorPopup("Collection file does not exist.");
-            RecentCollections = recentCollectionService.Remove(filePath);
+            recentCollectionService.Remove(filePath);
         }
     }
 }
