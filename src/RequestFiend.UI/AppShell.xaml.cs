@@ -94,10 +94,10 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Er
                 collectionItem.Items.Add(CreateRequestTab(message.FilePath, message.Collection, request));
             }
 
-            Shell.Current.Items.Add(collectionItem);
+            Items.Add(collectionItem);
         }
 
-        await Shell.Current.GoToAsync($"//{collectionItem.Route}");
+        await GoToAsync($"//{collectionItem.Route}");
     }
 
     public async void Receive(OpenTemplateRequestMessage message) {
@@ -105,7 +105,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Er
         var item = CreateRequestTab(message.FilePath, message.Collection, message.Request);
 
         collectionItem.Items.Add(item);
-        await Shell.Current.GoToAsync($"//{collectionItem.Route}/{item.Route}");
+        await GoToAsync($"//{collectionItem.Route}/{item.Route}");
     }
 
     private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
@@ -123,7 +123,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Er
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, Guid>(item, request.Id, async (tab, _) => {
             if (tab.Parent is ShellItem collectionItem) {
                 collectionItem.Items.Remove(tab);
-                await Shell.Current.GoToAsync($"//{collectionItem.Route}");
+                await GoToAsync($"//{collectionItem.Route}");
             }
         });
 

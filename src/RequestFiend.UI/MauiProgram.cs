@@ -31,7 +31,6 @@ public static class MauiProgram {
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPopupService, Services.PopupService>();
-        mauiAppBuilder.Services.AddSingleton<Models.Services.IFileService, Services.FileService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
         mauiAppBuilder.Services.AddSingleton(typeof(Models.Services.IModelDataProvider<>), typeof(Models.Services.ModelDataProvider<>));
 
