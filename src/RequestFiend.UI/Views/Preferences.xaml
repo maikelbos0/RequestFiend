@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.Preferences"
+    x:DataType="models:PreferencesModel"
+    Title="Preferences">
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                <Button Text="Save changes" Command="{Binding UpdateCommand}"/>
+
+                <Button Text="Reset" Command="{Binding ResetCommand}" Style="{StaticResource DangerButton}"/>
+            </StackLayout>
+
+            <Label Text="Save recent collections" Style="{StaticResource EntryLabel}"/>
+
+            <Switch IsToggled="{Binding SaveRecentCollections}"/>
+
+            <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
+
+            <Entry Text="{Binding MaximumRecentCollectionCount}"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</views:ContentPage>

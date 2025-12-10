@@ -38,6 +38,7 @@ public static class MauiProgram {
 
         mauiAppBuilder.Services.AddTransient<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();
         mauiAppBuilder.Services.AddTransient<MainPageModel>();
+        mauiAppBuilder.Services.AddTransient<PreferencesModel>();
         mauiAppBuilder.Services.AddTransient<NewRequestTemplateModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateModel>();

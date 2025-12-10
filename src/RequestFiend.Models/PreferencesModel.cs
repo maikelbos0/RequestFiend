@@ -1,19 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Models.Services;
 using System;
 using System.Linq;
 
 namespace RequestFiend.Models;
 
-public partial class PreferencesModel : ObservableObject {
+public partial class PreferencesModel : BoundModelBase {
     private readonly IPreferencesService preferencesService;
 
+    // TODO add custom entry or something
     public int MaximumRecentCollectionCount {
         get => field;
         set => SetProperty(ref field, Math.Max(value, 0));
     }
 
+    // TODO make it 2 different settings
     public bool SaveRecentCollections {
         get => field;
         set => SetProperty(ref field, value);
@@ -34,6 +35,7 @@ public partial class PreferencesModel : ObservableObject {
         preferencesService.SetRecentCollections(preferencesService.GetRecentCollections().Take(maximumRecentCollectionCount).ToList());
     }
 
+    // TODO add confirmation
     [RelayCommand]
     public void Reset() => preferencesService.Reset();
 }
