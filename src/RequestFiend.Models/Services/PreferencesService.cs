@@ -26,6 +26,11 @@ public class PreferencesService : IPreferencesService {
     public List<RecentCollectionModel> GetRecentCollections()
         => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
 
+    public void SetRecentCollections(List<RecentCollectionModel> recentCollections) {
+        Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
+        messageService.Send(new RecentCollectionsChangedMessage());
+    }
+
     public void PushRecentCollection(string filePath) {
         var recentCollections = GetRecentCollections();
         var maximumRecentCollectionCount = GetMaximumRecentCollectionCount();
@@ -46,11 +51,6 @@ public class PreferencesService : IPreferencesService {
         recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
 
         SetRecentCollections(recentCollections);
-    }
-
-    private void SetRecentCollections(List<RecentCollectionModel> recentCollections) {
-        Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
-        messageService.Send(new RecentCollectionsChangedMessage());
     }
 
     public void Reset() => Preferences.Clear();
