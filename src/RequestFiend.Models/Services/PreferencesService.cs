@@ -1,0 +1,57 @@
+﻿using Microsoft.Maui.Storage;
+using RequestFiend.Models.Messages;
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+
+namespace RequestFiend.Models.Services;
+
+public class PreferencesService : IPreferencesService {
+    private const int DefaultMaximumRecentCollectionCount = 10;
+    private const string RecentCollections = nameof(RecentCollections);
+    private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
+
+    private readonly IMessageService messageService;
+
+    public PreferencesService(IMessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    public int GetMaximumRecentCollectionCount()
+        => Preferences.Get(MaximumRecentCollectionCount, DefaultMaximumRecentCollectionCount);
+
+    public void SetMaximumRecentCollectionCount(int maximumRecentCollectionCount)
+        => Preferences.Set(nameof(MaximumRecentCollectionCount), maximumRecentCollectionCount);
+
+    public List<RecentCollectionModel> GetRecentCollections()
+        => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
+
+    public void PushRecentCollection(string filePath) {
+        var recentCollections = GetRecentCollections();
+        var maximumRecentCollectionCount = GetMaximumRecentCollectionCount();
+
+        recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
+        recentCollections.Insert(0, new(filePath));
+
+        if (recentCollections.Count > maximumRecentCollectionCount) {
+            recentCollections.RemoveRange(maximumRecentCollectionCount, recentCollections.Count - maximumRecentCollectionCount);
+        }
+
+        SetRecentCollections(recentCollections);
+    }
+
+    public void RemoveRecentCollection(string filePath) {
+        var recentCollections = GetRecentCollections();
+
+        recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
+
+        SetRecentCollections(recentCollections);
+    }
+
+    private void SetRecentCollections(List<RecentCollectionModel> recentCollections) {
+        Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
+        messageService.Send(new RecentCollectionsChangedMessage());
+    }
+
+    public void Reset() => Preferences.Clear();
+}

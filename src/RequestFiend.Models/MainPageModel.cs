@@ -15,7 +15,7 @@ namespace RequestFiend.Models;
 public partial class MainPageModel : BoundModelBase {
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    private readonly IRecentCollectionService recentCollectionService;
+    private readonly IPreferencesService preferencesService;
     private readonly IFileSystem fileSystem;
 
     public List<RecentCollectionModel> RecentCollections { 
@@ -23,15 +23,15 @@ public partial class MainPageModel : BoundModelBase {
         set => SetProperty(ref field, value);
     }
 
-    public MainPageModel(IPopupService popupService, IMessageService messageService, IRecentCollectionService recentCollectionService, IFileSystem fileSystem) {
+    public MainPageModel(IPopupService popupService, IMessageService messageService, IPreferencesService preferencesService, IFileSystem fileSystem) {
         this.popupService = popupService;
         this.messageService = messageService;
-        this.recentCollectionService = recentCollectionService;
+        this.preferencesService = preferencesService;
         this.fileSystem = fileSystem;
 
-        RecentCollections = recentCollectionService.Get();
+        RecentCollections = preferencesService.GetRecentCollections();
 
-        messageService.Register<MainPageModel, RecentCollectionsChangedMessage>(this, (model, _) => model.RecentCollections = recentCollectionService.Get());
+        messageService.Register<MainPageModel, RecentCollectionsChangedMessage>(this, (model, _) => model.RecentCollections = preferencesService.GetRecentCollections());
     }
 
     [RelayCommand]
@@ -45,7 +45,7 @@ public partial class MainPageModel : BoundModelBase {
 
         if (saveResult.IsSuccessful) {
             messageService.Send(new OpenCollectionRequestMessage(saveResult.FilePath, collection));
-            recentCollectionService.Push(saveResult.FilePath);
+            preferencesService.PushRecentCollection(saveResult.FilePath);
         }
         else if (saveResult.Exception != null) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -76,7 +76,7 @@ public partial class MainPageModel : BoundModelBase {
 
                 if (collection != null) {
                     messageService.Send(new OpenCollectionRequestMessage(filePath, collection));
-                    recentCollectionService.Push(filePath);
+                    preferencesService.PushRecentCollection(filePath);
                 }
                 else {
                     await popupService.ShowErrorPopup("Failed to load collection.");
@@ -88,7 +88,7 @@ public partial class MainPageModel : BoundModelBase {
         }
         else {
             await popupService.ShowErrorPopup("Collection file does not exist.");
-            recentCollectionService.Remove(filePath);
+            preferencesService.RemoveRecentCollection(filePath);
         }
     }
 }

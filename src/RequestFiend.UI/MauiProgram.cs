@@ -32,7 +32,8 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPopupService, Services.PopupService>();
-        mauiAppBuilder.Services.AddSingleton<Models.Services.IRecentCollectionService, Services.RecentCollectionService>();
+        mauiAppBuilder.Services.AddSingleton<Models.Services.IPreferencesService, Models.Services.PreferencesService>();
+        mauiAppBuilder.Services.AddSingleton<Models.Services.IPreferencesService, Models.Services.PreferencesService>();
         mauiAppBuilder.Services.AddSingleton(typeof(Models.Services.IModelDataProvider<>), typeof(Models.Services.ModelDataProvider<>));
 
         mauiAppBuilder.Services.AddTransient<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();

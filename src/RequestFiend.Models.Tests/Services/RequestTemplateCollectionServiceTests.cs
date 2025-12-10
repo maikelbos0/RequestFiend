@@ -16,7 +16,7 @@ public class RequestTemplateCollectionServiceTests {
 
         var fileSystem = Substitute.For<IFileSystem>();
         var messageService = Substitute.For<IMessageService>();
-        var recentCollectionService = Substitute.For<IRecentCollectionService>();
+        var preferencesService = Substitute.For<IPreferencesService>();
         var collection = new RequestTemplateCollection() {
             Variables = { new() { Name = "DefaultHeader", Value = "Accept" } },
             DefaultHeaders = [
@@ -24,12 +24,12 @@ public class RequestTemplateCollectionServiceTests {
             ]
         };
 
-        var subject = new RequestTemplateCollectionService(messageService, fileSystem, recentCollectionService);
+        var subject = new RequestTemplateCollectionService(messageService, fileSystem, preferencesService);
 
         await subject.Save(filePath, collection);
 
         await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
         messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionUpdatedMessage>(x => x.FilePath == filePath && x.Collection == collection), filePath);
-        recentCollectionService.Received(1).Push(filePath);
+        preferencesService.Received(1).PushRecentCollection(filePath);
     }
 }
