@@ -16,9 +16,9 @@
                 <Button Text="Reset" Command="{Binding ResetCommand}" Style="{StaticResource DangerButton}"/>
             </StackLayout>
 
-            <Label Text="Save recent collections" Style="{StaticResource EntryLabel}"/>
+            <Label Text="Show recent collections" Style="{StaticResource EntryLabel}"/>
 
-            <Switch IsToggled="{Binding SaveRecentCollections}"/>
+            <Switch IsToggled="{Binding ShowRecentCollections}"/>
 
             <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
 

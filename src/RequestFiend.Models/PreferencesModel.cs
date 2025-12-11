@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Models.Services;
 using System;
-using System.Linq;
 
 namespace RequestFiend.Models;
 
@@ -14,7 +13,7 @@ public partial class PreferencesModel : BoundModelBase {
         set => SetProperty(ref field, Math.Max(value, 0));
     }
 
-    public bool SaveRecentCollections {
+    public bool ShowRecentCollections {
         get => field;
         set => SetProperty(ref field, value);
     }
@@ -22,17 +21,16 @@ public partial class PreferencesModel : BoundModelBase {
     public PreferencesModel(IPreferencesService preferencesService) {
         this.preferencesService = preferencesService;
 
-        SaveRecentCollections = preferencesService.GetSaveRecentCollections();
+        ShowRecentCollections = preferencesService.GetShowRecentCollections();
         MaximumRecentCollectionCount = preferencesService.GetMaximumRecentCollectionCount();
-        SaveRecentCollections = MaximumRecentCollectionCount > 0;
     }
 
     [RelayCommand]
     public void Update() {
-        preferencesService.SetSaveRecentCollections(SaveRecentCollections);
+        preferencesService.SetShowRecentCollections(ShowRecentCollections);
         preferencesService.SetMaximumRecentCollectionCount(MaximumRecentCollectionCount);
 
-        if (SaveRecentCollections) {
+        if (ShowRecentCollections) {
             preferencesService.TrimRecentCollections();
         }
         else {

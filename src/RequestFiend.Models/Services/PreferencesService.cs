@@ -10,7 +10,7 @@ namespace RequestFiend.Models.Services;
 public class PreferencesService : IPreferencesService {
     public const bool DefaultSaveRecentCollections = true;
     private const int DefaultMaximumRecentCollectionCount = 10;
-    private const string SaveRecentCollections = nameof(SaveRecentCollections);
+    private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
 
@@ -20,10 +20,13 @@ public class PreferencesService : IPreferencesService {
         this.messageService = messageService;
     }
 
-    public bool GetSaveRecentCollections()
-        => Preferences.Get(SaveRecentCollections, DefaultSaveRecentCollections);
-    public void SetSaveRecentCollections(bool saveRecentCollections)
-        => Preferences.Set(SaveRecentCollections, saveRecentCollections);
+    public bool GetShowRecentCollections()
+        => Preferences.Get(ShowRecentCollections, DefaultSaveRecentCollections);
+    
+    public void SetShowRecentCollections(bool saveRecentCollections) {
+        Preferences.Set(ShowRecentCollections, saveRecentCollections);
+        messageService.Send(new ShowRecentCollectionsChangedMessage());
+    }
 
     public int GetMaximumRecentCollectionCount()
         => Preferences.Get(MaximumRecentCollectionCount, DefaultMaximumRecentCollectionCount);
@@ -48,7 +51,7 @@ public class PreferencesService : IPreferencesService {
     }
 
     public void PushRecentCollection(string filePath) {
-        if (!GetSaveRecentCollections()) {
+        if (!GetShowRecentCollections()) {
             return;
         }
 
@@ -66,7 +69,7 @@ public class PreferencesService : IPreferencesService {
     }
 
     public void RemoveRecentCollection(string filePath) {
-        if (!GetSaveRecentCollections()) {
+        if (!GetShowRecentCollections()) {
             return;
         }
 

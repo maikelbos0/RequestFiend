@@ -3,8 +3,8 @@
 namespace RequestFiend.Models.Services;
 
 public interface IPreferencesService {
-    bool GetSaveRecentCollections();
-    void SetSaveRecentCollections(bool saveRecentCollections);
+    bool GetShowRecentCollections();
+    void SetShowRecentCollections(bool saveRecentCollections);
     int GetMaximumRecentCollectionCount();
     void SetMaximumRecentCollectionCount(int maximumRecentCollectionCount);
     List<RecentCollectionModel> GetRecentCollections();

@@ -18,7 +18,12 @@ public partial class MainPageModel : BoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IFileSystem fileSystem;
 
-    public List<RecentCollectionModel> RecentCollections { 
+    public bool ShowRecentCollections {
+        get => field;
+        set => SetProperty(ref field, value);
+    }
+
+    public List<RecentCollectionModel> RecentCollections {
         get => field;
         set => SetProperty(ref field, value);
     }
@@ -29,9 +34,11 @@ public partial class MainPageModel : BoundModelBase {
         this.preferencesService = preferencesService;
         this.fileSystem = fileSystem;
 
+        ShowRecentCollections = preferencesService.GetShowRecentCollections();
         RecentCollections = preferencesService.GetRecentCollections();
 
         messageService.Register<MainPageModel, RecentCollectionsChangedMessage>(this, (model, _) => model.RecentCollections = preferencesService.GetRecentCollections());
+        messageService.Register<MainPageModel, ShowRecentCollectionsChangedMessage>(this, (model, _) => model.ShowRecentCollections = preferencesService.GetShowRecentCollections());
     }
 
     [RelayCommand]

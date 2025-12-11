@@ -5,6 +5,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Text;
@@ -18,11 +19,21 @@ namespace RequestFiend.Models.Tests;
 public class MainPageModelTests {
     [Fact]
     public void Constructor() {
-        var messageService = Substitute.For<IMessageService>();
+        const bool showRecentCollections = true;
+        var recentCollection = new List<RecentCollectionModel>();
 
-        var subject = new MainPageModel(Substitute.For<IPopupService>(), messageService, Substitute.For<IPreferencesService>(), Substitute.For<IFileSystem>());
+        var messageService = Substitute.For<IMessageService>();
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetShowRecentCollections().Returns(showRecentCollections);
+        preferencesService.GetRecentCollections().Returns(recentCollection);
+
+        var subject = new MainPageModel(Substitute.For<IPopupService>(), messageService, preferencesService, Substitute.For<IFileSystem>());
+
+        Assert.Equal(showRecentCollections, subject.ShowRecentCollections);
+        Assert.Equal(recentCollection, subject.RecentCollections);
 
         messageService.Received().Register(subject, Arg.Any<MessageHandler<MainPageModel, RecentCollectionsChangedMessage>>());
+        messageService.Received().Register(subject, Arg.Any<MessageHandler<MainPageModel, ShowRecentCollectionsChangedMessage>>());
     }
 
     [Fact]

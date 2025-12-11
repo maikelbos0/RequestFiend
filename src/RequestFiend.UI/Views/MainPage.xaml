@@ -26,7 +26,7 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Open an existing collection" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="10">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentCollections}" Padding="0" Spacing="10" IsVisible="{Binding ShowRecentCollections}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:RecentCollectionModel">
                                 <Button
@@ -37,7 +37,7 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                         <BindableLayout.EmptyView>
-                            <Label Text="No recent items found."/>
+                            <Label Text="No recent collections found."/>
                         </BindableLayout.EmptyView>
                     </VerticalStackLayout>
 

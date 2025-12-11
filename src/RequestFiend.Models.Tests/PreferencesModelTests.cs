@@ -12,12 +12,12 @@ public class PreferencesModelTests {
     [InlineData(10, true)]
     public void Constructor(int maximumRecentCollectionCount, bool saveRecentCollections) {
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetSaveRecentCollections().Returns(saveRecentCollections);
+        preferencesService.GetShowRecentCollections().Returns(saveRecentCollections);
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
 
         var subject = new PreferencesModel(preferencesService);
 
-        Assert.Equal(saveRecentCollections, subject.SaveRecentCollections);
+        Assert.Equal(saveRecentCollections, subject.ShowRecentCollections);
         Assert.Equal(maximumRecentCollectionCount, subject.MaximumRecentCollectionCount);
     }
 
@@ -31,12 +31,12 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService) {
             MaximumRecentCollectionCount = maximumRecentCollectionCount,
-            SaveRecentCollections = saveRecentCollections
+            ShowRecentCollections = saveRecentCollections
         };
 
         subject.Update();
 
-        preferencesService.Received().SetSaveRecentCollections(saveRecentCollections);
+        preferencesService.Received().SetShowRecentCollections(saveRecentCollections);
         preferencesService.Received().SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
 
         if (saveRecentCollections) {
