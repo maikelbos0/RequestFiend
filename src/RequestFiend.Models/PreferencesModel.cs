@@ -14,7 +14,6 @@ public partial class PreferencesModel : BoundModelBase {
         set => SetProperty(ref field, Math.Max(value, 0));
     }
 
-    // TODO make it 2 different settings
     public bool SaveRecentCollections {
         get => field;
         set => SetProperty(ref field, value);
@@ -23,16 +22,22 @@ public partial class PreferencesModel : BoundModelBase {
     public PreferencesModel(IPreferencesService preferencesService) {
         this.preferencesService = preferencesService;
 
+        SaveRecentCollections = preferencesService.GetSaveRecentCollections();
         MaximumRecentCollectionCount = preferencesService.GetMaximumRecentCollectionCount();
         SaveRecentCollections = MaximumRecentCollectionCount > 0;
     }
 
     [RelayCommand]
     public void Update() {
-        var maximumRecentCollectionCount = SaveRecentCollections ? MaximumRecentCollectionCount : 0;
-            
-        preferencesService.SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
-        preferencesService.SetRecentCollections(preferencesService.GetRecentCollections().Take(maximumRecentCollectionCount).ToList());
+        preferencesService.SetSaveRecentCollections(SaveRecentCollections);
+        preferencesService.SetMaximumRecentCollectionCount(MaximumRecentCollectionCount);
+
+        if (SaveRecentCollections) {
+            preferencesService.TrimRecentCollections();
+        }
+        else {
+            preferencesService.ClearRecentCollections();
+        }
     }
 
     // TODO add confirmation

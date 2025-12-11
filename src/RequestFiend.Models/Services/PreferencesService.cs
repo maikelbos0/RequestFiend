@@ -2,12 +2,15 @@
 using RequestFiend.Models.Messages;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 
 namespace RequestFiend.Models.Services;
 
 public class PreferencesService : IPreferencesService {
+    public const bool DefaultSaveRecentCollections = true;
     private const int DefaultMaximumRecentCollectionCount = 10;
+    private const string SaveRecentCollections = nameof(SaveRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
 
@@ -17,21 +20,38 @@ public class PreferencesService : IPreferencesService {
         this.messageService = messageService;
     }
 
+    public bool GetSaveRecentCollections()
+        => Preferences.Get(SaveRecentCollections, DefaultSaveRecentCollections);
+    public void SetSaveRecentCollections(bool saveRecentCollections)
+        => Preferences.Set(SaveRecentCollections, saveRecentCollections);
+
     public int GetMaximumRecentCollectionCount()
         => Preferences.Get(MaximumRecentCollectionCount, DefaultMaximumRecentCollectionCount);
 
     public void SetMaximumRecentCollectionCount(int maximumRecentCollectionCount)
-        => Preferences.Set(nameof(MaximumRecentCollectionCount), maximumRecentCollectionCount);
+        => Preferences.Set(MaximumRecentCollectionCount, maximumRecentCollectionCount);
 
     public List<RecentCollectionModel> GetRecentCollections()
-        => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
+        => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(RecentCollections, "[]")) ?? [];
 
-    public void SetRecentCollections(List<RecentCollectionModel> recentCollections) {
-        Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
+    public void TrimRecentCollections()
+        => SetRecentCollections([.. GetRecentCollections().Take(GetMaximumRecentCollectionCount())]);
+
+    private void SetRecentCollections(List<RecentCollectionModel> recentCollections) {
+        Preferences.Set(RecentCollections, JsonSerializer.Serialize(recentCollections));
+        messageService.Send(new RecentCollectionsChangedMessage());
+    }
+
+    public void ClearRecentCollections() {
+        Preferences.Remove(RecentCollections);
         messageService.Send(new RecentCollectionsChangedMessage());
     }
 
     public void PushRecentCollection(string filePath) {
+        if (!GetSaveRecentCollections()) {
+            return;
+        }
+
         var recentCollections = GetRecentCollections();
         var maximumRecentCollectionCount = GetMaximumRecentCollectionCount();
 
@@ -46,6 +66,10 @@ public class PreferencesService : IPreferencesService {
     }
 
     public void RemoveRecentCollection(string filePath) {
+        if (!GetSaveRecentCollections()) {
+            return;
+        }
+
         var recentCollections = GetRecentCollections();
 
         recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
@@ -53,5 +77,8 @@ public class PreferencesService : IPreferencesService {
         SetRecentCollections(recentCollections);
     }
 
-    public void Reset() => Preferences.Clear();
+    public void Reset() {
+        Preferences.Clear();
+        messageService.Send(new RecentCollectionsChangedMessage());
+    }
 }
