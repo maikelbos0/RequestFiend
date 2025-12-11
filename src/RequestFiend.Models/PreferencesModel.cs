@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Models.Messages;
+using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -11,11 +11,7 @@ public partial class PreferencesModel : BoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
 
-    // TODO add custom entry or something
-    public int MaximumRecentCollectionCount {
-        get => field;
-        set => SetProperty(ref field, Math.Max(value, 0));
-    }
+    public ValidatableString MaximumRecentCollectionCount { get; set; }
 
     public bool ShowRecentCollections {
         get => field;
@@ -28,13 +24,17 @@ public partial class PreferencesModel : BoundModelBase {
         this.popupService = popupService;
 
         ShowRecentCollections = preferencesService.GetShowRecentCollections();
-        MaximumRecentCollectionCount = preferencesService.GetMaximumRecentCollectionCount();
+        MaximumRecentCollectionCount = new(ValidationMode.Numeric, () => preferencesService.GetMaximumRecentCollectionCount().ToString());
     }
 
     [RelayCommand]
     public void Update() {
+        if (MaximumRecentCollectionCount.HasError) {
+            return;
+        }
+
         preferencesService.SetShowRecentCollections(ShowRecentCollections);
-        preferencesService.SetMaximumRecentCollectionCount(MaximumRecentCollectionCount);
+        preferencesService.SetMaximumRecentCollectionCount(int.Parse(MaximumRecentCollectionCount.Value!));
 
         if (ShowRecentCollections) {
             preferencesService.TrimRecentCollections();
@@ -51,7 +51,7 @@ public partial class PreferencesModel : BoundModelBase {
         if (await popupService.ShowConfirmPopup("Are you sure you want to reset your preferences?")) {
             preferencesService.Reset();
             ShowRecentCollections = preferencesService.GetShowRecentCollections();
-            MaximumRecentCollectionCount = preferencesService.GetMaximumRecentCollectionCount();
+            MaximumRecentCollectionCount.Reset();
 
             messageService.Send(new SuccessMessage("Preferences have been reset"));
         }

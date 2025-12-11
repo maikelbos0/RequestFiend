@@ -35,7 +35,7 @@ public class RequestTemplateCollectionModelTests {
     }
 
     [Fact]
-    public async Task TryUpdateRequestTemplateCollection() {
+    public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string defaultUrl = "https://default";
         const string headerName = "Name";
@@ -88,7 +88,7 @@ public class RequestTemplateCollectionModelTests {
     [InlineData(null, "Value", "Name", "Value")]
     [InlineData("Name", "Value", null, "Value")]
     [InlineData("Name", "Value", "Name", null)]
-    public async Task TryUpdateRequestTemplateCollection_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
+    public async Task Update_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
         const string defaultUrl = "https://default";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();

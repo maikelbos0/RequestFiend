@@ -20,29 +20,29 @@ public class PreferencesModelTests {
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
         Assert.Equal(saveRecentCollections, subject.ShowRecentCollections);
-        Assert.Equal(maximumRecentCollectionCount, subject.MaximumRecentCollectionCount);
+        Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
     }
 
     [Theory]
     [InlineData(10, false)]
     [InlineData(0, true)]
     [InlineData(10, true)]
-    public void Update(int maximumRecentCollectionCount, bool saveRecentCollections) {
+    public void Update(int maximumRecentCollectionCount, bool showRecentCollections) {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetRecentCollections().Returns([.. Enumerable.Range(0, 11).Select(x => new RecentCollectionModel($"{x}.json"))]);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
-            MaximumRecentCollectionCount = maximumRecentCollectionCount,
-            ShowRecentCollections = saveRecentCollections
+            MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
+            ShowRecentCollections = showRecentCollections
         };
 
         subject.Update();
 
-        preferencesService.Received(1).SetShowRecentCollections(saveRecentCollections);
+        preferencesService.Received(1).SetShowRecentCollections(showRecentCollections);
         preferencesService.Received(1).SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
 
-        if (saveRecentCollections) {
+        if (showRecentCollections) {
             preferencesService.Received(1).TrimRecentCollections();
         }
         else {
@@ -52,37 +52,71 @@ public class PreferencesModelTests {
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("Invalid")]
+    public void Update_Fails_When_Invalid(string? maximumRecentCollectionCount) {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        var messageService = Substitute.For<IMessageService>();
+
+        var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
+            MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount },
+        };
+
+        subject.Update();
+
+        preferencesService.DidNotReceive().SetShowRecentCollections(Arg.Any<bool>());
+        preferencesService.DidNotReceive().SetMaximumRecentCollectionCount(Arg.Any<int>());
+
+        preferencesService.DidNotReceive().TrimRecentCollections();
+        preferencesService.DidNotReceive().ClearRecentCollections();
+
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
+
     [Fact]
     public async Task Reset_And_Confirm() {
         var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetShowRecentCollections().Returns(true);
+        preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+        var subject = new PreferencesModel(preferencesService, messageService, popupService) {
+            ShowRecentCollections = false,
+            MaximumRecentCollectionCount = { Value = "25" }
+        };
 
         await subject.Reset();
 
+        Assert.Equal(preferencesService.GetShowRecentCollections(), subject.ShowRecentCollections);
+        Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
+
         preferencesService.Received(1).Reset();
-        preferencesService.Received(2).GetShowRecentCollections();
-        preferencesService.Received(2).GetMaximumRecentCollectionCount();
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Fact]
     public async Task Reset_Without_Confirming() {
         var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetShowRecentCollections().Returns(true);
+        preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+        var subject = new PreferencesModel(preferencesService, messageService, popupService) {
+            ShowRecentCollections = false,
+            MaximumRecentCollectionCount = { Value = "25" }
+        };
 
         await subject.Reset();
 
+        Assert.False(subject.ShowRecentCollections);
+        Assert.Equal("25", subject.MaximumRecentCollectionCount.Value);
+
         preferencesService.DidNotReceive().Reset();
-        preferencesService.Received(1).GetShowRecentCollections();
-        preferencesService.Received(1).GetMaximumRecentCollectionCount();
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 }

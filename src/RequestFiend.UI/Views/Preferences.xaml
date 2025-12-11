@@ -22,7 +22,7 @@
 
             <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
 
-            <Entry Text="{Binding MaximumRecentCollectionCount}"/>
+            <views:ValidatableEntry Text="{Binding MaximumRecentCollectionCount}"/>
         </VerticalStackLayout>
     </ScrollView>
 </views:ContentPage>
