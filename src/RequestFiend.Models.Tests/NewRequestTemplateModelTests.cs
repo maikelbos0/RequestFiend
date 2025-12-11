@@ -26,7 +26,7 @@ public class NewRequestTemplateModelTests {
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.Title);
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
-        messageService.Received().Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
+        messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
     }
 
     [Fact]

@@ -39,17 +39,19 @@ public class PreferencesModelTests {
 
         subject.Update();
 
-        preferencesService.Received().SetShowRecentCollections(saveRecentCollections);
-        preferencesService.Received().SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
+        preferencesService.Received(1).SetShowRecentCollections(saveRecentCollections);
+        preferencesService.Received(1).SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
 
         if (saveRecentCollections) {
-            preferencesService.Received().TrimRecentCollections();
+            preferencesService.Received(1).TrimRecentCollections();
         }
         else {
-            preferencesService.Received().ClearRecentCollections();
+            preferencesService.Received(1).ClearRecentCollections();
         }
 
-        messageService.Received().Send(Arg.Any<SuccessMessage>());
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+    }
+
     [Fact]
     public async Task Reset_And_Confirm() {
         var preferencesService = Substitute.For<IPreferencesService>();

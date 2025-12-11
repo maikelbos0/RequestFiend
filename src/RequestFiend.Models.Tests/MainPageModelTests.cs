@@ -32,8 +32,8 @@ public class MainPageModelTests {
         Assert.Equal(showRecentCollections, subject.ShowRecentCollections);
         Assert.Equal(recentCollection, subject.RecentCollections);
 
-        messageService.Received().Register(subject, Arg.Any<MessageHandler<MainPageModel, RecentCollectionsChangedMessage>>());
-        messageService.Received().Register(subject, Arg.Any<MessageHandler<MainPageModel, ShowRecentCollectionsChangedMessage>>());
+        messageService.Received(1).Register(subject, Arg.Any<MessageHandler<MainPageModel, RecentCollectionsChangedMessage>>());
+        messageService.Received(1).Register(subject, Arg.Any<MessageHandler<MainPageModel, ShowRecentCollectionsChangedMessage>>());
     }
 
     [Fact]
