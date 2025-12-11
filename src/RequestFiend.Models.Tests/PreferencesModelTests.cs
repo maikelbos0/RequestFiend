@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System.Linq;
 using Xunit;
@@ -15,7 +16,7 @@ public class PreferencesModelTests {
         preferencesService.GetShowRecentCollections().Returns(saveRecentCollections);
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
 
-        var subject = new PreferencesModel(preferencesService);
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>());
 
         Assert.Equal(saveRecentCollections, subject.ShowRecentCollections);
         Assert.Equal(maximumRecentCollectionCount, subject.MaximumRecentCollectionCount);
@@ -28,8 +29,9 @@ public class PreferencesModelTests {
     public void Update(int maximumRecentCollectionCount, bool saveRecentCollections) {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetRecentCollections().Returns([.. Enumerable.Range(0, 11).Select(x => new RecentCollectionModel($"{x}.json"))]);
+        var messageService = Substitute.For<IMessageService>();
 
-        var subject = new PreferencesModel(preferencesService) {
+        var subject = new PreferencesModel(preferencesService, messageService) {
             MaximumRecentCollectionCount = maximumRecentCollectionCount,
             ShowRecentCollections = saveRecentCollections
         };
@@ -45,13 +47,15 @@ public class PreferencesModelTests {
         else {
             preferencesService.Received().ClearRecentCollections();
         }
+
+        messageService.Received().Send(Arg.Any<SuccessMessage>());
     }
 
     [Fact]
     public void Reset() {
         var preferencesService = Substitute.For<IPreferencesService>();
 
-        var subject = new PreferencesModel(preferencesService);
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>());
 
         subject.Reset();
 

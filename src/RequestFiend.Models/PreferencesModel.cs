@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
 
@@ -6,6 +7,7 @@ namespace RequestFiend.Models;
 
 public partial class PreferencesModel : BoundModelBase {
     private readonly IPreferencesService preferencesService;
+    private readonly IMessageService messageService;
 
     // TODO add custom entry or something
     public int MaximumRecentCollectionCount {
@@ -18,9 +20,9 @@ public partial class PreferencesModel : BoundModelBase {
         set => SetProperty(ref field, value);
     }
 
-    public PreferencesModel(IPreferencesService preferencesService) {
+    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService) {
         this.preferencesService = preferencesService;
-
+        this.messageService = messageService;
         ShowRecentCollections = preferencesService.GetShowRecentCollections();
         MaximumRecentCollectionCount = preferencesService.GetMaximumRecentCollectionCount();
     }
@@ -36,6 +38,8 @@ public partial class PreferencesModel : BoundModelBase {
         else {
             preferencesService.ClearRecentCollections();
         }
+
+        messageService.Send(new SuccessMessage("Preferences have been updated"));
     }
 
     // TODO add confirmation
