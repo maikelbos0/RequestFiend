@@ -1,16 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.Linq;
 
 namespace RequestFiend.Models.PropertyTypes;
 
 public class ValidatableString : ObservableObject {
-    public bool IsRequired { get; }
+    public ValidationMode Mode { get; }
     public Func<string?> DefaultValueProvider { get; private set; }
     public string? Value {
         get => field;
         set {
             SetProperty(ref field, value);
-            HasError = IsRequired && string.IsNullOrWhiteSpace(value);
+            HasError = Mode switch {
+                ValidationMode.None => false,
+                ValidationMode.Required => string.IsNullOrEmpty(value),
+                ValidationMode.Numeric => string.IsNullOrEmpty(value) || value.Any(c => !char.IsAsciiDigit(c)),
+                _ => throw new NotImplementedException($"Missing implementation for ValidationMode {Mode}")
+            };
             IsModified = !HasError && value != DefaultValueProvider();
         }
     }
@@ -23,10 +29,25 @@ public class ValidatableString : ObservableObject {
         private set => SetProperty(ref field, value);
     }
 
+    [Obsolete]
     public ValidatableString(bool isRequired) : this(isRequired, () => null) { }
 
+    [Obsolete]
     public ValidatableString(bool isRequired, Func<string?> defaultValueProvider) {
-        IsRequired = isRequired;
+        if (isRequired) {
+            Mode = ValidationMode.Required;
+        }
+        else {
+            Mode = ValidationMode.None;
+        }
+        DefaultValueProvider = defaultValueProvider;
+        Reset();
+    }
+
+    public ValidatableString(ValidationMode mode) : this(mode, () => null) { }
+
+    public ValidatableString(ValidationMode mode, Func<string?> defaultValueProvider) {
+        Mode = mode;
         DefaultValueProvider = defaultValueProvider;
         Reset();
     }
