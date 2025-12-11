@@ -8,9 +8,9 @@ public class NameValuePairModel : ObservableObject {
     public ValidatableString Name { get; set; }
     public ValidatableString Value { get; set; }
 
-    public NameValuePairModel() : this(new(true), new(true)) { }
+    public NameValuePairModel() : this(new(ValidationMode.Required), new(ValidationMode.Required)) { }
 
-    public NameValuePairModel(NameValuePair pair) : this(new(true, () => pair.Name), new(true, () => pair.Value)) { }
+    public NameValuePairModel(NameValuePair pair) : this(new(ValidationMode.Required, () => pair.Name), new(ValidationMode.Required, () => pair.Value)) { }
 
     private NameValuePairModel(ValidatableString name, ValidatableString value) {
         Name = name;

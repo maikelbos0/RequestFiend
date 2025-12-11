@@ -30,7 +30,7 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         (filePath, collection) = modelDataProvider.GetData();
 
         Title = $"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings";
-        DefaultUrl = new(false, () => collection.DefaultUrl);
+        DefaultUrl = new(ValidationMode.None, () => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
     }

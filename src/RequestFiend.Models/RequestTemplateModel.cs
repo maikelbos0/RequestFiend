@@ -50,12 +50,12 @@ public partial class RequestTemplateModel : BoundModelBase {
         (filePath, collection, request) = modelDataProvider.GetData();
 
         Title = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
-        Name = new(true, () => request.Name);
-        Method = new(true, () => request.Method);
-        Url = new(true, () => request.Url);
+        Name = new(ValidationMode.Required, () => request.Name);
+        Method = new(ValidationMode.Required, () => request.Method);
+        Url = new(ValidationMode.Required, () => request.Url);
         Headers = new(request.Headers);
-        ContentType = new(true, () => Options.ContentTypeMap[request.ContentType]);
-        StringContent = new(false, () => request.StringContent);
+        ContentType = new(ValidationMode.Required, () => Options.ContentTypeMap[request.ContentType]);
+        StringContent = new(ValidationMode.Required, () => request.StringContent);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];

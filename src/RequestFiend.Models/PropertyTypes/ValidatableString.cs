@@ -29,21 +29,6 @@ public class ValidatableString : ObservableObject {
         private set => SetProperty(ref field, value);
     }
 
-    [Obsolete]
-    public ValidatableString(bool isRequired) : this(isRequired, () => null) { }
-
-    [Obsolete]
-    public ValidatableString(bool isRequired, Func<string?> defaultValueProvider) {
-        if (isRequired) {
-            Mode = ValidationMode.Required;
-        }
-        else {
-            Mode = ValidationMode.None;
-        }
-        DefaultValueProvider = defaultValueProvider;
-        Reset();
-    }
-
     public ValidatableString(ValidationMode mode) : this(mode, () => null) { }
 
     public ValidatableString(ValidationMode mode, Func<string?> defaultValueProvider) {

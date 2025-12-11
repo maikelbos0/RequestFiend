@@ -15,8 +15,8 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
 
     public string Title { get => field; set => SetProperty(ref field, value); }
-    public ValidatableString Name { get; set; } = new(true);
-    public ValidatableString Method { get; set; } = new(true);
+    public ValidatableString Name { get; set; } = new(ValidationMode.Required);
+    public ValidatableString Method { get; set; } = new(ValidationMode.Required);
     public ValidatableString Url { get; set; }
 
     public NewRequestTemplateModel(
@@ -29,7 +29,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
         (filePath, collection) = modelDataProvider.GetData();
 
         Title = $"{Path.GetFileNameWithoutExtension(filePath)} - New request";
-        Url = new(true, () => collection.DefaultUrl);
+        Url = new(ValidationMode.Required, () => collection.DefaultUrl);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, filePath, (model, _) => {
             if (!model.Url.IsModified) {
                 model.Url.Reset();
