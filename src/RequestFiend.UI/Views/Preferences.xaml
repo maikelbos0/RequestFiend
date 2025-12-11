@@ -16,9 +16,11 @@
                 <Button Text="Reset" Command="{Binding ResetCommand}" Style="{StaticResource DangerButton}"/>
             </StackLayout>
 
-            <Label Text="Show recent collections" Style="{StaticResource EntryLabel}"/>
-
-            <Switch IsToggled="{Binding ShowRecentCollections}"/>
+            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                <Switch IsToggled="{Binding ShowRecentCollections}"/>
+                
+                <Label Text="Show recent collections" Grid.Column="1" VerticalOptions="Center"/>
+            </Grid>
 
             <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
 
