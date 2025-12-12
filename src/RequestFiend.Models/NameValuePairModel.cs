@@ -5,8 +5,8 @@ using RequestFiend.Models.PropertyTypes;
 namespace RequestFiend.Models;
 
 public class NameValuePairModel : ObservableObject {
-    public ValidatableString Name { get; set; }
-    public ValidatableString Value { get; set; }
+    public ValidatableString Name { get; }
+    public ValidatableString Value { get; }
 
     public NameValuePairModel() : this(new(ValidationMode.Required), new(ValidationMode.Required)) { }
 
