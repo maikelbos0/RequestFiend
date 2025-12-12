@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 using RequestFiend.Models;
+using RequestFiend.UI.Views;
 using System.IO.Abstractions;
 
 namespace RequestFiend.UI;
@@ -22,7 +23,7 @@ public static class MauiProgram {
             });
 
 #if DEBUG
-		builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
 
         return builder.Build();
@@ -43,10 +44,13 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateModel>();
 
+        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionPage>();
+        mauiAppBuilder.Services.AddTransient<NewRequestTemplatePage>();
+        mauiAppBuilder.Services.AddTransient<RequestTemplatePage>();
+
         return mauiAppBuilder;
     }
 }
 
-// TODO register pages in service collection
 // TODO disable buttons when method not available
 // TODO decide what the fuck to do with the JSON buttons

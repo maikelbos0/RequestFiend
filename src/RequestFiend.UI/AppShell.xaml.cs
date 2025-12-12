@@ -72,7 +72,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                     Title = "Collection settings",
                     Icon = "bars_solid_full.png",
                     Items = {
-                        new RequestTemplateCollectionPage(GetRequiredService<RequestTemplateCollectionModel>())
+                        GetRequiredService<RequestTemplateCollectionPage>()
                     }
                 });
 
@@ -80,7 +80,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                     Title = "New request",
                     Icon = "plus_solid_full.png",
                     Items = {
-                        new NewRequestTemplatePage(GetRequiredService<NewRequestTemplateModel>())
+                        GetRequiredService<NewRequestTemplatePage>()
                     }
                 });
             }
@@ -110,7 +110,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             Icon = "paper_plane_solid_full.png",
             Title = request.Name,
             Items = {
-                new RequestTemplatePage(GetRequiredService<RequestTemplateModel>())
+                GetRequiredService<RequestTemplatePage>()
             },
             Route = $"RequestTemplate_{request.Id}"
         };
