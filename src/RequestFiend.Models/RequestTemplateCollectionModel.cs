@@ -33,11 +33,13 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         DefaultUrl = new(ValidationMode.None, () => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
+
+        ConfigureState([DefaultUrl], [DefaultHeaders, Variables]);
     }
 
     [RelayCommand]
     public async Task Update() {
-        if (DefaultHeaders.Any(defaultHeader => defaultHeader.Name.HasError || defaultHeader.Value.HasError) || Variables.Any(variable => variable.Name.HasError || variable.Value.HasError)) {
+        if (HasError) {
             return;
         }
 
