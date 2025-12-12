@@ -35,11 +35,13 @@ public partial class NewRequestTemplateModel : BoundModelBase {
                 model.Url.Reset();
             }
         });
+
+        ConfigureState([Name, Method, Url], []);
     }
 
     [RelayCommand]
     public async Task Create() {
-        if (Name.HasError || Method.HasError || Url.HasError) {
+        if (HasError) {
             return;
         }
 
