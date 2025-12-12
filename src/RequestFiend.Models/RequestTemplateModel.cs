@@ -60,11 +60,13 @@ public partial class RequestTemplateModel : BoundModelBase {
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+
+        ConfigureState([Name, Method, Url, ContentType, StringContent], [Headers]);
     }
 
     [RelayCommand]
     public async Task Update() {
-        if (Name.HasError || Method.HasError || Url.HasError || Headers.Any(header => header.Name.HasError || header.Value.HasError) || ContentType.HasError) {
+        if (HasError) {
             return;
         }
 
