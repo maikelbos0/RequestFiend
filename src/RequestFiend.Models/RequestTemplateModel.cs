@@ -126,7 +126,9 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
-        UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
-        UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        if (e.PropertyName == Constants.Value) {
+            UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+            UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        }
     }
 }
