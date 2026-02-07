@@ -11,12 +11,12 @@ public partial class PreferencesModel : BoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
 
-    public ValidatableString MaximumRecentCollectionCount { get; set; }
-
     public bool ShowRecentCollections {
         get => field;
         set => SetProperty(ref field, value);
     }
+
+    public ValidatableProperty<string?> MaximumRecentCollectionCount { get; set; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) {
         this.preferencesService = preferencesService;
@@ -24,7 +24,7 @@ public partial class PreferencesModel : BoundModelBase {
         this.popupService = popupService;
 
         ShowRecentCollections = preferencesService.GetShowRecentCollections();
-        MaximumRecentCollectionCount = new(ValidationMode.Numeric, () => preferencesService.GetMaximumRecentCollectionCount().ToString());
+        MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
     }
 
     [RelayCommand]

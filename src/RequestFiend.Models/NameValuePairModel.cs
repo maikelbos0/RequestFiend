@@ -1,24 +1,25 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using System;
 
 namespace RequestFiend.Models;
 
 public class NameValuePairModel : ObservableObject {
-    public ValidatableString Name { get; }
-    public ValidatableString Value { get; }
+    public ValidatableProperty<string?> Name { get; }
+    public ValidatableProperty<string?> Value { get; }
 
-    public NameValuePairModel() : this(new(ValidationMode.Required), new(ValidationMode.Required)) { }
+    public NameValuePairModel() : this(() => null, () => null) { }
 
-    public NameValuePairModel(NameValuePair pair) : this(new(ValidationMode.Required, () => pair.Name), new(ValidationMode.Required, () => pair.Value)) { }
+    public NameValuePairModel(NameValuePair pair) : this(() => pair.Name, () => pair.Value) { }
 
-    private NameValuePairModel(ValidatableString name, ValidatableString value) {
-        Name = name;
-        Value = value;
+    private NameValuePairModel(Func<string?> nameProvider, Func<string?> valueProvider) {
+        Name = new(nameProvider, Validator.Required);
+        Value = new(valueProvider, Validator.Required);
     }
 
     public void Reinitialize(NameValuePair pair) {
-        Name.Reinitialize(() => pair.Name);
-        Value.Reinitialize(() => pair.Value);
+        Name.Reset(() => pair.Name);
+        Value.Reset(() => pair.Value);
     }
 }

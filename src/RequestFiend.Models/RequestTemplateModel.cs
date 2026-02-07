@@ -23,11 +23,11 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplate request;
 
     public string Title { get => field; set => SetProperty(ref field, value); }
-    public ValidatableString Name { get; set; }
-    public ValidatableString Method { get; set; }
-    public ValidatableString Url { get; set; }
+    public ValidatableProperty<string?> Name { get; set; }
+    public ValidatableProperty<string?> Method { get; set; }
+    public ValidatableProperty<string?> Url { get; set; }
     public NameValuePairModelCollection Headers { get; set; }
-    public ValidatableString ContentType { get; set; }
+    public ValidatableProperty<string?> ContentType { get; set; }
     public bool UsesStringContent {
         get => field;
         private set => SetProperty(ref field, value);
@@ -36,7 +36,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         get => field;
         private set => SetProperty(ref field, value);
     }
-    public ValidatableString StringContent { get; set; }
+    public ValidatableProperty<string?> StringContent { get; set; }
 
     public RequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -50,12 +50,12 @@ public partial class RequestTemplateModel : BoundModelBase {
         (filePath, collection, request) = modelDataProvider.GetData();
 
         Title = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
-        Name = new(ValidationMode.Required, () => request.Name);
-        Method = new(ValidationMode.Required, () => request.Method);
-        Url = new(ValidationMode.Required, () => request.Url);
+        Name = new(() => request.Name, Validator.Required);
+        Method = new(() => request.Method, Validator.Required);
+        Url = new(() => request.Url, Validator.Required);
         Headers = new(request.Headers);
-        ContentType = new(ValidationMode.Required, () => Options.ContentTypeMap[request.ContentType]);
-        StringContent = new(ValidationMode.Required, () => request.StringContent);
+        ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
+        StringContent = new(() => request.StringContent);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];

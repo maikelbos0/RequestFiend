@@ -16,7 +16,7 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
 
     public string Title { get => field; set => SetProperty(ref field, value); }
-    public ValidatableString DefaultUrl { get; set; }
+    public ValidatableProperty<string?> DefaultUrl { get; set; }
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
 
@@ -30,7 +30,7 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         (filePath, collection) = modelDataProvider.GetData();
 
         Title = $"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings";
-        DefaultUrl = new(ValidationMode.None, () => collection.DefaultUrl);
+        DefaultUrl = new(() => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
 

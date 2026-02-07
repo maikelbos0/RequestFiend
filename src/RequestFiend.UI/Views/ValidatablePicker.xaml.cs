@@ -5,11 +5,11 @@ using System.Collections.Generic;
 namespace RequestFiend.UI.Views;
 
 public partial class ValidatablePicker : AbsoluteLayout {
-    public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(ValidatableString), typeof(ValidatablePicker), default(ValidatableString));
+    public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(ValidatableProperty<string?>), typeof(ValidatablePicker), default(ValidatableProperty<string?>));
     public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable<string>), typeof(ValidatablePicker), default(IEnumerable<string>));
 
-    public ValidatableString SelectedItem {
-        get => (ValidatableString)GetValue(SelectedItemProperty);
+    public ValidatableProperty<string?> SelectedItem {
+        get => (ValidatableProperty<string?>)GetValue(SelectedItemProperty);
         set => SetValue(SelectedItemProperty, value);
     }
 

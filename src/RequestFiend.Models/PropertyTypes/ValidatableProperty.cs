@@ -32,9 +32,9 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
 
     public ValidatableProperty(Func<TProperty> defaultValueProvider) : this(defaultValueProvider, _ => true) { }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool>? validator) {
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator) {
         DefaultValueProvider = defaultValueProvider;
-        Validator = validator ?? (_ => false);
+        Validator = validator;
         Value = DefaultValueProvider();
     }
 
