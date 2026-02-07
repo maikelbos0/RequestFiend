@@ -11,7 +11,7 @@ namespace RequestFiend.Models;
 public class BoundModelBase : ObservableObject {
     private const double widthBreakpoint = 675;
 
-    private IEnumerable<ValidatableString> validatableStrings = [];
+    private IEnumerable<ValidatableProperty> validatableProperties = [];
     private Dictionary<NameValuePairModelCollection, int> nameValuePairModelCollections = [];
 
     public double PageWidth {
@@ -62,11 +62,11 @@ public class BoundModelBase : ObservableObject {
         }
     }
 
-    public void ConfigureState(IEnumerable<ValidatableString> validatableStrings, IEnumerable<NameValuePairModelCollection> nameValuePairModelCollections) {
-        this.validatableStrings = validatableStrings;
+    public void ConfigureState(IEnumerable<ValidatableProperty> validatableProperties, IEnumerable<NameValuePairModelCollection> nameValuePairModelCollections) {
+        this.validatableProperties = validatableProperties;
         this.nameValuePairModelCollections = nameValuePairModelCollections.ToDictionary(nameValuePairModelCollection => nameValuePairModelCollection, nameValuePairModelCollection => nameValuePairModelCollection.Count);
 
-        foreach (var validatableString in validatableStrings) {
+        foreach (var validatableString in validatableProperties) {
             validatableString.PropertyChanged += OnPropertyChanged;
         }
 
@@ -105,7 +105,7 @@ public class BoundModelBase : ObservableObject {
     }
 
     private void SetState() {
-        if (validatableStrings.Any(validatableString => validatableString.HasError) 
+        if (validatableProperties.Any(validatableProperty => validatableProperty.HasError) 
             || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError))) {
 
             HasError = true;
@@ -113,7 +113,7 @@ public class BoundModelBase : ObservableObject {
         }
         else {
             HasError = false;
-            IsModified = validatableStrings.Any(validatableString => validatableString.IsModified)
+            IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
                 || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
         }
     }

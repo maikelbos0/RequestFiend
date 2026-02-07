@@ -4,7 +4,12 @@ using System.Collections.Generic;
 
 namespace RequestFiend.Models.PropertyTypes;
 
-public class ValidatableProperty<TProperty> : ObservableObject {
+public abstract class ValidatableProperty : ObservableObject {
+    public abstract bool HasError { get; protected set; }
+    public abstract bool IsModified { get; protected set; }
+}
+
+public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     public Func<TProperty> DefaultValueProvider { get; private set; }
     public Func<TProperty, bool> Validator { get; }
 
@@ -16,13 +21,13 @@ public class ValidatableProperty<TProperty> : ObservableObject {
             IsModified = !HasError && !EqualityComparer<TProperty>.Default.Equals(value, DefaultValueProvider());
         }
     }
-    public bool IsModified {
+    public override bool HasError {
         get => field;
-        private set => SetProperty(ref field, value);
+        protected set => SetProperty(ref field, value);
     }
-    public bool HasError {
+    public override bool IsModified {
         get => field;
-        private set => SetProperty(ref field, value);
+        protected set => SetProperty(ref field, value);
     }
 
     public ValidatableProperty(Func<TProperty> defaultValueProvider) : this(defaultValueProvider, _ => true) { }

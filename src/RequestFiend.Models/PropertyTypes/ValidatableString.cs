@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace RequestFiend.Models.PropertyTypes;
 
-public class ValidatableString : ObservableObject {
+public sealed class ValidatableString : ValidatableProperty {
     public ValidationMode Mode { get; }
     public Func<string?> DefaultValueProvider { get; private set; }
     public string? Value {
@@ -20,13 +19,13 @@ public class ValidatableString : ObservableObject {
             IsModified = !HasError && value != DefaultValueProvider();
         }
     }
-    public bool IsModified {
+    public override bool HasError {
         get => field;
-        private set => SetProperty(ref field, value);
+        protected set => SetProperty(ref field, value);
     }
-    public bool HasError {
+    public override bool IsModified {
         get => field;
-        private set => SetProperty(ref field, value);
+        protected set => SetProperty(ref field, value);
     }
 
     public ValidatableString(ValidationMode mode) : this(mode, () => null) { }
