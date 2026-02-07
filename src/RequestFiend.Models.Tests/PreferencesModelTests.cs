@@ -19,7 +19,7 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
-        Assert.Equal(saveRecentCollections, subject.ShowRecentCollections);
+        Assert.Equal(saveRecentCollections, subject.ShowRecentCollections.Value);
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
     }
 
@@ -29,18 +29,22 @@ public class PreferencesModelTests {
     [InlineData(10, true)]
     public void Update(int maximumRecentCollectionCount, bool showRecentCollections) {
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetRecentCollections().Returns([.. Enumerable.Range(0, 11).Select(x => new RecentCollectionModel($"{x}.json"))]);
+        preferencesService.GetShowRecentCollections().Returns(showRecentCollections);
+        preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
-            ShowRecentCollections = showRecentCollections
+            ShowRecentCollections = { Value = showRecentCollections }
         };
 
         subject.Update();
 
         preferencesService.Received(1).SetShowRecentCollections(showRecentCollections);
         preferencesService.Received(1).SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
+
+        Assert.False(subject.ShowRecentCollections.IsModified);
+        Assert.False(subject.MaximumRecentCollectionCount.IsModified);
 
         if (showRecentCollections) {
             preferencesService.Received(1).TrimRecentCollections();
@@ -84,13 +88,13 @@ public class PreferencesModelTests {
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
 
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
-            ShowRecentCollections = false,
+            ShowRecentCollections = { Value = false },
             MaximumRecentCollectionCount = { Value = "25" }
         };
 
         await subject.Reset();
 
-        Assert.Equal(preferencesService.GetShowRecentCollections(), subject.ShowRecentCollections);
+        Assert.Equal(preferencesService.GetShowRecentCollections(), subject.ShowRecentCollections.Value);
         Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
 
         preferencesService.Received(1).Reset();
@@ -107,13 +111,13 @@ public class PreferencesModelTests {
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
 
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
-            ShowRecentCollections = false,
+            ShowRecentCollections = { Value = false },
             MaximumRecentCollectionCount = { Value = "25" }
         };
 
         await subject.Reset();
 
-        Assert.False(subject.ShowRecentCollections);
+        Assert.False(subject.ShowRecentCollections.Value);
         Assert.Equal("25", subject.MaximumRecentCollectionCount.Value);
 
         preferencesService.DidNotReceive().Reset();

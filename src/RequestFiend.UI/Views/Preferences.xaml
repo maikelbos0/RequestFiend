@@ -17,7 +17,7 @@
             </StackLayout>
 
             <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
-                <Switch IsToggled="{Binding ShowRecentCollections}"/>
+                <Switch IsToggled="{Binding ShowRecentCollections.Value}"/>
                 
                 <Label Text="Show recent collections" Grid.Column="1" VerticalOptions="Center"/>
             </Grid>

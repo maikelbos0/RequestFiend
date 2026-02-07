@@ -142,7 +142,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "https://url", null, "Value", "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", null, "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", "Value", null)]
-    public async Task Update_Does_Nothing_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
+    public async Task Update_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
         const string stringContent = "Content";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
