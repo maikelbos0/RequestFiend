@@ -71,6 +71,14 @@ public partial class RequestTemplateModel : BoundModelBase {
         };
     }
 
+    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
+    public void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}{suffix}";
+        ShellItemTitle = $"{request.Name}{suffix}";
+    }
+
     [RelayCommand]
     public async Task Update() {
         if (HasError) {
@@ -93,14 +101,6 @@ public partial class RequestTemplateModel : BoundModelBase {
 
         await requestTemplateCollectionService.Save(filePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
-    }
-
-    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
-    public void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
-
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}{suffix}";
-        ShellItemTitle = $"{request.Name}{suffix}";
     }
 
     [RelayCommand]

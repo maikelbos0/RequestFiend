@@ -136,6 +136,31 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
+    [InlineData(false, false, "External data requests - Name", "Name")]
+    [InlineData(true, false, "External data requests - Name ▲", "Name ▲")]
+    [InlineData(false, true, "External data requests - Name ●", "Name ●")]
+    [InlineData(true, true, "External data requests - Name ▲", "Name ▲")]
+    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+            HasError = hasError,
+            IsModified = isModified
+        };
+
+        subject.UpdateTitles();
+
+        Assert.Equal(expectedPageTitle, subject.PageTitle);
+        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
+    }
+
+    [Theory]
     [InlineData(null, null, null, null, null, null)]
     [InlineData(null, "GET", "https://url", "Name", "Value", "JSON")]
     [InlineData("Name", null, "https://url", "Name", "Value", "JSON")]
@@ -183,29 +208,6 @@ public class RequestTemplateModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
-    }
-
-    [Theory]
-    [InlineData(false, false, "External data requests - Name", "Name")]
-    [InlineData(true, false, "External data requests - Name ▲", "Name ▲")]
-    [InlineData(false, true, "External data requests - Name ●", "Name ●")]
-    [InlineData(true, true, "External data requests - Name ▲", "Name ▲")]
-    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://url"
-        };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
-
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider) {
-            HasError = hasError,
-            IsModified = isModified
-        };
-
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Theory]

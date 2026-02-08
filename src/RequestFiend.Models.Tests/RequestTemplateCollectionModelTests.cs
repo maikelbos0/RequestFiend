@@ -51,6 +51,8 @@ public class RequestTemplateCollectionModelTests {
             IsModified = isModified
         };
 
+        subject.UpdateTitles();
+
         Assert.Equal(expectedPageTitle, subject.PageTitle);
         Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
