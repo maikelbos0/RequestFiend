@@ -18,15 +18,8 @@ public partial class MainPageModel : BoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IFileSystem fileSystem;
 
-    public bool ShowRecentCollections {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
-
-    public List<RecentCollectionModel> RecentCollections {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
+    public bool ShowRecentCollections { get => field; set => SetProperty(ref field, value); }
+    public List<RecentCollectionModel> RecentCollections { get => field; set => SetProperty(ref field, value); }
 
     public MainPageModel(IPopupService popupService, IMessageService messageService, IPreferencesService preferencesService, IFileSystem fileSystem) {
         this.popupService = popupService;

@@ -22,30 +22,12 @@ public class BoundModelBase : ObservableObject {
             }
         }
     }
-    public LayoutOptions StackHorizontalOptions {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
-    public StackOrientation StackOrientation {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
-    public bool StackIsHorizontal {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
-    public bool StackIsVertical {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
-    public bool HasError {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
-    public bool IsModified {
-        get => field;
-        set => SetProperty(ref field, value);
-    }
+    public LayoutOptions StackHorizontalOptions { get => field; private set => SetProperty(ref field, value); }
+    public StackOrientation StackOrientation { get => field; private set => SetProperty(ref field, value); }
+    public bool StackIsHorizontal { get => field; private set => SetProperty(ref field, value); }
+    public bool StackIsVertical { get => field; private set => SetProperty(ref field, value); }
+    public bool HasError { get => field; set => SetProperty(ref field, value); }
+    public bool IsModified { get => field; set => SetProperty(ref field, value); }
 
     private void EvaluateResponsiveProperties() {
         if (PageWidth < widthBreakpoint) {
@@ -105,7 +87,7 @@ public class BoundModelBase : ObservableObject {
     }
 
     private void SetState() {
-        if (validatableProperties.Any(validatableProperty => validatableProperty.HasError) 
+        if (validatableProperties.Any(validatableProperty => validatableProperty.HasError)
             || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError))) {
 
             HasError = true;
