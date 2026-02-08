@@ -3,6 +3,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,8 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
     private readonly string filePath;
     private readonly RequestTemplateCollection collection;
 
-    public string Title { get => field; set => SetProperty(ref field, value); }
+    public string PageTitle { get => field; set => SetProperty(ref field, value); }
+    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> DefaultUrl { get; set; }
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
@@ -29,12 +31,25 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         this.messageService = messageService;
         (filePath, collection) = modelDataProvider.GetData();
 
-        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings";
         DefaultUrl = new(() => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
 
+        UpdateTitles();
         ConfigureState([DefaultUrl], [DefaultHeaders, Variables]);
+        PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
+                UpdateTitles();
+            }
+        };
+    }
+
+    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
+    public void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings{suffix}";
+        ShellItemTitle = $"Collection settings{suffix}";
     }
 
     [RelayCommand]

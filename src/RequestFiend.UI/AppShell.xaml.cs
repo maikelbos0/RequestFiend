@@ -67,14 +67,9 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                 StyleId = message.FilePath
             };
 
+            collectionItem.Items.Add(CreateSettingsTab(message.FilePath, message.Collection));
+
             using (GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((message.FilePath, message.Collection))) {
-                collectionItem.Items.Add(new Tab() {
-                    Title = "Collection settings",
-                    Icon = "bars_solid_full.png",
-                    Items = {
-                        GetRequiredService<RequestTemplateCollectionPage>()
-                    }
-                });
 
                 collectionItem.Items.Add(new Tab() {
                     Title = "New request",
@@ -95,12 +90,21 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         await GoToAsync($"//{collectionItem.Route}");
     }
 
-    public async void Receive(OpenTemplateRequestMessage message) {
-        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var item = CreateRequestTab(message.FilePath, message.Collection, message.Request);
+    private Tab CreateSettingsTab(string filePath, RequestTemplateCollection collection) {
+        using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
 
-        collectionItem.Items.Add(item);
-        await GoToAsync($"//{collectionItem.Route}/{item.Route}");
+        var requestTemplateCollectionPage = GetRequiredService<RequestTemplateCollectionPage>();
+        var item = new Tab() {
+            Icon = "bars_solid_full.png",
+            Items = {
+                        requestTemplateCollectionPage
+                    },
+            BindingContext = requestTemplateCollectionPage.BindingContext
+        };
+
+        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateModel.ShellItemTitle));
+
+        return item;
     }
 
     private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
@@ -130,4 +134,12 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
 
     private T GetRequiredService<T>() where T : notnull
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
+    
+    public async void Receive(OpenTemplateRequestMessage message) {
+        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+        var item = CreateRequestTab(message.FilePath, message.Collection, message.Request);
+
+        collectionItem.Items.Add(item);
+        await GoToAsync($"//{collectionItem.Route}/{item.Route}");
+    }
 }
