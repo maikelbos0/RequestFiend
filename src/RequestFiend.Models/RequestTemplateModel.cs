@@ -22,7 +22,8 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
-    public string Title { get => field; set => SetProperty(ref field, value); }
+    public string PageTitle { get => field; set => SetProperty(ref field, value); }
+    public string TabTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> Name { get; set; }
     public ValidatableProperty<string?> Method { get; set; }
     public ValidatableProperty<string?> Url { get; set; }
@@ -49,7 +50,8 @@ public partial class RequestTemplateModel : BoundModelBase {
         this.messageService = messageService;
         (filePath, collection, request) = modelDataProvider.GetData();
 
-        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
+        TabTitle = request.Name;
         Name = new(() => request.Name, Validator.Required);
         Method = new(() => request.Method, Validator.Required);
         Url = new(() => request.Url, Validator.Required);
@@ -77,7 +79,8 @@ public partial class RequestTemplateModel : BoundModelBase {
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
-        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
+        TabTitle = request.Name;
         Name.Reset();
         Method.Reset();
         Url.Reset();
@@ -86,7 +89,6 @@ public partial class RequestTemplateModel : BoundModelBase {
         StringContent.Reset();
 
         await requestTemplateCollectionService.Save(filePath, collection);
-        messageService.Send(new RequestTemplateUpdatedMessage(request), request.Id);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 

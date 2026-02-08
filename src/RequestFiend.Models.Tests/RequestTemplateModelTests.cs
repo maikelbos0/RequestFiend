@@ -61,7 +61,8 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.Title);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
+        Assert.Equal(request.Name, subject.TabTitle);
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -114,7 +115,8 @@ public class RequestTemplateModelTests {
 
         await subject.Update();
 
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.Title);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
+        Assert.Equal(request.Name, subject.TabTitle);
         Assert.Equal(name, request.Name);
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);
@@ -130,7 +132,6 @@ public class RequestTemplateModelTests {
         Assert.False(subject.StringContent.IsModified);
 
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
-        messageService.Received(1).Send(Arg.Is<RequestTemplateUpdatedMessage>(x => x.Request == request), request.Id);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
@@ -181,7 +182,6 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousContent", request.StringContent);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
-        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateUpdatedMessage>(), Arg.Any<Guid>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 

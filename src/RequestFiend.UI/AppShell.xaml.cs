@@ -106,15 +106,18 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
         using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>().CreateScope((filePath, collection, request));
 
+        var page = GetRequiredService<RequestTemplatePage>();
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
-            Title = request.Name,
             Items = {
-                GetRequiredService<RequestTemplatePage>()
+                page
             },
-            Route = $"RequestTemplate_{request.Id}"
+            Route = $"RequestTemplate_{request.Id}",
+            BindingContext = page.BindingContext
         };
-        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateUpdatedMessage, Guid>(item, request.Id, (tab, message) => tab.Title = request.Name);
+
+        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateModel.TabTitle));
+
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, Guid>(item, request.Id, async (tab, _) => {
             if (tab.Parent is ShellItem collectionItem) {
                 collectionItem.Items.Remove(tab);
