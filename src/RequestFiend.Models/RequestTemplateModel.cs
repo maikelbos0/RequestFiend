@@ -24,7 +24,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplate request;
 
     public string PageTitle { get => field; set => SetProperty(ref field, value); }
-    public string TabTitle { get => field; set => SetProperty(ref field, value); }
+    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> Name { get; set; }
     public ValidatableProperty<string?> Method { get; set; }
     public ValidatableProperty<string?> Url { get; set; }
@@ -71,14 +71,6 @@ public partial class RequestTemplateModel : BoundModelBase {
         };
     }
 
-    [MemberNotNull(nameof(PageTitle), nameof(TabTitle))]
-    private void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
-
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}{suffix}";
-        TabTitle = $"{request.Name}{suffix}";
-    }
-
     [RelayCommand]
     public async Task Update() {
         if (HasError) {
@@ -102,6 +94,14 @@ public partial class RequestTemplateModel : BoundModelBase {
         UpdateTitles();
         await requestTemplateCollectionService.Save(filePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
+    }
+
+    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
+    public void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}{suffix}";
+        ShellItemTitle = $"{request.Name}{suffix}";
     }
 
     [RelayCommand]

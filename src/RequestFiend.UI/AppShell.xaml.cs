@@ -116,7 +116,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             BindingContext = page.BindingContext
         };
 
-        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateModel.TabTitle));
+        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateModel.ShellItemTitle));
 
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, Guid>(item, request.Id, async (tab, _) => {
             if (tab.Parent is ShellItem collectionItem) {

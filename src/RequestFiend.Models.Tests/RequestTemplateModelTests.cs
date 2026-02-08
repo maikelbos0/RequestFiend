@@ -62,7 +62,7 @@ public class RequestTemplateModelTests {
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
-        Assert.Equal(request.Name, subject.TabTitle);
+        Assert.Equal(request.Name, subject.ShellItemTitle);
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -116,7 +116,7 @@ public class RequestTemplateModelTests {
         await subject.Update();
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
-        Assert.Equal(request.Name, subject.TabTitle);
+        Assert.Equal(request.Name, subject.ShellItemTitle);
         Assert.Equal(name, request.Name);
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);
@@ -183,6 +183,31 @@ public class RequestTemplateModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Theory]
+    [InlineData(false, false, "External data requests - Name", "Name")]
+    [InlineData(true, false, "External data requests - Name ▲", "Name ▲")]
+    [InlineData(false, true, "External data requests - Name ●", "Name ●")]
+    [InlineData(true, true, "External data requests - Name ▲", "Name ▲")]
+    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
+        var popupService = Substitute.For<IPopupService>();
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider) {
+            HasError = hasError,
+            IsModified = isModified
+        };
+
+        Assert.Equal(expectedPageTitle, subject.PageTitle);
+        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Theory]
