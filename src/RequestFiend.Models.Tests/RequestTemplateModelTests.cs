@@ -61,8 +61,10 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
+        // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
         Assert.Equal(request.Name, subject.ShellItemTitle);
+
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -115,8 +117,6 @@ public class RequestTemplateModelTests {
 
         await subject.Update();
 
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
-        Assert.Equal(request.Name, subject.ShellItemTitle);
         Assert.Equal(name, request.Name);
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);
@@ -191,8 +191,6 @@ public class RequestTemplateModelTests {
     [InlineData(false, true, "External data requests - Name ●", "Name ●")]
     [InlineData(true, true, "External data requests - Name ▲", "Name ▲")]
     public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        var popupService = Substitute.For<IPopupService>();
-        var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -201,7 +199,7 @@ public class RequestTemplateModelTests {
         var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
         modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider) {
             HasError = hasError,
             IsModified = isModified
         };

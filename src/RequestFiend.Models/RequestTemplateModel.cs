@@ -91,7 +91,6 @@ public partial class RequestTemplateModel : BoundModelBase {
         ContentType.Reset();
         StringContent.Reset();
 
-        UpdateTitles();
         await requestTemplateCollectionService.Save(filePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
