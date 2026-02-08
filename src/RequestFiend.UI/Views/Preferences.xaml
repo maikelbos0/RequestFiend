@@ -14,6 +14,8 @@
                 <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModified}"/>
 
                 <Button Text="Reset" Command="{Binding ResetCommand}" Style="{StaticResource DangerButton}"/>
+
+                <Button Text="Clear recent collections" Command="{Binding ClearRecentCollectionsCommand}" Style="{StaticResource DangerButton}"/>
             </StackLayout>
 
             <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">

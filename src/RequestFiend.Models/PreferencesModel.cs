@@ -58,4 +58,13 @@ public partial class PreferencesModel : BoundModelBase {
             messageService.Send(new SuccessMessage("Preferences have been reset"));
         }
     }
+
+    [RelayCommand]
+    public async Task ClearRecentCollections() {
+        if (await popupService.ShowConfirmPopup("Are you sure you want to clear your recent collections?")) {
+            preferencesService.ClearRecentCollections();
+
+            messageService.Send(new SuccessMessage("Recent collections have been cleared"));
+        }
+    }
 }

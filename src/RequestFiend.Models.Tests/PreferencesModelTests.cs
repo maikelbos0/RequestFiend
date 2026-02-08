@@ -123,4 +123,34 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().Reset();
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
+
+    [Fact]
+    public async Task ClearRecentCollections_And_Confirm() {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
+
+        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+
+        await subject.ClearRecentCollections();
+
+        preferencesService.Received(1).ClearRecentCollections();
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Fact]
+    public async Task ClearRecentCollections_Without_Confirming() {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
+
+        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+
+        await subject.ClearRecentCollections();
+
+        preferencesService.DidNotReceive().ClearRecentCollections();
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
 }
