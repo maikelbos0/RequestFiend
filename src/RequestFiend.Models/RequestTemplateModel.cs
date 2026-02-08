@@ -5,6 +5,7 @@ using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -50,20 +51,32 @@ public partial class RequestTemplateModel : BoundModelBase {
         this.messageService = messageService;
         (filePath, collection, request) = modelDataProvider.GetData();
 
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
-        TabTitle = request.Name;
         Name = new(() => request.Name, Validator.Required);
         Method = new(() => request.Method, Validator.Required);
         Url = new(() => request.Url, Validator.Required);
         Headers = new(request.Headers);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
-
+        
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
 
+        UpdateTitles();
         ConfigureState([Name, Method, Url, ContentType, StringContent], [Headers]);
+        PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
+                UpdateTitles();
+            }
+        };
+    }
+
+    [MemberNotNull(nameof(PageTitle), nameof(TabTitle))]
+    private void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}{suffix}";
+        TabTitle = $"{request.Name}{suffix}";
     }
 
     [RelayCommand]
@@ -79,8 +92,6 @@ public partial class RequestTemplateModel : BoundModelBase {
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}";
-        TabTitle = request.Name;
         Name.Reset();
         Method.Reset();
         Url.Reset();
@@ -88,6 +99,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         ContentType.Reset();
         StringContent.Reset();
 
+        UpdateTitles();
         await requestTemplateCollectionService.Save(filePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
