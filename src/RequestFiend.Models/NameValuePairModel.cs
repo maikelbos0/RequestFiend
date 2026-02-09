@@ -18,7 +18,7 @@ public class NameValuePairModel : ObservableObject {
         Value = new(valueProvider, Validator.Required);
     }
 
-    public void Reinitialize(NameValuePair pair) {
+    public void Reset(NameValuePair pair) {
         Name.Reset(() => pair.Name);
         Value.Reset(() => pair.Value);
     }

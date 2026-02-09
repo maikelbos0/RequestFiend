@@ -63,8 +63,8 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
 
         DefaultUrl.Reset();
-        DefaultHeaders.Reinitialize(collection.DefaultHeaders);
-        Variables.Reinitialize(collection.Variables);
+        DefaultHeaders.Reset(collection.DefaultHeaders);
+        Variables.Reset(collection.Variables);
 
         await requestTemplateCollectionService.Save(filePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));

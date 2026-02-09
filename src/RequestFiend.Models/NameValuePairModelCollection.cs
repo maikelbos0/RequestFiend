@@ -38,13 +38,13 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         Add(new());
     }
 
-    public void Reinitialize(List<NameValuePair> collection) {
+    public void Reset(List<NameValuePair> collection) {
         if (collection.Count != Count) {
             throw new ArgumentException("Collection must have identical length", nameof(collection));
         }
 
         for (var i = 0; i < collection.Count; i++) {
-            this[i].Reinitialize(collection[i]);
+            this[i].Reset(collection[i]);
         }
     }
 

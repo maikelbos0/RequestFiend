@@ -78,7 +78,7 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void Reinitialize() {
+    public void Reset() {
         var subject = new NameValuePairModelCollection([]) {
             new(),
             new()
@@ -89,7 +89,7 @@ public class NameValuePairModelCollectionTests {
             new() { Name = "SecondName", Value = "SecondValue" }
         };
 
-        subject.Reinitialize(collection);
+        subject.Reset(collection);
 
         Assert.Equal(collection.Count, subject.Count);
 
@@ -103,7 +103,7 @@ public class NameValuePairModelCollectionTests {
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(3)]
-    public void Reinitialize_Throws_For_Wrong_Length(int collectionLength) {
+    public void Reset_Throws_For_Wrong_Length(int collectionLength) {
         var subject = new NameValuePairModelCollection([]) {
             new(),
             new()
@@ -113,6 +113,6 @@ public class NameValuePairModelCollectionTests {
             .Select(_ => new NameValuePair() { Name = "Name", Value = "Value" })
             .ToList();
 
-        Assert.Throws<ArgumentException>(() => subject.Reinitialize(collection));
+        Assert.Throws<ArgumentException>(() => subject.Reset(collection));
     }
 }

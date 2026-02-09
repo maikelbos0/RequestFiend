@@ -95,7 +95,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         Name.Reset();
         Method.Reset();
         Url.Reset();
-        Headers.Reinitialize(request.Headers);
+        Headers.Reset(request.Headers);
         ContentType.Reset();
         StringContent.Reset();
 

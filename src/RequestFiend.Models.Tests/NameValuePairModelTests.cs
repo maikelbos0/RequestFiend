@@ -5,19 +5,19 @@ namespace RequestFiend.Models.Tests;
 
 public class NameValuePairModelTests {
     [Fact]
-    public void Reinitialize() {
+    public void Reset() {
         var subject = new NameValuePairModel(new() { Name = "PreviousName", Value = "PreviousValue" });
 
-        var reinitializedPair = new NameValuePair() {
+        var resetPair = new NameValuePair() {
             Name = "NewName",
             Value = "NewValue"
         };
 
-        subject.Reinitialize(reinitializedPair);
+        subject.Reset(resetPair);
 
-        Assert.Equal(reinitializedPair.Name, subject.Name.Value);
+        Assert.Equal(resetPair.Name, subject.Name.Value);
         Assert.False(subject.Name.IsModified);
-        Assert.Equal(reinitializedPair.Value, subject.Value.Value);
+        Assert.Equal(resetPair.Value, subject.Value.Value);
         Assert.False(subject.Value.IsModified);
     }
 }
