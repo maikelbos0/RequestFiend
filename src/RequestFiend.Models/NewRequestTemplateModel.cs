@@ -3,6 +3,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -14,7 +15,8 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     private readonly string filePath;
     private readonly RequestTemplateCollection collection;
 
-    public string Title { get => field; set => SetProperty(ref field, value); }
+    public string PageTitle { get => field; set => SetProperty(ref field, value); }
+    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> Name { get; set; } = new(() => null, Validator.Required);
     public ValidatableProperty<string?> Method { get; set; } = new(() => null, Validator.Required);
     public ValidatableProperty<string?> Url { get; set; }
@@ -28,7 +30,6 @@ public partial class NewRequestTemplateModel : BoundModelBase {
         this.messageService = messageService;
         (filePath, collection) = modelDataProvider.GetData();
 
-        Title = $"{Path.GetFileNameWithoutExtension(filePath)} - New request";
         Url = new(() => collection.DefaultUrl, Validator.Required);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, filePath, (model, _) => {
             if (!model.Url.IsModified) {
@@ -36,7 +37,21 @@ public partial class NewRequestTemplateModel : BoundModelBase {
             }
         });
 
+        UpdateTitles();
         ConfigureState([Name, Method, Url], []);
+        PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
+                UpdateTitles();
+            }
+        };
+    }
+
+    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
+    public void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - New request{suffix}";
+        ShellItemTitle = $"New request{suffix}";
     }
 
     [RelayCommand]

@@ -6,7 +6,7 @@
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.NewRequestTemplatePage"
     x:DataType="models:NewRequestTemplateModel"
-    Title="{Binding Title}">
+    Title="{Binding PageTitle}">
 
     <ScrollView>
         <VerticalStackLayout>

@@ -68,17 +68,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             };
 
             collectionItem.Items.Add(CreateSettingsTab(message.FilePath, message.Collection));
-
-            using (GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((message.FilePath, message.Collection))) {
-
-                collectionItem.Items.Add(new Tab() {
-                    Title = "New request",
-                    Icon = "plus_solid_full.png",
-                    Items = {
-                        GetRequiredService<NewRequestTemplatePage>()
-                    }
-                });
-            }
+            collectionItem.Items.Add(CreateNewRequestTab(message.FilePath, message.Collection));
 
             foreach (var request in message.Collection.Requests) {
                 collectionItem.Items.Add(CreateRequestTab(message.FilePath, message.Collection, request));
@@ -93,16 +83,33 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     private Tab CreateSettingsTab(string filePath, RequestTemplateCollection collection) {
         using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
 
-        var requestTemplateCollectionPage = GetRequiredService<RequestTemplateCollectionPage>();
+        var page = GetRequiredService<RequestTemplateCollectionPage>();
         var item = new Tab() {
             Icon = "bars_solid_full.png",
             Items = {
-                        requestTemplateCollectionPage
-                    },
-            BindingContext = requestTemplateCollectionPage.BindingContext
+                page
+            },
+            BindingContext = page.BindingContext
         };
 
-        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateModel.ShellItemTitle));
+        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateCollectionModel.ShellItemTitle));
+
+        return item;
+    }
+
+    private Tab CreateNewRequestTab(string filePath, RequestTemplateCollection collection) {
+        using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
+
+        var page = GetRequiredService<NewRequestTemplatePage>();
+        var item = new Tab() {
+            Icon = "plus_solid_full.png",
+            Items = {
+                page
+            },
+            BindingContext = page.BindingContext
+        };
+
+        item.SetBinding(BaseShellItem.TitleProperty, nameof(NewRequestTemplateModel.ShellItemTitle));
 
         return item;
     }

@@ -22,11 +22,34 @@ public class NewRequestTemplateModelTests {
         modelDataProvider.GetData().Returns((filePath, collection));
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, modelDataProvider);
+        
+        // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.PageTitle);
+        Assert.Equal("New request", subject.ShellItemTitle);
 
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.Title);
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
+    }
+
+    [Theory]
+    [InlineData(false, false, "External data requests - New request", "New request")]
+    [InlineData(true, false, "External data requests - New request ▲", "New request ▲")]
+    [InlineData(false, true, "External data requests - New request ●", "New request ●")]
+    [InlineData(true, true, "External data requests - New request ▲", "New request ▲")]
+    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
+        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
+        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new()));
+
+        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+            HasError = hasError,
+            IsModified = isModified
+        };
+
+        subject.UpdateTitles();
+
+        Assert.Equal(expectedPageTitle, subject.PageTitle);
+        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Fact]
