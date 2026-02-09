@@ -1,7 +1,6 @@
 ﻿using NSubstitute;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,6 +20,23 @@ public class PreferencesModelTests {
 
         Assert.Equal(saveRecentCollections, subject.ShowRecentCollections.Value);
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
+    }
+
+    [Theory]
+    [InlineData(false, false, "Preferences", "Preferences")]
+    [InlineData(true, false, "Preferences ▲", "Preferences ▲")]
+    [InlineData(false, true, "Preferences ●", "Preferences ●")]
+    [InlineData(true, true, "Preferences ▲", "Preferences ▲")]
+    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
+        var subject = new PreferencesModel(Substitute.For<IPreferencesService>(), Substitute.For<IMessageService>(), Substitute.For<IPopupService>()) {
+            HasError = hasError,
+            IsModified = isModified
+        };
+
+        subject.UpdateTitles();
+
+        Assert.Equal(expectedPageTitle, subject.PageTitle);
+        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Theory]

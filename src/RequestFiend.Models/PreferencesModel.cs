@@ -2,6 +2,7 @@
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -11,8 +12,9 @@ public partial class PreferencesModel : BoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
 
+    public string PageTitle { get => field; set => SetProperty(ref field, value); }
+    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<bool> ShowRecentCollections { get; set; }
-
     public ValidatableProperty<string?> MaximumRecentCollectionCount { get; set; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) {
@@ -23,7 +25,20 @@ public partial class PreferencesModel : BoundModelBase {
         ShowRecentCollections = new(() => preferencesService.GetShowRecentCollections());
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
 
+        UpdateTitles();
         ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount], []);
+        PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
+                UpdateTitles();
+            }
+        };
+    }
+
+    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
+    public void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = ShellItemTitle = $"Preferences{suffix}";
     }
 
     [RelayCommand]
