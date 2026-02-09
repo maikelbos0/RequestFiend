@@ -22,11 +22,6 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
-    protected override void OnNavigated(ShellNavigatedEventArgs args) {
-        TitleLabel.Text = CurrentItem.Title;
-        CloseButton.IsVisible = CurrentItem.StyleId != null;
-    }
-
     private async void OnCloseClicked(object sender, EventArgs e) {
         var currentItem = CurrentItem;
         await GoToAsync("//MainPage");

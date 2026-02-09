@@ -4,20 +4,22 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
-    Title="RequestFiend">
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="RequestFiend"
+    x:Name="Shell">
 
     <Shell.TitleView>
         <AbsoluteLayout>
             <Grid ColumnDefinitions="*,Auto" Padding="15,0,15,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
                 <Label 
-                    x:Name="TitleLabel" 
-                    Text="Home" 
+                    BindingContext="{x:Reference Shell}"
+                    Text="{Binding CurrentItem.Title}"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                     FontSize="32"
                     LineBreakMode="TailTruncation"/>
 
                 <Button
-                    x:Name="CloseButton" 
+                    BindingContext="{x:Reference Shell}"
                     Text="🗙"
                     FontSize="32"
                     TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
@@ -26,8 +28,8 @@
                     MinimumWidthRequest="44"
                     SemanticProperties.Description="Close collection" 
                     Clicked="OnCloseClicked"
-                    Grid.Column="1" 
-                    IsVisible="False"/>
+                    Grid.Column="1"
+                    IsVisible="{Binding CurrentItem.StyleId, Converter={toolkit:IsNotNullConverter}}"/>
             </Grid>
 
             <Label
