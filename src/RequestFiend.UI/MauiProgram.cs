@@ -41,10 +41,10 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient<MainPageModel>();
         mauiAppBuilder.Services.AddTransient<PreferencesModel>();
         mauiAppBuilder.Services.AddTransient<NewRequestTemplateModel>();
-        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
+        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionSettingsModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateModel>();
 
-        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionPage>();
+        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionSettingsPage>();
         mauiAppBuilder.Services.AddTransient<NewRequestTemplatePage>();
         mauiAppBuilder.Services.AddTransient<RequestTemplatePage>();
 

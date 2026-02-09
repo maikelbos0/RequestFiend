@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateCollectionModel : BoundModelBase {
+public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IMessageService messageService;
     private readonly string filePath;
@@ -22,7 +22,7 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
 
-    public RequestTemplateCollectionModel(
+    public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IMessageService messageService, 
         IModelDataProvider<(string, RequestTemplateCollection)> modelDataProvider

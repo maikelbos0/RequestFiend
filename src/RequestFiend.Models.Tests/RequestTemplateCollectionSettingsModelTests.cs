@@ -8,7 +8,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class RequestTemplateCollectionModelTests {
+public class RequestTemplateCollectionSettingsModelTests {
     [Fact]
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";
@@ -23,7 +23,7 @@ public class RequestTemplateCollectionModelTests {
         var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
         modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new RequestTemplateCollectionModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
+        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
 
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitle);
@@ -46,7 +46,7 @@ public class RequestTemplateCollectionModelTests {
         var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
         modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new()));
 
-        var subject = new RequestTemplateCollectionModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider) {
             HasError = hasError,
             IsModified = isModified
         };
@@ -80,7 +80,7 @@ public class RequestTemplateCollectionModelTests {
         var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
         modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new RequestTemplateCollectionModel(requestTemplateCollectionService, messageService, modelDataProvider);
+        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, modelDataProvider);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -128,7 +128,7 @@ public class RequestTemplateCollectionModelTests {
         var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
         modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", collection));
 
-        var subject = new RequestTemplateCollectionModel(requestTemplateCollectionService, messageService, modelDataProvider);
+        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, modelDataProvider);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;

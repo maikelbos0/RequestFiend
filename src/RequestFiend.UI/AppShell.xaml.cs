@@ -78,7 +78,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     private Tab CreateSettingsTab(string filePath, RequestTemplateCollection collection) {
         using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
 
-        var page = GetRequiredService<RequestTemplateCollectionPage>();
+        var page = GetRequiredService<RequestTemplateCollectionSettingsPage>();
         var item = new Tab() {
             Icon = "bars_solid_full.png",
             Items = {
@@ -87,7 +87,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             BindingContext = page.BindingContext
         };
 
-        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateCollectionModel.ShellItemTitle));
+        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateCollectionSettingsModel.ShellItemTitle));
 
         return item;
     }
