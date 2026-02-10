@@ -37,8 +37,8 @@ public partial class NewRequestTemplateModel : BoundModelBase {
             }
         });
 
-        UpdateTitles();
         ConfigureState([Name, Method, Url], []);
+        UpdateTitles();
         PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
                 UpdateTitles();

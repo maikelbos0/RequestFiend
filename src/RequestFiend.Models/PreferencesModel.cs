@@ -25,8 +25,8 @@ public partial class PreferencesModel : BoundModelBase {
         ShowRecentCollections = new(() => preferencesService.GetShowRecentCollections());
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
 
-        UpdateTitles();
         ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount], []);
+        UpdateTitles();
         PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
                 UpdateTitles();

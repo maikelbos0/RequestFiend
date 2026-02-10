@@ -35,8 +35,8 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
 
-        UpdateTitles();
         ConfigureState([DefaultUrl], [DefaultHeaders, Variables]);
+        UpdateTitles();
         PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
                 UpdateTitles();

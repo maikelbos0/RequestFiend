@@ -62,8 +62,8 @@ public partial class RequestTemplateModel : BoundModelBase {
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
 
-        UpdateTitles();
         ConfigureState([Name, Method, Url, ContentType, StringContent], [Headers]);
+        UpdateTitles();
         PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
                 UpdateTitles();
