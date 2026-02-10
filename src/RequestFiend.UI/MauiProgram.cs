@@ -54,3 +54,5 @@ public static class MauiProgram {
 
 // TODO disable buttons when method not available
 // TODO decide what the fuck to do with the JSON buttons
+// TODO maybe just have an action button for creating a new request that adds a new empty request? Or move it to a popup?
+
