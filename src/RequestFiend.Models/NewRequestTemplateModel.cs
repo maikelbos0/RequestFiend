@@ -12,7 +12,7 @@ namespace RequestFiend.Models;
 public partial class NewRequestTemplateModel : BoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IMessageService messageService;
-    private readonly string filePath;
+    private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
     public string PageTitle { get => field; set => SetProperty(ref field, value); }
@@ -24,14 +24,16 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     public NewRequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IMessageService messageService,
-        IModelDataProvider<(string, RequestTemplateCollection)> modelDataProvider
+        RequestTemplateCollectionFileModel file,
+        RequestTemplateCollection collection
     ) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.messageService = messageService;
-        (filePath, collection) = modelDataProvider.GetData();
+        this.file = file;
+        this.collection = collection;
 
         Url = new(() => collection.DefaultUrl, Validator.Required);
-        messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, filePath, (model, _) => {
+        messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, file.FilePath, (model, _) => {
             if (!model.Url.IsModified) {
                 model.Url.Reset();
             }
@@ -50,7 +52,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     public void UpdateTitles() {
         var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
 
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - New request{suffix}";
+        PageTitle = $"{Path.GetFileNameWithoutExtension(file.FilePath)} - New request{suffix}";
         ShellItemTitle = $"New request{suffix}";
     }
 
@@ -71,8 +73,8 @@ public partial class NewRequestTemplateModel : BoundModelBase {
         Method.Reset();
         Url.Reset();
 
-        await requestTemplateCollectionService.Save(filePath, collection);
-        messageService.Send(new OpenTemplateRequestMessage(filePath, collection, request));
+        await requestTemplateCollectionService.Save(file.FilePath, collection);
+        messageService.Send(new OpenTemplateRequestMessage(file.FilePath, collection, request));
         messageService.Send(new SuccessMessage("Request had been added"));
     }
 }

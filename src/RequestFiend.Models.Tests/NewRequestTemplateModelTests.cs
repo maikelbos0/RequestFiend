@@ -18,14 +18,12 @@ public class NewRequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default"
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, modelDataProvider);
-        
+        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, new(filePath), collection);
+
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.PageTitle);
-        Assert.Equal("New request", subject.ShellItemTitle);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request ▲", subject.PageTitle);
+        Assert.Equal("New request ▲", subject.ShellItemTitle);
 
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
@@ -38,10 +36,9 @@ public class NewRequestTemplateModelTests {
     [InlineData(false, true, "External data requests - New request ●", "New request ●")]
     [InlineData(true, true, "External data requests - New request ▲", "New request ▲")]
     public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new()));
+        const string filePath = @"C:\Documents\External data requests.json";
 
-        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), new()) {
             HasError = hasError,
             IsModified = isModified
         };
@@ -64,10 +61,8 @@ public class NewRequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default"
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, modelDataProvider);
+        var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, new(filePath), collection);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -102,17 +97,15 @@ public class NewRequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default"
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, modelDataProvider);
+        var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, new(filePath), collection);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
         subject.Url.Value = url;
 
         await subject.Create();
-        
+
         Assert.Empty(collection.Requests);
 
         Assert.Equal(name, subject.Name.Value);
