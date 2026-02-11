@@ -19,7 +19,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    private readonly string filePath;
+    private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
@@ -44,12 +44,16 @@ public partial class RequestTemplateModel : BoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
-        IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)> modelDataProvider
+        RequestTemplateCollectionFileModel file,
+        RequestTemplateCollection collection,
+        RequestTemplate request
     ) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        (filePath, collection, request) = modelDataProvider.GetData();
+        this.file = file;
+        this.collection = collection;
+        this.request = request;
 
         Name = new(() => request.Name, Validator.Required);
         Method = new(() => request.Method, Validator.Required);
@@ -75,7 +79,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     public void UpdateTitles() {
         var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
 
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}{suffix}";
+        PageTitle = $"{Path.GetFileNameWithoutExtension(file.FilePath)} - {request.Name}{suffix}";
         ShellItemTitle = $"{request.Name}{suffix}";
     }
 
@@ -99,7 +103,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         ContentType.Reset();
         StringContent.Reset();
 
-        await requestTemplateCollectionService.Save(filePath, collection);
+        await requestTemplateCollectionService.Save(file.FilePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 
@@ -134,7 +138,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
             collection.Requests.Remove(request);
-            await requestTemplateCollectionService.Save(filePath, collection);
+            await requestTemplateCollectionService.Save(file.FilePath, collection);
             messageService.Send(new RequestTemplateDeletedMessage(), request.Id);
             messageService.Send(new SuccessMessage("Request had been deleted"));
         }

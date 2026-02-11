@@ -25,10 +25,8 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
@@ -56,10 +54,8 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request);
 
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
@@ -82,15 +78,15 @@ public class RequestTemplateModelTests {
     [InlineData(false, true, "External data requests - Name ●", "Name ●")]
     [InlineData(true, true, "External data requests - Name ▲", "Name ▲")]
     public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
             Url = "https://url"
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), new(), request) {
             HasError = hasError,
             IsModified = isModified
         };
@@ -127,10 +123,8 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -169,6 +163,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "https://url", "Name", null, "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", "Value", null)]
     public async Task Update_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
+        const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
@@ -183,10 +178,8 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent"
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -216,6 +209,8 @@ public class RequestTemplateModelTests {
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
     public async Task ValidateJson_When_Valid(string? stringContent) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var popupService = Substitute.For<IPopupService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -225,10 +220,8 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
         await subject.ValidateJson();
 
@@ -240,6 +233,8 @@ public class RequestTemplateModelTests {
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
     public async Task ValidateJson_When_Invalid(string? stringContent) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var popupService = Substitute.For<IPopupService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -249,10 +244,8 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
         await subject.ValidateJson();
 
@@ -266,6 +259,8 @@ public class RequestTemplateModelTests {
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
     public async Task FormatJson_When_Valid(string? stringContent, string? expectedStringContent) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var popupService = Substitute.For<IPopupService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -275,10 +270,8 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
         await subject.FormatJson();
 
@@ -292,6 +285,8 @@ public class RequestTemplateModelTests {
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
     public async Task FormatJson_When_Invalid(string? stringContent) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var popupService = Substitute.For<IPopupService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -301,10 +296,8 @@ public class RequestTemplateModelTests {
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new(), request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
         await subject.FormatJson();
 
@@ -330,10 +323,8 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, new(filePath), collection, request);
 
         await subject.Delete();
 
@@ -359,10 +350,8 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>();
-        modelDataProvider.GetData().Returns((filePath, collection, request));
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, modelDataProvider);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
 
         await subject.Delete();
 
