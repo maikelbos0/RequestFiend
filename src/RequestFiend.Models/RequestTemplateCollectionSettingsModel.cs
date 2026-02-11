@@ -13,7 +13,7 @@ namespace RequestFiend.Models;
 public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IMessageService messageService;
-    private readonly string filePath;
+    private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
     public string PageTitle { get => field; set => SetProperty(ref field, value); }
@@ -24,12 +24,14 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
-        IMessageService messageService, 
-        IModelDataProvider<(string, RequestTemplateCollection)> modelDataProvider
+        IMessageService messageService,
+        RequestTemplateCollectionFileModel file,
+        RequestTemplateCollection collection
     ) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.messageService = messageService;
-        (filePath, collection) = modelDataProvider.GetData();
+        this.file = file;
+        this.collection = collection;
 
         DefaultUrl = new(() => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders);
@@ -48,7 +50,7 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
     public void UpdateTitles() {
         var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
 
-        PageTitle = $"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings{suffix}";
+        PageTitle = $"{Path.GetFileNameWithoutExtension(file.FilePath)} - Collection settings{suffix}";
         ShellItemTitle = $"Collection settings{suffix}";
     }
 
@@ -66,7 +68,7 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
         DefaultHeaders.Reset(collection.DefaultHeaders);
         Variables.Reset(collection.Variables);
 
-        await requestTemplateCollectionService.Save(filePath, collection);
+        await requestTemplateCollectionService.Save(file.FilePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 }

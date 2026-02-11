@@ -20,10 +20,8 @@ public class RequestTemplateCollectionSettingsModelTests {
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
             }
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((filePath, collection));
-
-        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider);
+        
+        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), collection);
 
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitle);
@@ -43,10 +41,9 @@ public class RequestTemplateCollectionSettingsModelTests {
     [InlineData(false, true, "External data requests - Collection settings ●", "Collection settings ●")]
     [InlineData(true, true, "External data requests - Collection settings ▲", "Collection settings ▲")]
     public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", new()));
+        const string filePath = @"C:\Documents\External data requests.json";
 
-        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), modelDataProvider) {
+        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), new()) {
             HasError = hasError,
             IsModified = isModified
         };
@@ -77,10 +74,8 @@ public class RequestTemplateCollectionSettingsModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((filePath, collection));
 
-        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, modelDataProvider);
+        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, new(filePath), collection);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -112,6 +107,7 @@ public class RequestTemplateCollectionSettingsModelTests {
     [InlineData("Name", "Value", null, "Value")]
     [InlineData("Name", "Value", "Name", null)]
     public async Task Update_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
+        const string filePath = @"C:\Documents\External data requests.json";
         const string defaultUrl = "https://default";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
@@ -125,10 +121,8 @@ public class RequestTemplateCollectionSettingsModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
-        var modelDataProvider = Substitute.For<IModelDataProvider<(string, RequestTemplateCollection)>>();
-        modelDataProvider.GetData().Returns((@"C:\Documents\External data requests.json", collection));
 
-        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, modelDataProvider);
+        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, new(filePath), collection);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
