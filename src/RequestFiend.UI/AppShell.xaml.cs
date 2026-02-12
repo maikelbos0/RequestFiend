@@ -55,6 +55,8 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         var collectionItem = Items.SingleOrDefault(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
 
         if (collectionItem == null) {
+            using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection);
+
             collectionItem = new FlyoutItem() {
                 Title = Path.GetFileNameWithoutExtension(message.FilePath),
                 Icon = "folder_open_solid_full.png",
@@ -76,9 +78,6 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     private Tab CreateSettingsTab(string filePath, RequestTemplateCollection collection) {
-        using var _1 = GetRequiredService<IModelDataProvider<RequestTemplateCollectionFileModel>>().CreateScope(new(filePath));
-        using var _2 = GetRequiredService<IModelDataProvider<RequestTemplateCollection>>().CreateScope(collection);
-
         var page = GetRequiredService<RequestTemplateCollectionSettingsPage>();
         var item = new Tab() {
             Icon = "bars_solid_full.png",
@@ -94,9 +93,6 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     private Tab CreateNewRequestTab(string filePath, RequestTemplateCollection collection) {
-        using var _1 = GetRequiredService<IModelDataProvider<RequestTemplateCollectionFileModel>>().CreateScope(new(filePath));
-        using var _2 = GetRequiredService<IModelDataProvider<RequestTemplateCollection>>().CreateScope(collection);
-
         var page = GetRequiredService<NewRequestTemplatePage>();
         var item = new Tab() {
             Icon = "plus_solid_full.png",
@@ -112,9 +108,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
-        using var _1 = GetRequiredService<IModelDataProvider<RequestTemplateCollectionFileModel>>().CreateScope(new(filePath));
-        using var _2 = GetRequiredService<IModelDataProvider<RequestTemplateCollection>>().CreateScope(collection);
-        using var _3 = GetRequiredService<IModelDataProvider<RequestTemplate>>().CreateScope(request);
+        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(request);
 
         var page = GetRequiredService<RequestTemplatePage>();
         var item = new Tab() {

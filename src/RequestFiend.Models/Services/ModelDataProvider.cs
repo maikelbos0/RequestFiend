@@ -1,36 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RequestFiend.Models.Services;
 
-public class ModelDataProvider<TData> : IModelDataProvider<TData> where TData : class {
-    private TData? data;
+public class ModelDataProvider : IModelDataProvider {
+    private Dictionary<Type, object> data = [];
 
     private class Scope : IDisposable {
-        private readonly ModelDataProvider<TData> provider;
+        private readonly ModelDataProvider provider;
+        private readonly object[] data;
 
-        public Scope(ModelDataProvider<TData> provider, TData data) {
+        public Scope(ModelDataProvider provider, object[] data) {
             this.provider = provider;
-            provider.data = data;
+            this.data = data;
+
+            foreach (var dataItem in data) {
+                provider.data.Add(dataItem.GetType(), dataItem);
+            }
         }
 
         public void Dispose() {
-            provider.data = default;
+            foreach (var dataItem in data) {
+                provider.data.Remove(dataItem.GetType());
+            }
         }
     }
 
-    public IDisposable CreateScope(TData data) {
-        if (this.data != null) {
-            throw new InvalidOperationException("Only one scope at a time is allowed.");
-        }
-
+    public IDisposable CreateScope(params object[] data) {
         return new Scope(this, data);
     }
 
-    public TData GetData() {
-        if (data == null) {
-            throw new InvalidOperationException("A scope is required.");
-        }
-
-        return data;
-    }
+    public TData GetData<TData>() where TData : class
+        => (TData)data[typeof(TData)];
 }
