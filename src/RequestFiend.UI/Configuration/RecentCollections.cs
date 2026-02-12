@@ -10,13 +10,13 @@ public static class RecentCollections {
     // TODO create user preferences for max and for disabling and clearing
     private const int MaximumItemCount = 10;
 
-    public static List<RecentCollectionModel> Get()
-        => JsonSerializer.Deserialize<List<RecentCollectionModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
+    public static List<RequestTemplateCollectionFileModel> Get()
+        => JsonSerializer.Deserialize<List<RequestTemplateCollectionFileModel>>(Preferences.Get(nameof(RecentCollections), "[]")) ?? [];
 
-    public static void Set(List<RecentCollectionModel> recentCollections)
+    public static void Set(List<RequestTemplateCollectionFileModel> recentCollections)
         => Preferences.Set(nameof(RecentCollections), JsonSerializer.Serialize(recentCollections));
 
-    public static List<RecentCollectionModel> Push(string filePath) {
+    public static List<RequestTemplateCollectionFileModel> Push(string filePath) {
         var recentCollections = Get();
 
         recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
@@ -31,7 +31,7 @@ public static class RecentCollections {
         return recentCollections;
     }
 
-    public static List<RecentCollectionModel> Remove(string filePath) {
+    public static List<RequestTemplateCollectionFileModel> Remove(string filePath) {
         var recentCollections = Get();
 
         recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));

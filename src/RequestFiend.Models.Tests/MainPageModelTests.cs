@@ -20,7 +20,7 @@ public class MainPageModelTests {
     [Fact]
     public void Constructor() {
         const bool showRecentCollections = true;
-        var recentCollection = new List<RecentCollectionModel>();
+        var recentCollection = new List<RequestTemplateCollectionFileModel>();
 
         var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();

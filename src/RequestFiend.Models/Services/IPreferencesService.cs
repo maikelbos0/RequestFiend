@@ -7,7 +7,7 @@ public interface IPreferencesService {
     void SetShowRecentCollections(bool saveRecentCollections);
     int GetMaximumRecentCollectionCount();
     void SetMaximumRecentCollectionCount(int maximumRecentCollectionCount);
-    List<RecentCollectionModel> GetRecentCollections();
+    List<RequestTemplateCollectionFileModel> GetRecentCollections();
     void TrimRecentCollections();
     void ClearRecentCollections();
     void PushRecentCollection(string filePath);
