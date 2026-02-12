@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Models.Services;
 
-public class ModelDataProvider<TData> : IModelDataProvider<TData> where TData : struct {
+public class ModelDataProvider<TData> : IModelDataProvider<TData> where TData : class {
     private TData? data;
 
     private class Scope : IDisposable {
@@ -19,7 +19,7 @@ public class ModelDataProvider<TData> : IModelDataProvider<TData> where TData : 
     }
 
     public IDisposable CreateScope(TData data) {
-        if (this.data.HasValue) {
+        if (this.data != null) {
             throw new InvalidOperationException("Only one scope at a time is allowed.");
         }
 
@@ -27,10 +27,10 @@ public class ModelDataProvider<TData> : IModelDataProvider<TData> where TData : 
     }
 
     public TData GetData() {
-        if (!data.HasValue) {
+        if (data == null) {
             throw new InvalidOperationException("A scope is required.");
         }
 
-        return data.Value;
+        return data;
     }
 }

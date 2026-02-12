@@ -76,7 +76,8 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     private Tab CreateSettingsTab(string filePath, RequestTemplateCollection collection) {
-        using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
+        using var _1 = GetRequiredService<IModelDataProvider<RequestTemplateCollectionFileModel>>().CreateScope(new(filePath));
+        using var _2 = GetRequiredService<IModelDataProvider<RequestTemplateCollection>>().CreateScope(collection);
 
         var page = GetRequiredService<RequestTemplateCollectionSettingsPage>();
         var item = new Tab() {
@@ -93,7 +94,8 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     private Tab CreateNewRequestTab(string filePath, RequestTemplateCollection collection) {
-        using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection)>>().CreateScope((filePath, collection));
+        using var _1 = GetRequiredService<IModelDataProvider<RequestTemplateCollectionFileModel>>().CreateScope(new(filePath));
+        using var _2 = GetRequiredService<IModelDataProvider<RequestTemplateCollection>>().CreateScope(collection);
 
         var page = GetRequiredService<NewRequestTemplatePage>();
         var item = new Tab() {
@@ -110,7 +112,9 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
-        using var _ = GetRequiredService<IModelDataProvider<(string, RequestTemplateCollection, RequestTemplate)>>().CreateScope((filePath, collection, request));
+        using var _1 = GetRequiredService<IModelDataProvider<RequestTemplateCollectionFileModel>>().CreateScope(new(filePath));
+        using var _2 = GetRequiredService<IModelDataProvider<RequestTemplateCollection>>().CreateScope(collection);
+        using var _3 = GetRequiredService<IModelDataProvider<RequestTemplate>>().CreateScope(request);
 
         var page = GetRequiredService<RequestTemplatePage>();
         var item = new Tab() {
