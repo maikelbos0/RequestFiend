@@ -30,6 +30,19 @@ public class BoundModelBaseTests {
         };
 
     [Fact]
+    public void Constructor() {
+        const string pageTitleBase = "Page title";
+        const string shellItemTitleBase = "Shell item title";
+
+        var subject = new BoundModelBase(pageTitleBase, shellItemTitleBase);
+
+        Assert.Equal(pageTitleBase, subject.PageTitleBase);
+        Assert.Equal(pageTitleBase, subject.PageTitle);
+        Assert.Equal(shellItemTitleBase, subject.ShellItemTitleBase);
+        Assert.Equal(shellItemTitleBase, subject.ShellItemTitle);
+    }
+
+    [Fact]
     public void State_When_Nothing_Is_Modified() {
         var validatableProperty1 = new ValidatableProperty<string?>(() => "Name");
         var validatableProperty2 = new ValidatableProperty<string?>(() => "Value");
@@ -42,6 +55,8 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
+        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
 
     [Fact]
@@ -57,6 +72,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -72,6 +89,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -87,6 +106,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -104,6 +125,8 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -121,6 +144,8 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -138,6 +163,8 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
     
     [Fact]
@@ -155,6 +182,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -172,6 +201,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -189,6 +220,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -206,6 +239,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -223,5 +258,7 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 }

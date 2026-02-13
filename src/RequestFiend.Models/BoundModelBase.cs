@@ -27,13 +27,15 @@ public class BoundModelBase : ObservableObject {
     public bool StackIsHorizontal { get => field; private set => SetProperty(ref field, value); }
     public bool StackIsVertical { get => field; private set => SetProperty(ref field, value); }
     public string PageTitleBase { get => field; protected set => SetProperty(ref field, value); }
+    public string PageTitle { get => field; protected set => SetProperty(ref field, value); }
     public string ShellItemTitleBase { get => field; protected set => SetProperty(ref field, value); }
+    public string ShellItemTitle { get => field; protected set => SetProperty(ref field, value); }
     public bool HasError { get => field; set => SetProperty(ref field, value); }
     public bool IsModified { get => field; set => SetProperty(ref field, value); }
 
     public BoundModelBase(string initialPageTitleBase, string initialShellItemTitleBase) {
-        PageTitleBase = initialPageTitleBase;
-        ShellItemTitleBase = initialShellItemTitleBase;
+        PageTitleBase = PageTitle = initialPageTitleBase;
+        ShellItemTitleBase = ShellItemTitle = initialShellItemTitleBase;
     }
 
     private void EvaluateResponsiveProperties() {
@@ -56,44 +58,55 @@ public class BoundModelBase : ObservableObject {
         this.nameValuePairModelCollections = nameValuePairModelCollections.ToDictionary(nameValuePairModelCollection => nameValuePairModelCollection, nameValuePairModelCollection => nameValuePairModelCollection.Count);
 
         foreach (var validatableString in validatableProperties) {
-            validatableString.PropertyChanged += OnPropertyChanged;
+            validatableString.PropertyChanged += OnValidatablePropertyChanged;
         }
 
         foreach (var collection in nameValuePairModelCollections) {
-            collection.CollectionChanged += OnCollectionChanged;
+            collection.CollectionChanged += OnNameValuePairCollectionChanged;
 
             foreach (var nameValuePairModel in collection) {
-                nameValuePairModel.Name.PropertyChanged += OnPropertyChanged;
-                nameValuePairModel.Value.PropertyChanged += OnPropertyChanged;
+                nameValuePairModel.Name.PropertyChanged += OnValidatablePropertyChanged;
+                nameValuePairModel.Value.PropertyChanged += OnValidatablePropertyChanged;
             }
         }
 
-        SetState();
+        PropertyChanged += OnPropertyChanged;
+
+        UpdateState();
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == Constants.IsModified || e.PropertyName == Constants.HasError) {
-            SetState();
+            UpdateState();
         }
     }
 
-    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+    private void OnNameValuePairCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         if (e.OldItems != null) {
             foreach (var pair in e.OldItems.Cast<NameValuePairModel>()) {
-                pair.Name.PropertyChanged -= OnPropertyChanged;
+                pair.Name.PropertyChanged -= OnValidatablePropertyChanged;
             }
         }
 
         if (e.NewItems != null) {
             foreach (var pair in e.NewItems.Cast<NameValuePairModel>()) {
-                pair.Name.PropertyChanged += OnPropertyChanged;
+                pair.Name.PropertyChanged += OnValidatablePropertyChanged;
             }
         }
 
-        SetState();
+        UpdateState();
     }
 
-    private void SetState() {
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(PageTitleBase) || e.PropertyName == nameof(ShellItemTitleBase)) {
+            UpdateTitles();
+        }
+    }
+
+    private void UpdateState() {
+        var hasError = HasError;
+        var isModified = IsModified;
+
         if (validatableProperties.Any(validatableProperty => validatableProperty.HasError)
             || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError))) {
 
@@ -105,5 +118,16 @@ public class BoundModelBase : ObservableObject {
             IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
                 || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
         }
+
+        if (hasError != HasError || isModified != IsModified) {
+            UpdateTitles();
+        }
+    }
+
+    private void UpdateTitles() {
+        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+
+        PageTitle = $"{PageTitleBase}{suffix}";
+        ShellItemTitle = $"{ShellItemTitleBase}{suffix}";
     }
 }
