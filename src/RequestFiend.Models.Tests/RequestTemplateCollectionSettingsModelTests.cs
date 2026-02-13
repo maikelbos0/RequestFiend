@@ -25,36 +25,12 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitleBase);
         Assert.Equal("Collection settings", subject.ShellItemTitleBase);
-
-        // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitle);
-        Assert.Equal("Collection settings", subject.ShellItemTitle);
-
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
         foreach (var header in collection.DefaultHeaders) {
             Assert.Equal(header.Value, Assert.Single(subject.DefaultHeaders, headerModel => headerModel.Name.Value == header.Name).Value.Value);
         }
-    }
-
-    [Theory]
-    [InlineData(false, false, "External data requests - Collection settings", "Collection settings")]
-    [InlineData(true, false, "External data requests - Collection settings ▲", "Collection settings ▲")]
-    [InlineData(false, true, "External data requests - Collection settings ●", "Collection settings ●")]
-    [InlineData(true, true, "External data requests - Collection settings ▲", "Collection settings ▲")]
-    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), new()) {
-            HasError = hasError,
-            IsModified = isModified
-        };
-
-        subject.UpdateTitles();
-
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Fact]

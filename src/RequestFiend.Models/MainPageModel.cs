@@ -19,8 +19,6 @@ public partial class MainPageModel : BoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IFileSystem fileSystem;
 
-    public string PageTitle { get => field; set => SetProperty(ref field, value); }
-    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public bool ShowRecentCollections { get => field; set => SetProperty(ref field, value); }
     public List<RequestTemplateCollectionFileModel> RecentCollections { get => field; set => SetProperty(ref field, value); }
 
@@ -37,19 +35,6 @@ public partial class MainPageModel : BoundModelBase {
         messageService.Register<MainPageModel, ShowRecentCollectionsChangedMessage>(this, (model, _) => model.ShowRecentCollections = preferencesService.GetShowRecentCollections());
 
         ConfigureState([], []);
-        UpdateTitles();
-        PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
-                UpdateTitles();
-            }
-        };
-    }
-
-    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
-    public void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
-
-        PageTitle = ShellItemTitle = $"Home{suffix}";
     }
 
     [RelayCommand]

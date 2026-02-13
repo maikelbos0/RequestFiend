@@ -16,8 +16,6 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
-    public string PageTitle { get => field; set => SetProperty(ref field, value); }
-    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> DefaultUrl { get; set; }
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
@@ -38,20 +36,6 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
         Variables = new(collection.Variables);
 
         ConfigureState([DefaultUrl], [DefaultHeaders, Variables]);
-        UpdateTitles();
-        PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
-                UpdateTitles();
-            }
-        };
-    }
-
-    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
-    public void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
-
-        PageTitle = $"{Path.GetFileNameWithoutExtension(file.FilePath)} - Collection settings{suffix}";
-        ShellItemTitle = $"Collection settings{suffix}";
     }
 
     [RelayCommand]

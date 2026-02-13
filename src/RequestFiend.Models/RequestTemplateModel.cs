@@ -23,8 +23,6 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
-    public string PageTitle { get => field; set => SetProperty(ref field, value); }
-    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> Name { get; set; }
     public ValidatableProperty<string?> Method { get; set; }
     public ValidatableProperty<string?> Url { get; set; }
@@ -67,20 +65,6 @@ public partial class RequestTemplateModel : BoundModelBase {
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
 
         ConfigureState([Name, Method, Url, ContentType, StringContent], [Headers]);
-        UpdateTitles();
-        PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
-                UpdateTitles();
-            }
-        };
-    }
-
-    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
-    public void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
-
-        PageTitle = $"{Path.GetFileNameWithoutExtension(file.FilePath)} - {request.Name}{suffix}";
-        ShellItemTitle = $"{request.Name}{suffix}";
     }
 
     [RelayCommand]

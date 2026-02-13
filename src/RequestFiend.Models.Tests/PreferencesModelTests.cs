@@ -25,23 +25,6 @@ public class PreferencesModelTests {
     }
 
     [Theory]
-    [InlineData(false, false, "Preferences", "Preferences")]
-    [InlineData(true, false, "Preferences ▲", "Preferences ▲")]
-    [InlineData(false, true, "Preferences ●", "Preferences ●")]
-    [InlineData(true, true, "Preferences ▲", "Preferences ▲")]
-    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        var subject = new PreferencesModel(Substitute.For<IPreferencesService>(), Substitute.For<IMessageService>(), Substitute.For<IPopupService>()) {
-            HasError = hasError,
-            IsModified = isModified
-        };
-
-        subject.UpdateTitles();
-
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
-    }
-
-    [Theory]
     [InlineData(10, false)]
     [InlineData(0, true)]
     [InlineData(10, true)]

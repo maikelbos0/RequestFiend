@@ -23,33 +23,9 @@ public class NewRequestTemplateModelTests {
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.PageTitleBase);
         Assert.Equal("New request", subject.ShellItemTitleBase);
-
-        // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request ▲", subject.PageTitle);
-        Assert.Equal("New request ▲", subject.ShellItemTitle);
-
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
-    }
-
-    [Theory]
-    [InlineData(false, false, "External data requests - New request", "New request")]
-    [InlineData(true, false, "External data requests - New request ▲", "New request ▲")]
-    [InlineData(false, true, "External data requests - New request ●", "New request ●")]
-    [InlineData(true, true, "External data requests - New request ▲", "New request ▲")]
-    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), new()) {
-            HasError = hasError,
-            IsModified = isModified
-        };
-
-        subject.UpdateTitles();
-
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Fact]

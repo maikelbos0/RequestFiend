@@ -12,8 +12,6 @@ public partial class PreferencesModel : BoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
 
-    public string PageTitle { get => field; set => SetProperty(ref field, value); }
-    public string ShellItemTitle { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<bool> ShowRecentCollections { get; set; }
     public ValidatableProperty<string?> MaximumRecentCollectionCount { get; set; }
 
@@ -26,19 +24,6 @@ public partial class PreferencesModel : BoundModelBase {
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
 
         ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount], []);
-        UpdateTitles();
-        PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
-                UpdateTitles();
-            }
-        };
-    }
-
-    [MemberNotNull(nameof(PageTitle), nameof(ShellItemTitle))]
-    public void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
-
-        PageTitle = ShellItemTitle = $"Preferences{suffix}";
     }
 
     [RelayCommand]

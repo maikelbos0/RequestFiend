@@ -60,10 +60,6 @@ public class RequestTemplateModelTests {
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
         Assert.Equal(request.Name, subject.ShellItemTitleBase);
 
-        // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
-        Assert.Equal(request.Name, subject.ShellItemTitle);
-
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -73,31 +69,6 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.StringContent, subject.StringContent.Value);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
-    }
-
-    [Theory]
-    [InlineData(false, false, "External data requests - Name", "Name")]
-    [InlineData(true, false, "External data requests - Name ▲", "Name ▲")]
-    [InlineData(false, true, "External data requests - Name ●", "Name ●")]
-    [InlineData(true, true, "External data requests - Name ▲", "Name ▲")]
-    public void UpdateTitles(bool hasError, bool isModified, string expectedPageTitle, string expectedShellItemTitle) {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://url"
-        };
-
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), new(), request) {
-            HasError = hasError,
-            IsModified = isModified
-        };
-
-        subject.UpdateTitles();
-
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Fact]
@@ -146,8 +117,6 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
-        Assert.Equal(request.Name, subject.ShellItemTitleBase);
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
         Assert.False(subject.Url.IsModified);
