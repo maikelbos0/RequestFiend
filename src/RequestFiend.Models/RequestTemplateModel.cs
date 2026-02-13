@@ -47,7 +47,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
-    ) {
+    ) : base($"{file.Name} - {request.Name}", request.Name) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
@@ -102,6 +102,8 @@ public partial class RequestTemplateModel : BoundModelBase {
         Headers.Reset(request.Headers);
         ContentType.Reset();
         StringContent.Reset();
+        PageTitleBase = $"{file.Name} - {request.Name}";
+        ShellItemTitleBase = request.Name;
 
         await requestTemplateCollectionService.Save(file.FilePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));

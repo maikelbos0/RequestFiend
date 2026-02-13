@@ -57,6 +57,9 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request);
 
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
+        Assert.Equal(request.Name, subject.ShellItemTitleBase);
+
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitle);
         Assert.Equal(request.Name, subject.ShellItemTitle);
@@ -143,6 +146,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
+        Assert.Equal(request.Name, subject.ShellItemTitleBase);
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
         Assert.False(subject.Url.IsModified);

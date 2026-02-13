@@ -23,6 +23,9 @@ public class RequestTemplateCollectionSettingsModelTests {
         
         var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), collection);
 
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitleBase);
+        Assert.Equal("Collection settings", subject.ShellItemTitleBase);
+
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitle);
         Assert.Equal("Collection settings", subject.ShellItemTitle);

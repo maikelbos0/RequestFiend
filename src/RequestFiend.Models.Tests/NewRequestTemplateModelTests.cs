@@ -21,6 +21,9 @@ public class NewRequestTemplateModelTests {
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, new(filePath), collection);
 
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.PageTitleBase);
+        Assert.Equal("New request", subject.ShellItemTitleBase);
+
         // TODO move the initial title update and property subscription to ConfigureState and find a way to confirm state configuration
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request ▲", subject.PageTitle);
         Assert.Equal("New request ▲", subject.ShellItemTitle);

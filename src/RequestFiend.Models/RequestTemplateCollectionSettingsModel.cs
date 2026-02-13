@@ -27,7 +27,7 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
         IMessageService messageService,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection
-    ) {
+    ) : base($"{file.Name} - Collection settings", "Collection settings") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.messageService = messageService;
         this.file = file;

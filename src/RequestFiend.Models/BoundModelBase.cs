@@ -26,8 +26,15 @@ public class BoundModelBase : ObservableObject {
     public StackOrientation StackOrientation { get => field; private set => SetProperty(ref field, value); }
     public bool StackIsHorizontal { get => field; private set => SetProperty(ref field, value); }
     public bool StackIsVertical { get => field; private set => SetProperty(ref field, value); }
+    public string PageTitleBase { get => field; protected set => SetProperty(ref field, value); }
+    public string ShellItemTitleBase { get => field; protected set => SetProperty(ref field, value); }
     public bool HasError { get => field; set => SetProperty(ref field, value); }
     public bool IsModified { get => field; set => SetProperty(ref field, value); }
+
+    public BoundModelBase(string initialPageTitleBase, string initialShellItemTitleBase) {
+        PageTitleBase = initialPageTitleBase;
+        ShellItemTitleBase = initialShellItemTitleBase;
+    }
 
     private void EvaluateResponsiveProperties() {
         if (PageWidth < widthBreakpoint) {

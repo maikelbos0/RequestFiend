@@ -17,7 +17,7 @@ public partial class PreferencesModel : BoundModelBase {
     public ValidatableProperty<bool> ShowRecentCollections { get; set; }
     public ValidatableProperty<string?> MaximumRecentCollectionCount { get; set; }
 
-    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) {
+    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
         this.messageService = messageService;
         this.popupService = popupService;

@@ -18,6 +18,8 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
+        Assert.Equal("Preferences", subject.PageTitleBase);
+        Assert.Equal("Preferences", subject.ShellItemTitleBase);
         Assert.Equal(saveRecentCollections, subject.ShowRecentCollections.Value);
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
     }

@@ -29,6 +29,8 @@ public class MainPageModelTests {
 
         var subject = new MainPageModel(Substitute.For<IPopupService>(), messageService, preferencesService, Substitute.For<IFileSystem>());
 
+        Assert.Equal("Home", subject.PageTitleBase);
+        Assert.Equal("Home", subject.ShellItemTitleBase);
         Assert.Equal(showRecentCollections, subject.ShowRecentCollections);
         Assert.Equal(recentCollection, subject.RecentCollections);
 

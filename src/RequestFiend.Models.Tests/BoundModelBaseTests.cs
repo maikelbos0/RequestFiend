@@ -9,7 +9,7 @@ public class BoundModelBaseTests {
     [Theory]
     [MemberData(nameof(PageWidth_Sets_StackOProperties_Data))]
     public void PageWidth_Sets_StackOProperties(double pageWidth, bool expectedHorizontalFill, StackOrientation expectedStackOrientation, bool expectedStackIsHorizontal, bool expectedStackIsVertical) {
-        var subject = new BoundModelBase() {
+        var subject = new BoundModelBase("Page title", "Shell item title") {
             PageWidth = pageWidth
         };
 
@@ -36,7 +36,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -51,7 +51,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -66,7 +66,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -81,7 +81,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -96,7 +96,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -113,7 +113,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -130,7 +130,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -147,7 +147,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -164,7 +164,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -181,7 +181,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -198,7 +198,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 
@@ -215,7 +215,7 @@ public class BoundModelBaseTests {
         var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName", Value = "FirstValue" }, new() { Name = "SecondName", Value = "SecondValue" }]);
         var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName", Value = "ThirdValue" }, new() { Name = "FourthName", Value = "FourthValue" }]);
 
-        var subject = new BoundModelBase();
+        var subject = new BoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
 

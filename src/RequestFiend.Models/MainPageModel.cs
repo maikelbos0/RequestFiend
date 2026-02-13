@@ -24,7 +24,7 @@ public partial class MainPageModel : BoundModelBase {
     public bool ShowRecentCollections { get => field; set => SetProperty(ref field, value); }
     public List<RequestTemplateCollectionFileModel> RecentCollections { get => field; set => SetProperty(ref field, value); }
 
-    public MainPageModel(IPopupService popupService, IMessageService messageService, IPreferencesService preferencesService, IFileSystem fileSystem) {
+    public MainPageModel(IPopupService popupService, IMessageService messageService, IPreferencesService preferencesService, IFileSystem fileSystem) : base("Home", "Home") {
         this.popupService = popupService;
         this.messageService = messageService;
         this.preferencesService = preferencesService;
