@@ -113,6 +113,8 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
     
     public async void Receive(OpenTemplateRequestMessage message) {
+        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection);
+
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
         var item = CreateRequestTab(message.Request);
 
