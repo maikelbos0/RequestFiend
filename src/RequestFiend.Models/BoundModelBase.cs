@@ -124,7 +124,7 @@ public class BoundModelBase : ObservableObject {
         }
     }
 
-    private void UpdateTitles() {
+    protected void UpdateTitles() {
         var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
 
         PageTitle = $"{PageTitleBase}{suffix}";
