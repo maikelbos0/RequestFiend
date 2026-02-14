@@ -72,8 +72,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
+        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
+        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
 
     [Fact]
@@ -106,8 +106,8 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
+        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
 
     [Fact]
@@ -181,9 +181,9 @@ public class BoundModelBaseTests {
         validatableProperty1.Value = null;
 
         Assert.True(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -200,9 +200,9 @@ public class BoundModelBaseTests {
         nameValuePairModelCollection2[1].Name.Value = null;
 
         Assert.True(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -219,9 +219,9 @@ public class BoundModelBaseTests {
         nameValuePairModelCollection2[1].Value.Value = null;
 
         Assert.True(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 
     [Fact]
@@ -238,9 +238,9 @@ public class BoundModelBaseTests {
         nameValuePairModelCollection2.Add(new());
 
         Assert.True(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.Equal($"{subject.PageTitleBase} ▲", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ▲", subject.ShellItemTitle);
+        Assert.True(subject.IsModified);
+        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
+        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 
     [Fact]

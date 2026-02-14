@@ -104,28 +104,21 @@ public class BoundModelBase : ObservableObject {
     }
 
     private void UpdateState() {
-        var hasError = HasError;
         var isModified = IsModified;
 
-        if (validatableProperties.Any(validatableProperty => validatableProperty.HasError)
-            || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError))) {
+        HasError = validatableProperties.Any(validatableProperty => validatableProperty.HasError)
+            || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError));
 
-            HasError = true;
-            IsModified = false;
-        }
-        else {
-            HasError = false;
-            IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
-                || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
-        }
+        IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
+            || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
 
-        if (hasError != HasError || isModified != IsModified) {
+        if (isModified != IsModified) {
             UpdateTitles();
         }
     }
 
     protected void UpdateTitles() {
-        var suffix = HasError ? " ▲" : IsModified ? " ●" : "";
+        var suffix = IsModified ? " ●" : "";
 
         PageTitle = $"{PageTitleBase}{suffix}";
         ShellItemTitle = $"{ShellItemTitleBase}{suffix}";

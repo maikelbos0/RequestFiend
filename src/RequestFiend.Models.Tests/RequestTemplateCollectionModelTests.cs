@@ -16,8 +16,8 @@ public class RequestTemplateCollectionModelTests {
 
     [Theory]
     [InlineData(false, false, false, false, "External data requests", "External data requests")]
-    [InlineData(true, false, true, false, "External data requests ▲", "External data requests ▲")]
-    [InlineData(true, true, true, false, "External data requests ▲", "External data requests ▲")]
+    [InlineData(true, false, true, false, "External data requests", "External data requests")]
+    [InlineData(true, true, true, false, "External data requests", "External data requests")]
     [InlineData(false, true, false, true, "External data requests ●", "External data requests ●")]
     public void AddChild_Updates_State(bool childHasError, bool childIsModified, bool expectedHasError, bool expectedIsModified, string expectedPageTitle, string expectedShellItemTitle) {
         const string filePath = @"C:\Documents\External data requests.json";
@@ -57,8 +57,8 @@ public class RequestTemplateCollectionModelTests {
 
     [Theory]
     [InlineData(false, false, false, false, "External data requests", "External data requests")]
-    [InlineData(true, false, true, false, "External data requests ▲", "External data requests ▲")]
-    [InlineData(true, true, true, false, "External data requests ▲", "External data requests ▲")]
+    [InlineData(true, false, true, false, "External data requests", "External data requests")]
+    [InlineData(true, true, true, false, "External data requests", "External data requests")]
     [InlineData(false, true, false, true, "External data requests ●", "External data requests ●")]
     public void Changing_Child_State_Updates_State(bool childHasError, bool childIsModified, bool expectedHasError, bool expectedIsModified, string expectedPageTitle, string expectedShellItemTitle) {
         const string filePath = @"C:\Documents\External data requests.json";
