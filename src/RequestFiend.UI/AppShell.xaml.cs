@@ -64,8 +64,19 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                 StyleId = message.FilePath
             };
 
-            collectionItem.Items.Add(CreateSettingsTab(message.FilePath, message.Collection));
-            collectionItem.Items.Add(CreateNewRequestTab(message.FilePath, message.Collection));
+            collectionItem.Items.Add(new Tab() {
+                Icon = "bars_solid_full.png",
+                    Items = {
+                    GetRequiredService<RequestTemplateCollectionSettingsPage>()
+                }
+            });
+
+            collectionItem.Items.Add(new Tab() {
+                Icon = "plus_solid_full.png",
+                Items = {
+                    GetRequiredService<NewRequestTemplatePage>()
+                }
+            });
 
             foreach (var request in message.Collection.Requests) {
                 collectionItem.Items.Add(CreateRequestTab(message.FilePath, message.Collection, request));
@@ -77,50 +88,16 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         await GoToAsync($"//{collectionItem.Route}");
     }
 
-    private Tab CreateSettingsTab(string filePath, RequestTemplateCollection collection) {
-        var page = GetRequiredService<RequestTemplateCollectionSettingsPage>();
-        var item = new Tab() {
-            Icon = "bars_solid_full.png",
-            Items = {
-                page
-            },
-            BindingContext = page.BindingContext
-        };
-
-        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateCollectionSettingsModel.ShellItemTitle));
-
-        return item;
-    }
-
-    private Tab CreateNewRequestTab(string filePath, RequestTemplateCollection collection) {
-        var page = GetRequiredService<NewRequestTemplatePage>();
-        var item = new Tab() {
-            Icon = "plus_solid_full.png",
-            Items = {
-                page
-            },
-            BindingContext = page.BindingContext
-        };
-
-        item.SetBinding(BaseShellItem.TitleProperty, nameof(NewRequestTemplateModel.ShellItemTitle));
-
-        return item;
-    }
-
     private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
         using var _ = GetRequiredService<IModelDataProvider>().CreateScope(request);
 
-        var page = GetRequiredService<RequestTemplatePage>();
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Items = {
-                page
+                GetRequiredService<RequestTemplatePage>()
             },
-            Route = $"RequestTemplate_{request.Id}",
-            BindingContext = page.BindingContext
+            Route = $"RequestTemplate_{request.Id}"
         };
-
-        item.SetBinding(BaseShellItem.TitleProperty, nameof(RequestTemplateModel.ShellItemTitle));
 
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, Guid>(item, request.Id, async (tab, _) => {
             if (tab.Parent is ShellItem collectionItem) {
