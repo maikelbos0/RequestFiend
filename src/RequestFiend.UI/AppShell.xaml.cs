@@ -79,7 +79,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             });
 
             foreach (var request in message.Collection.Requests) {
-                collectionItem.Items.Add(CreateRequestTab(message.FilePath, message.Collection, request));
+                collectionItem.Items.Add(CreateRequestTab(request));
             }
 
             Items.Add(collectionItem);
@@ -88,7 +88,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         await GoToAsync($"//{collectionItem.Route}");
     }
 
-    private Tab CreateRequestTab(string filePath, RequestTemplateCollection collection, RequestTemplate request) {
+    private Tab CreateRequestTab(RequestTemplate request) {
         using var _ = GetRequiredService<IModelDataProvider>().CreateScope(request);
 
         var item = new Tab() {
@@ -114,7 +114,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     
     public async void Receive(OpenTemplateRequestMessage message) {
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var item = CreateRequestTab(message.FilePath, message.Collection, message.Request);
+        var item = CreateRequestTab(message.Request);
 
         collectionItem.Items.Add(item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");

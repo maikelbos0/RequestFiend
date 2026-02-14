@@ -2,4 +2,4 @@
 
 namespace RequestFiend.Models.Messages;
 
-public record OpenTemplateRequestMessage(string FilePath, RequestTemplateCollection Collection, RequestTemplate Request);
+public record OpenTemplateRequestMessage(string FilePath, RequestTemplate Request);

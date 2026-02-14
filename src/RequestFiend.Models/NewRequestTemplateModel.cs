@@ -56,7 +56,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
         Url.Reset();
 
         await requestTemplateCollectionService.Save(file.FilePath, collection);
-        messageService.Send(new OpenTemplateRequestMessage(file.FilePath, collection, request));
+        messageService.Send(new OpenTemplateRequestMessage(file.FilePath, request));
         messageService.Send(new SuccessMessage("Request had been added"));
     }
 }
