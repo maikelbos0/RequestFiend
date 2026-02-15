@@ -17,13 +17,9 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     public TProperty Value {
         get => field;
         set {
-            SetProperty(ref field, value);
-
-            // TODO can we call this only when SetProperty returns true? There was an issue but I forgot.
-
-            HasError = !Validator(value);
-            IsModified = !EqualityComparer<TProperty>.Default.Equals(value, DefaultValueProvider());
-            IsModifiedWithoutError = IsModified && !HasError;
+            if (SetProperty(ref field, value)) {
+                SetState();
+            }
         }
     }
     public override bool HasError { get => field; protected set => SetProperty(ref field, value); }
@@ -36,6 +32,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         DefaultValueProvider = defaultValueProvider;
         Validator = validator;
         Value = DefaultValueProvider();
+        SetState();
     }
 
     public void Reset(Func<TProperty> defaultValueProvider) {
@@ -45,5 +42,12 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
 
     public void Reset() {
         Value = DefaultValueProvider();
+        SetState();
+    }
+
+    private void SetState() {
+        HasError = !Validator(Value);
+        IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, DefaultValueProvider());
+        IsModifiedWithoutError = IsModified && !HasError;
     }
 }

@@ -39,13 +39,13 @@ public class ValidatablePropertyTests {
     [Fact]
     public void Reset() {
         const string initialValue = "Initial";
-        const string resetValue = "Reinitialized";
 
-        var subject = new ValidatableProperty<string?>(() => initialValue);
+        var subject = new ValidatableProperty<string?>(() => initialValue, value => !string.IsNullOrEmpty(value));
 
-        subject.Reset(() => resetValue);
+        subject.Reset(() => null);
 
-        Assert.Equal(resetValue, subject.Value);
+        Assert.Null(subject.Value);
+        Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
         Assert.False(subject.IsModifiedWithoutError);
     }
