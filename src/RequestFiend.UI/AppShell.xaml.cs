@@ -56,6 +56,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
 
         if (collectionItem == null) {
             using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection);
+            var collectionModel = GetRequiredService<RequestTemplateCollectionModel>();
 
             collectionItem = new FlyoutItem() {
                 Title = Path.GetFileNameWithoutExtension(message.FilePath),
@@ -66,15 +67,15 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
 
             collectionItem.Items.Add(new Tab() {
                 Icon = "bars_solid_full.png",
-                    Items = {
-                    GetRequiredService<RequestTemplateCollectionSettingsPage>()
+                Items = {
+                    new RequestTemplateCollectionSettingsPage(collectionModel.Settings)
                 }
             });
 
             collectionItem.Items.Add(new Tab() {
                 Icon = "plus_solid_full.png",
                 Items = {
-                    GetRequiredService<NewRequestTemplatePage>()
+                    new NewRequestTemplatePage(collectionModel.NewRequest)
                 }
             });
 

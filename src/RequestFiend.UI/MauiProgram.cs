@@ -45,12 +45,9 @@ public static class MauiProgram {
 
         mauiAppBuilder.Services.AddTransient<MainPageModel>();
         mauiAppBuilder.Services.AddTransient<PreferencesModel>();
-        mauiAppBuilder.Services.AddTransient<NewRequestTemplateModel>();
-        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionSettingsModel>();
+        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateModel>();
 
-        mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionSettingsPage>();
-        mauiAppBuilder.Services.AddTransient<NewRequestTemplatePage>();
         mauiAppBuilder.Services.AddTransient<RequestTemplatePage>();
 
         return mauiAppBuilder;
@@ -58,4 +55,3 @@ public static class MauiProgram {
 }
 
 // TODO decide what the fuck to do with the JSON buttons
-
