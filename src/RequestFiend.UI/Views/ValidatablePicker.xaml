@@ -18,7 +18,7 @@
             <DataTrigger TargetType="Picker" Binding="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.HasError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
             </DataTrigger>
-            <DataTrigger TargetType="Picker" Binding="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModified, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Picker" Binding="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
             </DataTrigger>
         </Picker.Triggers>
@@ -42,7 +42,7 @@
     <Label
         Text="●"
         TextColor="{x:StaticResource ModifiedIcon}"
-        IsVisible="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModified, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
         AbsoluteLayout.LayoutFlags="XProportional"

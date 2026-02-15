@@ -17,7 +17,7 @@
             <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
             </DataTrigger>
-            <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModified, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
             </DataTrigger>
         </Entry.Triggers>
@@ -41,7 +41,7 @@
     <Label
         Text="●"
         TextColor="{x:StaticResource ModifiedIcon}"
-        IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModified, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
         AbsoluteLayout.LayoutFlags="XProportional"

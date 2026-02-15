@@ -21,7 +21,7 @@
             <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
             </DataTrigger>
-            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.IsModified, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
             </DataTrigger>
         </Editor.Triggers>
@@ -45,7 +45,7 @@
     <Label
         Text="●"
         TextColor="{x:StaticResource ModifiedIcon}"
-        IsVisible="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.IsModified, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
         AbsoluteLayout.LayoutFlags="XProportional"

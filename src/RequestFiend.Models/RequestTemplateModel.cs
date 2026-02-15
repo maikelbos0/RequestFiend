@@ -26,14 +26,8 @@ public partial class RequestTemplateModel : BoundModelBase {
     public ValidatableProperty<string?> Url { get; set; }
     public NameValuePairModelCollection Headers { get; set; }
     public ValidatableProperty<string?> ContentType { get; set; }
-    public bool UsesStringContent {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
-    public bool UsesJsonContent {
-        get => field;
-        private set => SetProperty(ref field, value);
-    }
+    public bool UsesStringContent { get => field; private set => SetProperty(ref field, value); }
+    public bool UsesJsonContent { get => field; private set => SetProperty(ref field, value); }
     public ValidatableProperty<string?> StringContent { get; set; }
 
     public RequestTemplateModel(
@@ -57,7 +51,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         Headers = new(request.Headers);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
-        
+
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
