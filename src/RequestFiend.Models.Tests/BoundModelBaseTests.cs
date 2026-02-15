@@ -55,6 +55,7 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal(subject.PageTitleBase, subject.PageTitle);
         Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
@@ -72,6 +73,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal(subject.PageTitleBase, subject.PageTitle);
         Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
@@ -89,6 +91,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal(subject.PageTitleBase, subject.PageTitle);
         Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
@@ -106,6 +109,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal(subject.PageTitleBase, subject.PageTitle);
         Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
     }
@@ -125,6 +129,7 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.True(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -144,6 +149,7 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.True(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -163,6 +169,7 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.True(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -182,6 +189,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -201,6 +209,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -220,6 +229,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -239,6 +249,7 @@ public class BoundModelBaseTests {
 
         Assert.True(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.False(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
@@ -258,6 +269,7 @@ public class BoundModelBaseTests {
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);
+        Assert.True(subject.IsModifiedWithoutError);
         Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
         Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }

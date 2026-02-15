@@ -13,7 +13,7 @@
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                        <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModified}"/>
+                        <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
                     </StackLayout>
 
                     <Label Text="Default url (optional)" Style="{StaticResource EntryLabel}"/>

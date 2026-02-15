@@ -32,6 +32,7 @@ public class BoundModelBase : ObservableObject {
     public string ShellItemTitle { get => field; protected set => SetProperty(ref field, value); }
     public bool HasError { get => field; set => SetProperty(ref field, value); }
     public bool IsModified { get => field; set => SetProperty(ref field, value); }
+    public bool IsModifiedWithoutError { get => field; protected set => SetProperty(ref field, value); }
 
     public BoundModelBase(string initialPageTitleBase, string initialShellItemTitleBase) {
         PageTitleBase = PageTitle = initialPageTitleBase;
@@ -76,7 +77,8 @@ public class BoundModelBase : ObservableObject {
     }
 
     private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == Constants.IsModified || e.PropertyName == Constants.HasError) {
+        // TODO we need constants here?
+        if (e.PropertyName == Constants.HasError || e.PropertyName == Constants.IsModified || e.PropertyName == nameof(IsModifiedWithoutError)) {
             UpdateState();
         }
     }
@@ -111,6 +113,8 @@ public class BoundModelBase : ObservableObject {
 
         IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
             || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
+
+        IsModifiedWithoutError = IsModified && !HasError;
 
         if (isModified != IsModified) {
             UpdateTitles();

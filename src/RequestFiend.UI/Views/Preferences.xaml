@@ -11,7 +11,7 @@
     <ScrollView>
         <VerticalStackLayout>
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModified}"/>
+                <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
 
                 <Button Text="Reset" Command="{Binding ResetCommand}" Style="{StaticResource DangerButton}"/>
 
