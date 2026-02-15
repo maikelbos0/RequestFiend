@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Storage = Microsoft.Maui.Storage;
@@ -84,7 +85,7 @@ public class MainPageModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
-        fileSystem.File.ReadAllTextAsync(filePath).Returns(JsonSerializer.Serialize(new RequestTemplateCollection()));
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns(JsonSerializer.Serialize(new RequestTemplateCollection()));
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
@@ -145,7 +146,7 @@ public class MainPageModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
-        fileSystem.File.ReadAllTextAsync(filePath).Returns("Invalid JSON");
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns("Invalid JSON");
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
@@ -166,7 +167,7 @@ public class MainPageModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
-        fileSystem.File.ReadAllTextAsync(filePath).Returns("null");
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns("null");
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
@@ -186,7 +187,7 @@ public class MainPageModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
-        fileSystem.File.ReadAllTextAsync(filePath).Returns(JsonSerializer.Serialize(new RequestTemplateCollection()));
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns(JsonSerializer.Serialize(new RequestTemplateCollection()));
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
@@ -225,7 +226,7 @@ public class MainPageModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
-        fileSystem.File.ReadAllTextAsync(filePath).Returns("Invalid JSON");
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns("Invalid JSON");
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
@@ -245,7 +246,7 @@ public class MainPageModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
-        fileSystem.File.ReadAllTextAsync(filePath).Returns("null");
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns("null");
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 

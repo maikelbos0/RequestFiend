@@ -24,7 +24,7 @@ public class TextContentManagerTests {
         var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
 
         Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
-        Assert.Equal("The Replacement and Another get replaced", await result.ReadAsStringAsync());
+        Assert.Equal("The Replacement and Another get replaced", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 
     [Theory]

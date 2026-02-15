@@ -4,6 +4,7 @@ using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System.IO.Abstractions;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,7 +29,7 @@ public class RequestTemplateCollectionServiceTests {
 
         await subject.Save(filePath, collection);
 
-        await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
+        await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection), Arg.Any<CancellationToken>());
         messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionUpdatedMessage>(x => x.FilePath == filePath && x.Collection == collection), filePath);
         preferencesService.Received(1).PushRecentCollection(filePath);
     }

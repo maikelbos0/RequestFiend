@@ -23,7 +23,7 @@ public class JsonContentManagerTests {
         var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
 
         Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
-        Assert.Equal("[{\"Meaning\": 42}, {\"Meaning\": 42}]", await result.ReadAsStringAsync());
+        Assert.Equal("[{\"Meaning\": 42}, {\"Meaning\": 42}]", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 
     [Theory]
