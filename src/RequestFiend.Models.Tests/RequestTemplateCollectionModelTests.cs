@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using System.IO;
 using Xunit;
@@ -10,12 +11,25 @@ public class RequestTemplateCollectionModelTests {
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";
 
-        var subject = new RequestTemplateCollectionModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), new());
+        var collection = new RequestTemplateCollection() {
+            Requests = [
+                new() { Name = "Request", Method = "GET", Url = "https://localhost" },
+            ]
+        };
+
+        var subject = new RequestTemplateCollectionModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            new(filePath),
+            collection
+        );
 
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.PageTitleBase);
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitleBase);
         Assert.NotNull(subject.Settings);
         Assert.NotNull(subject.NewRequest);
+        Assert.NotNull(Assert.Single(subject.Requests));
     }
 
     //[Theory]

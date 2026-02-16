@@ -21,6 +21,9 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
+    // TODO cleanup
+    public Guid Id => request.Id;
+
     public ValidatableProperty<string?> Name { get; set; }
     public ValidatableProperty<string?> Method { get; set; }
     public ValidatableProperty<string?> Url { get; set; }

@@ -1,35 +1,27 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace RequestFiend.Models;
 
 public partial class RequestTemplateCollectionModel : BoundModelBase {
-    // TODO figure out which of these we actually need in the end
-    private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
-    private readonly IMessageService messageService;
-    private readonly RequestTemplateCollectionFileModel file;
-    private readonly RequestTemplateCollection collection;
     //private readonly List<BoundModelBase> models = [];
 
     public RequestTemplateCollectionSettingsModel Settings { get; }
     public NewRequestTemplateModel NewRequest { get; }
+    public List<RequestTemplateModel> Requests { get; }
 
     public RequestTemplateCollectionModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
+        IPopupService popupService,
         IMessageService messageService,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection
     ) : base(file.Name, file.Name) {
-        this.requestTemplateCollectionService = requestTemplateCollectionService;
-        this.messageService = messageService;
-        this.file = file;
-        this.collection = collection;
-
         Settings = new(requestTemplateCollectionService, messageService, file, collection);
         NewRequest = new(requestTemplateCollectionService, messageService, file, collection);
+        Requests = [.. collection.Requests.Select(request => new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, file, collection, request))];
     }
 
 

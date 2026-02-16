@@ -79,7 +79,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                 }
             });
 
-            foreach (var request in message.Collection.Requests) {
+            foreach (var request in collectionModel.Requests) {
                 collectionItem.Items.Add(CreateRequestTab(request));
             }
 
@@ -89,13 +89,11 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         await GoToAsync($"//{collectionItem.Route}");
     }
 
-    private Tab CreateRequestTab(RequestTemplate request) {
-        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(request);
-
+    private Tab CreateRequestTab(RequestTemplateModel request) {
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Items = {
-                GetRequiredService<RequestTemplatePage>()
+                new RequestTemplatePage(request)
             },
             Route = $"RequestTemplate_{request.Id}"
         };
@@ -114,10 +112,11 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
     
     public async void Receive(OpenTemplateRequestMessage message) {
-        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection);
+        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
 
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var item = CreateRequestTab(message.Request);
+        var request = GetRequiredService<RequestTemplateModel>();
+        var item = CreateRequestTab(request);
 
         collectionItem.Items.Add(item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
