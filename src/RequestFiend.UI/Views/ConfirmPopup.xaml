@@ -6,16 +6,15 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     x:Class="RequestFiend.UI.Views.ConfirmPopup"
     x:TypeArguments="system:Boolean"
-    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}"
-	Padding="0">
+    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
 
-    <VerticalStackLayout Padding="0">
-        <Label x:Name="MessageLabel" />
+	<VerticalStackLayout>
+		<Label x:Name="MessageLabel" />
 
-        <HorizontalStackLayout HorizontalOptions="End">
-            <Button Text="Ok" Clicked="OnOkClicked"/>
+		<HorizontalStackLayout HorizontalOptions="End">
+			<Button Text="Ok" Clicked="OnOkClicked"/>
 
-            <Button Text="Cancel" Clicked="OnCancelClicked"/>
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+			<Button Text="Cancel" Clicked="OnCancelClicked"/>
+		</HorizontalStackLayout>
+	</VerticalStackLayout>
 </toolkit:Popup>
