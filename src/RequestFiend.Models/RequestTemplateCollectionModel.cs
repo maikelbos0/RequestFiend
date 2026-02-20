@@ -51,8 +51,7 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
     }
 
     private void OnChildStateChanged(object? sender, PropertyChangedEventArgs e) {
-        // TODO we need constants here?
-        if (e.PropertyName == Constants.IsModified || e.PropertyName == Constants.HasError) {
+        if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
             UpdateState();
         }
     }

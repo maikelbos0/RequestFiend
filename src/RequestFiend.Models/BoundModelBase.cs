@@ -77,8 +77,7 @@ public class BoundModelBase : ObservableObject {
     }
 
     private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        // TODO we need constants here?
-        if (e.PropertyName == Constants.HasError || e.PropertyName == Constants.IsModified || e.PropertyName == nameof(IsModifiedWithoutError)) {
+        if (e.PropertyName == nameof(ValidatableProperty.IsModified) || e.PropertyName == nameof(ValidatableProperty.HasError)) {
             UpdateState();
         }
     }

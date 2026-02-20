@@ -126,7 +126,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == Constants.Value) {
+        if (e.PropertyName == nameof(ValidatableProperty<>.Value)) {
             UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
             UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         }
