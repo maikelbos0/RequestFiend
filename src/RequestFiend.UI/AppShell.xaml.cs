@@ -62,7 +62,8 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                 Title = Path.GetFileNameWithoutExtension(message.FilePath),
                 Icon = "folder_open_solid_full.png",
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
-                StyleId = message.FilePath
+                StyleId = message.FilePath,
+                BindingContext = collectionModel
             };
 
             collectionItem.Items.Add(new Tab() {
@@ -112,11 +113,9 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
     
     public async void Receive(OpenTemplateRequestMessage message) {
-        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
-
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var request = GetRequiredService<RequestTemplateModel>();
-        var item = CreateRequestTab(request);
+        var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
+        var item = CreateRequestTab(collectionModel.AddRequest(message.Request));
 
         collectionItem.Items.Add(item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
