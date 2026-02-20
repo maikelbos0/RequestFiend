@@ -1,6 +1,8 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 
 namespace RequestFiend.Models;
 
@@ -30,41 +32,41 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         this.collection = collection;
 
         Settings = new(requestTemplateCollectionService, messageService, file, collection);
+        Settings.PropertyChanged += OnChildStateChanged;
         NewRequest = new(requestTemplateCollectionService, messageService, file, collection);
+        NewRequest.PropertyChanged += OnChildStateChanged;
 
         foreach (var request in collection.Requests) {
             AddRequest(request);
         }
+
+        UpdateState();
     }
 
     public RequestTemplateModel AddRequest(RequestTemplate request) {
         var model = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, file, collection, request);
+        model.PropertyChanged += OnChildStateChanged;
         requests.Add(model);
         return model;
     }
 
+    private void OnChildStateChanged(object? sender, PropertyChangedEventArgs e) {
+        // TODO we need constants here?
+        if (e.PropertyName == Constants.IsModified || e.PropertyName == Constants.HasError) {
+            UpdateState();
+        }
+    }
 
-    //private void OnChildStateChanged(object? sender, PropertyChangedEventArgs e) {
-    //    if (e.PropertyName == Constants.IsModified || e.PropertyName == Constants.HasError) {
-    //        UpdateState();
-    //    }
-    //}
+    private void UpdateState() {
+        var models = requests.Cast<BoundModelBase>().Append(Settings).Append(NewRequest);
+        var isModified = IsModified;
 
-    //private void UpdateState() {
-    //    var hasError = HasError;
-    //    var isModified = IsModified;
+        HasError = models.Any(model => model.HasError);
+        IsModified = models.Any(model => model.IsModified);
+        IsModifiedWithoutError = IsModified && !HasError;
 
-    //    if (models.Any(model => model.HasError)) {
-    //        HasError = true;
-    //        IsModified = false;
-    //    }
-    //    else {
-    //        HasError = false;
-    //        IsModified = models.Any(model => model.IsModified);
-    //    }
-
-    //    if (hasError != HasError || isModified != IsModified) {
-    //        UpdateTitles();
-    //    }
-    //}
+        if (isModified != IsModified) {
+            UpdateTitles();
+        }
+    }
 }

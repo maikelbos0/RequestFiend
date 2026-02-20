@@ -59,12 +59,13 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             var collectionModel = GetRequiredService<RequestTemplateCollectionModel>();
 
             collectionItem = new FlyoutItem() {
-                Title = Path.GetFileNameWithoutExtension(message.FilePath),
                 Icon = "folder_open_solid_full.png",
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
                 StyleId = message.FilePath,
                 BindingContext = collectionModel
             };
+
+            collectionItem.SetBinding(BaseShellItem.TitleProperty, nameof(BoundModelBase.ShellItemTitle));
 
             collectionItem.Items.Add(new Tab() {
                 Icon = "bars_solid_full.png",

@@ -110,10 +110,8 @@ public class BoundModelBase : ObservableObject {
 
         HasError = validatableProperties.Any(validatableProperty => validatableProperty.HasError)
             || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError));
-
         IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
             || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
-
         IsModifiedWithoutError = IsModified && !HasError;
 
         if (isModified != IsModified) {

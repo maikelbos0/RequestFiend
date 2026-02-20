@@ -13,6 +13,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
+    // TODO fix null vs empty string is modified
     public ValidatableProperty<string?> Name { get; set; } = new(() => null, Validator.Required);
     public ValidatableProperty<string?> Method { get; set; } = new(() => null, Validator.Required);
     public ValidatableProperty<string?> Url { get; set; }
