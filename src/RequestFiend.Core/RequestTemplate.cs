@@ -6,7 +6,6 @@ using System.Net.Http;
 namespace RequestFiend.Core;
 
 public class RequestTemplate {
-    public Guid Id { get; init; } = Guid.NewGuid();
     public required string Name { get; set; }
     public required string Method { get; set; }
     public required string Url { get; set; }

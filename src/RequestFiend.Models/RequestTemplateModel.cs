@@ -21,9 +21,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
-    // TODO cleanup
-    public Guid Id => request.Id;
-
+    public Guid Id { get; } = Guid.NewGuid();
     public ValidatableProperty<string?> Name { get; set; }
     public ValidatableProperty<string?> Method { get; set; }
     public ValidatableProperty<string?> Url { get; set; }
@@ -120,7 +118,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
             collection.Requests.Remove(request);
             await requestTemplateCollectionService.Save(file.FilePath, collection);
-            messageService.Send(new RequestTemplateDeletedMessage(), request.Id);
+            messageService.Send(new RequestTemplateDeletedMessage(), Id);
             messageService.Send(new SuccessMessage("Request had been deleted"));
         }
     }

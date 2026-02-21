@@ -304,7 +304,7 @@ public class RequestTemplateModelTests {
 
         Assert.Empty(collection.Requests);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
-        messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), request.Id);
+        messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), subject.Id);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
