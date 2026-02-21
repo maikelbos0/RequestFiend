@@ -178,7 +178,6 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("")]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
     public async Task ValidateJson_When_Valid(string stringContent) {
@@ -203,6 +202,7 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
+    [InlineData("")]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
     public async Task ValidateJson_When_Invalid(string stringContent) {
@@ -227,7 +227,6 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("", "")]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
     public async Task FormatJson_When_Valid(string stringContent, string expectedStringContent) {
@@ -254,6 +253,7 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
+    [InlineData("")]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
     public async Task FormatJson_When_Invalid(string stringContent) {

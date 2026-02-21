@@ -89,9 +89,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     [RelayCommand]
     public async Task ValidateJson() {
         try {
-            if (!string.IsNullOrEmpty(StringContent.Value)) {
-                _ = JsonDocument.Parse(StringContent.Value);
-            }
+            _ = JsonDocument.Parse(StringContent.Value);
             messageService.Send(new SuccessMessage("JSON content has been validated"));
         }
         catch (Exception exception) {
@@ -102,10 +100,8 @@ public partial class RequestTemplateModel : BoundModelBase {
     [RelayCommand]
     public async Task FormatJson() {
         try {
-            if (!string.IsNullOrEmpty(StringContent.Value)) {
-                var document = JsonDocument.Parse(StringContent.Value ?? "");
-                StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
-            }
+            var document = JsonDocument.Parse(StringContent.Value ?? "");
+            StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
             messageService.Send(new SuccessMessage("JSON content has been formatted"));
         }
         catch (Exception exception) {
