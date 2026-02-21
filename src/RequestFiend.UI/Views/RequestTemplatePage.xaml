@@ -39,25 +39,15 @@
 
                     <Label Text="Body" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <Label Text="Content type" Style="{StaticResource EntryLabel}" IsVisible="{Binding StackIsHorizontal}"/>
+                    <Label Text="Content type" Style="{StaticResource EntryLabel}"/>
 
-                    <Grid IsVisible="{Binding StackIsHorizontal}" ColumnDefinitions="*,Auto,Auto">
-                        <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
+                    <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
 
-                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" IsEnabled="{Binding UsesJsonContent}" Grid.Column="1"/>
+                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
+                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}"/>
 
-                        <Button Text="Format JSON" Command="{Binding FormatJsonCommand}" IsEnabled="{Binding UsesJsonContent}"  Grid.Column="2"/>
-                    </Grid>
-
-                    <Label Text="Content type" Style="{StaticResource EntryLabel}" IsVisible="{Binding StackIsVertical}"/>
-                    
-                    <VerticalStackLayout Padding="0" IsVisible="{Binding StackIsVertical}">
-                        <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
-
-                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
-
-                        <Button Text="Format JSON" Command="{Binding FormatJsonCommand}" HorizontalOptions="Fill" IsEnabled="{Binding UsesJsonContent}"/>
-                    </VerticalStackLayout>
+                        <Button Text="Format JSON" Command="{Binding FormatJsonCommand}"/>
+                    </StackLayout>
 
                     <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
 

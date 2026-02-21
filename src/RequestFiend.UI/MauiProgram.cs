@@ -49,5 +49,3 @@ public static class MauiProgram {
         return mauiAppBuilder;
     }
 }
-
-// TODO decide what the fuck to do with the JSON buttons
