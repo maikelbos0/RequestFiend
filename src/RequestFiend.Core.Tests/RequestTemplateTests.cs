@@ -20,28 +20,8 @@ public class RequestTemplateTests {
         Assert.Equal(expectedManagerType, subject.GetContentManager().GetType());
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("localhost")]
-    [InlineData("https://")]
-    [InlineData("https:localhost")]
-    [InlineData("https//localhost")]
-    public void TryCreateMessage_Does_Not_Create_Message_When_Url_Is_Invalid(string url) {
-        var subject = new RequestTemplate() {
-            Name = "Request",
-            Method = "GET",
-            Url = url
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = [subject]
-        };
-
-        Assert.False(subject.TryCreateMessage(collection, out var message));
-        Assert.Null(message);
-    }
-
     [Fact]
-    public void TryCreateMessage_Creates_Message_If_Possible() {
+    public void CreateMessage_Creates_Message() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -51,15 +31,15 @@ public class RequestTemplateTests {
             Requests = [subject]
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
-        Assert.NotNull(message);
+        var message = subject.CreateMessage(collection);
+
         Assert.Equal(subject.Method, message.Method.Method);
         Assert.NotNull(message.RequestUri);
         Assert.Equal(subject.Url, message.RequestUri.ToString());
     }
 
     [Fact]
-    public void TryCreateMessage_Applies_Variables_To_Url() {
+    public void CreateMessage_Applies_Variables_To_Url() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -70,13 +50,14 @@ public class RequestTemplateTests {
             Variables = { new() { Name = "BaseUrl", Value = "https://localhost:7001/" } }
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         Assert.NotNull(message.RequestUri);
         Assert.Equal("https://localhost:7001/values", message.RequestUri.ToString());
     }
 
     [Fact]
-    public void TryCreateMessage_Adds_Headers() {
+    public void CreateMessage_Adds_Headers() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -89,14 +70,15 @@ public class RequestTemplateTests {
             Requests = [subject]
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         var header = Assert.Single(message.Headers);
         Assert.Equal("Accept", header.Key);
         Assert.Equal("application/json", Assert.Single(header.Value));
     }
 
     [Fact]
-    public void TryCreateMessage_Applies_Variables_To_Header_Names() {
+    public void CreateMessage_Applies_Variables_To_Header_Names() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -110,13 +92,14 @@ public class RequestTemplateTests {
             Variables = { new() { Name = "Header", Value = "Accept" } }
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         var header = Assert.Single(message.Headers);
         Assert.Equal("Accept", header.Key);
     }
 
     [Fact]
-    public void TryCreateMessage_Applies_Variables_To_Header_Values() {
+    public void CreateMessage_Applies_Variables_To_Header_Values() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -130,13 +113,14 @@ public class RequestTemplateTests {
             Variables = { new() { Name = "Header", Value = "application/json" } }
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         var header = Assert.Single(message.Headers);
         Assert.Equal("application/json", Assert.Single(header.Value));
     }
 
     [Fact]
-    public void TryCreateMessage_Adds_DefaultHeaders() {
+    public void CreateMessage_Adds_DefaultHeaders() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -149,14 +133,15 @@ public class RequestTemplateTests {
             ]
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         var defaultHeader = Assert.Single(message.Headers);
         Assert.Equal("Accept", defaultHeader.Key);
         Assert.Equal("application/json", Assert.Single(defaultHeader.Value));
     }
 
     [Fact]
-    public void TryCreateMessage_Applies_Variables_To_DefaultHeader_Names() {
+    public void CreateMessage_Applies_Variables_To_DefaultHeader_Names() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -170,13 +155,14 @@ public class RequestTemplateTests {
             ]
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         var defaultHeader = Assert.Single(message.Headers);
         Assert.Equal("Accept", defaultHeader.Key);
     }
 
     [Fact]
-    public void TryCreateMessage_Applies_Variables_To_DefaultHeader_Values() {
+    public void CreateMessage_Applies_Variables_To_DefaultHeader_Values() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -190,13 +176,14 @@ public class RequestTemplateTests {
             ]
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         var defaultHeader = Assert.Single(message.Headers);
         Assert.Equal("application/json", Assert.Single(defaultHeader.Value));
     }
 
     [Fact]
-    public void TryCreateMessage_Adds_Content_If_Available() {
+    public void CreateMessage_Adds_Content_If_Available() {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
@@ -208,7 +195,8 @@ public class RequestTemplateTests {
             Requests = [subject]
         };
 
-        Assert.True(subject.TryCreateMessage(collection, out var message));
+        var message = subject.CreateMessage(collection);
+
         Assert.IsType<StringContent>(message.Content);
     }
 }

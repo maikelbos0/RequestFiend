@@ -20,13 +20,9 @@ public class RequestTemplate {
         _ => throw new NotImplementedException($"Received unknown content type '{ContentType}'.")
     };
 
-    public bool TryCreateMessage(RequestTemplateCollection collection, [NotNullWhen(true)] out HttpRequestMessage? message) {
-        if (!Uri.TryCreate(collection.ApplyVariables(Url), UriKind.Absolute, out var uri)) {
-            message = null;
-            return false;
-        }
+    public HttpRequestMessage CreateMessage(RequestTemplateCollection collection) {
+        var message = new HttpRequestMessage(HttpMethod.Parse(Method), new Uri(collection.ApplyVariables(Url)));
 
-        message = new(HttpMethod.Parse(Method), uri);
         foreach (var header in Headers) {
             message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
         }
@@ -36,6 +32,6 @@ public class RequestTemplate {
 
         message.Content = GetContentManager().GetContent(this, collection);
 
-        return true;
+        return message;
     }
 }

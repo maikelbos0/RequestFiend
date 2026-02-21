@@ -84,8 +84,8 @@ public partial class MainPageModel : BoundModelBase {
                     await popupService.ShowErrorPopup("Failed to load collection.");
                 }
             }
-            catch (Exception ex) {
-                await popupService.ShowErrorPopup($"Failed to load collection: {ex.Message}");
+            catch (Exception exception) {
+                await popupService.ShowErrorPopup($"Failed to load collection: {exception.Message}");
             }
         }
         else {
