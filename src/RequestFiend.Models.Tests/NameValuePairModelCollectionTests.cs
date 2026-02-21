@@ -26,32 +26,12 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void Add() {
-        // TODO what is this test???
-        var subject = new NameValuePairModelCollection([]) {
-            new() {
-                Name = { Value = "Name" },
-                Value = { Value = "Value" }
-            }
-        };
+    public void OnAddClicked() {
+        var subject = new NameValuePairModelCollection([]);
 
-        Assert.True(subject.HasItems);
-    }
+        subject.OnAddClicked();
 
-    // TODO combine these tests? It doesn't make so much sense
-    [Fact]
-    public void Remove() {
-        var item = new NameValuePairModel() {
-            Name = { Value = "Name" }
-        };
-
-        var subject = new NameValuePairModelCollection([]) {
-            item
-        };
-
-        subject.Remove(item);
-
-        Assert.False(subject.HasItems);
+        Assert.Single(subject);
     }
 
     [Fact]
@@ -67,15 +47,6 @@ public class NameValuePairModelCollectionTests {
 
         Assert.Equal(2, subject.Count);
         Assert.DoesNotContain(pair, subject);
-    }
-
-    [Fact]
-    public void OnAddClicked() {
-        var subject = new NameValuePairModelCollection([]);
-
-        subject.OnAddClicked();
-
-        Assert.Single(subject);
     }
 
     [Fact]
