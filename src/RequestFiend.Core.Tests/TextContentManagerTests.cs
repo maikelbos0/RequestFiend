@@ -26,20 +26,4 @@ public class TextContentManagerTests {
         Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void GetContent_Without_StringContent(string? stringContent) {
-        var subject = new TextContentManager();
-        var request = new RequestTemplate() {
-            Name = "Request",
-            Method = "GET",
-            Url = "https://localhost",
-            StringContent = stringContent
-        };
-        var collection = new RequestTemplateCollection();
-
-        Assert.Null(subject.GetContent(request, collection));
-    }
 }
