@@ -129,14 +129,13 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("", "", "", "", "", "")]
-    [InlineData("", "GET", "https://url", "Name", "Value", "JSON")]
-    [InlineData("Name", "", "https://url", "Name", "Value", "JSON")]
-    [InlineData("Name", "GET", "", "Name", "Value", "JSON")]
-    [InlineData("Name", "GET", "https://url", "", "Value", "JSON")]
-    [InlineData("Name", "GET", "https://url", "Name", "", "JSON")]
-    [InlineData("Name", "GET", "https://url", "Name", "Value", "")]
-    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string headerValue, string contentType) {
+    [InlineData("", "", "", "", "")]
+    [InlineData("", "GET", "https://url", "Name", "JSON")]
+    [InlineData("Name", "", "https://url", "Name", "JSON")]
+    [InlineData("Name", "GET", "", "Name", "JSON")]
+    [InlineData("Name", "GET", "https://url", "", "JSON")]
+    [InlineData("Name", "GET", "https://url", "Name", "")]
+    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
 
@@ -159,7 +158,6 @@ public class RequestTemplateModelTests {
         subject.Method.Value = method;
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
-        subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 

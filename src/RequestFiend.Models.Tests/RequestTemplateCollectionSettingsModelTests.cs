@@ -80,12 +80,10 @@ public class RequestTemplateCollectionSettingsModelTests {
     }
 
     [Theory]
-    [InlineData("", "", "", "")]
-    [InlineData("Name", "", "Name", "Value")]
-    [InlineData("", "Value", "Name", "Value")]
-    [InlineData("Name", "Value", "", "Value")]
-    [InlineData("Name", "Value", "Name", "")]
-    public async Task Update_Fails_When_Invalid(string headerName, string headerValue, string variableName, string variableValue) {
+    [InlineData("", "")]
+    [InlineData("", "Name")]
+    [InlineData("Name", "")]
+    public async Task Update_Fails_When_Invalid(string headerName, string variableName) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string defaultUrl = "https://default";
 
@@ -94,10 +92,10 @@ public class RequestTemplateCollectionSettingsModelTests {
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             DefaultHeaders = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
+                new() { Name = "PreviousName" }
             },
             Variables = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
+                new() { Name = "PreviousName" }
             }
         };
 
@@ -105,17 +103,13 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
-        subject.DefaultHeaders[0].Value.Value = headerValue;
         subject.Variables[0].Name.Value = variableName;
-        subject.Variables[0].Value.Value = variableValue;
 
         await subject.Update();
 
         Assert.Equal("https://previous", collection.DefaultUrl);
         Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
-        Assert.Equal("PreviousValue", collection.DefaultHeaders[0].Value);
         Assert.Equal("PreviousName", collection.Variables[0].Name);
-        Assert.Equal("PreviousValue", collection.Variables[0].Value);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());

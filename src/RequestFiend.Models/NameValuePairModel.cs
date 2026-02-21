@@ -15,7 +15,7 @@ public class NameValuePairModel : ObservableObject {
 
     private NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider) {
         Name = new(nameProvider, Validator.Required);
-        Value = new(valueProvider, Validator.Required);
+        Value = new(valueProvider);
     }
 
     public void Reset(NameValuePair pair) {

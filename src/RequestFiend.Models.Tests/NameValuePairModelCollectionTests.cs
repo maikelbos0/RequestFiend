@@ -27,6 +27,7 @@ public class NameValuePairModelCollectionTests {
 
     [Fact]
     public void Add() {
+        // TODO what is this test???
         var subject = new NameValuePairModelCollection([]) {
             new() {
                 Name = { Value = "Name" },
@@ -37,11 +38,11 @@ public class NameValuePairModelCollectionTests {
         Assert.True(subject.HasItems);
     }
 
+    // TODO combine these tests? It doesn't make so much sense
     [Fact]
     public void Remove() {
         var item = new NameValuePairModel() {
-            Name = { Value = "Name" },
-            Value = { Value = "Value" }
+            Name = { Value = "Name" }
         };
 
         var subject = new NameValuePairModelCollection([]) {
@@ -110,7 +111,7 @@ public class NameValuePairModelCollectionTests {
         };
 
         var collection = Enumerable.Range(0, collectionLength)
-            .Select(_ => new NameValuePair() { Name = "Name", Value = "Value" })
+            .Select(_ => new NameValuePair() { Name = "Name" })
             .ToList();
 
         Assert.Throws<ArgumentException>(() => subject.Reset(collection));
