@@ -14,7 +14,7 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
-    public ValidatableProperty<string?> DefaultUrl { get; set; }
+    public ValidatableProperty<string> DefaultUrl { get; set; }
     public NameValuePairModelCollection DefaultHeaders { get; set; }
     public NameValuePairModelCollection Variables { get; set; }
 

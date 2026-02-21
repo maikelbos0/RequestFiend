@@ -11,7 +11,7 @@ public class RequestTemplate {
     public required string Url { get; set; }
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
-    public string? StringContent { get; set; }
+    public string StringContent { get; set; } = "";
 
     public IContentManager GetContentManager() => ContentType switch {
         ContentType.None => new NoneContentManager(),

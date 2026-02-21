@@ -129,14 +129,14 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, null, null, null, null, null)]
-    [InlineData(null, "GET", "https://url", "Name", "Value", "JSON")]
-    [InlineData("Name", null, "https://url", "Name", "Value", "JSON")]
-    [InlineData("Name", "GET", null, "Name", "Value", "JSON")]
-    [InlineData("Name", "GET", "https://url", null, "Value", "JSON")]
-    [InlineData("Name", "GET", "https://url", "Name", null, "JSON")]
-    [InlineData("Name", "GET", "https://url", "Name", "Value", null)]
-    public async Task Update_Fails_When_Invalid(string? name, string? method, string? url, string? headerName, string? headerValue, string? contentType) {
+    [InlineData("", "", "", "", "", "")]
+    [InlineData("", "GET", "https://url", "Name", "Value", "JSON")]
+    [InlineData("Name", "", "https://url", "Name", "Value", "JSON")]
+    [InlineData("Name", "GET", "", "Name", "Value", "JSON")]
+    [InlineData("Name", "GET", "https://url", "", "Value", "JSON")]
+    [InlineData("Name", "GET", "https://url", "Name", "", "JSON")]
+    [InlineData("Name", "GET", "https://url", "Name", "Value", "")]
+    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string headerValue, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
 
@@ -178,11 +178,10 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
-    public async Task ValidateJson_When_Valid(string? stringContent) {
+    public async Task ValidateJson_When_Valid(string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -206,7 +205,7 @@ public class RequestTemplateModelTests {
     [Theory]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
-    public async Task ValidateJson_When_Invalid(string? stringContent) {
+    public async Task ValidateJson_When_Invalid(string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -228,11 +227,10 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, null)]
     [InlineData("", "")]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
-    public async Task FormatJson_When_Valid(string? stringContent, string? expectedStringContent) {
+    public async Task FormatJson_When_Valid(string stringContent, string expectedStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -258,7 +256,7 @@ public class RequestTemplateModelTests {
     [Theory]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
-    public async Task FormatJson_When_Invalid(string? stringContent) {
+    public async Task FormatJson_When_Invalid(string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();

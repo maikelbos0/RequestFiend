@@ -64,11 +64,11 @@ public class NewRequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(null, null, null)]
-    [InlineData(null, "GET", "https://url")]
-    [InlineData("Name", null, "https://url")]
-    [InlineData("Name", "GET", null)]
-    public async Task Create_Fails_When_Invalid(string? name, string? method, string? url) {
+    [InlineData("", "", "")]
+    [InlineData("", "GET", "https://url")]
+    [InlineData("Name", "", "https://url")]
+    [InlineData("Name", "GET", "")]
+    public async Task Create_Fails_When_Invalid(string name, string method, string url) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();

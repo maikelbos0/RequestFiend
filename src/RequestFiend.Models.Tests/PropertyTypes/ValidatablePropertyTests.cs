@@ -5,11 +5,10 @@ namespace RequestFiend.Models.Tests.PropertyTypes;
 
 public class ValidatablePropertyTests {
     [Theory]
-    [InlineData(null, true)]
     [InlineData("", true)]
     [InlineData("Value", false)]
-    public void Constructor(string? initialValue, bool expectedHasError) {
-        var subject = new ValidatableProperty<string?>(() => initialValue, value => !string.IsNullOrEmpty(value));
+    public void Constructor(string initialValue, bool expectedHasError) {
+        var subject = new ValidatableProperty<string>(() => initialValue, value => !string.IsNullOrEmpty(value));
 
         Assert.Equal(initialValue, subject.Value);
         Assert.Equal(expectedHasError, subject.HasError);
@@ -18,15 +17,13 @@ public class ValidatablePropertyTests {
     }
 
     [Theory]
-    [InlineData(null, null, true, false, false)]
-    [InlineData(null, "", true, true, false)]
-    [InlineData(null, "Changed", false, true, true)]
+    [InlineData("", "", true, false, false)]
+    [InlineData("", "Changed", false, true, true)]
     [InlineData("Initial", "Initial", false, false, false)]
     [InlineData("Initial", "Changed", false, true, true)]
-    [InlineData("Initial", null, true, true, false)]
     [InlineData("Initial", "", true, true, false)]
-    public void Value(string? initialValue, string? newValue, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError) {
-        var subject = new ValidatableProperty<string?>(() => initialValue, value => !string.IsNullOrEmpty(value)) {
+    public void Value(string initialValue, string newValue, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError) {
+        var subject = new ValidatableProperty<string>(() => initialValue, value => !string.IsNullOrEmpty(value)) {
             Value = newValue
         };
 
@@ -40,11 +37,11 @@ public class ValidatablePropertyTests {
     public void Reset() {
         const string initialValue = "Initial";
 
-        var subject = new ValidatableProperty<string?>(() => initialValue, value => !string.IsNullOrEmpty(value));
+        var subject = new ValidatableProperty<string>(() => initialValue, value => !string.IsNullOrEmpty(value));
 
-        subject.Reset(() => null);
+        subject.Reset(() => "");
 
-        Assert.Null(subject.Value);
+        Assert.Equal("", subject.Value);
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
         Assert.False(subject.IsModifiedWithoutError);

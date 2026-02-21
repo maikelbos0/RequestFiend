@@ -12,7 +12,7 @@ public partial class PreferencesModel : BoundModelBase {
     private readonly IPopupService popupService;
 
     public ValidatableProperty<bool> ShowRecentCollections { get; set; }
-    public ValidatableProperty<string?> MaximumRecentCollectionCount { get; set; }
+    public ValidatableProperty<string> MaximumRecentCollectionCount { get; set; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;

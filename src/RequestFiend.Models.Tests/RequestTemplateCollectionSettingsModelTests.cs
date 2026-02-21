@@ -80,12 +80,12 @@ public class RequestTemplateCollectionSettingsModelTests {
     }
 
     [Theory]
-    [InlineData(null, null, null, null)]
-    [InlineData("Name", null, "Name", "Value")]
-    [InlineData(null, "Value", "Name", "Value")]
-    [InlineData("Name", "Value", null, "Value")]
-    [InlineData("Name", "Value", "Name", null)]
-    public async Task Update_Fails_When_Invalid(string? headerName, string? headerValue, string? variableName, string? variableValue) {
+    [InlineData("", "", "", "")]
+    [InlineData("Name", "", "Name", "Value")]
+    [InlineData("", "Value", "Name", "Value")]
+    [InlineData("Name", "Value", "", "Value")]
+    [InlineData("Name", "Value", "Name", "")]
+    public async Task Update_Fails_When_Invalid(string headerName, string headerValue, string variableName, string variableValue) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string defaultUrl = "https://default";
 

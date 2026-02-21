@@ -41,7 +41,7 @@ public class NameValuePairModelCollectionTests {
     public void Remove() {
         var item = new NameValuePairModel() {
             Name = { Value = "Name" },
-            Value = { Value = null }
+            Value = { Value = "Value" }
         };
 
         var subject = new NameValuePairModelCollection([]) {

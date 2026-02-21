@@ -6,14 +6,14 @@ using System;
 namespace RequestFiend.Models;
 
 public class NameValuePairModel : ObservableObject {
-    public ValidatableProperty<string?> Name { get; }
-    public ValidatableProperty<string?> Value { get; }
+    public ValidatableProperty<string> Name { get; }
+    public ValidatableProperty<string> Value { get; }
 
-    public NameValuePairModel() : this(() => null, () => null) { }
+    public NameValuePairModel() : this(() => "", () => "") { }
 
     public NameValuePairModel(NameValuePair pair) : this(() => pair.Name, () => pair.Value) { }
 
-    private NameValuePairModel(Func<string?> nameProvider, Func<string?> valueProvider) {
+    private NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider) {
         Name = new(nameProvider, Validator.Required);
         Value = new(valueProvider, Validator.Required);
     }

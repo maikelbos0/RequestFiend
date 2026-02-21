@@ -22,14 +22,14 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplate request;
 
     public Guid Id { get; } = Guid.NewGuid();
-    public ValidatableProperty<string?> Name { get; set; }
-    public ValidatableProperty<string?> Method { get; set; }
-    public ValidatableProperty<string?> Url { get; set; }
+    public ValidatableProperty<string> Name { get; set; }
+    public ValidatableProperty<string> Method { get; set; }
+    public ValidatableProperty<string> Url { get; set; }
     public NameValuePairModelCollection Headers { get; set; }
-    public ValidatableProperty<string?> ContentType { get; set; }
+    public ValidatableProperty<string> ContentType { get; set; }
     public bool UsesStringContent { get => field; private set => SetProperty(ref field, value); }
     public bool UsesJsonContent { get => field; private set => SetProperty(ref field, value); }
-    public ValidatableProperty<string?> StringContent { get; set; }
+    public ValidatableProperty<string> StringContent { get; set; }
 
     public RequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,

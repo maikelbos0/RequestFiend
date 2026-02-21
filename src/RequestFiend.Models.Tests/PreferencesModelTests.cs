@@ -58,9 +58,9 @@ public class PreferencesModelTests {
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData("")]
     [InlineData("Invalid")]
-    public void Update_Fails_When_Invalid(string? maximumRecentCollectionCount) {
+    public void Update_Fails_When_Invalid(string maximumRecentCollectionCount) {
         var preferencesService = Substitute.For<IPreferencesService>();
         var messageService = Substitute.For<IMessageService>();
 
