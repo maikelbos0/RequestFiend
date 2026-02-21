@@ -42,174 +42,91 @@ public class BoundModelBaseTests {
         Assert.Equal(shellItemTitleBase, subject.ShellItemTitle);
     }
 
-    // TODO rewrite these to just use the state properties, can it be done?
-
-    [Fact]
-    public void State_When_Nothing_Is_Modified() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
+    [Theory]
+    [InlineData(false, false, false, false, false, false, false, "Page title", "Shell item title")]
+    [InlineData(true, false, false, false, true, false, false, "Page title", "Shell item title")]
+    [InlineData(false, false, true, false, true, false, false, "Page title", "Shell item title")]
+    [InlineData(true, true, false, false, true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, true, true, true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, true, false, false, false, true, true, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, false, true, false, true, true, "Page title ●", "Shell item title ●")]
+    public void State_Initial(
+        bool validateblePropertyHasError,
+        bool validatablePropertyIsModified,
+        bool nameValuePairPropertyHasError,
+        bool nameValuePairPropertyIsModified,
+        bool expectedHasError,
+        bool expectedIsModified,
+        bool expectedIsModifiedWithoutError,
+        string expectedPageTitle,
+        string expectedShellItemTitle
+    ) {
+        var validatableProperty = new ValidatableProperty<string>(() => "Name");
+        var nameValuePairModelCollection = new NameValuePairModelCollection([new() { Name = "Name" }]);
 
         var subject = new BoundModelBase("Page title", "Shell item title");
 
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
+        validatableProperty.HasError = validateblePropertyHasError;
+        validatableProperty.IsModified = validatablePropertyIsModified;
+        nameValuePairModelCollection[0].Name.HasError = nameValuePairPropertyHasError;
+        nameValuePairModelCollection[0].Name.IsModified = nameValuePairPropertyIsModified;
 
-        Assert.False(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.False(subject.IsModifiedWithoutError);
-        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
-        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
+        subject.ConfigureState([validatableProperty], [nameValuePairModelCollection]);
+
+        Assert.Equal(expectedHasError, subject.HasError);
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
+        Assert.Equal(expectedPageTitle, subject.PageTitle);
+        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
-    [Fact]
-    public void State_When_Nothing_Is_Modified_With_Property_Error() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value", Validator.Numeric);
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
+    [Theory]
+    [InlineData(false, false, false, false, false, false, false, "Page title", "Shell item title")]
+    [InlineData(true, false, false, false, true, false, false, "Page title", "Shell item title")]
+    [InlineData(false, false, true, false, true, false, false, "Page title", "Shell item title")]
+    [InlineData(true, true, false, false, true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, true, true, true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, true, false, false, false, true, true, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, false, true, false, true, true, "Page title ●", "Shell item title ●")]
+    public void State(
+        bool validateblePropertyHasError,
+        bool validatablePropertyIsModified,
+        bool nameValuePairPropertyHasError,
+        bool nameValuePairPropertyIsModified,
+        bool expectedHasError,
+        bool expectedIsModified,
+        bool expectedIsModifiedWithoutError,
+        string expectedPageTitle,
+        string expectedShellItemTitle
+    ) {
+        var validatableProperty = new ValidatableProperty<string>(() => "Name");
+        var nameValuePairModelCollection = new NameValuePairModelCollection([new() { Name = "Name" }]);
 
         var subject = new BoundModelBase("Page title", "Shell item title");
 
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
+        subject.ConfigureState([validatableProperty], [nameValuePairModelCollection]);
 
-        Assert.True(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.False(subject.IsModifiedWithoutError);
-        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
-        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
-    }
+        validatableProperty.HasError = validateblePropertyHasError;
+        validatableProperty.IsModified = validatablePropertyIsModified;
+        nameValuePairModelCollection[0].Name.HasError = nameValuePairPropertyHasError;
+        nameValuePairModelCollection[0].Name.IsModified = nameValuePairPropertyIsModified;
 
-    [Fact]
-    public void State_When_Nothing_Is_Modified_With_Pair_Name_Error() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
-
-        Assert.True(subject.HasError);
-        Assert.False(subject.IsModified);
-        Assert.False(subject.IsModifiedWithoutError);
-        Assert.Equal(subject.PageTitleBase, subject.PageTitle);
-        Assert.Equal(subject.ShellItemTitleBase, subject.ShellItemTitle);
-    }
-
-    [Fact]
-    public void State_When_Property_Is_Modified() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
-
-        validatableProperty2.Value = "Changed";
-
-        Assert.False(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.True(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
-    }
-
-    [Fact]
-    public void State_When_Pair_Name_Is_Modified() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
-
-        nameValuePairModelCollection2[1].Name.Value = "Changed";
-
-        Assert.False(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.True(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
-    }
-
-    [Fact]
-    public void State_When_Pair_Value_Is_Modified() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
-
-        nameValuePairModelCollection2[1].Value.Value = "Changed";
-
-        Assert.False(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.True(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
-    }
-    
-    [Fact]
-    public void State_When_Property_Has_Error() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value", Validator.Numeric);
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
-
-        validatableProperty1.Value = "";
-
-        Assert.True(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.False(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
-    }
-
-    [Fact]
-    public void State_When_Pair_Name_Has_Error() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
-
-        nameValuePairModelCollection2[1].Name.Value = "";
-
-        Assert.True(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.False(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
+        Assert.Equal(expectedHasError, subject.HasError);
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
+        Assert.Equal(expectedPageTitle, subject.PageTitle);
+        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
     }
 
     [Fact]
     public void State_When_Pair_Is_Added() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
+        var nameValuePairModelCollection = new NameValuePairModelCollection([]);
 
         var subject = new BoundModelBase("Page title", "Shell item title");
 
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
+        subject.ConfigureState([], [nameValuePairModelCollection]);
 
-        nameValuePairModelCollection2.Add(new());
+        nameValuePairModelCollection.Add(new());
 
         Assert.True(subject.HasError);
         Assert.True(subject.IsModified);
@@ -220,16 +137,13 @@ public class BoundModelBaseTests {
 
     [Fact]
     public void State_When_Pair_Is_Removed() {
-        var validatableProperty1 = new ValidatableProperty<string>(() => "Name");
-        var validatableProperty2 = new ValidatableProperty<string>(() => "Value");
-        var nameValuePairModelCollection1 = new NameValuePairModelCollection([new() { Name = "FirstName" }, new() { Name = "SecondName" }]);
-        var nameValuePairModelCollection2 = new NameValuePairModelCollection([new() { Name = "ThirdName" }, new() { Name = "FourthName" }]);
+        var nameValuePairModelCollection = new NameValuePairModelCollection([new() { Name = "Name" }, new() { Name = "Name" }]);
 
         var subject = new BoundModelBase("Page title", "Shell item title");
 
-        subject.ConfigureState([validatableProperty1, validatableProperty2], [nameValuePairModelCollection1, nameValuePairModelCollection2]);
+        subject.ConfigureState([], [nameValuePairModelCollection]);
 
-        nameValuePairModelCollection2.Remove(nameValuePairModelCollection2.Last());
+        nameValuePairModelCollection.Remove(nameValuePairModelCollection.Last());
 
         Assert.False(subject.HasError);
         Assert.True(subject.IsModified);

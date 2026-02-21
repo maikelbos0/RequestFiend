@@ -93,7 +93,7 @@ public class RequestTemplateCollectionModelTests {
     [InlineData(true, false, true, false, false, "External data requests", "External data requests")]
     [InlineData(true, true, true, true, false, "External data requests ●", "External data requests ●")]
     [InlineData(false, true, false, true, true, "External data requests ●", "External data requests ●")]
-    public void Changing_NewRequeset_State_Updates_State(bool newRequestHasError, bool newRequestIsModified, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, string expectedPageTitle, string expectedShellItemTitle) {
+    public void Changing_NewRequest_State_Updates_State(bool newRequestHasError, bool newRequestIsModified, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, string expectedPageTitle, string expectedShellItemTitle) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var collection = new RequestTemplateCollection();

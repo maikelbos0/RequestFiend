@@ -32,7 +32,7 @@ public class BoundModelBase : ObservableObject {
     public string ShellItemTitle { get => field; protected set => SetProperty(ref field, value); }
     public bool HasError { get => field; set => SetProperty(ref field, value); }
     public bool IsModified { get => field; set => SetProperty(ref field, value); }
-    public bool IsModifiedWithoutError { get => field; protected set => SetProperty(ref field, value); }
+    public bool IsModifiedWithoutError { get => field; set => SetProperty(ref field, value); }
 
     public BoundModelBase(string initialPageTitleBase, string initialShellItemTitleBase) {
         PageTitleBase = PageTitle = initialPageTitleBase;
