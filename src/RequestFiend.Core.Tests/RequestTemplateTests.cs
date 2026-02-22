@@ -5,6 +5,30 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateTests {
+    [Fact]
+    public void Clone() {
+        var subject = new RequestTemplate() {
+            Name = "Request",
+            Method = "GET",
+            Url = "https://localhost:7001/",
+            Headers = [
+                new() { Name = "Accept", Value = "application/json" }
+            ],
+            ContentType = ContentType.Text,
+            StringContent = "Just a piece of text"
+        };
+
+        var result = subject.Clone();
+
+        Assert.Equal(subject.Name, result.Name);
+        Assert.Equal(subject.Method, result.Method);
+        Assert.Equal(subject.Url, result.Url);
+        Assert.NotSame(subject.Headers, result.Headers);
+        Assert.Equal(subject.Headers.Count, result.Headers.Count);
+        Assert.Equal(subject.ContentType, result.ContentType);
+        Assert.Equal(subject.StringContent, result.StringContent);
+    }
+
     [Theory]
     [InlineData(ContentType.None, typeof(NoneContentManager))]
     [InlineData(ContentType.Text, typeof(TextContentManager))]

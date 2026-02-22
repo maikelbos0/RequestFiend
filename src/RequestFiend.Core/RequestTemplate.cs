@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net.Http;
 
 namespace RequestFiend.Core;
@@ -12,6 +12,16 @@ public class RequestTemplate {
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
     public string StringContent { get; set; } = "";
+
+    public RequestTemplate Clone()
+        => new() {
+            Name = Name,
+            Method = Method,
+            Url = Url,
+            Headers = [.. Headers.Select(header => header.Clone())],
+            ContentType = ContentType,
+            StringContent = StringContent
+        };
 
     public IContentManager GetContentManager() => ContentType switch {
         ContentType.None => new NoneContentManager(),
