@@ -61,6 +61,24 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     [RelayCommand]
+    public void ExecuteRequest() {
+        if (HasError) {
+            return;
+        }
+
+        var request = this.request.Clone();
+
+        request.Name = Name.Value!;
+        request.Method = Method.Value!;
+        request.Url = Url.Value!;
+        request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
+        request.StringContent = StringContent.Value;
+
+        messageService.Send(new ExecuteRequestMessage(file.FilePath, collection, request));
+    }
+
+    [RelayCommand]
     public async Task Update() {
         if (HasError) {
             return;

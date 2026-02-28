@@ -72,6 +72,113 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
+    public void ExecuteRequest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+        const string name = "Name";
+        const string method = "GET";
+        const string url = "https://url";
+        const string headerName = "Name";
+        const string headerValue = "Value";
+        const string contentType = "JSON";
+        const string stringContent = "Content";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Old",
+            Method = "POST",
+            Url = "https://previous",
+            Headers = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            ContentType = Core.ContentType.Text,
+            StringContent = "PreviousContent"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
+
+        subject.Name.Value = name;
+        subject.Method.Value = method;
+        subject.Url.Value = url;
+        subject.Headers[0].Name.Value = headerName;
+        subject.Headers[0].Value.Value = headerValue;
+        subject.ContentType.Value = contentType;
+        subject.StringContent.Value = stringContent;
+
+        subject.ExecuteRequest();
+
+        Assert.Equal("Old", request.Name);
+        Assert.Equal("POST", request.Method);
+        Assert.Equal("https://previous", request.Url);
+        Assert.Equal("PreviousName", request.Headers[0].Name);
+        Assert.Equal("PreviousValue", request.Headers[0].Value);
+        Assert.Equal(Core.ContentType.Text, request.ContentType);
+        Assert.Equal("PreviousContent", request.StringContent);
+
+        messageService.Received(1).Send(Arg.Is<ExecuteRequestMessage>(message
+            => message.FilePath == filePath
+            && message.Collection == collection
+            && message.Request != request
+            && message.Request.Name == name
+            && message.Request.Method == method
+            && message.Request.Url == url
+            && message.Request.Headers.Count == 1
+            && message.Request.Headers[0].Name == headerName
+            && message.Request.Headers[0].Value == headerValue
+            && message.Request.ContentType == Options.ReverseContentTypeMap[contentType]
+            && message.Request.StringContent == stringContent));
+    }
+
+    [Theory]
+    [InlineData("", "", "", "", "")]
+    [InlineData("", "GET", "https://url", "Name", "JSON")]
+    [InlineData("Name", "", "https://url", "Name", "JSON")]
+    [InlineData("Name", "GET", "", "Name", "JSON")]
+    [InlineData("Name", "GET", "https://url", "", "JSON")]
+    [InlineData("Name", "GET", "https://url", "Name", "")]
+    public async Task ExecuteRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
+        const string filePath = @"C:\Documents\External data requests.json";
+        const string stringContent = "Content";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Old",
+            Method = "POST",
+            Url = "https://previous",
+            Headers = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            ContentType = Core.ContentType.Text,
+            StringContent = "PreviousContent"
+        };
+
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
+
+        subject.Name.Value = name;
+        subject.Method.Value = method;
+        subject.Url.Value = url;
+        subject.Headers[0].Name.Value = headerName;
+        subject.ContentType.Value = contentType;
+        subject.StringContent.Value = stringContent;
+
+        subject.ExecuteRequest();
+
+        Assert.Equal("Old", request.Name);
+        Assert.Equal("POST", request.Method);
+        Assert.Equal("https://previous", request.Url);
+        Assert.Equal("PreviousName", request.Headers[0].Name);
+        Assert.Equal("PreviousValue", request.Headers[0].Value);
+        Assert.Equal(Core.ContentType.Text, request.ContentType);
+        Assert.Equal("PreviousContent", request.StringContent);
+
+        messageService.DidNotReceive().Send(Arg.Any<ExecuteRequestMessage>());
+    }
+
+    [Fact]
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
