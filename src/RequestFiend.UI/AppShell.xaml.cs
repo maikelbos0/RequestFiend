@@ -1,20 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
-using RequestFiend.Core;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using RequestFiend.UI.Views;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage> {
+public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage>, IRecipient<ExecuteRequestMessage> {
     private CancellationTokenSource? messageCancellationTokenSource;
 
     public AppShell() {
@@ -91,6 +89,15 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         await GoToAsync($"//{collectionItem.Route}");
     }
 
+    public async void Receive(OpenTemplateRequestMessage message) {
+        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+        var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
+        var item = CreateRequestTab(collectionModel.AddRequest(message.Request));
+
+        collectionItem.Items.Add(item);
+        await GoToAsync($"//{collectionItem.Route}/{item.Route}");
+    }
+
     private Tab CreateRequestTab(RequestTemplateModel request) {
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
@@ -110,15 +117,12 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         return item;
     }
 
+    public void Receive(ExecuteRequestMessage message) {
+        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+
+        Receive(new SuccessMessage("Received execute request for: " + message.Request.Name));
+    }
+
     private T GetRequiredService<T>() where T : notnull
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
-    
-    public async void Receive(OpenTemplateRequestMessage message) {
-        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
-        var item = CreateRequestTab(collectionModel.AddRequest(message.Request));
-
-        collectionItem.Items.Add(item);
-        await GoToAsync($"//{collectionItem.Route}/{item.Route}");
-    }
 }

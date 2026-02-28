@@ -5,6 +5,7 @@
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     xmlns:core="clr-namespace:RequestFiend.Core;assembly=RequestFiend.Core"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="RequestFiend.UI.Views.RequestTemplatePage"
     x:DataType="models:RequestTemplateModel"
     Title="{Binding PageTitle}">
@@ -14,6 +15,8 @@
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                        <Button Text="Execute" Command="{Binding ExecuteCommand}" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+                        
                         <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
 
                         <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"/>

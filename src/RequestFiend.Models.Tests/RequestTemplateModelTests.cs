@@ -72,7 +72,7 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
-    public void ExecuteRequest() {
+    public void Execute() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
@@ -108,7 +108,7 @@ public class RequestTemplateModelTests {
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
-        subject.ExecuteRequest();
+        subject.Execute();
 
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);
@@ -139,7 +139,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "", "Name", "JSON")]
     [InlineData("Name", "GET", "https://url", "", "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", "")]
-    public async Task ExecuteRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
+    public async Task Execute_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
 
@@ -165,7 +165,7 @@ public class RequestTemplateModelTests {
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
-        subject.ExecuteRequest();
+        subject.Execute();
 
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);

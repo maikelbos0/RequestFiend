@@ -61,7 +61,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     [RelayCommand]
-    public void ExecuteRequest() {
+    public void Execute() {
         if (HasError) {
             return;
         }
