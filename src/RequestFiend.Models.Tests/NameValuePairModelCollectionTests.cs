@@ -17,6 +17,7 @@ public class NameValuePairModelCollectionTests {
         var subject = new NameValuePairModelCollection(collection);
 
         Assert.Equal(collection.Count, subject.Count);
+        Assert.False(subject.IsModified);
         Assert.True(subject.HasItems);
 
         for (var i = 0; i < collection.Count; i++) {
@@ -31,6 +32,8 @@ public class NameValuePairModelCollectionTests {
 
         subject.OnAddClicked();
 
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasItems);
         Assert.Single(subject);
     }
 
@@ -45,6 +48,8 @@ public class NameValuePairModelCollectionTests {
 
         subject.OnRemoveClicked(pair);
 
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasItems);
         Assert.Equal(2, subject.Count);
         Assert.DoesNotContain(pair, subject);
     }
@@ -52,7 +57,6 @@ public class NameValuePairModelCollectionTests {
     [Fact]
     public void Reset() {
         var subject = new NameValuePairModelCollection([]) {
-            new(),
             new()
         };
 
@@ -61,8 +65,11 @@ public class NameValuePairModelCollectionTests {
             new() { Name = "SecondName", Value = "SecondValue" }
         };
 
+        subject.Add(new());
+
         subject.Reset(collection);
 
+        Assert.False(subject.IsModified);
         Assert.Equal(collection.Count, subject.Count);
 
         for (var i = 0; i < collection.Count; i++) {

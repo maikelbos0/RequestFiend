@@ -9,6 +9,17 @@ using System.ComponentModel;
 namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel> {
+    private int unmodifiedCount;
+
+    public bool IsModified {
+        get => field;
+        private set {
+            if (field != value) {
+                field = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsModified)));
+            }
+        }
+    }
 
     public bool HasItems {
         get => field;
@@ -24,19 +35,20 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            Add(new NameValuePairModel(item));
+            Add(new(item));
         }
+
+        unmodifiedCount = Count;
+        IsModified = false;
     }
 
     [RelayCommand]
-    public void OnRemoveClicked(NameValuePairModel pair) {
-        Remove(pair);
-    }
+    public void OnRemoveClicked(NameValuePairModel pair)
+        => Remove(pair);
 
     [RelayCommand]
-    public void OnAddClicked() {
-        Add(new());
-    }
+    public void OnAddClicked()
+        => Add(new());
 
     public void Reset(List<NameValuePair> collection) {
         if (collection.Count != Count) {
@@ -46,9 +58,13 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         for (var i = 0; i < collection.Count; i++) {
             this[i].Reset(collection[i]);
         }
+
+        unmodifiedCount = Count;
+        IsModified = false;
     }
 
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         HasItems = Count > 0;
+        IsModified = Count != unmodifiedCount;
     }
 }
