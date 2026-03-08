@@ -21,7 +21,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
-    public Guid Id { get; } = Guid.NewGuid();
+    public string Id { get; } = Guid.NewGuid().ToString();
     public ValidatableProperty<string> Name { get; set; }
     public ValidatableProperty<string> Method { get; set; }
     public ValidatableProperty<string> Url { get; set; }
@@ -75,7 +75,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
-        messageService.Send(new CreateRequestMessage(file.FilePath, collection, request));
+        messageService.Send(new CreateRequestMessage(file.FilePath, Id, collection, request));
     }
 
     [RelayCommand]

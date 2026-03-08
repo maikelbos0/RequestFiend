@@ -32,6 +32,9 @@ public static class MauiProgram {
 
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
+        mauiAppBuilder.Services.AddHttpClient<RequestHandler>();
+        mauiAppBuilder.Services.AddSingleton<IRequestHandler, RequestHandler>();
+
         mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPopupService, Services.PopupService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPreferencesService, Models.Services.PreferencesService>();
@@ -41,10 +44,12 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollectionFileModel>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollection>());
+        mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplate>());
 
         mauiAppBuilder.Services.AddTransient<MainPageModel>();
         mauiAppBuilder.Services.AddTransient<PreferencesModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
+        mauiAppBuilder.Services.AddTransient<RequestModel>();
 
         return mauiAppBuilder;
     }

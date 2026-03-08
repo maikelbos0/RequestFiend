@@ -104,10 +104,11 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
             Items = {
                 new RequestTemplatePage(request)
             },
-            Route = $"RequestTemplate_{request.Id}"
+            Route = $"RequestTemplate_{request.Id}",
+            StyleId = request.Id.ToString()
         };
 
-        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, Guid>(item, request.Id, async (tab, _) => {
+        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async (tab, _) => {
             if (tab.Parent is ShellItem collectionItem) {
                 collectionItem.Items.Remove(tab);
                 await GoToAsync($"//{collectionItem.Route}");
@@ -118,9 +119,11 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     public void Receive(CreateRequestMessage message) {
+        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+        var requestItem = (Tab)collectionItem.Items.Single(item => item.StyleId == message.Id);
 
-        Receive(new SuccessMessage("Received execute request for: " + message.Request.Name));
+        requestItem.Items.Add(new RequestPage(GetRequiredService<RequestModel>()));
     }
 
     private T GetRequiredService<T>() where T : notnull

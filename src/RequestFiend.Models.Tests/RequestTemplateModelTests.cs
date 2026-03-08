@@ -120,6 +120,7 @@ public class RequestTemplateModelTests {
 
         messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
             => message.FilePath == filePath
+            && message.Id == subject.Id
             && message.Collection == collection
             && message.Request != request
             && message.Request.Name == name
