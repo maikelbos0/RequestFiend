@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-    x:Class="RequestFiend.UI.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:views="clr-namespace:RequestFiend.UI.Views"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    Title="RequestFiend"
-    x:Name="Shell">
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.AppShell"
+    x:Name="Shell"
+    Title="RequestFiend">
 
     <Shell.TitleView>
         <AbsoluteLayout>
@@ -33,8 +33,6 @@
             </Grid>
 
             <Label
-                xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 x:Name="SuccessLabel"
 	            BackgroundColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"
 	            FontSize="18"
