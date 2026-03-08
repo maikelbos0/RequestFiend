@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Core;
 
-public class RequestHandler {
+public class RequestHandler : IRequestHandler {
     private readonly HttpClient httpClient;
 
     public RequestHandler(HttpClient httpClient) {
