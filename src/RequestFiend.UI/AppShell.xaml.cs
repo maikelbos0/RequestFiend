@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage>, IRecipient<ExecuteRequestMessage> {
+public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage>, IRecipient<CreateRequestMessage> {
     private CancellationTokenSource? messageCancellationTokenSource;
 
     public AppShell() {
@@ -117,7 +117,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         return item;
     }
 
-    public void Receive(ExecuteRequestMessage message) {
+    public void Receive(CreateRequestMessage message) {
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
 
         Receive(new SuccessMessage("Received execute request for: " + message.Request.Name));

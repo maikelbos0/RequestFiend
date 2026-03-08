@@ -61,7 +61,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     [RelayCommand]
-    public void Execute() {
+    public void CreateRequest() {
         if (HasError) {
             return;
         }
@@ -75,7 +75,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
-        messageService.Send(new ExecuteRequestMessage(file.FilePath, collection, request));
+        messageService.Send(new CreateRequestMessage(file.FilePath, collection, request));
     }
 
     [RelayCommand]

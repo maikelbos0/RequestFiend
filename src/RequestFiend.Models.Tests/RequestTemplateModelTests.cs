@@ -72,7 +72,7 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
-    public void Execute() {
+    public void CreateRequest() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
@@ -108,7 +108,7 @@ public class RequestTemplateModelTests {
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
-        subject.Execute();
+        subject.CreateRequest();
 
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);
@@ -118,7 +118,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
 
-        messageService.Received(1).Send(Arg.Is<ExecuteRequestMessage>(message
+        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
             => message.FilePath == filePath
             && message.Collection == collection
             && message.Request != request
@@ -139,7 +139,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "GET", "", "Name", "JSON")]
     [InlineData("Name", "GET", "https://url", "", "JSON")]
     [InlineData("Name", "GET", "https://url", "Name", "")]
-    public async Task Execute_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
+    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
 
@@ -165,7 +165,7 @@ public class RequestTemplateModelTests {
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
 
-        subject.Execute();
+        subject.CreateRequest();
 
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);
@@ -175,7 +175,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
 
-        messageService.DidNotReceive().Send(Arg.Any<ExecuteRequestMessage>());
+        messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
 
     [Fact]
