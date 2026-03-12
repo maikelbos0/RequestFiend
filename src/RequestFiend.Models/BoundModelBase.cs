@@ -2,7 +2,6 @@
 using Microsoft.Maui.Controls;
 using RequestFiend.Models.PropertyTypes;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
@@ -12,7 +11,7 @@ public class BoundModelBase : ObservableObject {
     private const double widthBreakpoint = 675;
 
     private IEnumerable<ValidatableProperty> validatableProperties = [];
-    private Dictionary<NameValuePairModelCollection, int> nameValuePairModelCollections = [];
+    private IEnumerable<NameValuePairModelCollection> nameValuePairModelCollections = [];
 
     public double PageWidth {
         get => field;
@@ -56,19 +55,14 @@ public class BoundModelBase : ObservableObject {
 
     public void ConfigureState(IEnumerable<ValidatableProperty> validatableProperties, IEnumerable<NameValuePairModelCollection> nameValuePairModelCollections) {
         this.validatableProperties = validatableProperties;
-        this.nameValuePairModelCollections = nameValuePairModelCollections.ToDictionary(nameValuePairModelCollection => nameValuePairModelCollection, nameValuePairModelCollection => nameValuePairModelCollection.Count);
-
-        foreach (var validatableString in validatableProperties) {
-            validatableString.PropertyChanged += OnValidatablePropertyChanged;
+        this.nameValuePairModelCollections = nameValuePairModelCollections;
+        
+        foreach (var validatableProperty in validatableProperties) {
+            validatableProperty.PropertyChanged += OnValidatablePropertyChanged;
         }
 
         foreach (var collection in nameValuePairModelCollections) {
-            collection.CollectionChanged += OnNameValuePairCollectionChanged;
-
-            foreach (var nameValuePairModel in collection) {
-                nameValuePairModel.Name.PropertyChanged += OnValidatablePropertyChanged;
-                nameValuePairModel.Value.PropertyChanged += OnValidatablePropertyChanged;
-            }
+            ((INotifyPropertyChanged)collection).PropertyChanged += OnValidatablePropertyChanged;
         }
 
         PropertyChanged += OnPropertyChanged;
@@ -82,22 +76,6 @@ public class BoundModelBase : ObservableObject {
         }
     }
 
-    private void OnNameValuePairCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        if (e.OldItems != null) {
-            foreach (var pair in e.OldItems.Cast<NameValuePairModel>()) {
-                pair.Name.PropertyChanged -= OnValidatablePropertyChanged;
-            }
-        }
-
-        if (e.NewItems != null) {
-            foreach (var pair in e.NewItems.Cast<NameValuePairModel>()) {
-                pair.Name.PropertyChanged += OnValidatablePropertyChanged;
-            }
-        }
-
-        UpdateState();
-    }
-
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(PageTitleBase) || e.PropertyName == nameof(ShellItemTitleBase)) {
             UpdateTitles();
@@ -107,10 +85,8 @@ public class BoundModelBase : ObservableObject {
     private void UpdateState() {
         var isModified = IsModified;
 
-        HasError = validatableProperties.Any(validatableProperty => validatableProperty.HasError)
-            || nameValuePairModelCollections.Any(collection => collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.HasError || nameValuePairModel.Value.HasError));
-        IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified)
-            || nameValuePairModelCollections.Any(collection => collection.Key.Count != collection.Value || collection.Key.Any(nameValuePairModel => nameValuePairModel.Name.IsModified || nameValuePairModel.Value.IsModified));
+        HasError = validatableProperties.Any(validatableProperty => validatableProperty.HasError) || nameValuePairModelCollections.Any(collection => collection.HasError);
+        IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified) || nameValuePairModelCollections.Any(collection => collection.IsModified);
         IsModifiedWithoutError = IsModified && !HasError;
 
         if (isModified != IsModified) {

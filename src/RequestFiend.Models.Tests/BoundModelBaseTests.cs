@@ -50,11 +50,11 @@ public class BoundModelBaseTests {
     [InlineData(false, false, true, true, true, true, false, "Page title ●", "Shell item title ●")]
     [InlineData(false, true, false, false, false, true, true, "Page title ●", "Shell item title ●")]
     [InlineData(false, false, false, true, false, true, true, "Page title ●", "Shell item title ●")]
-    public void State_Initial(
+    public void ConfigureState(
         bool validateblePropertyHasError,
         bool validatablePropertyIsModified,
-        bool nameValuePairPropertyHasError,
-        bool nameValuePairPropertyIsModified,
+        bool nameValuePairCollectionHasError,
+        bool nameValuePairCollectionIsModified,
         bool expectedHasError,
         bool expectedIsModified,
         bool expectedIsModifiedWithoutError,
@@ -62,14 +62,14 @@ public class BoundModelBaseTests {
         string expectedShellItemTitle
     ) {
         var validatableProperty = new ValidatableProperty<string>(() => "Name");
-        var nameValuePairModelCollection = new NameValuePairModelCollection([new() { Name = "Name" }]);
+        var nameValuePairModelCollection = new NameValuePairModelCollection([]);
 
         var subject = new BoundModelBase("Page title", "Shell item title");
 
         validatableProperty.HasError = validateblePropertyHasError;
         validatableProperty.IsModified = validatablePropertyIsModified;
-        nameValuePairModelCollection[0].Name.HasError = nameValuePairPropertyHasError;
-        nameValuePairModelCollection[0].Name.IsModified = nameValuePairPropertyIsModified;
+        nameValuePairModelCollection.HasError = nameValuePairCollectionHasError;
+        nameValuePairModelCollection.IsModified = nameValuePairCollectionIsModified;
 
         subject.ConfigureState([validatableProperty], [nameValuePairModelCollection]);
 
@@ -91,8 +91,8 @@ public class BoundModelBaseTests {
     public void State(
         bool validateblePropertyHasError,
         bool validatablePropertyIsModified,
-        bool nameValuePairPropertyHasError,
-        bool nameValuePairPropertyIsModified,
+        bool nameValuePairCollectionHasError,
+        bool nameValuePairCollectionIsModified,
         bool expectedHasError,
         bool expectedIsModified,
         bool expectedIsModifiedWithoutError,
@@ -108,47 +108,13 @@ public class BoundModelBaseTests {
 
         validatableProperty.HasError = validateblePropertyHasError;
         validatableProperty.IsModified = validatablePropertyIsModified;
-        nameValuePairModelCollection[0].Name.HasError = nameValuePairPropertyHasError;
-        nameValuePairModelCollection[0].Name.IsModified = nameValuePairPropertyIsModified;
+        nameValuePairModelCollection.HasError = nameValuePairCollectionHasError;
+        nameValuePairModelCollection.IsModified = nameValuePairCollectionIsModified;
 
         Assert.Equal(expectedHasError, subject.HasError);
         Assert.Equal(expectedIsModified, subject.IsModified);
         Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
         Assert.Equal(expectedPageTitle, subject.PageTitle);
         Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
-    }
-
-    [Fact]
-    public void State_When_Pair_Is_Added() {
-        var nameValuePairModelCollection = new NameValuePairModelCollection([]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([], [nameValuePairModelCollection]);
-
-        nameValuePairModelCollection.Add(new());
-
-        Assert.True(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.False(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
-    }
-
-    [Fact]
-    public void State_When_Pair_Is_Removed() {
-        var nameValuePairModelCollection = new NameValuePairModelCollection([new() { Name = "Name" }, new() { Name = "Name" }]);
-
-        var subject = new BoundModelBase("Page title", "Shell item title");
-
-        subject.ConfigureState([], [nameValuePairModelCollection]);
-
-        nameValuePairModelCollection.Remove(nameValuePairModelCollection.Last());
-
-        Assert.False(subject.HasError);
-        Assert.True(subject.IsModified);
-        Assert.True(subject.IsModifiedWithoutError);
-        Assert.Equal($"{subject.PageTitleBase} ●", subject.PageTitle);
-        Assert.Equal($"{subject.ShellItemTitleBase} ●", subject.ShellItemTitle);
     }
 }
