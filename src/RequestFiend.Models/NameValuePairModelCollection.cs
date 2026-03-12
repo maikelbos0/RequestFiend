@@ -5,11 +5,22 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel> {
     private int unmodifiedCount;
+
+    public bool HasError {
+        get => field;
+        private set {
+            if (field != value) {
+                field = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasError)));
+            }
+        }
+    }
 
     public bool IsModified {
         get => field;
@@ -64,7 +75,30 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     }
 
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
+        if (e.OldItems != null) {
+            foreach (var pair in e.OldItems.Cast<NameValuePairModel>()) {
+                pair.PropertyChanged -= OnValidatablePropertyChanged;
+            }
+        }
+
+        if (e.NewItems != null) {
+            foreach (var pair in e.NewItems.Cast<NameValuePairModel>()) {
+                pair.PropertyChanged += OnValidatablePropertyChanged;
+            }
+        }
+
+        UpdateState();
+    }
+
+    private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(NameValuePairModel.IsModified) || e.PropertyName == nameof(NameValuePairModel.HasError)) {
+            UpdateState();
+        }
+    }
+
+    private void UpdateState() {
         HasItems = Count > 0;
-        IsModified = Count != unmodifiedCount;
+        HasError = this.Any(nameValuePairModel => nameValuePairModel.HasError);
+        IsModified = Count != unmodifiedCount || this.Any(nameValuePairModel => nameValuePairModel.IsModified);
     }
 }
