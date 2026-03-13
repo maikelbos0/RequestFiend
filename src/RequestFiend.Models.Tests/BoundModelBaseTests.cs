@@ -1,33 +1,34 @@
 ﻿using Microsoft.Maui.Controls;
 using RequestFiend.Models.PropertyTypes;
-using System.Linq;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
 public class BoundModelBaseTests {
     [Theory]
-    [MemberData(nameof(PageWidth_Sets_StackOProperties_Data))]
-    public void PageWidth_Sets_StackOProperties(double pageWidth, bool expectedHorizontalFill, StackOrientation expectedStackOrientation, bool expectedStackIsHorizontal, bool expectedStackIsVertical) {
+    [InlineData(400, true, false, false, true)]
+    [InlineData(674, true, false, false, true)]
+    [InlineData(675, false, false, true, false)]
+    [InlineData(900, false, false, true, false)]
+    public void PageWidth_Sets_StackOProperties(
+        double pageWidth,
+        bool expectedHorizontalFill,
+        bool expectedHorizontalStackOrientation,
+        bool expectedStackIsHorizontal,
+        bool expectedStackIsVertical
+    ) {
         var subject = new BoundModelBase("Page title", "Shell item title") {
             PageWidth = pageWidth
         };
 
         var expectedStackHorizontalOptions = expectedHorizontalFill ? LayoutOptions.Fill : LayoutOptions.End;
+        var expectedStackOrientation = expectedHorizontalStackOrientation ? StackOrientation.Horizontal : StackOrientation.Vertical;
 
         Assert.Equal(expectedStackHorizontalOptions, subject.StackHorizontalOptions);
         Assert.Equal(expectedStackOrientation, subject.StackOrientation);
         Assert.Equal(expectedStackIsHorizontal, subject.StackIsHorizontal);
         Assert.Equal(expectedStackIsVertical, subject.StackIsVertical);
     }
-
-    public static TheoryData<double, bool, StackOrientation, bool, bool> PageWidth_Sets_StackOProperties_Data()
-        => new() {
-            { 400, true, StackOrientation.Vertical, false, true },
-            { 674, true, StackOrientation.Vertical, false, true },
-            { 675, false, StackOrientation.Horizontal, true, false },
-            { 900, false, StackOrientation.Horizontal, true, false },
-        };
 
     [Fact]
     public void Constructor() {
@@ -43,35 +44,26 @@ public class BoundModelBaseTests {
     }
 
     [Theory]
-    [InlineData(false, false, false, false, false, false, false, "Page title", "Shell item title")]
-    [InlineData(true, false, false, false, true, false, false, "Page title", "Shell item title")]
-    [InlineData(false, false, true, false, true, false, false, "Page title", "Shell item title")]
-    [InlineData(true, true, false, false, true, true, false, "Page title ●", "Shell item title ●")]
-    [InlineData(false, false, true, true, true, true, false, "Page title ●", "Shell item title ●")]
-    [InlineData(false, true, false, false, false, true, true, "Page title ●", "Shell item title ●")]
-    [InlineData(false, false, false, true, false, true, true, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, false, false, false, "Page title", "Shell item title")]
+    [InlineData(true, false, true, false, false, "Page title", "Shell item title")]
+    [InlineData(true, true, true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, true, false, true, true, "Page title ●", "Shell item title ●")]
     public void ConfigureState(
         bool validateblePropertyHasError,
         bool validatablePropertyIsModified,
-        bool nameValuePairCollectionHasError,
-        bool nameValuePairCollectionIsModified,
         bool expectedHasError,
         bool expectedIsModified,
         bool expectedIsModifiedWithoutError,
         string expectedPageTitle,
         string expectedShellItemTitle
     ) {
-        var validatableProperty = new ValidatableProperty<string>(() => "Name");
-        var nameValuePairModelCollection = new NameValuePairModelCollection([]);
-
+        var validatable = new ValidatableProperty<string>(() => "Name");
         var subject = new BoundModelBase("Page title", "Shell item title");
 
-        validatableProperty.HasError = validateblePropertyHasError;
-        validatableProperty.IsModified = validatablePropertyIsModified;
-        nameValuePairModelCollection.HasError = nameValuePairCollectionHasError;
-        nameValuePairModelCollection.IsModified = nameValuePairCollectionIsModified;
+        validatable.HasError = validateblePropertyHasError;
+        validatable.IsModified = validatablePropertyIsModified;
 
-        subject.ConfigureState([validatableProperty], [nameValuePairModelCollection]);
+        subject.ConfigureState([validatable]);
 
         Assert.Equal(expectedHasError, subject.HasError);
         Assert.Equal(expectedIsModified, subject.IsModified);
@@ -81,35 +73,27 @@ public class BoundModelBaseTests {
     }
 
     [Theory]
-    [InlineData(false, false, false, false, false, false, false, "Page title", "Shell item title")]
-    [InlineData(true, false, false, false, true, false, false, "Page title", "Shell item title")]
-    [InlineData(false, false, true, false, true, false, false, "Page title", "Shell item title")]
-    [InlineData(true, true, false, false, true, true, false, "Page title ●", "Shell item title ●")]
-    [InlineData(false, false, true, true, true, true, false, "Page title ●", "Shell item title ●")]
-    [InlineData(false, true, false, false, false, true, true, "Page title ●", "Shell item title ●")]
-    [InlineData(false, false, false, true, false, true, true, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, false, false, false, "Page title", "Shell item title")]
+    [InlineData(true, false, true, false, false, "Page title", "Shell item title")]
+    [InlineData(true, true, true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, true, false, true, true, "Page title ●", "Shell item title ●")]
     public void State(
         bool validateblePropertyHasError,
         bool validatablePropertyIsModified,
-        bool nameValuePairCollectionHasError,
-        bool nameValuePairCollectionIsModified,
         bool expectedHasError,
         bool expectedIsModified,
         bool expectedIsModifiedWithoutError,
         string expectedPageTitle,
         string expectedShellItemTitle
     ) {
-        var validatableProperty = new ValidatableProperty<string>(() => "Name");
-        var nameValuePairModelCollection = new NameValuePairModelCollection([new() { Name = "Name" }]);
+        var validatable = new ValidatableProperty<string>(() => "Name");
 
         var subject = new BoundModelBase("Page title", "Shell item title");
 
-        subject.ConfigureState([validatableProperty], [nameValuePairModelCollection]);
+        subject.ConfigureState([validatable]);
 
-        validatableProperty.HasError = validateblePropertyHasError;
-        validatableProperty.IsModified = validatablePropertyIsModified;
-        nameValuePairModelCollection.HasError = nameValuePairCollectionHasError;
-        nameValuePairModelCollection.IsModified = nameValuePairCollectionIsModified;
+        validatable.HasError = validateblePropertyHasError;
+        validatable.IsModified = validatablePropertyIsModified;
 
         Assert.Equal(expectedHasError, subject.HasError);
         Assert.Equal(expectedIsModified, subject.IsModified);

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace RequestFiend.Models.PropertyTypes;
 
 public abstract class ValidatableProperty : ObservableObject, IValidatable {
-    public abstract bool HasError { get; set; }
-    public abstract bool IsModified { get; set; }
-    public abstract bool IsModifiedWithoutError { get; set; }
+    public bool HasError { get => field; set => SetProperty(ref field, value); }
+    public bool IsModified { get => field; set => SetProperty(ref field, value); }
+    public bool IsModifiedWithoutError { get => field; set => SetProperty(ref field, value); }
 }
 
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
@@ -21,9 +21,6 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
             }
         }
     }
-    public override bool HasError { get => field; set => SetProperty(ref field, value); }
-    public override bool IsModified { get => field; set => SetProperty(ref field, value); }
-    public override bool IsModifiedWithoutError { get => field; set => SetProperty(ref field, value); }
 
     public ValidatableProperty(Func<TProperty> defaultValueProvider) : this(defaultValueProvider, _ => true) { }
 
