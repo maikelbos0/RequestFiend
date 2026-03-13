@@ -63,7 +63,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     public void Reset(List<NameValuePair> collection) {
         if (collection.Count != Count) {
-            throw new ArgumentException("Collection must have identical length", nameof(collection));
+            throw new ArgumentException("Collection must have identical length.", nameof(collection));
         }
 
         for (var i = 0; i < collection.Count; i++) {

@@ -15,6 +15,8 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
                         <Button Text="Execute" Command="{Binding ExecuteCommand}" IsEnabled="{Binding IsExecuting, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+
+                        <Button Text="Cancel" Command="{Binding CancelExecutionCommand}" IsEnabled="{Binding IsExecuting}"/>
                     </StackLayout>
 
                 </VerticalStackLayout>

@@ -43,7 +43,7 @@ public class RequestModelTests {
             Requests = [request]
         };
         var requestContext = new RequestContext();
-        requestHandler.Execute(request, collection, CancellationToken.None).Returns(requestContext);
+        requestHandler.Execute(request, collection, Arg.Any<CancellationToken>()).Returns(requestContext);
         var isExecutingValues = new List<bool>();
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
