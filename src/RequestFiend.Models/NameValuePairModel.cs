@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace RequestFiend.Models;
 
-public class NameValuePairModel : ObservableObject {
+public class NameValuePairModel : ObservableObject, IValidatable {
     public ValidatableProperty<string> Name { get; }
     public ValidatableProperty<string> Value { get; }
     public bool HasError { get => field; set => SetProperty(ref field, value); }
@@ -19,7 +19,7 @@ public class NameValuePairModel : ObservableObject {
     private NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider) {
         Name = new(nameProvider, Validator.Required);
         Value = new(valueProvider);
-            
+
         Name.PropertyChanged += OnValidatablePropertyChanged;
         Value.PropertyChanged += OnValidatablePropertyChanged;
 

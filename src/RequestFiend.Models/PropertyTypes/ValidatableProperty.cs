@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RequestFiend.Models.PropertyTypes;
 
-public abstract class ValidatableProperty : ObservableObject {
+public abstract class ValidatableProperty : ObservableObject, IValidatable {
     public abstract bool HasError { get; set; }
     public abstract bool IsModified { get; set; }
     public abstract bool IsModifiedWithoutError { get; set; }

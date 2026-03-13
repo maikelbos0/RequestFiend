@@ -57,7 +57,7 @@ public partial class RequestTemplateModel : BoundModelBase {
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
 
-        ConfigureState([Name, Method, Url, ContentType, StringContent], [Headers]);
+        ConfigureState([Name, Method, Url, ContentType, StringContent, Headers]);
     }
 
     [RelayCommand]

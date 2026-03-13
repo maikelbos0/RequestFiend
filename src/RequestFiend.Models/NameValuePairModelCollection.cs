@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace RequestFiend.Models;
 
-public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel> {
+public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel>, IValidatable {
     private int unmodifiedCount;
 
     public bool HasError {

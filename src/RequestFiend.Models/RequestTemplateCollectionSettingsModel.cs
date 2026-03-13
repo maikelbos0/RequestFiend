@@ -33,7 +33,7 @@ public partial class RequestTemplateCollectionSettingsModel : BoundModelBase {
         DefaultHeaders = new(collection.DefaultHeaders);
         Variables = new(collection.Variables);
 
-        ConfigureState([DefaultUrl], [DefaultHeaders, Variables]);
+        ConfigureState([DefaultUrl, DefaultHeaders, Variables]);
     }
 
     [RelayCommand]

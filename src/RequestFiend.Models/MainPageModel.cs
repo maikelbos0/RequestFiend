@@ -33,7 +33,7 @@ public partial class MainPageModel : BoundModelBase {
         messageService.Register<MainPageModel, RecentCollectionsChangedMessage>(this, (model, _) => model.RecentCollections = preferencesService.GetRecentCollections());
         messageService.Register<MainPageModel, ShowRecentCollectionsChangedMessage>(this, (model, _) => model.ShowRecentCollections = preferencesService.GetShowRecentCollections());
 
-        ConfigureState([], []);
+        ConfigureState([]);
     }
 
     [RelayCommand]

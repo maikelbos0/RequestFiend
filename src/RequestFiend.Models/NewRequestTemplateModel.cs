@@ -35,7 +35,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
             }
         });
 
-        ConfigureState([Name, Method, Url], []);
+        ConfigureState([Name, Method, Url]);
     }
 
     [RelayCommand]

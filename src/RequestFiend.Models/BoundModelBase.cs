@@ -10,8 +10,7 @@ namespace RequestFiend.Models;
 public class BoundModelBase : ObservableObject {
     private const double widthBreakpoint = 675;
 
-    private IEnumerable<ValidatableProperty> validatableProperties = [];
-    private IEnumerable<NameValuePairModelCollection> nameValuePairModelCollections = [];
+    private IEnumerable<IValidatable> validatables = [];
 
     public double PageWidth {
         get => field;
@@ -53,16 +52,11 @@ public class BoundModelBase : ObservableObject {
         }
     }
 
-    public void ConfigureState(IEnumerable<ValidatableProperty> validatableProperties, IEnumerable<NameValuePairModelCollection> nameValuePairModelCollections) {
-        this.validatableProperties = validatableProperties;
-        this.nameValuePairModelCollections = nameValuePairModelCollections;
+    public void ConfigureState(IEnumerable<IValidatable> validatables) {
+        this.validatables = validatables;
         
-        foreach (var validatableProperty in validatableProperties) {
+        foreach (var validatableProperty in validatables) {
             validatableProperty.PropertyChanged += OnValidatablePropertyChanged;
-        }
-
-        foreach (var collection in nameValuePairModelCollections) {
-            ((INotifyPropertyChanged)collection).PropertyChanged += OnValidatablePropertyChanged;
         }
 
         PropertyChanged += OnPropertyChanged;
@@ -85,8 +79,8 @@ public class BoundModelBase : ObservableObject {
     private void UpdateState() {
         var isModified = IsModified;
 
-        HasError = validatableProperties.Any(validatableProperty => validatableProperty.HasError) || nameValuePairModelCollections.Any(collection => collection.HasError);
-        IsModified = validatableProperties.Any(validatableProperty => validatableProperty.IsModified) || nameValuePairModelCollections.Any(collection => collection.IsModified);
+        HasError = validatables.Any(validatableProperty => validatableProperty.HasError);
+        IsModified = validatables.Any(validatableProperty => validatableProperty.IsModified);
         IsModifiedWithoutError = IsModified && !HasError;
 
         if (isModified != IsModified) {

@@ -22,7 +22,7 @@ public partial class PreferencesModel : BoundModelBase {
         ShowRecentCollections = new(() => preferencesService.GetShowRecentCollections());
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
 
-        ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount], []);
+        ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount]);
     }
 
     [RelayCommand]
