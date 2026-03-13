@@ -8,8 +8,8 @@ public class BoundModelBaseTests {
     [Theory]
     [InlineData(400, true, false, false, true)]
     [InlineData(674, true, false, false, true)]
-    [InlineData(675, false, false, true, false)]
-    [InlineData(900, false, false, true, false)]
+    [InlineData(675, false, true, true, false)]
+    [InlineData(900, false, true, true, false)]
     public void PageWidth_Sets_StackOProperties(
         double pageWidth,
         bool expectedHorizontalFill,

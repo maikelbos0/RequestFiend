@@ -1,5 +1,7 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,8 +25,8 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing...", subject.PageTitleBase);
-        Assert.Equal("Executing...", subject.ShellItemTitleBase);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange", subject.PageTitleBase);
+        Assert.Equal("Exchange", subject.ShellItemTitleBase);
     }
 
     [Fact]
@@ -42,13 +44,32 @@ public class RequestModelTests {
         };
         var requestContext = new RequestContext();
         requestHandler.Execute(request, collection, CancellationToken.None).Returns(requestContext);
+        var isExecutingValues = new List<bool>();
+        var pageTitleBaseValues = new List<string>();
+        var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(requestHandler, new(filePath), collection, request);
+        subject.PropertyChanged += (_, e) => {
+            switch (e.PropertyName) {
+                case nameof(RequestModel.PageTitleBase):
+                    pageTitleBaseValues.Add(subject.PageTitleBase);
+                    break;
+                case nameof(RequestModel.ShellItemTitleBase):
+                    shellItemTitleBaseValues.Add(subject.ShellItemTitleBase);
+                    break;
+                case nameof(RequestModel.IsExecuting):
+                    isExecutingValues.Add(subject.IsExecuting);
+                    break;
+                default:
+                    break;
+            }
+        };
 
-        await subject.Execute(CancellationToken.None);
+        await subject.Execute();
 
         Assert.Same(requestContext, subject.Context);
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Response", subject.PageTitleBase);
-        Assert.Equal("Response", subject.ShellItemTitleBase);
+        Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
+        Assert.Equal(["Executing request...", "Exchange"], shellItemTitleBaseValues);
+        Assert.Equal([true, false], isExecutingValues);
     }
 }

@@ -13,6 +13,7 @@ public partial class RequestModel : BoundModelBase {
     private readonly RequestTemplate request;
 
     public string Id { get; } = Guid.NewGuid().ToString();
+    public bool IsExecuting { get => field; set => SetProperty(ref field, value); }
     public RequestContext? Context { get => field; set => SetProperty(ref field, value); }
 
     public RequestModel(
@@ -20,17 +21,23 @@ public partial class RequestModel : BoundModelBase {
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
-    ) : base($"{file.Name} - {request.Name} - Executing...", "Executing...") {
+    ) : base($"{file.Name} - {request.Name} - Exchange", "Exchange") {
         this.requestHandler = requestHandler;
         this.file = file;
         this.collection = collection;
         this.request = request;
+
+        ConfigureState([]);
     }
 
     [RelayCommand]
-    public async Task Execute(CancellationToken cancellationToken) {
-        Context = await requestHandler.Execute(request, collection, cancellationToken);
-        PageTitleBase = $"{file.Name} - {request.Name} - Response";
-        ShellItemTitleBase = "Response";
+    public async Task Execute() {
+        PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
+        ShellItemTitleBase = "Executing request...";
+        IsExecuting = true;
+        Context = await requestHandler.Execute(request, collection, CancellationToken.None);
+        PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
+        ShellItemTitleBase = "Exchange";
+        IsExecuting = false;
     }
 }

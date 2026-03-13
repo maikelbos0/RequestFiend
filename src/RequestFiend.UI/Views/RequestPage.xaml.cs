@@ -5,5 +5,6 @@ namespace RequestFiend.UI.Views;
 public partial class RequestPage : ContentPage {
     public RequestPage(RequestModel model) : base(model) {
         InitializeComponent();
+        _ = model.Execute();
     }
 }
