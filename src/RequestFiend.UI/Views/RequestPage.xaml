@@ -17,6 +17,8 @@
                         <Button Text="Execute" Command="{Binding ExecuteCommand}" IsEnabled="{Binding IsExecuting, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
 
                         <Button Text="Cancel" Command="{Binding CancelExecutionCommand}" IsEnabled="{Binding IsExecuting}"/>
+                        
+                        <Button Text="Close" Command="{Binding CloseCommand}" Style="{StaticResource DangerButton}"/>
                     </StackLayout>
 
                 </VerticalStackLayout>

@@ -1,7 +1,8 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
+using RequestFiend.Models.Services;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ public class RequestModelTests {
             Requests = [request]
         };
 
-        var subject = new RequestModel(Substitute.For<IRequestHandler>(), new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange", subject.PageTitleBase);
         Assert.Equal("Exchange", subject.ShellItemTitleBase);
@@ -48,7 +49,7 @@ public class RequestModelTests {
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
 
-        var subject = new RequestModel(requestHandler, new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), requestHandler, new(filePath), collection, request);
         subject.PropertyChanged += (_, e) => {
             switch (e.PropertyName) {
                 case nameof(RequestModel.PageTitleBase):
@@ -71,5 +72,26 @@ public class RequestModelTests {
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal(["Executing request...", "Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);
+    }
+
+    [Fact]
+    public void Close() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), new(filePath), collection, request);
+
+        subject.Close();
+
+        messageService.Received().Send(Arg.Any<CloseRequestMessage>(), subject.Id);
     }
 }

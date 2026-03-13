@@ -1,28 +1,33 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
+using RequestFiend.Models.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestModel : BoundModelBase {
+public partial class RequestModel : BoundModelBase, IDisposable {
+    private readonly IMessageService messageService;
     private readonly IRequestHandler requestHandler;
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
-    private CancellationTokenSource? executingCts;
+    private CancellationTokenSource? executingCancellationTokenSource;
 
     public string Id { get; } = Guid.NewGuid().ToString();
     public bool IsExecuting { get => field; set => SetProperty(ref field, value); }
     public RequestContext? Context { get => field; set => SetProperty(ref field, value); }
 
     public RequestModel(
+        IMessageService messageService,
         IRequestHandler requestHandler,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
     ) : base($"{file.Name} - {request.Name} - Exchange", "Exchange") {
+        this.messageService = messageService;
         this.requestHandler = requestHandler;
         this.file = file;
         this.collection = collection;
@@ -33,30 +38,41 @@ public partial class RequestModel : BoundModelBase {
 
     [RelayCommand]
     public async Task Execute() {
-        using var cts = new CancellationTokenSource();
+        using var cancellationTokenSource = new CancellationTokenSource();
 
-        if (Interlocked.CompareExchange(ref executingCts, cts, null) != null) {
-            cts.Dispose();
+        if (Interlocked.CompareExchange(ref executingCancellationTokenSource, cancellationTokenSource, null) != null) {
+            cancellationTokenSource.Dispose();
             throw new InvalidOperationException("The request is already executing.");
         }
 
-        executingCts = cts;
+        executingCancellationTokenSource = cancellationTokenSource;
 
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
         ShellItemTitleBase = "Executing request...";
         IsExecuting = true;
 
-        Context = await requestHandler.Execute(request, collection, cts.Token);
+        Context = await requestHandler.Execute(request, collection, cancellationTokenSource.Token);
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = "Exchange";
         IsExecuting = false;
         
-        executingCts = null;
+        executingCancellationTokenSource = null;
     }
 
     [RelayCommand]
     public void CancelExecution() {
-        executingCts?.Cancel();
+        executingCancellationTokenSource?.Cancel();
+    }
+
+    [RelayCommand]
+    public void Close() {
+        executingCancellationTokenSource?.Cancel();
+        messageService.Send(new CloseRequestMessage(), Id);
+    }
+
+    public void Dispose() {
+        executingCancellationTokenSource?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

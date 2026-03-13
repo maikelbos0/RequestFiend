@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage>, IRecipient<CreateRequestMessage> {
+public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage>, IRecipient<CreateRequestMessage> {
     private CancellationTokenSource? messageCancellationTokenSource;
 
     public AppShell() {
@@ -27,9 +27,13 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     }
 
     public async void Receive(SuccessMessage message) {
-        this.messageCancellationTokenSource?.Cancel();
+        using var cancellationTokenSource = new CancellationTokenSource();
 
-        var messageCancellationTokenSource = this.messageCancellationTokenSource = new();
+        if (Interlocked.CompareExchange(ref messageCancellationTokenSource, cancellationTokenSource, null) != null) {
+
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource.Dispose();
+        }
 
         SuccessLabel.Text = message.Text;
         SuccessLabel.Opacity = 1;
@@ -38,7 +42,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         await Task.Delay(1000);
 
         for (var i = 0; i < 25; i++) {
-            if (messageCancellationTokenSource.Token.IsCancellationRequested) {
+            if (cancellationTokenSource.Token.IsCancellationRequested) {
                 return;
             }
 
@@ -111,7 +115,6 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async (tab, _) => {
             if (tab.Parent is ShellItem collectionItem) {
                 collectionItem.Items.Remove(tab);
-                await GoToAsync($"//{collectionItem.Route}");
             }
         });
 
@@ -121,15 +124,22 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
     public async void Receive(CreateRequestMessage message) {
         using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var index = 1 + collectionItem.Items.Select((item, index) => new { Index = index, StyleId = item.StyleId }).Last(item => item.StyleId == message.Id).Index;
+        var index = 1 + collectionItem.Items.Select((item, index) => new { Index = index, item.StyleId }).Single(item => item.StyleId == message.Id).Index;
         var request = GetRequiredService<RequestModel>();
         var item = new Tab() {
             Icon = "arrow_right_arrow_left_solid_full.png",
             Items = {
-                new RequestPage(GetRequiredService<RequestModel>())
+                new RequestPage(request)
             },
-            Route = $"Request_{request.Id}"
+            Route = $"Request_{request.Id}",
+            StyleId = request.Id
         };
+
+        WeakReferenceMessenger.Default.Register<Tab, CloseRequestMessage, string>(item, request.Id, async (tab, _) => {
+            if (tab.Parent is ShellItem collectionItem) {
+                collectionItem.Items.Remove(tab);
+            }
+        });
 
         collectionItem.Items.Insert(index, item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
@@ -137,4 +147,9 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
 
     private T GetRequiredService<T>() where T : notnull
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
+
+    public void Dispose() {
+        messageCancellationTokenSource?.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
