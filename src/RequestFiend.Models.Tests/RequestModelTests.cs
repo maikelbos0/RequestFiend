@@ -23,8 +23,8 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
-        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Executing {request.Name}", subject.PageTitleBase);
-        Assert.Equal($"Executing {request.Name}", subject.ShellItemTitleBase);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing...", subject.PageTitleBase);
+        Assert.Equal("Executing...", subject.ShellItemTitleBase);
     }
 
     [Fact]
@@ -48,5 +48,7 @@ public class RequestModelTests {
         await subject.Execute(CancellationToken.None);
 
         Assert.Same(requestContext, subject.Context);
+        Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Response", subject.PageTitleBase);
+        Assert.Equal("Response", subject.ShellItemTitleBase);
     }
 }

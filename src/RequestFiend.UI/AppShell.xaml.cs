@@ -105,7 +105,7 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
                 new RequestTemplatePage(request)
             },
             Route = $"RequestTemplate_{request.Id}",
-            StyleId = request.Id.ToString()
+            StyleId = request.Id
         };
 
         WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async (tab, _) => {
@@ -118,12 +118,21 @@ public partial class AppShell : Shell, IRecipient<SuccessMessage>, IRecipient<Op
         return item;
     }
 
-    public void Receive(CreateRequestMessage message) {
+    public async void Receive(CreateRequestMessage message) {
         using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var requestItem = (Tab)collectionItem.Items.Single(item => item.StyleId == message.Id);
+        var index = 1 + collectionItem.Items.Select((item, index) => new { Index = index, StyleId = item.StyleId }).Last(item => item.StyleId == message.Id).Index;
+        var request = GetRequiredService<RequestModel>();
+        var item = new Tab() {
+            Icon = "arrow_right_arrow_left_solid_full.png",
+            Items = {
+                new RequestPage(GetRequiredService<RequestModel>())
+            },
+            Route = $"Request_{request.Id}"
+        };
 
-        requestItem.Items.Add(new RequestPage(GetRequiredService<RequestModel>()));
+        collectionItem.Items.Insert(index, item);
+        await GoToAsync($"//{collectionItem.Route}/{item.Route}");
     }
 
     private T GetRequiredService<T>() where T : notnull

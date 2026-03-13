@@ -8,10 +8,11 @@ namespace RequestFiend.Models;
 
 public partial class RequestModel : BoundModelBase {
     private readonly IRequestHandler requestHandler;
+    private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
 
-    public Guid Id { get; } = Guid.NewGuid();
+    public string Id { get; } = Guid.NewGuid().ToString();
     public RequestContext? Context { get => field; set => SetProperty(ref field, value); }
 
     public RequestModel(
@@ -19,13 +20,17 @@ public partial class RequestModel : BoundModelBase {
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
-    ) : base($"{file.Name} - Executing {request.Name}", $"Executing {request.Name}") {
+    ) : base($"{file.Name} - {request.Name} - Executing...", "Executing...") {
         this.requestHandler = requestHandler;
+        this.file = file;
         this.collection = collection;
         this.request = request;
     }
 
     [RelayCommand]
-    public async Task Execute(CancellationToken cancellationToken)
-        => Context = await requestHandler.Execute(request, collection, cancellationToken);
+    public async Task Execute(CancellationToken cancellationToken) {
+        Context = await requestHandler.Execute(request, collection, cancellationToken);
+        PageTitleBase = $"{file.Name} - {request.Name} - Response";
+        ShellItemTitleBase = "Response";
+    }
 }
