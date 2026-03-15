@@ -2,8 +2,10 @@
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -43,8 +45,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var requestContext = new RequestContext();
-        requestHandler.Execute(request, collection, Arg.Any<CancellationToken>()).Returns(requestContext);
         var isExecutingValues = new List<bool>();
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
@@ -68,7 +68,7 @@ public class RequestModelTests {
 
         await subject.Execute();
 
-        Assert.Same(requestContext, subject.Context);
+        _ = requestHandler.Received().Execute(request, collection, subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal(["Executing request...", "Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);
@@ -93,5 +93,77 @@ public class RequestModelTests {
         subject.Close();
 
         messageService.Received().Send(Arg.Any<CloseRequestMessage>(), subject.Id);
+    }
+
+    [Fact]
+    public void OnRequestCreated() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var isExecutingValues = new List<bool>();
+        var pageTitleBaseValues = new List<string>();
+        var shellItemTitleBaseValues = new List<string>();
+        var expectedRequest = new HttpRequestMessage();
+
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
+
+        subject.OnRequestCreated(expectedRequest);
+
+        Assert.Equal(expectedRequest, subject.Request);
+    }
+
+    [Fact]
+    public void OnResponseReceived() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var isExecutingValues = new List<bool>();
+        var pageTitleBaseValues = new List<string>();
+        var shellItemTitleBaseValues = new List<string>();
+        var expectedResponse = new HttpResponseMessage();
+
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
+
+        subject.OnResponseReceived(expectedResponse);
+
+        Assert.Equal(expectedResponse, subject.Response);
+    }
+
+    [Fact]
+    public void OnExceptionCaught() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://url"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var isExecutingValues = new List<bool>();
+        var pageTitleBaseValues = new List<string>();
+        var shellItemTitleBaseValues = new List<string>();
+        var expectedException = new Exception();
+
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
+
+        subject.OnExceptionCaught(expectedException);
+
+        Assert.Equal(expectedException, subject.Exception);
     }
 }

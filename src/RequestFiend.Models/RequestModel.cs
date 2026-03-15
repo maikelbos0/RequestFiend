@@ -3,12 +3,13 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestModel : BoundModelBase, IDisposable {
+public partial class RequestModel : BoundModelBase, IRequestExchangeListener, IDisposable {
     private readonly IMessageService messageService;
     private readonly IRequestHandler requestHandler;
     private readonly RequestTemplateCollectionFileModel file;
@@ -18,7 +19,9 @@ public partial class RequestModel : BoundModelBase, IDisposable {
 
     public string Id { get; } = Guid.NewGuid().ToString();
     public bool IsExecuting { get => field; set => SetProperty(ref field, value); }
-    public RequestContext? Context { get => field; set => SetProperty(ref field, value); }
+    public HttpRequestMessage? Request { get => field; set => SetProperty(ref field, value); }
+    public HttpResponseMessage? Response { get => field; set => SetProperty(ref field, value); }
+    public Exception? Exception { get => field; set => SetProperty(ref field, value); }
 
     public RequestModel(
         IMessageService messageService,
@@ -50,8 +53,11 @@ public partial class RequestModel : BoundModelBase, IDisposable {
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
         ShellItemTitleBase = "Executing request...";
         IsExecuting = true;
+        Request = null;
+        Response = null;
+        Exception = null;
 
-        Context = await requestHandler.Execute(request, collection, cancellationTokenSource.Token);
+        await requestHandler.Execute(request, collection, this, cancellationTokenSource.Token);
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = "Exchange";
@@ -70,6 +76,15 @@ public partial class RequestModel : BoundModelBase, IDisposable {
         executingCancellationTokenSource?.Cancel();
         messageService.Send(new CloseRequestMessage(), Id);
     }
+
+    public void OnRequestCreated(HttpRequestMessage request)
+        => Request = request;
+
+    public void OnResponseReceived(HttpResponseMessage response)
+        => Response = response;
+
+    public void OnExceptionCaught(Exception exception) 
+        => Exception = exception;
 
     public void Dispose() {
         executingCancellationTokenSource?.Dispose();
