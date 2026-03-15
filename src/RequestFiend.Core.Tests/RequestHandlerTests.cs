@@ -75,4 +75,64 @@ public class RequestHandlerTests {
         Assert.Null(result.Response);
         Assert.Same(expectedException, result.Exception);
     }
+
+    [Fact]
+    public async Task Execute_Notifies_Listener_Of_Request() {
+        var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
+        httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
+        var httpClient = new HttpClient(httpMessageHandler);
+        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+
+        var subject = new RequestHandler(httpClient);
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost/"
+        };
+
+        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
+
+        requestPipelineListener.Received().OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
+    }
+
+    [Fact]
+    public async Task Execute_Notifies_Listener_Of_Response() {
+        var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
+        httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
+        var httpClient = new HttpClient(httpMessageHandler);
+        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+
+        var subject = new RequestHandler(httpClient);
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost/"
+        };
+
+        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
+
+        requestPipelineListener.Received().OnResponseReceived(Arg.Is<HttpResponseMessage>(response => response == result.Response));
+    }
+
+    [Fact]
+    public async Task Execute_Notifies_Listener_Of_Exception() {
+        var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
+        httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(new InvalidOperationException());
+        var httpClient = new HttpClient(httpMessageHandler);
+        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+
+        var subject = new RequestHandler(httpClient);
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost/"
+        };
+
+        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
+
+        requestPipelineListener.Received().OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+    }
 }
