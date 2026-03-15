@@ -33,7 +33,7 @@ public class NewRequestTemplateModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
-        const string url = "https://url";
+        const string url = "https://localhost";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -65,8 +65,8 @@ public class NewRequestTemplateModelTests {
 
     [Theory]
     [InlineData("", "", "")]
-    [InlineData("", "GET", "https://url")]
-    [InlineData("Name", "", "https://url")]
+    [InlineData("", "GET", "https://localhost")]
+    [InlineData("Name", "", "https://localhost")]
     [InlineData("Name", "GET", "")]
     public async Task Create_Fails_When_Invalid(string name, string method, string url) {
         const string filePath = @"C:\Documents\External data requests.json";

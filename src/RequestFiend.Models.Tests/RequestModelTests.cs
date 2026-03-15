@@ -20,7 +20,7 @@ public class RequestModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -40,7 +40,7 @@ public class RequestModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -82,7 +82,7 @@ public class RequestModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -102,7 +102,7 @@ public class RequestModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -126,7 +126,7 @@ public class RequestModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -150,7 +150,7 @@ public class RequestModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]

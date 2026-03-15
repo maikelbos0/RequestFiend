@@ -20,7 +20,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -44,7 +44,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url",
+            Url = "https://localhost",
             Headers = {
                 new() { Name = "Name", Value = "Value" }
             },
@@ -76,7 +76,7 @@ public class RequestTemplateModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
-        const string url = "https://url";
+        const string url = "https://localhost";
         const string headerName = "Name";
         const string headerValue = "Value";
         const string contentType = "JSON";
@@ -135,11 +135,11 @@ public class RequestTemplateModelTests {
 
     [Theory]
     [InlineData("", "", "", "", "")]
-    [InlineData("", "GET", "https://url", "Name", "JSON")]
-    [InlineData("Name", "", "https://url", "Name", "JSON")]
+    [InlineData("", "GET", "https://localhost", "Name", "JSON")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON")]
     [InlineData("Name", "GET", "", "Name", "JSON")]
-    [InlineData("Name", "GET", "https://url", "", "JSON")]
-    [InlineData("Name", "GET", "https://url", "Name", "")]
+    [InlineData("Name", "GET", "https://localhost", "", "JSON")]
+    [InlineData("Name", "GET", "https://localhost", "Name", "")]
     public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
@@ -184,7 +184,7 @@ public class RequestTemplateModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
         const string name = "Name";
         const string method = "GET";
-        const string url = "https://url";
+        const string url = "https://localhost";
         const string headerName = "Name";
         const string headerValue = "Value";
         const string contentType = "JSON";
@@ -238,11 +238,11 @@ public class RequestTemplateModelTests {
 
     [Theory]
     [InlineData("", "", "", "", "")]
-    [InlineData("", "GET", "https://url", "Name", "JSON")]
-    [InlineData("Name", "", "https://url", "Name", "JSON")]
+    [InlineData("", "GET", "https://localhost", "Name", "JSON")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON")]
     [InlineData("Name", "GET", "", "Name", "JSON")]
-    [InlineData("Name", "GET", "https://url", "", "JSON")]
-    [InlineData("Name", "GET", "https://url", "Name", "")]
+    [InlineData("Name", "GET", "https://localhost", "", "JSON")]
+    [InlineData("Name", "GET", "https://localhost", "Name", "")]
     public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
@@ -294,7 +294,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url",
+            Url = "https://localhost",
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
@@ -319,7 +319,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url",
+            Url = "https://localhost",
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
@@ -343,7 +343,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url",
+            Url = "https://localhost",
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
@@ -370,7 +370,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url",
+            Url = "https://localhost",
             ContentType = Core.ContentType.Json,
             StringContent = stringContent
         };
@@ -396,7 +396,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -423,7 +423,7 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://url"
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
