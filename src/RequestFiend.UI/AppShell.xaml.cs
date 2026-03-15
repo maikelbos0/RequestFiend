@@ -27,13 +27,12 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
     }
 
     public async void Receive(SuccessMessage message) {
-        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+        var previousCancellationTokenSource = Interlocked.Exchange(ref messageCancellationTokenSource, cancellationTokenSource);
 
-        if (Interlocked.CompareExchange(ref messageCancellationTokenSource, cancellationTokenSource, null) != null) {
-
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource.Dispose();
-        }
+        previousCancellationTokenSource?.Cancel();
+        previousCancellationTokenSource?.Dispose();
 
         SuccessLabel.Text = message.Text;
         SuccessLabel.Opacity = 1;
@@ -42,7 +41,7 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
         await Task.Delay(1000);
 
         for (var i = 0; i < 25; i++) {
-            if (cancellationTokenSource.Token.IsCancellationRequested) {
+            if (cancellationToken.IsCancellationRequested) {
                 return;
             }
 
