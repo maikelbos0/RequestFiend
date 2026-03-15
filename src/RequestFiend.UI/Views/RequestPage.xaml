@@ -17,10 +17,39 @@
                         <Button Text="Execute" Command="{Binding ExecuteCommand}" IsEnabled="{Binding IsExecuting, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
 
                         <Button Text="Cancel" Command="{Binding CancelExecutionCommand}" IsEnabled="{Binding IsExecuting}"/>
-                        
+
                         <Button Text="Close" Command="{Binding CloseCommand}" Style="{StaticResource DangerButton}"/>
                     </StackLayout>
+                </VerticalStackLayout>
+            </Border>
 
+            <Border IsVisible="{Binding Context.Request, Converter={toolkit:IsNotNullConverter}}">
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Label Text="Request" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+
+                    <Grid ColumnDefinitions="*,3*">
+                        <Label Text="{Binding Context.Request.Method}"/>
+
+                        <Label Text="{Binding Context.Request.RequestUri}" Grid.Column="1"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border IsVisible="{Binding Context.Response, Converter={toolkit:IsNotNullConverter}}">
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Label Text="Response" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+
+                    <Label Text="{Binding Context.Response.StatusCode}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border IsVisible="{Binding Context.Exception, Converter={toolkit:IsNotNullConverter}}">
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Label Text="Exception" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+
+                    <Label Text="{Binding Context.Exception.Message}"/>
+
+                    <Label Text="{Binding Context.Exception.StackTrace}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
