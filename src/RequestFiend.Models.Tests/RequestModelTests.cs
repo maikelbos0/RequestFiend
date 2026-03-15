@@ -116,7 +116,7 @@ public class RequestModelTests {
 
         subject.OnRequestCreated(expectedRequest);
 
-        Assert.Equal(expectedRequest, subject.Request);
+        Assert.Equal(new HttpRequestModel(expectedRequest), subject.Request);
     }
 
     [Fact]

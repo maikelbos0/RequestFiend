@@ -19,7 +19,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
 
     public string Id { get; } = Guid.NewGuid().ToString();
     public bool IsExecuting { get => field; set => SetProperty(ref field, value); }
-    public HttpRequestMessage? Request { get => field; set => SetProperty(ref field, value); }
+    public HttpRequestModel? Request { get => field; set => SetProperty(ref field, value); }
     public HttpResponseMessage? Response { get => field; set => SetProperty(ref field, value); }
     public Exception? Exception { get => field; set => SetProperty(ref field, value); }
 
@@ -49,7 +49,6 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
         }
 
         executingCancellationTokenSource = cancellationTokenSource;
-
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
         ShellItemTitleBase = "Executing request...";
         IsExecuting = true;
@@ -62,7 +61,6 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = "Exchange";
         IsExecuting = false;
-        
         executingCancellationTokenSource = null;
     }
 
@@ -78,7 +76,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
     }
 
     public void OnRequestCreated(HttpRequestMessage request)
-        => Request = request;
+        => Request = new(request);
 
     public void OnResponseReceived(HttpResponseMessage response)
         => Response = response;
