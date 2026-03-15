@@ -5,7 +5,7 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public static class Options {
-    public static List<string> Methods { get; } = ["GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"];
+    public static List<string> Methods { get; } = ["", "GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"];
     public static Dictionary<ContentType, string> ContentTypeMap { get; } = new() {
         [ContentType.None] = "None",
         [ContentType.Text] = "Text",
