@@ -51,6 +51,7 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
         }
 
         SuccessLabel.IsVisible = false;
+        messageCancellationTokenSource = null;
     }
 
     public async void Receive(OpenCollectionRequestMessage message) {
@@ -112,11 +113,8 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
             StyleId = request.Id
         };
 
-        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async (tab, _) => {
-            if (tab.Parent is ShellItem collectionItem) {
-                collectionItem.Items.Remove(tab);
-            }
-        });
+        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async (tab, _)
+            => await CloseCollectionTab(tab));
 
         return item;
     }
@@ -124,7 +122,11 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
     public async void Receive(CreateRequestMessage message) {
         using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
-        var index = 1 + collectionItem.Items.Select((item, index) => new { Index = index, item.StyleId }).Single(item => item.StyleId == message.Id).Index;
+        var (requestItem, index) = collectionItem.Items
+            .Select((item, index) => new { Index = index, Item = item, item.StyleId })
+            .Where(x => x.StyleId == message.Id)
+            .Select(x => (x.Item, x.Index + 1))
+            .Single();
         var request = GetRequiredService<RequestModel>();
         var item = new Tab() {
             Icon = "arrow_right_arrow_left_solid_full.png",
@@ -135,11 +137,8 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
             StyleId = request.Id
         };
 
-        WeakReferenceMessenger.Default.Register<Tab, CloseRequestMessage, string>(item, request.Id, async (tab, _) => {
-            if (tab.Parent is ShellItem collectionItem) {
-                collectionItem.Items.Remove(tab);
-            }
-        });
+        WeakReferenceMessenger.Default.Register<Tab, CloseRequestMessage, string>(item, request.Id, async (tab, _) 
+            => await CloseCollectionTab(tab));
 
         collectionItem.Items.Insert(index, item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
@@ -147,6 +146,19 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
 
     private T GetRequiredService<T>() where T : notnull
         => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
+
+    private async Task CloseCollectionTab(Tab tab) {
+        if (tab.Parent is ShellItem collectionItem) {
+            var newIndex = collectionItem.Items.IndexOf(tab) - 1;
+            var newRoute = collectionItem.Items[newIndex].Route;
+
+            if (newRoute != null) {
+                await GoToAsync($"//{collectionItem.Route}/{newRoute}");
+            }
+
+            collectionItem.Items.Remove(tab);
+        }
+    }
 
     public void Dispose() {
         messageCancellationTokenSource?.Dispose();
