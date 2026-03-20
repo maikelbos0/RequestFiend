@@ -25,7 +25,7 @@
 
                     <views:ValidatableEntry Text="{Binding Name}"/>
 
-                    <Grid ColumnDefinitions="*,3*">
+                    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
                         <Label Text="Method" Style="{StaticResource EntryLabel}"/>
 
                         <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>

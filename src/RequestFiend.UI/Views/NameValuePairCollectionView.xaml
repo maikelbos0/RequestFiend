@@ -10,9 +10,9 @@
     <CollectionView SelectionMode="None" ItemsSource="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource, Source={x:Reference Root}}">
         <CollectionView.Header>
             <Grid ColumnDefinitions="*,*,44" IsVisible="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource.HasItems, Source={x:Reference Root}}" ColumnSpacing="10">
-                <Label Text="Name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0"/>
+                <Label Text="Name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, -5"/>
 
-                <Label Text="Value" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0" Grid.Column="1"/>
+                <Label Text="Value" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, -5" Grid.Column="1"/>
             </Grid>
         </CollectionView.Header>
         <CollectionView.ItemTemplate>
@@ -29,7 +29,6 @@
                         Style="{StaticResource SecondaryButton}" 
                         Margin="0, 10, 0, 0"
                         HorizontalOptions="Fill"
-                        CornerRadius="4"
                         MinimumWidthRequest="-1"
                         Grid.Column="2" 
                         SemanticProperties.Description="{Binding x:DataType='views:NameValuePairCollectionView', Path=DeleteButtonText, Source={x:Reference Root}}" />
@@ -42,8 +41,7 @@
                 Command="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource.AddClickedCommand, Source={x:Reference Root}}"
                 Style="{x:StaticResource SecondaryButton}"
                 Margin="0, 10, 0, 0"
-                HorizontalOptions="Fill"
-                CornerRadius="4"/>
+                HorizontalOptions="Fill"/>
         </CollectionView.Footer>
     </CollectionView>
 </ContentView>

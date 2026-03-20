@@ -17,7 +17,7 @@
         <Setter Property="StrokeThickness" Value="0"/>
         <Setter Property="StrokeShape">
             <Setter.Value>
-                <RoundRectangle CornerRadius="8" />
+                <RoundRectangle CornerRadius="6" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -32,8 +32,8 @@
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="10"/>
         <Setter Property="MinimumWidthRequest" Value="175"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -174,7 +174,7 @@
         <Setter Property="Opacity" Value="1" />
         <Setter Property="BorderColor" Value="Transparent"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -201,21 +201,21 @@
 
     <Style TargetType="Label" x:Key="Header">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkText}, Dark={StaticResource White}}" />
-        <Setter Property="FontSize" Value="32" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
 
     <Style TargetType="Label" x:Key="SectionHeader">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkText}, Dark={StaticResource White}}" />
-        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
 
     <Style TargetType="Label" x:Key="EntryLabel">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryDark}, Dark={StaticResource Secondary}}" />
-        <Setter Property="Margin" Value="10, 0, 0, -15"/>
+        <Setter Property="Margin" Value="10, 0, 0, -10"/>
     </Style>
 
     <Style TargetType="Picker">
@@ -440,16 +440,16 @@
     </Style>
 
     <Style TargetType="VerticalStackLayout">
-        <Setter Property="Padding" Value="25"/>
-        <Setter Property="Spacing" Value="25"/>
+        <Setter Property="Padding" Value="15"/>
+        <Setter Property="Spacing" Value="15"/>
     </Style>
 
     <Style TargetType="HorizontalStackLayout">
-        <Setter Property="Spacing" Value="25"/>
+        <Setter Property="Spacing" Value="15"/>
     </Style>
 
     <Style TargetType="StackLayout">
-        <Setter Property="Spacing" Value="25"/>
+        <Setter Property="Spacing" Value="15"/>
     </Style>
 
     <Style TargetType="VerticalStackLayout" x:Key="ElementGroup">
@@ -457,8 +457,8 @@
     </Style>
 
     <Style TargetType="Grid">
-        <Setter Property="ColumnSpacing" Value="25"/>
-        <Setter Property="RowSpacing" Value="25"/>
+        <Setter Property="ColumnSpacing" Value="15"/>
+        <Setter Property="RowSpacing" Value="15"/>
     </Style>
 
 </ResourceDictionary>
