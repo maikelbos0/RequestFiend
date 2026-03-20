@@ -72,9 +72,21 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Exception" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <Label Text="{Binding Exception.Message}"/>
+                    <Label Text="Type" Style="{StaticResource EntryLabel}"/>
 
-                    <Label Text="{Binding Exception.StackTrace}"/>
+                    <Entry Text="{Binding Exception.Type}" IsReadOnly="True" />
+
+                    <Label Text="Message" Style="{StaticResource EntryLabel}"/>
+
+                    <Entry Text="{Binding Exception.Message}" IsReadOnly="True" />
+
+                    <Label Text="Source" Style="{StaticResource EntryLabel}"/>
+
+                    <Entry Text="{Binding Exception.Source}" IsReadOnly="True" />
+                    
+                    <Label Text="Stack trace" Style="{StaticResource EntryLabel}"/>
+
+                    <Editor Text="{Binding Exception.StackTrace}" HeightRequest="300" />
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

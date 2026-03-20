@@ -164,6 +164,6 @@ public class RequestModelTests {
 
         subject.OnExceptionCaught(expectedException);
 
-        Assert.Equal(expectedException, subject.Exception);
+        Assert.Equal(new ExceptionModel(expectedException), subject.Exception);
     }
 }
