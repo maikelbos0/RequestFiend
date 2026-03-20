@@ -29,7 +29,7 @@ public class RequestModelTests {
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange", subject.PageTitleBase);
-        Assert.Equal("Exchange", subject.ShellItemTitleBase);
+        Assert.Equal($"{request.Name} - Exchange", subject.ShellItemTitleBase);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class RequestModelTests {
 
         _ = requestHandler.Received().Execute(request, collection, subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
-        Assert.Equal(["Executing request...", "Exchange"], shellItemTitleBaseValues);
+        Assert.Equal([$"{request.Name} - Executing request...", $"{request.Name} - Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);
     }
 

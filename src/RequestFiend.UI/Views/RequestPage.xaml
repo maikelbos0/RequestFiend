@@ -27,7 +27,15 @@
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Request" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
-                    <Entry Text="{Binding Request.Name}" IsReadOnly="True" />
+                    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
+                        <Label Text="Method" Style="{StaticResource EntryLabel}"/>
+
+                        <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>
+
+                        <Entry Text="{Binding Request.Method}" IsReadOnly="True" Grid.Row="1" />
+
+                        <Entry Text="{Binding Request.Url}" IsReadOnly="True" Grid.Row="1" Grid.Column="1" />
+                    </Grid>
 
                     <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 

@@ -17,7 +17,8 @@ public class HttpRequestModelTests {
 
         var subject = new HttpRequestModel(request);
 
-        Assert.Equal($"{request.Method} {request.RequestUri}", subject.Name);
-        Assert.Equal(request.Headers.Count(), subject.Headers.Count());
+        Assert.Equal(request.Method.ToString(), subject.Method);
+        Assert.Equal(request.RequestUri.ToString(), subject.Url);
+        Assert.Equal(request.Headers.Count(), subject.Headers.Length);
     }
 }

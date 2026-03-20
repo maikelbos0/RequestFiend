@@ -29,7 +29,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
-    ) : base($"{file.Name} - {request.Name} - Exchange", "Exchange") {
+    ) : base($"{file.Name} - {request.Name} - Exchange", $"{request.Name} - Exchange") {
         this.messageService = messageService;
         this.requestHandler = requestHandler;
         this.file = file;
@@ -50,7 +50,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
 
         executingCancellationTokenSource = cancellationTokenSource;
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
-        ShellItemTitleBase = "Executing request...";
+        ShellItemTitleBase = $"{request.Name} - Executing request...";
         IsExecuting = true;
         Request = null;
         Response = null;
@@ -59,7 +59,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
         await requestHandler.Execute(request, collection, this, cancellationTokenSource.Token);
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
-        ShellItemTitleBase = "Exchange";
+        ShellItemTitleBase = $"{request.Name} - Exchange";
         IsExecuting = false;
         executingCancellationTokenSource = null;
     }
