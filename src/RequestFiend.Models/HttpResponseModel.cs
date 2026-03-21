@@ -25,6 +25,6 @@ public partial record HttpResponseModel(string Status, ImmutableArray<HttpHeader
 
     public HttpResponseModel(HttpResponseMessage response) : this(
         GetStatus(response.StatusCode),
-        [.. response.Headers.Select(header => new HttpHeaderModel(header))]
+        [.. response.Headers.Select(header => new HttpHeaderModel(header)), .. response.Content.Headers.Select(header => new HttpHeaderModel(header))]
     ) { }
 }

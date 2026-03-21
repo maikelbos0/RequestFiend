@@ -14,13 +14,14 @@ public class HttpResponseModelTests {
         var response = new HttpResponseMessage() {
             StatusCode = statusCode,
             Headers = {
-                { "Accept", "application/json" }
-            }
+                { "Cache-control", "max-age=0, private" }
+            },
+            Content = new StringContent("String content")
         };
 
         var subject = new HttpResponseModel(response);
 
         Assert.Equal(expectedStatus, subject.Status);
-        Assert.Equal(response.Headers.Count(), subject.Headers.Length);
+        Assert.Equal(response.Headers.Count() + response.Content.Headers.Count(), subject.Headers.Length);
     }
 }
