@@ -20,7 +20,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
     public string Id { get; } = Guid.NewGuid().ToString();
     public bool IsExecuting { get => field; set => SetProperty(ref field, value); }
     public HttpRequestModel? Request { get => field; set => SetProperty(ref field, value); }
-    public HttpResponseMessage? Response { get => field; set => SetProperty(ref field, value); }
+    public HttpResponseModel? Response { get => field; set => SetProperty(ref field, value); }
     public ExceptionModel? Exception { get => field; set => SetProperty(ref field, value); }
 
     public RequestModel(
@@ -79,7 +79,7 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
         => Request = new(request);
 
     public void OnResponseReceived(HttpResponseMessage response)
-        => Response = response;
+        => Response = new(response);
 
     public void OnExceptionCaught(Exception exception) 
         => Exception = new(exception);

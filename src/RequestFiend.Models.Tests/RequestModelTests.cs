@@ -140,7 +140,7 @@ public class RequestModelTests {
 
         subject.OnResponseReceived(expectedResponse);
 
-        Assert.Equal(expectedResponse, subject.Response);
+        Assert.Equal(new(expectedResponse), subject.Response);
     }
 
     [Fact]
