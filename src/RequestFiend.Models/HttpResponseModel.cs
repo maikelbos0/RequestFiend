@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 
 namespace RequestFiend.Models;
 
-// TODO figure out if we can use a collection that's not reference based equality
 public partial record HttpResponseModel(string Status, HttpContentModel Content, ImmutableArray<HttpHeaderModel> Headers) {
     [GeneratedRegex(@"(?<!^)[A-Z][a-z]", RegexOptions.Compiled)]
     private static partial Regex GetWordFinder();
