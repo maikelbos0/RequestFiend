@@ -3,5 +3,6 @@
 namespace RequestFiend.Models;
 
 public record HttpHeaderModel(string Name, string Value) {
-    public HttpHeaderModel(KeyValuePair<string, IEnumerable<string>> header) : this(header.Key, string.Join(", ", header.Value)) { }
+    public static HttpHeaderModel Create(KeyValuePair<string, IEnumerable<string>> header)
+        => new(header.Key, string.Join(", ", header.Value));
 }

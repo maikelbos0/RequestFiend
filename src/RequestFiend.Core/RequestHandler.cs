@@ -20,14 +20,20 @@ public class RequestHandler : IRequestHandler {
 
         try {
             context.Request = request.CreateMessage(collection);
-            requestExchangeListener?.OnRequestCreated(context.Request);
+            if (requestExchangeListener != null) {
+                await requestExchangeListener.OnRequestCreated(context.Request);
+            }
 
             context.Response = await httpClient.SendAsync(context.Request, cancellationToken);
-            requestExchangeListener?.OnResponseReceived(context.Response);
+            if (requestExchangeListener != null) {
+                await requestExchangeListener.OnResponseReceived(context.Response);
+            }
         }
         catch (Exception exception) {
             context.Exception = exception;
-            requestExchangeListener?.OnExceptionCaught(exception);
+            if (requestExchangeListener != null) {
+                await requestExchangeListener.OnExceptionCaught(exception);
+            }
         }
 
         return context;

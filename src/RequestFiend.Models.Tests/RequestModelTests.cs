@@ -96,7 +96,7 @@ public class RequestModelTests {
     }
 
     [Fact]
-    public void OnRequestCreated() {
+    public async Task OnRequestCreated() {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -114,13 +114,13 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
-        subject.OnRequestCreated(expectedRequest);
+        await subject.OnRequestCreated(expectedRequest);
 
         Assert.NotNull(subject.Request);
     }
 
     [Fact]
-    public void OnResponseReceived() {
+    public async Task OnResponseReceived() {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -138,13 +138,13 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
-        subject.OnResponseReceived(expectedResponse);
+        await subject.OnResponseReceived(expectedResponse);
 
         Assert.NotNull(subject.Response);
     }
 
     [Fact]
-    public void OnExceptionCaught() {
+    public async Task OnExceptionCaught() {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -162,7 +162,7 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), new(filePath), collection, request);
 
-        subject.OnExceptionCaught(expectedException);
+        await subject.OnExceptionCaught(expectedException);
 
         Assert.NotNull(subject.Exception);
     }

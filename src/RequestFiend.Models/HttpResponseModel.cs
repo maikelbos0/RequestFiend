@@ -4,10 +4,22 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial record HttpResponseModel(string Status, HttpContentModel Content, ImmutableArray<HttpHeaderModel> Headers) {
+public partial record HttpResponseModel(string Status, ImmutableArray<HttpHeaderModel> Headers, HttpContentModel Content) {
+    public async static Task<HttpResponseModel> Create(HttpResponseMessage response) {
+        // Read content before headers since reading content can add headers like Content-Length
+        var content = await GetContent(response.Content);
+
+        return new(
+            GetStatus(response.StatusCode),
+            [.. response.Headers.Select(HttpHeaderModel.Create), .. response.Content.Headers.Select(HttpHeaderModel.Create)],
+            content
+        );
+    }
+
     [GeneratedRegex(@"(?<!^)[A-Z][a-z]", RegexOptions.Compiled)]
     private static partial Regex GetWordFinder();
 
@@ -27,17 +39,17 @@ public partial record HttpResponseModel(string Status, HttpContentModel Content,
         return $"{code} {name}";
     }
 
-    private static HttpContentModel GetContent(HttpContent content) {
+    // TODO move to HttpContentModel.Create
+    private async static Task<HttpContentModel> GetContent(HttpContent content) {
         if (content == null) {
             return new(HttpContentType.None, "", []);
         }
 
-        // TODO make it async
         if (IsText(content.Headers.ContentType)) {
-            return new(HttpContentType.Text, content.ReadAsStringAsync().GetAwaiter().GetResult(), []);
+            return new(HttpContentType.Text, await content.ReadAsStringAsync(), []);
         }
 
-        return new(HttpContentType.Unknown, "", [.. content.ReadAsByteArrayAsync().GetAwaiter().GetResult()]);
+        return new(HttpContentType.Unknown, "", [.. await content.ReadAsByteArrayAsync()]);
 
         static bool IsText(MediaTypeHeaderValue? contentType) {
             if (contentType == null) {
@@ -51,10 +63,4 @@ public partial record HttpResponseModel(string Status, HttpContentModel Content,
             return contentType.CharSet != null;
         }
     }
-
-    public HttpResponseModel(HttpResponseMessage response) : this(
-        GetStatus(response.StatusCode),
-        GetContent(response.Content),
-        [.. response.Headers.Select(header => new HttpHeaderModel(header)), .. response.Content.Headers.Select(header => new HttpHeaderModel(header))]
-    ) { }
 }

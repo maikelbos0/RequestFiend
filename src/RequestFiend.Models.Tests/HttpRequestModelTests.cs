@@ -6,7 +6,7 @@ namespace RequestFiend.Models.Tests;
 
 public class HttpRequestModelTests {
     [Fact]
-    public void Constructor() {
+    public void Create() {
         var request = new HttpRequestMessage() {
             Method = HttpMethod.Post,
             RequestUri = new("https://localhost/"),
@@ -15,7 +15,7 @@ public class HttpRequestModelTests {
             }
         };
 
-        var subject = new HttpRequestModel(request);
+        var subject = HttpRequestModel.Create(request);
 
         Assert.Equal(request.Method.ToString(), subject.Method);
         Assert.Equal(request.RequestUri.ToString(), subject.Url);

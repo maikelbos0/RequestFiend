@@ -75,14 +75,18 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
         messageService.Send(new CloseRequestMessage(), Id);
     }
 
-    public void OnRequestCreated(HttpRequestMessage request)
-        => Request = new(request);
+    public Task OnRequestCreated(HttpRequestMessage request) {
+        Request = HttpRequestModel.Create(request);
+        return Task.CompletedTask;
+    }
 
-    public void OnResponseReceived(HttpResponseMessage response)
-        => Response = new(response);
+    public async Task OnResponseReceived(HttpResponseMessage response)
+        => Response = await HttpResponseModel.Create(response);
 
-    public void OnExceptionCaught(Exception exception) 
-        => Exception = new(exception);
+    public Task OnExceptionCaught(Exception exception) { 
+        Exception = new(exception);
+        return Task.CompletedTask;
+    }
 
     public void Dispose() {
         executingCancellationTokenSource?.Dispose();
