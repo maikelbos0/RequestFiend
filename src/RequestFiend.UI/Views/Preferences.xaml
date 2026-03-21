@@ -18,15 +18,19 @@
                 <Button Text="Clear recent collections" Command="{Binding ClearRecentCollectionsCommand}" Style="{StaticResource DangerButton}"/>
             </StackLayout>
 
-            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
-                <Switch IsToggled="{Binding ShowRecentCollections.Value}"/>
-                
-                <Label Text="Show recent collections" Grid.Column="1" VerticalOptions="Center"/>
-            </Grid>
+            <Border>
+                <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                        <Switch IsToggled="{Binding ShowRecentCollections.Value}"/>
 
-            <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
+                        <Label Text="Show recent collections" Grid.Column="1" VerticalOptions="Center"/>
+                    </Grid>
 
-            <views:ValidatableEntry Text="{Binding MaximumRecentCollectionCount}"/>
+                    <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
+
+                    <views:ValidatableEntry Text="{Binding MaximumRecentCollectionCount}"/>
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
     </ScrollView>
 </views:ContentPage>

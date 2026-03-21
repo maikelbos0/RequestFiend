@@ -10,7 +10,10 @@
     <CollectionView SelectionMode="None" ItemsSource="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource, Source={x:Reference Root}}">
         <CollectionView.Header>
             <Grid ColumnDefinitions="*,*,44" IsVisible="{Binding x:DataType='views:NameValuePairCollectionView', Path=ItemsSource.HasItems, Source={x:Reference Root}}" ColumnSpacing="10">
-                <Label Text="Name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, -5"/>
+                <Label
+                    Text="{Binding x:DataType='views:NameValuePairCollectionView', Path=NameLabelText, Source={x:Reference Root}}"
+                    Style="{StaticResource EntryLabel}"
+                    Margin="10, 0, 0, -5"/>
 
                 <Label Text="Value" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, -5" Grid.Column="1"/>
             </Grid>

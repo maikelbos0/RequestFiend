@@ -11,21 +11,18 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <Border>
-                <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                        <Button Text="Execute" Command="{Binding ExecuteCommand}" IsEnabled="{Binding IsExecuting, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+            <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                <Button Text="Execute" Command="{Binding ExecuteCommand}" IsEnabled="{Binding IsExecuting, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
 
-                        <Button Text="Cancel" Command="{Binding CancelExecutionCommand}" IsEnabled="{Binding IsExecuting}"/>
+                <Button Text="Cancel" Command="{Binding CancelExecutionCommand}" IsEnabled="{Binding IsExecuting}"/>
 
-                        <Button Text="Close" Command="{Binding CloseCommand}" Style="{StaticResource DangerButton}"/>
-                    </StackLayout>
-                </VerticalStackLayout>
-            </Border>
+                <Button Text="Close" Command="{Binding CloseCommand}" Style="{StaticResource DangerButton}"/>
+            </StackLayout>
+
+            <Label Text="Request" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1" IsVisible="{Binding Request, Converter={toolkit:IsNotNullConverter}}"/>
 
             <Border IsVisible="{Binding Request, Converter={toolkit:IsNotNullConverter}}">
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Request" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
 
                     <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
                         <Label Text="Method" Style="{StaticResource EntryLabel}"/>
@@ -37,12 +34,10 @@
                         <Entry Text="{Binding Request.Url}" IsReadOnly="True" Grid.Row="1" Grid.Column="1" />
                     </Grid>
 
-                    <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
-
                     <CollectionView SelectionMode="None" ItemsSource="{Binding Request.Headers}">
                         <CollectionView.Header>
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                                <Label Text="Name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0"/>
+                                <Label Text="Header name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0"/>
 
                                 <Label Text="Value" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0" Grid.Column="1"/>
                             </Grid>
@@ -60,20 +55,18 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Label Text="Response" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1" IsVisible="{Binding Response, Converter={toolkit:IsNotNullConverter}}"/>
+
             <Border IsVisible="{Binding Response, Converter={toolkit:IsNotNullConverter}}">
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Response" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
-
                     <Label Text="Status" Style="{StaticResource EntryLabel}"/>
 
                     <Entry Text="{Binding Response.Status}" IsReadOnly="True" />
 
-                    <Label Text="Headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
-
                     <CollectionView SelectionMode="None" ItemsSource="{Binding Response.Headers}">
                         <CollectionView.Header>
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                                <Label Text="Name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0"/>
+                                <Label Text="Header name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0"/>
 
                                 <Label Text="Value" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, 0" Grid.Column="1"/>
                             </Grid>
@@ -104,10 +97,10 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Label Text="Exception" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1" IsVisible="{Binding Exception, Converter={toolkit:IsNotNullConverter}}"/>
+
             <Border IsVisible="{Binding Exception, Converter={toolkit:IsNotNullConverter}}">
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Exception" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
-
                     <Label Text="Type" Style="{StaticResource EntryLabel}"/>
 
                     <Entry Text="{Binding Exception.Type}" IsReadOnly="True" />

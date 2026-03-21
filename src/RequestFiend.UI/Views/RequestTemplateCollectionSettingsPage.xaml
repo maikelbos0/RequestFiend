@@ -10,23 +10,27 @@
 
     <ScrollView>
         <VerticalStackLayout>
+            <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
+            </StackLayout>
+            
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                        <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
-                    </StackLayout>
-
                     <Label Text="Default url (optional)" Style="{StaticResource EntryLabel}"/>
 
                     <views:ValidatableEntry Text="{Binding DefaultUrl}" />
 
-                    <Label Text="Default headers" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
+                    <views:NameValuePairCollectionView
+                        ItemsSource="{Binding DefaultHeaders}"
+                        NameLabelText="Default header name"
+                        DeleteButtonText="Delete default header"
+                        AddButtonText="Add default header"/>
 
-                    <views:NameValuePairCollectionView ItemsSource="{Binding DefaultHeaders}" DeleteButtonText="Delete default header" AddButtonText="Add default header"/>
-
-                    <Label Text="Variables" Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
-
-                    <views:NameValuePairCollectionView ItemsSource="{Binding Variables}" DeleteButtonText="Delete variable" AddButtonText="Add variable"/>
+                    <views:NameValuePairCollectionView
+                        ItemsSource="{Binding Variables}"
+                        NameLabelText="Variable name"
+                        DeleteButtonText="Delete variable"
+                        AddButtonText="Add variable"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

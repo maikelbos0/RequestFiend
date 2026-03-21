@@ -10,12 +10,12 @@
 
     <ScrollView>
         <VerticalStackLayout>
+            <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+                <Button Text="Create new request" Command="{Binding CreateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
+            </StackLayout>
+            
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                        <Button Text="Create new request" Command="{Binding CreateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
-                    </StackLayout>
-
                     <Label Text="Name" Style="{StaticResource EntryLabel}"/>
 
                     <views:ValidatableEntry Text="{Binding Name}"/>

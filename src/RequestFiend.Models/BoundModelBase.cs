@@ -8,7 +8,7 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public class BoundModelBase : ObservableObject {
-    private const double widthBreakpoint = 675;
+    private const double widthBreakpoint = 540;
 
     private IEnumerable<IValidatable> validatables = [];
 

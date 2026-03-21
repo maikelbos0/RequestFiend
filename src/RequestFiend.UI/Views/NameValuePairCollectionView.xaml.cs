@@ -1,17 +1,22 @@
 using Microsoft.Maui.Controls;
 using RequestFiend.Models;
-using System;
 
 namespace RequestFiend.UI.Views;
 
 public partial class NameValuePairCollectionView : ContentView {
     public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(NameValuePairModelCollection), typeof(NameValuePairCollectionView), default(NameValuePairModelCollection));
+    public static readonly BindableProperty NameLabelTextProperty = BindableProperty.Create(nameof(NameLabelText), typeof(string), typeof(NameValuePairCollectionView), default(string));
     public static readonly BindableProperty DeleteButtonTextProperty = BindableProperty.Create(nameof(DeleteButtonText), typeof(string), typeof(NameValuePairCollectionView), default(string));
     public static readonly BindableProperty AddButtonTextProperty = BindableProperty.Create(nameof(AddButtonText), typeof(string), typeof(NameValuePairCollectionView), default(string));
 
     public NameValuePairModelCollection ItemsSource {
         get => (NameValuePairModelCollection)GetValue(ItemsSourceProperty);
         set => SetValue(ItemsSourceProperty, value);
+    }
+
+    public string NameLabelText {
+        get => (string)GetValue(NameLabelTextProperty);
+        set => SetValue(NameLabelTextProperty, value);
     }
 
     public string DeleteButtonText {
