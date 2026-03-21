@@ -88,6 +88,19 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                    <Label Text="Content" Style="{StaticResource EntryLabel}"/>
+
+                    <Entry
+                        Text="(none)" 
+                        IsReadOnly="True"
+                        IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.None}}"/>
+
+                    <Editor 
+                        Text="{Binding Response.Content.TextContent}" 
+                        HeightRequest="300"
+                        IsReadOnly="True"
+                        IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Text}}"/>
                 </VerticalStackLayout>
             </Border>
 
@@ -106,10 +119,10 @@
                     <Label Text="Source" Style="{StaticResource EntryLabel}"/>
 
                     <Entry Text="{Binding Exception.Source}" IsReadOnly="True" />
-                    
+
                     <Label Text="Stack trace" Style="{StaticResource EntryLabel}"/>
 
-                    <Editor Text="{Binding Exception.StackTrace}" HeightRequest="300" />
+                    <Editor Text="{Binding Exception.StackTrace}" HeightRequest="300" IsReadOnly="True"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
