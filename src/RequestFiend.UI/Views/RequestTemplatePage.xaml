@@ -18,7 +18,7 @@
 
                 <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"/>
             </StackLayout>
-            
+
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Label Text="Name" Style="{StaticResource EntryLabel}"/>
@@ -45,13 +45,27 @@
 
                     <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
 
-                    <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}" IsVisible="{Binding UsesJsonContent}">
-                        <Button Text="Validate JSON" Command="{Binding ValidateJsonCommand}"/>
+                    <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesUnstructuredStringContent}"/>
 
-                        <Button Text="Format JSON" Command="{Binding FormatJsonCommand}"/>
-                    </StackLayout>
-
-                    <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStringContent}"/>
+                    <Label Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStructuredStringContent}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Content (" />
+                                <Span Style="{StaticResource LinkButton}" Text="validate">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ValidateJsonCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=") (" />
+                                <Span Style="{StaticResource LinkButton}" Text="format">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding FormatJsonCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=")" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
                     <views:ValidatableContentEditor Text="{Binding StringContent}" IsVisible="{Binding UsesStringContent}"/>
                 </VerticalStackLayout>

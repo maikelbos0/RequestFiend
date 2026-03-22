@@ -11,10 +11,10 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(Core.ContentType.None, false, false)]
-    [InlineData(Core.ContentType.Text, true, false)]
-    [InlineData(Core.ContentType.Json, true, true)]
-    public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
+    [InlineData(Core.ContentType.None, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true)]
+    [InlineData(Core.ContentType.Json, true, true, false)]
+    public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -31,14 +31,15 @@ public class RequestTemplateModelTests {
         };
 
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
-        Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
+        Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
+        Assert.Equal(expectedUsesUnstructuredStringContent, subject.UsesUnstructuredStringContent);
     }
 
     [Theory]
-    [InlineData(Core.ContentType.None, false, false)]
-    [InlineData(Core.ContentType.Text, true, false)]
-    [InlineData(Core.ContentType.Json, true, true)]
-    public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesJsonContent) {
+    [InlineData(Core.ContentType.None, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true)]
+    [InlineData(Core.ContentType.Json, true, true, false)]
+    public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -68,7 +69,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
-        Assert.Equal(expectedUsesJsonContent, subject.UsesJsonContent);
+        Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
+        Assert.Equal(expectedUsesUnstructuredStringContent, subject.UsesUnstructuredStringContent);
     }
 
     [Fact]
@@ -286,7 +288,7 @@ public class RequestTemplateModelTests {
     [Theory]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
-    public async Task ValidateJson_When_Valid(string stringContent) {
+    public async Task ValidateStructuredText_When_Valid(string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -301,7 +303,7 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
-        await subject.ValidateJson();
+        await subject.ValidateStructuredText();
 
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -311,7 +313,7 @@ public class RequestTemplateModelTests {
     [InlineData("")]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
-    public async Task ValidateJson_When_Invalid(string stringContent) {
+    public async Task ValidateStructuredText_When_Invalid(string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -326,7 +328,7 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
-        await subject.ValidateJson();
+        await subject.ValidateStructuredText();
 
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
@@ -335,7 +337,7 @@ public class RequestTemplateModelTests {
     [Theory]
     [InlineData("{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
     [InlineData("{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
-    public async Task FormatJson_When_Valid(string stringContent, string expectedStringContent) {
+    public async Task FormatStructuredText_When_Valid(string stringContent, string expectedStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -350,7 +352,7 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
-        await subject.FormatJson();
+        await subject.FormatStructuredText();
 
         Assert.Equal(subject.StringContent.Value, expectedStringContent);
 
@@ -362,7 +364,7 @@ public class RequestTemplateModelTests {
     [InlineData("")]
     [InlineData("Text")]
     [InlineData("\"Field\":\"Value\"")]
-    public async Task FormatJson_When_Invalid(string stringContent) {
+    public async Task FormatStructuredText_When_Invalid(string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -377,7 +379,7 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
-        await subject.FormatJson();
+        await subject.FormatStructuredText();
 
         Assert.Equal(stringContent, subject.StringContent.Value);
 

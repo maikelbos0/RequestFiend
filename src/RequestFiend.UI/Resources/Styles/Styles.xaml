@@ -461,4 +461,14 @@
         <Setter Property="RowSpacing" Value="15"/>
     </Style>
 
+    <Style TargetType="Span">
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style TargetType="Span" x:Key="LinkButton">
+        <Setter Property="TextDecorations" Value="Underline"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+    </Style>
+
 </ResourceDictionary>

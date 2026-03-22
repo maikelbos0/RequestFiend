@@ -28,7 +28,8 @@ public partial class RequestTemplateModel : BoundModelBase {
     public NameValuePairModelCollection Headers { get; set; }
     public ValidatableProperty<string> ContentType { get; set; }
     public bool UsesStringContent { get => field; private set => SetProperty(ref field, value); }
-    public bool UsesJsonContent { get => field; private set => SetProperty(ref field, value); }
+    public bool UsesStructuredStringContent { get => field; private set => SetProperty(ref field, value); }
+    public bool UsesUnstructuredStringContent { get => field; private set => SetProperty(ref field, value); }
     public ValidatableProperty<string> StringContent { get; set; }
 
     public RequestTemplateModel(
@@ -55,7 +56,8 @@ public partial class RequestTemplateModel : BoundModelBase {
 
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
-        UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
 
         ConfigureState([Name, Method, Url, ContentType, StringContent, Headers]);
     }
@@ -105,7 +107,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     [RelayCommand]
-    public async Task ValidateJson() {
+    public async Task ValidateStructuredText() {
         try {
             _ = JsonDocument.Parse(StringContent.Value);
             messageService.Send(new SuccessMessage("JSON content has been validated"));
@@ -116,7 +118,7 @@ public partial class RequestTemplateModel : BoundModelBase {
     }
 
     [RelayCommand]
-    public async Task FormatJson() {
+    public async Task FormatStructuredText() {
         try {
             var document = JsonDocument.Parse(StringContent.Value ?? "");
             StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
@@ -140,7 +142,8 @@ public partial class RequestTemplateModel : BoundModelBase {
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(ValidatableProperty<>.Value)) {
             UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
-            UsesJsonContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+            UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+            UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
         }
     }
 }
