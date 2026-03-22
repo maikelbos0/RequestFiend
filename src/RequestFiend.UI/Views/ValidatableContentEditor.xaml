@@ -13,7 +13,6 @@
         IsSpellCheckEnabled="False"
         IsTextPredictionEnabled="False"
         HeightRequest="300"
-        FontFamily="FiraCodeRegular"
         AbsoluteLayout.LayoutFlags="WidthProportional"
         AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
 
