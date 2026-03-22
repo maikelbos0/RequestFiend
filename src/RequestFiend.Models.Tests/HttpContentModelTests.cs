@@ -50,4 +50,18 @@ public class HttpContentModelTests {
         Assert.Equal(expectedTextContent, subject.TextContent);
         Assert.Equal(expectedBinaryContent, subject.BinaryContent);
     }
+
+    [Theory]
+    [InlineData(new byte[] { }, "")]
+    [InlineData(new byte[] { 0 }, "00")]
+    [InlineData(new byte[] { 0, 255 }, "00FF")]
+    [InlineData(new byte[] { 0, 1, 2, 3 }, "00010203")]
+    [InlineData(new byte[] { 0, 1, 2, 3, 4 }, "00010203 04")]
+    [InlineData(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }, "00010203 04050607")]
+    [InlineData(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, "00010203 04050607 08")]
+    public void TranslateToHexContent(byte[] binaryContent, string expectedResult) {
+        var result = HttpContentModel.TranslateToHexContent(binaryContent);
+
+        Assert.Equal(expectedResult, result);
+    }
 }
