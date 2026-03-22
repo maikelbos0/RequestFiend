@@ -3,5 +3,6 @@
 public enum HttpContentType {
     None,
     Text,
+    Image,
     Unknown
 }

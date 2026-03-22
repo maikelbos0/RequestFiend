@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial record HttpResponseModel(string Status, ImmutableArray<HttpHeaderModel> Headers, HttpContentModel Content) {
+public partial record HttpResponseModel(string Status, HttpHeaderModel[] Headers, HttpContentModel Content) {
     public async static Task<HttpResponseModel> Create(HttpResponseMessage response) {
         // Read content before headers since reading content can add content headers like Content-Length
         var content = await HttpContentModel.Create(response.Content);

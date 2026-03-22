@@ -94,6 +94,12 @@
                         HeightRequest="300"
                         IsReadOnly="True"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Text}}"/>
+
+                    <Image 
+                        HeightRequest="300"
+                        Source="{Binding Response.Content.BinaryContent, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                        IsAnimationPlaying="true"
+                        IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Image}}"/>
                 </VerticalStackLayout>
             </Border>
 

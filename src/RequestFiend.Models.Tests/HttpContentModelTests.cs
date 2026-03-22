@@ -34,6 +34,12 @@ public class HttpContentModelTests {
     [InlineData("application/json", null, HttpContentType.Text, "Content", null)]
     [InlineData("application/xhtml+json", null, HttpContentType.Text, "Content", null)]
     [InlineData("application/octet-stream", "UTF-8", HttpContentType.Text, "Content", null)]
+    [InlineData("image/bmp", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
+    [InlineData("image/gif", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
+    [InlineData("image/jpeg", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
+    [InlineData("image/png", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
+    [InlineData("image/svg+xml", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
+    [InlineData("image/webp", null, HttpContentType.Unknown, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
     [InlineData("application/octet-stream", null, HttpContentType.Unknown, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
     public async Task Create(string mediaType, string? charSet, HttpContentType expectedType, string? expectedTextContent, byte[]? expectedBinaryContent) {
         var content = new StringContent("Content", new MediaTypeHeaderValue(mediaType, charSet));
