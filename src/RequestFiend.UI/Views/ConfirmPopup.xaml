@@ -11,10 +11,10 @@
 	<VerticalStackLayout>
 		<Label x:Name="MessageLabel" />
 
-		<HorizontalStackLayout HorizontalOptions="End">
-			<Button Text="Ok" Clicked="OnOkClicked"/>
+		<Grid ColumnDefinitions="*,*">
+			<Button Text="Ok" Clicked="OnOkClicked" MinimumWidthRequest="-1"/>
 
-			<Button Text="Cancel" Clicked="OnCancelClicked"/>
-		</HorizontalStackLayout>
+			<Button Text="Cancel" Clicked="OnCancelClicked" MinimumWidthRequest="-1" Grid.Column="1"/>
+		</Grid>
 	</VerticalStackLayout>
 </toolkit:Popup>

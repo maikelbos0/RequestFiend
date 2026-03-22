@@ -9,6 +9,6 @@
 	<VerticalStackLayout>
 		<Label x:Name="MessageLabel" />
 
-		<Button Text="Dismiss" Clicked="OnDismissClicked" />
+		<Button Text="Dismiss" Clicked="OnDismissClicked"/>
 	</VerticalStackLayout>
 </toolkit:Popup>
