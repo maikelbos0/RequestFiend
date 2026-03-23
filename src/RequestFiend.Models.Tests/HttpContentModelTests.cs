@@ -34,21 +34,23 @@ public class HttpContentModelTests {
     [InlineData("application/json", null, HttpContentType.Text, "Content", null)]
     [InlineData("application/xhtml+json", null, HttpContentType.Text, "Content", null)]
     [InlineData("application/octet-stream", "UTF-8", HttpContentType.Text, "Content", null)]
-    [InlineData("image/bmp", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    [InlineData("image/gif", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    [InlineData("image/jpeg", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    [InlineData("image/png", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    [InlineData("image/svg+xml", null, HttpContentType.Image, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    [InlineData("image/webp", null, HttpContentType.Unknown, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    [InlineData("application/octet-stream", null, HttpContentType.Unknown, null, new byte[] { 67, 111, 110, 116, 101, 110, 116 })]
-    public async Task Create(string mediaType, string? charSet, HttpContentType expectedType, string? expectedTextContent, byte[]? expectedBinaryContent) {
+    [InlineData("image/bmp", null, HttpContentType.Image, null, "436F6E74 656E74")]
+    [InlineData("image/gif", null, HttpContentType.Image, null, "436F6E74 656E74")]
+    [InlineData("image/jpeg", null, HttpContentType.Image, null, "436F6E74 656E74")]
+    [InlineData("image/png", null, HttpContentType.Image, null, "436F6E74 656E74")]
+    [InlineData("image/svg+xml", null, HttpContentType.Image, null, "436F6E74 656E74")]
+    [InlineData("image/webp", null, HttpContentType.Unknown, null, "436F6E74 656E74")]
+    [InlineData("application/octet-stream", null, HttpContentType.Unknown, null, "436F6E74 656E74")]
+    public async Task Create(string mediaType, string? charSet, HttpContentType expectedType, string? expectedTextContent, string? expectedHexContent) {
         var content = new StringContent("Content", new MediaTypeHeaderValue(mediaType, charSet));
 
         var subject = await HttpContentModel.Create(content);
 
         Assert.Equal(expectedType, subject.Type);
+        Assert.Equal(mediaType, subject.MediaType);
+        Assert.Equal([67, 111, 110, 116, 101, 110, 116], subject.BinaryContent);
+        Assert.Equal(expectedHexContent, subject.HexContent);
         Assert.Equal(expectedTextContent, subject.TextContent);
-        Assert.Equal(expectedBinaryContent, subject.BinaryContent);
     }
 
     [Theory]

@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial record HttpContentModel(HttpContentType Type, string? TextContent, byte[]? BinaryContent, string? HexContent) {
+public partial record HttpContentModel(HttpContentType Type, string? MediaType, byte[]? BinaryContent, string? HexContent, string? TextContent) {
     private static readonly HashSet<string> imageMediaTypes = ["image/bmp", "image/gif", "image/jpeg", "image/png", "image/svg+xml"];
     private static readonly HashSet<HttpContentType> textContentTypes = [HttpContentType.Text];
-    private static readonly HashSet<HttpContentType> binaryContentTypes = [HttpContentType.Image, HttpContentType.Unknown];
     private static readonly string hexStringLookup = Convert.ToHexString([.. Enumerable.Range(byte.MinValue, byte.MaxValue - byte.MinValue + 1).Select(i => (byte)i)]);
 
     public async static Task<HttpContentModel> Create(HttpContent? content) {
         if (content == null) {
             // TODO what other ways are there?
-            return new(HttpContentType.None, null, null, null);
+            return new(HttpContentType.None, null, null, null, null);
         }
 
         var type = GetType(content.Headers.ContentType);
+        var binaryContent = await content.ReadAsByteArrayAsync();
+        var hexContent = textContentTypes.Contains(type) ? null : TranslateToHexContent(binaryContent);
         var textContent = textContentTypes.Contains(type) ? await content.ReadAsStringAsync() : null;
-        var binaryContent = binaryContentTypes.Contains(type) ? await content.ReadAsByteArrayAsync() : null;
 
-        return new(type, textContent, binaryContent, TranslateToHexContent(binaryContent));
+        return new(type, content.Headers.ContentType?.MediaType, binaryContent, hexContent, textContent);
     }
 
     private static HttpContentType GetType(MediaTypeHeaderValue? contentType) {
