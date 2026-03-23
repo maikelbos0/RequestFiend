@@ -14,7 +14,7 @@ public partial class NewRequestTemplateModel : BoundModelBase {
     private readonly RequestTemplateCollection collection;
 
     public ValidatableProperty<string> Name { get; set; } = new(() => "", Validator.Required);
-    public ValidatableProperty<string> Method { get; set; } = new(() => "", Validator.Required);
+    public ValidatableProperty<string> Method { get; set; } = new(() => "GET", Validator.Required);
     public ValidatableProperty<string> Url { get; set; }
 
     public NewRequestTemplateModel(
