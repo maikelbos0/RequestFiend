@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using MimeMapping;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ namespace RequestFiend.Models;
 public partial class RequestModel : BoundModelBase, IRequestExchangeListener, IDisposable {
     private readonly IMessageService messageService;
     private readonly IRequestHandler requestHandler;
+    private readonly IPopupService popupService;
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
@@ -26,12 +29,14 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
     public RequestModel(
         IMessageService messageService,
         IRequestHandler requestHandler,
+        IPopupService popupService,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
     ) : base($"{file.Name} - {request.Name} - Exchange", $"{request.Name} - Exchange") {
         this.messageService = messageService;
         this.requestHandler = requestHandler;
+        this.popupService = popupService;
         this.file = file;
         this.collection = collection;
         this.request = request;
@@ -67,6 +72,39 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
     [RelayCommand]
     public void CancelExecution() {
         executingCancellationTokenSource?.Cancel();
+    }
+
+    [RelayCommand]
+    public async Task SaveResponseContent() {
+        if (Response?.Content?.BinaryContent == null) {
+            return;
+        }
+
+        var extension = GetExtension();
+        var saveResult = await popupService.ShowSaveDialog(GetExtension(), new MemoryStream(Response.Content.BinaryContent));
+
+        if (saveResult.IsSuccessful) {
+            messageService.Send(new SuccessMessage("Response content has been saved"));
+        }
+        else if (saveResult.Exception != null) {
+            await popupService.ShowErrorPopup($"Failed to save response content: {saveResult.Exception.Message}");
+        }
+
+        string GetExtension() {
+            if (Response.Content.MediaType != null) {
+                var extensions = MimeUtility.GetExtensions(Response.Content.MediaType);
+
+                if (extensions != null) {
+                    return $".{extensions[0]}";
+                }
+            }
+
+            if (Response.Content.Type == HttpContentType.Text) {
+                return ".txt";
+            }
+
+            return ".bin";
+        }
     }
 
     [RelayCommand]

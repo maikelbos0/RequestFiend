@@ -82,7 +82,21 @@
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
-                    <Label Text="Content" Style="{StaticResource EntryLabel}"/>
+                    <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding Response.Content.BinaryContent, Converter={toolkit:IsNullConverter}}"/>
+
+                    <Label Style="{StaticResource EntryLabel}" IsVisible="{Binding Response.Content.BinaryContent, Converter={toolkit:IsNotNullConverter}}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Content (" />
+                                <Span Style="{StaticResource LinkButton}" Text="save">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SaveResponseContentCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=")" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
                     <Entry
                         Text="(none)" 
