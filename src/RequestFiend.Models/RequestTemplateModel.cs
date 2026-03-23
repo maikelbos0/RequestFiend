@@ -135,7 +135,7 @@ public partial class RequestTemplateModel : BoundModelBase {
             collection.Requests.Remove(request);
             await requestTemplateCollectionService.Save(file.FilePath, collection);
             messageService.Send(new RequestTemplateDeletedMessage(), Id);
-            messageService.Send(new SuccessMessage("Request had been deleted"));
+            messageService.Send(new SuccessMessage("Request has been deleted"));
         }
     }
 
