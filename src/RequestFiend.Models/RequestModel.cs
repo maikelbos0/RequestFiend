@@ -80,7 +80,6 @@ public partial class RequestModel : BoundModelBase, IRequestExchangeListener, ID
             return;
         }
 
-        var extension = GetExtension();
         var saveResult = await popupService.ShowSaveDialog(GetExtension(), new MemoryStream(Response.Content.BinaryContent));
 
         if (saveResult.IsSuccessful) {

@@ -52,7 +52,7 @@ public class RequestTemplateCollectionModelTests {
             Url = "https://localhost"
         };
 
-        var result = subject.AddRequest(request);
+        subject.AddRequest(request);
 
         Assert.NotNull(Assert.Single(subject.Requests));
     }

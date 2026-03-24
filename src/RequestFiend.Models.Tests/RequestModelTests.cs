@@ -174,39 +174,6 @@ public class RequestModelTests {
 
     }
 
-    /*
-    [RelayCommand]
-    public async Task SaveResponseContent() {
-        if (Response?.Content?.BinaryContent == null) {
-            return;
-        }
-
-        var extension = GetExtension();
-        var saveResult = await popupService.ShowSaveDialog(GetExtension(), new MemoryStream(Response.Content.BinaryContent));
-
-        if (saveResult.IsSuccessful) {
-            messageService.Send(new SuccessMessage("Response content has been saved"));
-        }
-        else if (saveResult.Exception != null) {
-            await popupService.ShowErrorPopup($"Failed to save response content: {saveResult.Exception.Message}");
-        }
-
-        string GetExtension() {
-            if (Response.Content.MediaType != null) {
-                var extensions = MimeUtility.GetExtensions(Response.Content.MediaType);
-
-                if (extensions != null) {
-                    return extensions[0];
-                }
-            }
-
-            if (Response.Content.Type == HttpContentType.Text) {
-                return ".txt";
-            }
-
-            return ".bin";
-        }
-    }*/
     [Fact]
     public void Close() {
         const string filePath = @"C:\Documents\External data requests.json";
@@ -240,9 +207,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var isExecutingValues = new List<bool>();
-        var pageTitleBaseValues = new List<string>();
-        var shellItemTitleBaseValues = new List<string>();
         var expectedRequest = new HttpRequestMessage();
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
@@ -264,9 +228,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var isExecutingValues = new List<bool>();
-        var pageTitleBaseValues = new List<string>();
-        var shellItemTitleBaseValues = new List<string>();
         var expectedResponse = new HttpResponseMessage();
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
@@ -288,9 +249,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var isExecutingValues = new List<bool>();
-        var pageTitleBaseValues = new List<string>();
-        var shellItemTitleBaseValues = new List<string>();
         var expectedException = new Exception();
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
