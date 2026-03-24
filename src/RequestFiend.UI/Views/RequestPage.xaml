@@ -2,6 +2,7 @@
 <views:ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:RequestFiend.Models.Converters;assembly=RequestFiend.Models"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
@@ -116,7 +117,7 @@
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Image}}"/>
 
                     <Editor 
-                        Text="{Binding Response.Content.HexContent}" 
+                        Text="{Binding Response.Content.BinaryContent, Converter={converters:ByteArrayToHexStringConverter}, Mode=OneWay}" 
                         HeightRequest="300"
                         IsReadOnly="True"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Unknown}}"/>

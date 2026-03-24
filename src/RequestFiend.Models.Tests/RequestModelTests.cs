@@ -104,7 +104,7 @@ public class RequestModelTests {
         var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
-            Response = new("200 OK", [], new(contentType, mediaType, [0, 1, 2, 3], null, null))
+            Response = new("200 OK", [], new(contentType, mediaType, [0, 1, 2, 3], null))
         };
 
         await subject.SaveResponseContent();
@@ -134,7 +134,7 @@ public class RequestModelTests {
         var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
-            Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null, null))
+            Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
         };
 
         await subject.SaveResponseContent();
@@ -163,7 +163,7 @@ public class RequestModelTests {
         var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
-            Response = new("200 OK", [], new(HttpContentType.None, null, null, null, null))
+            Response = new("200 OK", [], new(HttpContentType.None, null, null, null))
         };
 
         await subject.SaveResponseContent();
