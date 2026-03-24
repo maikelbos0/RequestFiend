@@ -53,13 +53,13 @@
                                 <Span Text="Content (" />
                                 <Span Style="{StaticResource LinkButton}" Text="validate">
                                     <Span.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ValidateJsonCommand}"/>
+                                        <TapGestureRecognizer Command="{Binding ValidateStructuredTextCommand}"/>
                                     </Span.GestureRecognizers>
                                 </Span>
                                 <Span Text=") (" />
                                 <Span Style="{StaticResource LinkButton}" Text="format">
                                     <Span.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding FormatJsonCommand}"/>
+                                        <TapGestureRecognizer Command="{Binding FormatStructuredTextCommand}"/>
                                     </Span.GestureRecognizers>
                                 </Span>
                                 <Span Text=")" />
