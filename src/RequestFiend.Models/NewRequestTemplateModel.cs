@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class NewRequestTemplateModel : BoundModelBase {
+public partial class NewRequestTemplateModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IMessageService messageService;
     private readonly RequestTemplateCollectionFileModel file;

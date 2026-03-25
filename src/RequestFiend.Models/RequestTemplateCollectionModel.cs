@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateCollectionModel : BoundModelBase {
+public partial class RequestTemplateCollectionModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
@@ -56,8 +56,8 @@ public partial class RequestTemplateCollectionModel : BoundModelBase {
         }
     }
 
-    private void UpdateState() {
-        var models = requests.Cast<BoundModelBase>().Append(Settings).Append(NewRequest);
+    protected override void UpdateState() {
+        var models = requests.Cast<PageBoundModelBase>().Append(Settings).Append(NewRequest);
         var isModified = IsModified;
 
         HasError = models.Any(model => model.HasError);

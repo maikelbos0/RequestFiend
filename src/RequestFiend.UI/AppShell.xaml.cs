@@ -67,7 +67,7 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
                 BindingContext = collectionModel
             };
 
-            collectionItem.SetBinding(BaseShellItem.TitleProperty, nameof(BoundModelBase.ShellItemTitle));
+            collectionItem.SetBinding(BaseShellItem.TitleProperty, nameof(PageBoundModelBase.ShellItemTitle));
 
             collectionItem.Items.Add(new Tab() {
                 Icon = "bars_solid_full.png",

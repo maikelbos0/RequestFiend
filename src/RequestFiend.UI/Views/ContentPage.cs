@@ -6,7 +6,7 @@ using System.ComponentModel;
 namespace RequestFiend.UI.Views;
 
 public partial class ContentPage : Microsoft.Maui.Controls.ContentPage {
-    public ContentPage(BoundModelBase model) {
+    public ContentPage(PageBoundModelBase model) {
         BindingContext = model;
 
         ParentChanged += UpdateParentTitleAndRegisterNext;
@@ -24,7 +24,7 @@ public partial class ContentPage : Microsoft.Maui.Controls.ContentPage {
         }
 
         void UpdateAncestorTitles(object? sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName == nameof(BoundModelBase.ShellItemTitle)) {
+            if (e.PropertyName == nameof(PageBoundModelBase.ShellItemTitle)) {
                 Element item = this;
 
                 while (item is not Tab && item.Parent is BaseShellItem shellItem) {
@@ -38,6 +38,6 @@ public partial class ContentPage : Microsoft.Maui.Controls.ContentPage {
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
 
-        ((BoundModelBase)BindingContext).PageWidth = Width;
+        ((PageBoundModelBase)BindingContext).PageWidth = Width;
     }
 }

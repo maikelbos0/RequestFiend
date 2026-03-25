@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestModel : BoundModelBase, IRequestExchangeListener, IDisposable {
+public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener, IDisposable {
     private readonly IMessageService messageService;
     private readonly IRequestHandler requestHandler;
     private readonly IPopupService popupService;

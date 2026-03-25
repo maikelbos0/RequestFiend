@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class MainPageModel : BoundModelBase {
+public partial class MainPageModel : PageBoundModelBase {
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
     private readonly IPreferencesService preferencesService;

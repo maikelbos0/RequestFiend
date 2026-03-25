@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class PreferencesModel : BoundModelBase {
+public partial class PreferencesModel : PageBoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;

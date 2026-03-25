@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateModel : BoundModelBase {
+public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
@@ -105,6 +105,10 @@ public partial class RequestTemplateModel : BoundModelBase {
         await requestTemplateCollectionService.Save(file.FilePath, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
+
+    [RelayCommand]
+    public Task ShowQueryStringPopup()
+        => popupService.ShowQueryStringPopup();
 
     [RelayCommand]
     public async Task ValidateStructuredText() {
