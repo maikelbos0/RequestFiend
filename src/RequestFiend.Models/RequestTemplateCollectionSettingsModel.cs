@@ -30,8 +30,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         this.collection = collection;
 
         DefaultUrl = new(() => collection.DefaultUrl);
-        DefaultHeaders = new(collection.DefaultHeaders);
-        Variables = new(collection.Variables);
+        DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
+        Variables = new(collection.Variables, Validator.Variable);
 
         ConfigureState([DefaultUrl, DefaultHeaders, Variables]);
     }

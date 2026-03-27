@@ -1,4 +1,5 @@
 ﻿using RequestFiend.Core;
+using RequestFiend.Models.PropertyTypes;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -9,7 +10,7 @@ public class NameValuePairModelTests {
     [InlineData("Name", false)]
     public void Constructor(string name, bool expectedHasError) {
         var pair = new NameValuePair() { Name = name, Value = "Value" };
-        var subject = new NameValuePairModel(pair);
+        var subject = new NameValuePairModel(pair, Validator.Required);
 
         Assert.Equal(pair.Name, subject.Name.Value);
         Assert.Equal(pair.Value, subject.Value.Value);
@@ -24,7 +25,7 @@ public class NameValuePairModelTests {
     [InlineData(false, true, false, false, false, true)]
     [InlineData(false, false, false, true, false, true)]
     public void State(bool nameHasError, bool nameIsModified, bool valueHasError, bool valueIsModified, bool expectedHasError, bool expectedIsModified) {
-        var subject = new NameValuePairModel(new() { Name = "Name", Value = "Value" }) {
+        var subject = new NameValuePairModel("Name", "Value", Validator.Required) {
             Name = { HasError = nameHasError, IsModified = nameIsModified },
             Value = { HasError = valueHasError, IsModified = valueIsModified }
         };
@@ -35,7 +36,7 @@ public class NameValuePairModelTests {
 
     [Fact]
     public void Reset() {
-        var subject = new NameValuePairModel(new() { Name = "PreviousName", Value = "PreviousValue" });
+        var subject = new NameValuePairModel("PreviousName", "PreviousValue", Validator.Required);
 
         var resetPair = new NameValuePair() {
             Name = "NewName",

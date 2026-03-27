@@ -50,7 +50,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Name = new(() => request.Name, Validator.Required);
         Method = new(() => request.Method, Validator.Required);
         Url = new(() => request.Url, Validator.Required);
-        Headers = new(request.Headers);
+        Headers = new(request.Headers, Validator.Required);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
 
@@ -107,8 +107,8 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public Task ShowQueryStringPopup()
-        => popupService.ShowQueryStringPopup();
+    public Task ShowUrlPopup()
+        => popupService.ShowUrlPopup();
 
     [RelayCommand]
     public async Task ValidateStructuredText() {

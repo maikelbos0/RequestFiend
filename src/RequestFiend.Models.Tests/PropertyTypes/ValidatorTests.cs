@@ -21,4 +21,17 @@ public class ValidatorTests {
     public void Numeric(string value, bool expectedResult) {
         Assert.Equal(expectedResult, Validator.Numeric(value));
     }
+
+    [Theory]
+    [InlineData("Foo", true)]
+    [InlineData("123", true)]
+    [InlineData("Да", true)]
+    [InlineData("٢٣٤٥٦٧٨٩", true)]
+    [InlineData("１２３", true)]
+    [InlineData("Foo+132", false)]
+    [InlineData("Foo 132", false)]
+    [InlineData("Foo/132", false)]
+    public void Variable(string value, bool expectedResult) {
+        Assert.Equal(expectedResult, Validator.Variable(value));
+    }
 }

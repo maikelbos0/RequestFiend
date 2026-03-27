@@ -10,6 +10,7 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel>, IValidatable {
+    private readonly Func<string, bool> nameValidator;
     private int unmodifiedCount;
 
     public bool HasError {
@@ -42,15 +43,16 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         }
     }
 
-    public NameValuePairModelCollection(List<NameValuePair> collection) {
+    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator) {
         CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            Add(new(item));
+            Add(new(item, nameValidator));
         }
 
         unmodifiedCount = Count;
         IsModified = false;
+        this.nameValidator = nameValidator;
     }
 
     [RelayCommand]
@@ -59,7 +61,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     [RelayCommand]
     public void OnAddClicked()
-        => Add(new());
+        => Add(new(nameValidator));
 
     public void Reset(List<NameValuePair> collection) {
         if (collection.Count != Count) {

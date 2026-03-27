@@ -12,14 +12,14 @@ public class NameValuePairModel : ObservableObject, IValidatable {
     public bool HasError { get => field; set => SetProperty(ref field, value); }
     public bool IsModified { get => field; set => SetProperty(ref field, value); }
 
-    public NameValuePairModel() : this("", "") { }
+    public NameValuePairModel(Func<string, bool> nameValidator) : this("", "", nameValidator) { }
 
-    public NameValuePairModel(string name, string value) : this(() => name, () => value) { }
+    public NameValuePairModel(string name, string value, Func<string, bool> nameValidator) : this(() => name, () => value, nameValidator) { }
 
-    public NameValuePairModel(NameValuePair pair) : this(() => pair.Name, () => pair.Value) { }
+    public NameValuePairModel(NameValuePair pair, Func<string, bool> nameValidator) : this(() => pair.Name, () => pair.Value, nameValidator) { }
 
-    private NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider) {
-        Name = new(nameProvider, Validator.Required);
+    private NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider, Func<string, bool> nameValidator) {
+        Name = new(nameProvider, nameValidator);
         Value = new(valueProvider);
 
         Name.PropertyChanged += OnValidatablePropertyChanged;

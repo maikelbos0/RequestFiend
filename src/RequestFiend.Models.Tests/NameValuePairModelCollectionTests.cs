@@ -1,4 +1,5 @@
 ﻿using RequestFiend.Core;
+using RequestFiend.Models.PropertyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ public class NameValuePairModelCollectionTests {
             new() { Name = name, Value = "FirstValue" },
             new() { Name = "SecondName", Value = "SecondValue" }
         };
-        var subject = new NameValuePairModelCollection(collection);
+        var subject = new NameValuePairModelCollection(collection, Validator.Required);
 
         Assert.Equal(collection.Count, subject.Count);
         Assert.Equal(expectedHasError, subject.HasError);
@@ -41,7 +42,7 @@ public class NameValuePairModelCollectionTests {
             new() { Name = "FirstName", Value = "FirstValue" },
             new() { Name = "SecondName", Value = "SecondValue" }
         };
-        var subject = new NameValuePairModelCollection(collection);
+        var subject = new NameValuePairModelCollection(collection, Validator.Required);
 
         subject[0].HasError = pairHasEror;
         subject[0].IsModified = pairIsModified;
@@ -51,7 +52,7 @@ public class NameValuePairModelCollectionTests {
         }
 
         for (var i = 0; i < pairsToAdd; i++) {
-            subject.Add(new());
+            subject.Add(new(Validator.Required));
         }
 
         Assert.Equal(expectedHasError, subject.HasError);
@@ -61,7 +62,7 @@ public class NameValuePairModelCollectionTests {
 
     [Fact]
     public void OnAddClicked() {
-        var subject = new NameValuePairModelCollection([]);
+        var subject = new NameValuePairModelCollection([], Validator.Required);
 
         subject.OnAddClicked();
 
@@ -72,11 +73,11 @@ public class NameValuePairModelCollectionTests {
 
     [Fact]
     public void OnRemoveClicked() {
-        var pair = new NameValuePairModel();
-        var subject = new NameValuePairModelCollection([]) {
-            new(),
+        var pair = new NameValuePairModel(Validator.Required);
+        var subject = new NameValuePairModelCollection([], Validator.Required) {
+            new(Validator.Required),
             pair,
-            new()
+            new(Validator.Required)
         };
 
         subject.OnRemoveClicked(pair);
@@ -89,8 +90,8 @@ public class NameValuePairModelCollectionTests {
 
     [Fact]
     public void Reset() {
-        var subject = new NameValuePairModelCollection([]) {
-            new()
+        var subject = new NameValuePairModelCollection([], Validator.Required) {
+            new(Validator.Required)
         };
 
         var collection = new List<NameValuePair>() {
@@ -98,7 +99,7 @@ public class NameValuePairModelCollectionTests {
             new() { Name = "SecondName", Value = "SecondValue" }
         };
 
-        subject.Add(new());
+        subject.Add(new(Validator.Required));
 
         subject.Reset(collection);
 
@@ -116,9 +117,9 @@ public class NameValuePairModelCollectionTests {
     [InlineData(1)]
     [InlineData(3)]
     public void Reset_Throws_For_Wrong_Length(int collectionLength) {
-        var subject = new NameValuePairModelCollection([]) {
-            new(),
-            new()
+        var subject = new NameValuePairModelCollection([], Validator.Required) {
+            new(Validator.Required),
+            new(Validator.Required)
         };
 
         var collection = Enumerable.Range(0, collectionLength)

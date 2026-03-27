@@ -6,7 +6,7 @@ namespace RequestFiend.Models;
 
 public partial class UrlModel : BoundModelBase {
     public ValidatableProperty<string> BaseUrl { get; }
-    public NameValuePairModelCollection Parameters { get; } = new([]);
+    public NameValuePairModelCollection Parameters { get; } = new([], Validator.Required);
     public string Url { get => field; private set => SetProperty(ref field, value); }
 
     public UrlModel(string url) {
@@ -22,10 +22,10 @@ public partial class UrlModel : BoundModelBase {
                 var valueIndex = parameter.IndexOf('=');
 
                 if (valueIndex == -1) {
-                    Parameters.Add(new(parameter, ""));
+                    Parameters.Add(new(parameter, "", Validator.Required));
                 }
                 else {
-                    Parameters.Add(new(parameter.Substring(0, valueIndex), parameter.Substring(valueIndex + 1)));
+                    Parameters.Add(new(parameter.Substring(0, valueIndex), parameter.Substring(valueIndex + 1), Validator.Required));
                 }
             }
         }
