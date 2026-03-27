@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RequestFiend.Core;
 
@@ -10,7 +11,7 @@ public class RequestTemplateCollection {
     public List<NameValuePair> Variables { get; set; } = [];
 
     public string ApplyVariables(string value) {
-        foreach (var variable in Variables) {
+        foreach (var variable in Variables.Where(variable => !variable.Name.Any(c => !char.IsLetterOrDigit(c) && c != '_'))) {
             value = value.Replace($"{{{{{variable.Name}}}}}", variable.Value, StringComparison.InvariantCultureIgnoreCase);
         }
 

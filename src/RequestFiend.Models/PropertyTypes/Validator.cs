@@ -5,5 +5,5 @@ namespace RequestFiend.Models.PropertyTypes;
 public static class Validator {
     public static bool Required(string value) => !string.IsNullOrEmpty(value);
     public static bool Numeric(string value) => !string.IsNullOrEmpty(value) && !value.Any(c => !char.IsAsciiDigit(c));
-    public static bool Variable(string value) => !string.IsNullOrEmpty(value) && !value.Any(c => !char.IsLetterOrDigit(c));
+    public static bool Variable(string value) => !string.IsNullOrEmpty(value) && !value.Any(c => !char.IsLetterOrDigit(c) && c != '_');
 }

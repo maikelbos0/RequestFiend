@@ -3,17 +3,40 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateCollectionTests {
-    [Fact]
-    public void ApplyVariables_Replaces_Variables_With_Values() {
+    [Theory]
+    [InlineData("Foo")]
+    [InlineData("123")]
+    [InlineData("Да")]
+    [InlineData("٢٣٤٥٦٧٨٩")]
+    [InlineData("１２３")]
+    [InlineData("Foo_132")]
+    public void ApplyVariables_Replaces_Variable_With_Value(string name) {
         var subject = new RequestTemplateCollection() {
             Variables = {
-                new() { Name = "First", Value = "Replacement" },
-                new() { Name = "Second", Value = "Another" }
+                new() { Name = name, Value = "Replacement" }
             }
         };
 
-        var result = subject.ApplyVariables("{{First}} first and {{second}}");
+        var result = subject.ApplyVariables($"We change {{{{{name}}}}} to Replacement");
 
-        Assert.Equal("Replacement first and Another", result);
+        Assert.Equal("We change Replacement to Replacement", result);
+    }
+
+    [Theory]
+    [InlineData("Foo+132")]
+    [InlineData("Foo 132")]
+    [InlineData("Foo/132")]
+    public void ApplyVariables_Ignores_Invalid_Variables(string name) {
+        var input = $"We can leave {{{{{name}}}}} as-is";
+
+        var subject = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = name, Value = "Replacement" }
+            }
+        };
+
+        var result = subject.ApplyVariables(input);
+
+        Assert.Equal(input, result);
     }
 }

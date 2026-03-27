@@ -28,6 +28,7 @@ public class ValidatorTests {
     [InlineData("Да", true)]
     [InlineData("٢٣٤٥٦٧٨٩", true)]
     [InlineData("１２３", true)]
+    [InlineData("Foo_132", true)]
     [InlineData("Foo+132", false)]
     [InlineData("Foo 132", false)]
     [InlineData("Foo/132", false)]
