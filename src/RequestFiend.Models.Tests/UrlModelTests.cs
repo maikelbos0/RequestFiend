@@ -2,12 +2,12 @@
 
 namespace RequestFiend.Models.Tests;
 
-public class QueryStringModelTests {
+public class UrlModelTests {
     [Theory]
     [InlineData("https://localhost/api")]
     [InlineData("https://localhost/api?")]
     public void Constructor_Without_Parameters(string url) {
-        var subject = new QueryStringModel(url);
+        var subject = new UrlModel(url);
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Empty(subject.Parameters);
@@ -16,7 +16,7 @@ public class QueryStringModelTests {
 
     [Fact]
     public void Constructor_With_Parameters() {
-        var subject = new QueryStringModel("https://localhost/api?Foo&Bar=Test?&Baz");
+        var subject = new UrlModel("https://localhost/api?Foo&Bar=Test?&Baz");
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Equal(3, subject.Parameters.Count);

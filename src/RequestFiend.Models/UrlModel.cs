@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace RequestFiend.Models;
 
-public partial class QueryStringModel : BoundModelBase {
+public partial class UrlModel : BoundModelBase {
     public ValidatableProperty<string> BaseUrl { get; }
     public NameValuePairModelCollection Parameters { get; } = new([]);
     public string Url { get => field; private set => SetProperty(ref field, value); }
 
-    public QueryStringModel(string url) {
+    public UrlModel(string url) {
         var index = url.IndexOf('?');
 
         if (index == -1) {
