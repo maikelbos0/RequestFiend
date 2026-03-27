@@ -12,7 +12,9 @@ public class NameValuePairModel : ObservableObject, IValidatable {
     public bool HasError { get => field; set => SetProperty(ref field, value); }
     public bool IsModified { get => field; set => SetProperty(ref field, value); }
 
-    public NameValuePairModel() : this(() => "", () => "") { }
+    public NameValuePairModel() : this("", "") { }
+
+    public NameValuePairModel(string name, string value) : this(() => name, () => value) { }
 
     public NameValuePairModel(NameValuePair pair) : this(() => pair.Name, () => pair.Value) { }
 
