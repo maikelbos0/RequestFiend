@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using Xunit.Internal;
 
 namespace RequestFiend.Models.Tests;
 
@@ -86,6 +87,19 @@ public class NameValuePairModelCollectionTests {
         Assert.True(subject.HasItems);
         Assert.Equal(2, subject.Count);
         Assert.DoesNotContain(pair, subject);
+    }
+
+    [Fact]
+    public void Add() {
+        var subject = new NameValuePairModelCollection([], Validator.Variable);
+
+        subject.Add("Variable name", "Variable value");
+
+        Assert.True(subject.HasError);
+
+        var pair = Assert.Single(subject);
+        Assert.Equal("Variable name", pair.Name.Value);
+        Assert.Equal("Variable value", pair.Value.Value);
     }
 
     [Fact]

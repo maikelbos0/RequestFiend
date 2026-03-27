@@ -22,10 +22,10 @@ public partial class UrlModel : BoundModelBase {
                 var valueIndex = parameter.IndexOf('=');
 
                 if (valueIndex == -1) {
-                    Parameters.Add(new(parameter, "", Validator.Required));
+                    Parameters.Add(parameter, "");
                 }
                 else {
-                    Parameters.Add(new(parameter.Substring(0, valueIndex), parameter.Substring(valueIndex + 1), Validator.Required));
+                    Parameters.Add(parameter.Substring(0, valueIndex), parameter.Substring(valueIndex + 1));
                 }
             }
         }

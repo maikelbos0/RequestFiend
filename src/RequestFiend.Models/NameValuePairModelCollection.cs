@@ -63,6 +63,10 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     public void OnAddClicked()
         => Add(new(nameValidator));
 
+    public void Add(string name, string value) {
+        Add(new(name, value, nameValidator));
+    }
+
     public void Reset(List<NameValuePair> collection) {
         if (collection.Count != Count) {
             throw new ArgumentException("Collection must have identical length.", nameof(collection));
