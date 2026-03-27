@@ -32,7 +32,7 @@ public class ValidatorTests {
     [InlineData("Foo+132", false)]
     [InlineData("Foo 132", false)]
     [InlineData("Foo/132", false)]
-    public void Variable(string value, bool expectedResult) {
-        Assert.Equal(expectedResult, Validator.Variable(value));
+    public void VariableName(string value, bool expectedResult) {
+        Assert.Equal(expectedResult, Validator.VariableName(value));
     }
 }
