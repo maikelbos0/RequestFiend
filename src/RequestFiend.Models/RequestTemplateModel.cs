@@ -107,10 +107,6 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public Task ShowUrlPopup()
-        => popupService.ShowUrlPopup();
-
-    [RelayCommand]
     public async Task ValidateStructuredText() {
         try {
             _ = JsonDocument.Parse(StringContent.Value);
