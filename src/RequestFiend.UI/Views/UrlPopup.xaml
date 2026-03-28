@@ -14,7 +14,7 @@
 
     <VerticalStackLayout>
         <Grid ColumnDefinitions="*,*">
-            <Button Text="Ok" Command="{Binding ConfirmCommand}" MinimumWidthRequest="-1" IsEnabled="{Binding IsModifiedWithoutError}"/>
+            <Button Text="Ok" Command="{Binding ConfirmCommand}" MinimumWidthRequest="-1" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
 
             <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumWidthRequest="-1" Grid.Column="1"/>
         </Grid>

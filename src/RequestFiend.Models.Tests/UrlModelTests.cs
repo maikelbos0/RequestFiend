@@ -60,7 +60,19 @@ public class UrlModelTests {
     }
 
     [Fact]
-    public void ParseQueryStringFromBaseUrl() {
+    public void ParseQueryStringFromBaseUrl_Without_Parameters() {
+        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo");
+
+        subject.ParseQueryStringFromBaseUrl();
+
+        Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
+        Assert.Single(subject.Parameters);
+        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Foo" && pair.Value.Value == "");
+        Assert.False(subject.IsModified);
+    }
+
+    [Fact]
+    public void ParseQueryStringFromBaseUrl_With_Parameters() {
         var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo") {
             BaseUrl = {
                 Value = "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz"
@@ -74,6 +86,7 @@ public class UrlModelTests {
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Foo" && pair.Value.Value == "");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test + {{Qux}}");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
+        Assert.True(subject.IsModified);
     }
 
     [Theory]

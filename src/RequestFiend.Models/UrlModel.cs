@@ -50,42 +50,56 @@ public partial class UrlModel : BoundModelBase {
     private Func<string?, CancellationToken, Task> closeMethod;
 
     public ValidatableProperty<string> BaseUrl { get; set; }
-    public NameValuePairModelCollection Parameters { get; } = new([], Validator.Required);
+    public NameValuePairModelCollection Parameters { get; }
 
 #pragma warning disable CS9264 // Url is set in  UpdateState called by ConfigureState
     public UrlModel(Func<string?, CancellationToken, Task> closeMethod, string url) {
         this.closeMethod = closeMethod;
-        BaseUrl = new(() => url, Validator.Required);
+        var (baseUrl, parameters) = ParseUrl(url);
 
-        ParseQueryStringFromBaseUrl();
+        BaseUrl = new(() => baseUrl, Validator.Required);
+        Parameters = new([.. parameters.Select(parameter => new NameValuePair() { Name = parameter.Name, Value = parameter.Value })], Validator.Required);
+
         ConfigureState([BaseUrl, Parameters]);
     }
 #pragma warning restore CS9264 // Url is set in UpdateState called by ConfigureState
 
     [RelayCommand]
     public void ParseQueryStringFromBaseUrl() {
-        var url = BaseUrl.Value;
+        var (baseUrl, parameters) = ParseUrl(BaseUrl.Value);
+
+        BaseUrl.Value = baseUrl;
+
+        foreach (var parameter in parameters) {
+            Parameters.Add(parameter.Name, parameter.Value);
+        }
+
+        UpdateState();
+    }
+
+    private (string BaseUrl, List<(string Name, string Value)> Parameters) ParseUrl(string url) {
         var index = url.IndexOf('?');
 
         if (index == -1) {
-            BaseUrl.Reset(() => url);
+            return (url, []);
         }
         else {
-            BaseUrl.Reset(() => url.Substring(0, index));
+            var baseUrl = url.Substring(0, index);
+            var parameters = new List<(string Name, string Value)>();
 
             foreach (var parameter in url.Substring(index + 1).Split("&", StringSplitOptions.RemoveEmptyEntries)) {
                 var valueIndex = parameter.IndexOf('=');
 
                 if (valueIndex == -1) {
-                    Parameters.Add(HttpUtility.UrlDecode(parameter), "");
+                    parameters.Add((HttpUtility.UrlDecode(parameter), ""));
                 }
                 else {
-                    Parameters.Add(HttpUtility.UrlDecode(parameter.Substring(0, valueIndex)), HttpUtility.UrlDecode(parameter.Substring(valueIndex + 1)));
+                    parameters.Add((HttpUtility.UrlDecode(parameter.Substring(0, valueIndex)), HttpUtility.UrlDecode(parameter.Substring(valueIndex + 1))));
                 }
             }
-        }
 
-        UpdateState();
+            return (baseUrl, parameters);
+        }
     }
 
     [RelayCommand]
@@ -93,7 +107,7 @@ public partial class UrlModel : BoundModelBase {
         if (HasError) {
             return;
         }
-        
+
         await closeMethod(GetUrl(), cancellationToken);
     }
 
