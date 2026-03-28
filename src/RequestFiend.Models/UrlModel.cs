@@ -51,7 +51,6 @@ public partial class UrlModel : BoundModelBase {
 
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; } = new([], Validator.Required);
-    public string Url { get => field; private set => SetProperty(ref field, value); }
 
 #pragma warning disable CS9264 // Url is set in  UpdateState called by ConfigureState
     public UrlModel(Func<string?, CancellationToken, Task> closeMethod, string url) {
@@ -95,19 +94,19 @@ public partial class UrlModel : BoundModelBase {
             return;
         }
         
-        await closeMethod(Url, cancellationToken);
+        await closeMethod(GetUrl(), cancellationToken);
     }
 
     [RelayCommand]
     public Task Cancel(CancellationToken cancellationToken)
         => closeMethod(null, cancellationToken);
 
-    protected override void UpdateState() {
+    private string GetUrl() {
         if (Parameters.Count > 0) {
-            Url = $"{BaseUrl.Value}?{string.Join('&', Parameters.Select(parameter => $"{EncodeUrlComponent(parameter.Name.Value)}={EncodeUrlComponent(parameter.Value.Value)}"))}";
+            return $"{BaseUrl.Value}?{string.Join('&', Parameters.Select(parameter => $"{EncodeUrlComponent(parameter.Name.Value)}={EncodeUrlComponent(parameter.Value.Value)}"))}";
         }
         else {
-            Url = BaseUrl.Value;
+            return BaseUrl.Value;
         }
     }
 }

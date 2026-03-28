@@ -5,16 +5,28 @@
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.UrlPopup"
     x:TypeArguments="system:String"
     x:DataType="models:UrlModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}"
+    MaximumWidthRequest="540">
 
     <VerticalStackLayout>
         <Grid ColumnDefinitions="*,*">
-            <Button Text="Ok" Command="{Binding ConfirmCommand}" MinimumWidthRequest="-1" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+            <Button Text="Ok" Command="{Binding ConfirmCommand}" MinimumWidthRequest="-1" IsEnabled="{Binding IsModifiedWithoutError}"/>
 
             <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumWidthRequest="-1" Grid.Column="1"/>
         </Grid>
+
+        <Label Text="Base url" Style="{StaticResource EntryLabel}"/>
+
+        <views:ValidatableEntry Text="{Binding BaseUrl}" />
+
+        <views:NameValuePairCollectionView
+            ItemsSource="{Binding Parameters}"
+            NameLabelText="Parameter name"
+            DeleteButtonText="Delete parameter"
+            AddButtonText="Add parameter"/>
     </VerticalStackLayout>
 </toolkit:Popup>
