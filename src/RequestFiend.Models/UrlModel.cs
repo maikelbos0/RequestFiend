@@ -1,10 +1,49 @@
-﻿using RequestFiend.Models.PropertyTypes;
+﻿using RequestFiend.Core;
+using RequestFiend.Models.PropertyTypes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 
 namespace RequestFiend.Models;
 
 public partial class UrlModel : BoundModelBase {
+    public static string EncodeUrlComponent(string urlComponent) {
+        if (urlComponent.Length == 0) {
+            return urlComponent;
+        }
+
+        var chunks = new List<(string Value, bool NeedsEncoding)>();
+        var previousPosition = 0;
+
+        for (var position = 0; position < urlComponent.Length; position++) {
+            if (TryGetVariableReferenceLength(urlComponent, position, out var length)) {
+                chunks.Add((urlComponent.Substring(previousPosition, position - previousPosition), true));
+                chunks.Add((urlComponent.Substring(position, length), false));
+                previousPosition = position + length;
+            }
+        }
+
+        chunks.Add((urlComponent.Substring(previousPosition), true));
+
+        return string.Join("", chunks.Select(chunk => chunk.NeedsEncoding ? HttpUtility.UrlEncode(chunk.Value) : chunk.Value));
+    }
+
+    private static bool TryGetVariableReferenceLength(string urlComponent, int position, out int length) {
+        if (urlComponent.Length > position + 4 && urlComponent[position] == '{' && urlComponent[position + 1] == '{') {
+            length = 4;
+
+            while (urlComponent.Length > position + length && RequestTemplateCollection.IsValidVariableCharacter(urlComponent[position + length - 2])) {
+                length++;
+            }
+
+            return urlComponent[position + length - 1] == '}' && urlComponent[position + length - 2] == '}';
+        }
+
+        length = 0;
+        return false;
+    }
+
     public ValidatableProperty<string> BaseUrl { get; }
     public NameValuePairModelCollection Parameters { get; } = new([], Validator.Required);
     public string Url { get => field; private set => SetProperty(ref field, value); }
@@ -22,16 +61,16 @@ public partial class UrlModel : BoundModelBase {
                 var valueIndex = parameter.IndexOf('=');
 
                 if (valueIndex == -1) {
-                    Parameters.Add(parameter, "");
+                    Parameters.Add(HttpUtility.UrlDecode(parameter), "");
                 }
                 else {
-                    Parameters.Add(parameter.Substring(0, valueIndex), parameter.Substring(valueIndex + 1));
+                    Parameters.Add(HttpUtility.UrlDecode(parameter.Substring(0, valueIndex)), HttpUtility.UrlDecode(parameter.Substring(valueIndex + 1)));
                 }
             }
         }
 
         if (Parameters.Count > 0) {
-            Url = $"{BaseUrl.Value}?{string.Join('&', Parameters.Select(parameter => $"{parameter.Name.Value}={parameter.Value.Value}"))}";
+            Url = $"{BaseUrl.Value}?{string.Join('&', Parameters.Select(parameter => $"{EncodeUrlComponent(parameter.Name.Value)}={EncodeUrlComponent(parameter.Value.Value)}"))}";
         }
         else {
             Url = BaseUrl.Value;

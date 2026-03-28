@@ -5,7 +5,8 @@ using System.Linq;
 namespace RequestFiend.Core;
 
 public class RequestTemplateCollection {
-    public static bool IsValidVariableName(string name) => !string.IsNullOrEmpty(name) && !name.Any(c => !char.IsLetterOrDigit(c) && c != '_');
+    public static bool IsValidVariableCharacter(char c) => char.IsLetterOrDigit(c) || c == '_';
+    public static bool IsValidVariableName(string name) => !string.IsNullOrEmpty(name) && name.All(IsValidVariableCharacter);
 
     public string DefaultUrl { get; set; } = "";
     public List<RequestTemplate> Requests { get; set; } = [];
