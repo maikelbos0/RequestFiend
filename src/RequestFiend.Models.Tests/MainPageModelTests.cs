@@ -76,6 +76,23 @@ public class MainPageModelTests {
     }
 
     [Fact]
+    public async Task CreateNewCollection_Does_Nothing_When_Canceled() {
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
+        var messageService = Substitute.For<IMessageService>();
+        var preferencesService = Substitute.For<IPreferencesService>();
+
+        var subject = new MainPageModel(popupService, messageService, preferencesService, Substitute.For<IFileSystem>());
+
+        await subject.CreateNewCollection();
+
+        await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new RequestTemplateCollection())));
+        messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+    }
+
+    [Fact]
     public async Task OpenExistingCollection() {
         const string filePath = @"C:\Documents\External data requests.json";
 

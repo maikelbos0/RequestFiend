@@ -5,7 +5,6 @@ using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 using RequestFiend.Core;
 using RequestFiend.Models;
-using RequestFiend.UI.Views;
 using System.IO.Abstractions;
 
 namespace RequestFiend.UI;

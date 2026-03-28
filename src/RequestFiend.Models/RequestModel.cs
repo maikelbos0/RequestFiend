@@ -85,7 +85,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         if (saveResult.IsSuccessful) {
             messageService.Send(new SuccessMessage("Response content has been saved"));
         }
-        else if (saveResult.Exception != null) {
+        else if (saveResult.Exception != null && saveResult.Exception is not OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to save response content: {saveResult.Exception.Message}");
         }
 

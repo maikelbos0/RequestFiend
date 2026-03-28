@@ -49,7 +49,7 @@ public partial class MainPageModel : PageBoundModelBase {
             messageService.Send(new OpenCollectionRequestMessage(saveResult.FilePath, collection));
             preferencesService.PushRecentCollection(saveResult.FilePath);
         }
-        else if (saveResult.Exception != null) {
+        else if (saveResult.Exception != null && saveResult.Exception is not OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
         }
     }

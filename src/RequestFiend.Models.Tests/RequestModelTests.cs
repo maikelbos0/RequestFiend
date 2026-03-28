@@ -142,6 +142,36 @@ public class RequestModelTests {
     }
 
     [Fact]
+    public async Task SaveResponseContent_Does_Nothing_When_Canceled() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+        var isExecutingValues = new List<bool>();
+        var pageTitleBaseValues = new List<string>();
+        var shellItemTitleBaseValues = new List<string>();
+
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
+            Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
+        };
+
+        await subject.SaveResponseContent();
+
+        await popupService.Received(1).ShowSaveDialog(Arg.Any<string>(), Arg.Is<MemoryStream>(stream => stream.ToArray().SequenceEqual(subject.Response.Content.BinaryContent)));
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+    }
+
+    [Fact]
     public async Task SaveResponseContent_Does_Nothing_Without_BinaryContent() {
         const string filePath = @"C:\Documents\External data requests.json";
 
