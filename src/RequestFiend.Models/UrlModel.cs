@@ -1,4 +1,5 @@
-﻿using RequestFiend.Core;
+﻿using CommunityToolkit.Mvvm.Input;
+using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using System;
 using System.Collections.Generic;
@@ -44,18 +45,29 @@ public partial class UrlModel : BoundModelBase {
         return false;
     }
 
-    public ValidatableProperty<string> BaseUrl { get; }
+    public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; } = new([], Validator.Required);
     public string Url { get => field; private set => SetProperty(ref field, value); }
 
+#pragma warning disable CS9264 // Url is set in  UpdateState called by ConfigureState
     public UrlModel(string url) {
+        BaseUrl = new(() => url, Validator.Required);
+
+        ParseQueryStringFromBaseUrl();
+        ConfigureState([BaseUrl, Parameters]);
+    }
+#pragma warning restore CS9264 // Url is set in UpdateState called by ConfigureState
+
+    [RelayCommand]
+    public void ParseQueryStringFromBaseUrl() {
+        var url = BaseUrl.Value;
         var index = url.IndexOf('?');
 
         if (index == -1) {
-            BaseUrl = new(() => url, Validator.Required);
+            BaseUrl.Reset(() => url);
         }
         else {
-            BaseUrl = new(() => url.Substring(0, index));
+            BaseUrl.Reset(() => url.Substring(0, index));
 
             foreach (var parameter in url.Substring(index + 1).Split("&", StringSplitOptions.RemoveEmptyEntries)) {
                 var valueIndex = parameter.IndexOf('=');
@@ -69,6 +81,10 @@ public partial class UrlModel : BoundModelBase {
             }
         }
 
+        UpdateState();
+    }
+
+    protected override void UpdateState() {
         if (Parameters.Count > 0) {
             Url = $"{BaseUrl.Value}?{string.Join('&', Parameters.Select(parameter => $"{EncodeUrlComponent(parameter.Name.Value)}={EncodeUrlComponent(parameter.Value.Value)}"))}";
         }

@@ -56,4 +56,22 @@ public class UrlModelTests {
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
         Assert.Equal("https://localhost/api?Foo=&%7bBar%7d=Test+%2b+{{Qux}}&Baz=", subject.Url);
     }
+
+    [Fact]
+    public void ParseQueryStringFromBaseUrl() {
+        var subject = new UrlModel("https://localhost/api?Foo") {
+            BaseUrl = {
+                Value = "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz"
+            }
+        };
+
+        subject.ParseQueryStringFromBaseUrl();
+
+        Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
+        Assert.Equal(3, subject.Parameters.Count);
+        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Foo" && pair.Value.Value == "");
+        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test + {{Qux}}");
+        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
+        Assert.Equal("https://localhost/api?Foo=&%7bBar%7d=Test+%2b+{{Qux}}&Baz=", subject.Url);
+    }
 }
