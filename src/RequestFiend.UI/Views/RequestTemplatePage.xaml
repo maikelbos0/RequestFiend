@@ -28,7 +28,19 @@
                     <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
                         <Label Text="Method" Style="{StaticResource EntryLabel}"/>
 
-                        <Label Text="Url" Style="{StaticResource EntryLabel}" Grid.Column="1"/>
+                        <Label Style="{StaticResource EntryLabel}" Grid.Column="1">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Url (" />
+                                    <Span Style="{StaticResource LinkButton}" Text="edit">
+                                        <Span.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ShowUrlPopupCommand}"/>
+                                        </Span.GestureRecognizers>
+                                    </Span>
+                                    <Span Text=")" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
 
                         <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
 

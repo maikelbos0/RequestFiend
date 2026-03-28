@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using CommunityToolkit.Maui.Core;
+using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -283,6 +284,30 @@ public class RequestTemplateModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Theory]
+    [InlineData(null, "https://localhost")]
+    [InlineData("https://localhost/api", "https://localhost/api")]
+    public async Task ShowUrlPopup(string? returnValue, string expectedUrl) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var popupService = Substitute.For<IPopupService>();
+        var popupResult = Substitute.For<IPopupResult<string>>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        popupResult.Result.Returns(returnValue);
+        popupService.ShowUrlPopup(request.Url).Returns(popupResult);
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), new(filePath), new(), request);
+
+        await subject.ShowUrlPopup();
+
+        await popupService.Received(1).ShowUrlPopup(request.Url);
+        Assert.Equal(expectedUrl, subject.Url.Value);
     }
 
     [Theory]

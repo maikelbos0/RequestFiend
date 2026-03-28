@@ -1,4 +1,8 @@
-﻿using System.Web;
+﻿using NSubstitute;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -38,7 +42,7 @@ public class UrlModelTests {
     [InlineData("https://localhost/api")]
     [InlineData("https://localhost/api?")]
     public void Constructor_Without_Parameters(string url) {
-        var subject = new UrlModel(url);
+        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), url);
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Empty(subject.Parameters);
@@ -47,7 +51,7 @@ public class UrlModelTests {
 
     [Fact]
     public void Constructor_With_Parameters() {
-        var subject = new UrlModel("https://localhost/api?Foo&%7bBar%7d=Test+%2b+{{Qux}}&Baz");
+        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo&%7bBar%7d=Test+%2b+{{Qux}}&Baz");
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Equal(3, subject.Parameters.Count);
@@ -59,7 +63,7 @@ public class UrlModelTests {
 
     [Fact]
     public void ParseQueryStringFromBaseUrl() {
-        var subject = new UrlModel("https://localhost/api?Foo") {
+        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo") {
             BaseUrl = {
                 Value = "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz"
             }
@@ -73,5 +77,40 @@ public class UrlModelTests {
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test + {{Qux}}");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
         Assert.Equal("https://localhost/api?Foo=&%7bBar%7d=Test+%2b+{{Qux}}&Baz=", subject.Url);
+    }
+
+    [Fact]
+    public async Task Confirm() {
+        var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
+
+        var subject = new UrlModel(closeMethod, "https://localhost/api?Foo=Test");
+
+        await subject.Confirm(CancellationToken.None);
+
+        await closeMethod.Received().Invoke("https://localhost/api?Foo=Test", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Confirm_Fails_When_Invalid() {
+        var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
+
+        var subject = new UrlModel(closeMethod, "https://localhost/api?Foo=Test") {
+            HasError = true
+        };
+
+        await subject.Confirm(CancellationToken.None);
+
+        await closeMethod.DidNotReceive().Invoke(Arg.Any<string?>(), CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Cancel() {
+        var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
+
+        var subject = new UrlModel(closeMethod, "https://localhost/api?Foo=Test");
+
+        await subject.Cancel(CancellationToken.None);
+
+        await closeMethod.Received().Invoke(null, CancellationToken.None);
     }
 }

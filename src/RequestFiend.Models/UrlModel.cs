@@ -4,6 +4,8 @@ using RequestFiend.Models.PropertyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace RequestFiend.Models;
@@ -45,12 +47,15 @@ public partial class UrlModel : BoundModelBase {
         return false;
     }
 
+    private Func<string?, CancellationToken, Task> closeMethod;
+
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; } = new([], Validator.Required);
     public string Url { get => field; private set => SetProperty(ref field, value); }
 
 #pragma warning disable CS9264 // Url is set in  UpdateState called by ConfigureState
-    public UrlModel(string url) {
+    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, string url) {
+        this.closeMethod = closeMethod;
         BaseUrl = new(() => url, Validator.Required);
 
         ParseQueryStringFromBaseUrl();
@@ -83,6 +88,19 @@ public partial class UrlModel : BoundModelBase {
 
         UpdateState();
     }
+
+    [RelayCommand]
+    public async Task Confirm(CancellationToken cancellationToken) {
+        if (HasError) {
+            return;
+        }
+        
+        await closeMethod(Url, cancellationToken);
+    }
+
+    [RelayCommand]
+    public Task Cancel(CancellationToken cancellationToken)
+        => closeMethod(null, cancellationToken);
 
     protected override void UpdateState() {
         if (Parameters.Count > 0) {

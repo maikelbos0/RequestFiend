@@ -107,6 +107,15 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     }
 
     [RelayCommand]
+    public async Task ShowUrlPopup() {
+        var result = await popupService.ShowUrlPopup(Url.Value);
+
+        if (result.Result != null) {
+            Url.Value = result.Result;
+        }
+    }
+
+    [RelayCommand]
     public async Task ValidateStructuredText() {
         try {
             _ = JsonDocument.Parse(StringContent.Value);

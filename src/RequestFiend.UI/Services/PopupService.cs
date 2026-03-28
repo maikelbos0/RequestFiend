@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Extensions;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
@@ -25,4 +26,6 @@ public class PopupService : IPopupService {
     public Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions)
         => FilePicker.Default.PickAsync(pickOptions);
 
+    public Task<IPopupResult<string>> ShowUrlPopup(string url)
+        => Shell.Current.ShowPopupAsync<string>(new UrlPopup(url));
 }

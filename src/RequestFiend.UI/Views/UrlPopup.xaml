@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="RequestFiend.UI.Views.UrlPopup"
+    x:TypeArguments="system:String"
+    x:DataType="models:UrlModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
+
+    <VerticalStackLayout>
+        <Grid ColumnDefinitions="*,*">
+            <Button Text="Ok" Command="{Binding ConfirmCommand}" MinimumWidthRequest="-1" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+
+            <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumWidthRequest="-1" Grid.Column="1"/>
+        </Grid>
+    </VerticalStackLayout>
+</toolkit:Popup>

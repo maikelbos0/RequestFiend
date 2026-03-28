@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Storage;
+﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Storage;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,4 +11,5 @@ public interface IPopupService {
     Task ShowErrorPopup(string message);
     Task<FileSaverResult> ShowSaveDialog(string fileName, Stream stream);
     Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions);
+    Task<IPopupResult<string>> ShowUrlPopup(string url);
 }
