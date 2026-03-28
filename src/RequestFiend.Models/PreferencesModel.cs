@@ -11,8 +11,8 @@ public partial class PreferencesModel : PageBoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
 
-    public ValidatableProperty<bool> ShowRecentCollections { get; set; }
-    public ValidatableProperty<string> MaximumRecentCollectionCount { get; set; }
+    public ValidatableProperty<bool> ShowRecentCollections { get; }
+    public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;

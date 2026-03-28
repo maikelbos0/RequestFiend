@@ -13,9 +13,9 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
-    public ValidatableProperty<string> Name { get; set; } = new(() => "", Validator.Required);
-    public ValidatableProperty<string> Method { get; set; } = new(() => "GET", Validator.Required);
-    public ValidatableProperty<string> Url { get; set; }
+    public ValidatableProperty<string> Name { get; } = new(() => "", Validator.Required);
+    public ValidatableProperty<string> Method { get; } = new(() => "GET", Validator.Required);
+    public ValidatableProperty<string> Url { get; }
 
     public NewRequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,

@@ -22,15 +22,15 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly RequestTemplate request;
 
     public string Id { get; } = Guid.NewGuid().ToString();
-    public ValidatableProperty<string> Name { get; set; }
-    public ValidatableProperty<string> Method { get; set; }
-    public ValidatableProperty<string> Url { get; set; }
-    public NameValuePairModelCollection Headers { get; set; }
-    public ValidatableProperty<string> ContentType { get; set; }
+    public ValidatableProperty<string> Name { get; }
+    public ValidatableProperty<string> Method { get; }
+    public ValidatableProperty<string> Url { get; }
+    public NameValuePairModelCollection Headers { get; }
+    public ValidatableProperty<string> ContentType { get; }
     public bool UsesStringContent { get => field; private set => SetProperty(ref field, value); }
     public bool UsesStructuredStringContent { get => field; private set => SetProperty(ref field, value); }
     public bool UsesUnstructuredStringContent { get => field; private set => SetProperty(ref field, value); }
-    public ValidatableProperty<string> StringContent { get; set; }
+    public ValidatableProperty<string> StringContent { get; }
 
     public RequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,

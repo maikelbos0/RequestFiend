@@ -14,9 +14,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
-    public ValidatableProperty<string> DefaultUrl { get; set; }
-    public NameValuePairModelCollection DefaultHeaders { get; set; }
-    public NameValuePairModelCollection Variables { get; set; }
+    public ValidatableProperty<string> DefaultUrl { get; }
+    public NameValuePairModelCollection DefaultHeaders { get; }
+    public NameValuePairModelCollection Variables { get; }
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
