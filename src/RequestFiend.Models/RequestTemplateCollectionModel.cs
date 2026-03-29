@@ -31,7 +31,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         this.file = file;
         this.collection = collection;
 
-        Settings = new(requestTemplateCollectionService, messageService, file, collection);
+        Settings = new(requestTemplateCollectionService, popupService, messageService, file, collection);
         Settings.PropertyChanged += OnChildStateChanged;
         NewRequest = new(requestTemplateCollectionService, messageService, file, collection);
         NewRequest.PropertyChanged += OnChildStateChanged;

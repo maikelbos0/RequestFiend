@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using CommunityToolkit.Maui.Core;
+using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -20,8 +21,8 @@ public class RequestTemplateCollectionSettingsModelTests {
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
             }
         };
-        
-        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IMessageService>(), new(filePath), collection);
+
+        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitleBase);
         Assert.Equal("Collection settings", subject.ShellItemTitleBase);
@@ -54,7 +55,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             }
         };
 
-        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, new(filePath), collection);
+        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -99,7 +100,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             }
         };
 
-        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, messageService, new(filePath), collection);
+        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection);
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -114,4 +115,27 @@ public class RequestTemplateCollectionSettingsModelTests {
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
+
+    [Theory]
+    [InlineData(null, "https://localhost")]
+    [InlineData("https://localhost/api", "https://localhost/api")]
+    public async Task ShowDefaultUrlPopup(string? returnValue, string expectedUrl) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var popupService = Substitute.For<IPopupService>();
+        var popupResult = Substitute.For<IPopupResult<string>>();
+        var collection = new RequestTemplateCollection() {
+            DefaultUrl = "https://localhost"
+        };
+        popupResult.Result.Returns(returnValue);
+        popupService.ShowUrlPopup(collection.DefaultUrl).Returns(popupResult);
+
+        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), new(filePath), collection);
+
+        await subject.ShowDefaultUrlPopup();
+
+        await popupService.Received(1).ShowUrlPopup(collection.DefaultUrl);
+        Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
+    }
+
 }

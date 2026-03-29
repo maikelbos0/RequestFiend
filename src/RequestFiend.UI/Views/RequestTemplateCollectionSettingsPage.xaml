@@ -16,7 +16,19 @@
             
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Label Text="Default url (optional)" Style="{StaticResource EntryLabel}"/>
+                    <Label Style="{StaticResource EntryLabel}" Grid.Column="1">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Default url (optional) (" />
+                                <Span Style="{StaticResource LinkButton}" Text="edit">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ShowDefaultUrlPopupCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=")" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
 
                     <views:ValidatableEntry Text="{Binding DefaultUrl}" />
 
