@@ -19,7 +19,19 @@
             <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumWidthRequest="-1" Grid.Column="1"/>
         </Grid>
 
-        <Label Text="Base url" Style="{StaticResource EntryLabel}"/>
+        <Label Style="{StaticResource EntryLabel}">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Base url (" />
+                    <Span Style="{StaticResource LinkButton}" Text="parse">
+                        <Span.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ParseQueryStringFromBaseUrlCommand}"/>
+                        </Span.GestureRecognizers>
+                    </Span>
+                    <Span Text=")" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
 
         <views:ValidatableEntry Text="{Binding BaseUrl}" />
 
