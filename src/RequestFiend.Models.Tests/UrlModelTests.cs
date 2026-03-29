@@ -90,12 +90,19 @@ public class UrlModelTests {
     }
 
     [Theory]
-    [InlineData(false, "https://localhost/api?Foo=")]
-    [InlineData(true, "https://localhost/api?Foo=&%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
-    public async Task Confirm(bool addParameters, string expectedUrl) {
+    [InlineData("https://localhost/api?Foo", "https://localhost/api", false, "https://localhost/api?Foo=")]
+    [InlineData("https://localhost/api?Foo", "https://localhost/api", true, "https://localhost/api?Foo=&%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
+    [InlineData("https://localhost/api?Foo", "https://localhost/api?", false, "https://localhost/api?Foo=")]
+    [InlineData("https://localhost/api", "https://localhost/api?", true, "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
+    [InlineData("https://localhost/api", "https://localhost/api?Bar", false, "https://localhost/api?Bar")]
+    [InlineData("https://localhost/api", "https://localhost/api", true, "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
+    [InlineData("https://localhost/api?Foo", "https://localhost/api?Bar", false, "https://localhost/api?Bar&Foo=")]
+    public async Task Confirm(string url, string baseUrl, bool addParameters, string expectedUrl) {
         var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, "https://localhost/api?Foo");
+        var subject = new UrlModel(closeMethod, url) {
+            BaseUrl = { Value = baseUrl }
+        };
 
         if (addParameters) {
             subject.Parameters.Add("{Bar}", "Test + {{Qux}}");

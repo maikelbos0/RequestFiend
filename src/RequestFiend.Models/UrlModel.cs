@@ -52,7 +52,6 @@ public partial class UrlModel : BoundModelBase {
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; }
 
-#pragma warning disable CS9264 // Url is set in  UpdateState called by ConfigureState
     public UrlModel(Func<string?, CancellationToken, Task> closeMethod, string url) {
         this.closeMethod = closeMethod;
         var (baseUrl, parameters) = ParseUrl(url);
@@ -62,7 +61,6 @@ public partial class UrlModel : BoundModelBase {
 
         ConfigureState([BaseUrl, Parameters]);
     }
-#pragma warning restore CS9264 // Url is set in UpdateState called by ConfigureState
 
     [RelayCommand]
     public void ParseQueryStringFromBaseUrl() {
@@ -73,8 +71,6 @@ public partial class UrlModel : BoundModelBase {
         foreach (var parameter in parameters) {
             Parameters.Add(parameter.Name, parameter.Value);
         }
-
-        UpdateState();
     }
 
     private (string BaseUrl, List<(string Name, string Value)> Parameters) ParseUrl(string url) {
@@ -108,19 +104,25 @@ public partial class UrlModel : BoundModelBase {
             return;
         }
 
-        await closeMethod(GetUrl(), cancellationToken);
+        var url = BaseUrl.Value;
+
+        if (Parameters.Count > 0) {
+            var index = url.IndexOf('?');
+
+            if (index == -1) {
+                url += "?";
+            }
+            else if (index < url.Length - 1) {
+                url += "&";
+            }
+
+            url += $"{string.Join('&', Parameters.Select(parameter => $"{EncodeUrlComponent(parameter.Name.Value)}={EncodeUrlComponent(parameter.Value.Value)}"))}";
+        }
+
+        await closeMethod(url, cancellationToken);
     }
 
     [RelayCommand]
     public Task Cancel(CancellationToken cancellationToken)
         => closeMethod(null, cancellationToken);
-
-    private string GetUrl() {
-        if (Parameters.Count > 0) {
-            return $"{BaseUrl.Value}?{string.Join('&', Parameters.Select(parameter => $"{EncodeUrlComponent(parameter.Name.Value)}={EncodeUrlComponent(parameter.Value.Value)}"))}";
-        }
-        else {
-            return BaseUrl.Value;
-        }
-    }
 }
