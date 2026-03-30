@@ -2,6 +2,7 @@
 <AbsoluteLayout
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:RequestFiend.Models.Converters;assembly=RequestFiend.Models"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.ValidatableEntry"
     HorizontalOptions="Fill"
@@ -11,7 +12,9 @@
         x:Name="Entry"
         Text="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}}"
         AbsoluteLayout.LayoutFlags="WidthProportional"
-        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize"
+        Focused="OnEntryFocused"
+        Unfocused="OnEntryUnfocused">
 
         <Entry.Triggers>
             <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
@@ -24,6 +27,29 @@
     </Entry>
 
     <Label
+        x:Name="Label"
+        FormattedText="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}, Converter={converters:StringToFormattedVariableStringConverter}, ConverterParameter={StaticResource VariableReference}}"
+        Style="{StaticResource OverlayLabel}"
+        IsVisible="False"
+        AbsoluteLayout.LayoutFlags="WidthProportional"
+        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+
+        <Label.GestureRecognizers>
+            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
+        </Label.GestureRecognizers>
+
+        <Label.Triggers>
+            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
+            </DataTrigger>
+        </Label.Triggers>
+    </Label>
+
+    <Label
         Text="▲"
         TextColor="{x:StaticResource ErrorIcon}"
         IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}"
@@ -33,8 +59,8 @@
         AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
         
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
-            <TapGestureRecognizer Tapped="OnIconTapped"/>
+            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
 
@@ -48,8 +74,8 @@
         AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
 
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
-            <TapGestureRecognizer Tapped="OnIconTapped"/>
+            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
 </AbsoluteLayout>

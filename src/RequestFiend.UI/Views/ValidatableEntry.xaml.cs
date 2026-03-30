@@ -15,11 +15,19 @@ public partial class ValidatableEntry : AbsoluteLayout {
         InitializeComponent();
     }
 
-    private void OnIconTapped(object sender, TappedEventArgs e) {
+    private void OnOverlayTapped(object sender, TappedEventArgs e) {
         Entry.Focus();
     }
 
-    private void OnIconPointerPressed(object sender, PointerEventArgs e) {
+    private void OnOverlayPointerPressed(object sender, PointerEventArgs e) {
         Entry.Focus();
+    }
+
+    private void OnEntryFocused(object sender, FocusEventArgs e) {
+        Label.IsVisible = false;
+    }
+
+    private void OnEntryUnfocused(object sender, FocusEventArgs e) {
+        Label.IsVisible = true;
     }
 }
