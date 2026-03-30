@@ -69,7 +69,7 @@ public class RequestModelTests {
 
         await subject.Execute();
 
-        _ = requestHandler.Received().Execute(request, collection, subject, Arg.Any<CancellationToken>());
+        _ = requestHandler.Received(1).Execute(request, collection, subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal([$"{request.Name} - Executing request...", $"{request.Name} - Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);
@@ -219,7 +219,7 @@ public class RequestModelTests {
 
         subject.Close();
 
-        messageService.Received().Send(Arg.Any<CloseRequestMessage>(), subject.Id);
+        messageService.Received(1).Send(Arg.Any<CloseRequestMessage>(), subject.Id);
     }
 
     [Fact]

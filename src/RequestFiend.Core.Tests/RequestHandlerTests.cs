@@ -93,7 +93,7 @@ public class RequestHandlerTests {
 
         var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
 
-        await requestPipelineListener.Received().OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
+        await requestPipelineListener.Received(1).OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class RequestHandlerTests {
 
         var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
 
-        await requestPipelineListener.Received().OnResponseReceived(Arg.Is<HttpResponseMessage>(response => response == result.Response));
+        await requestPipelineListener.Received(1).OnResponseReceived(Arg.Is<HttpResponseMessage>(response => response == result.Response));
     }
 
     [Fact]
@@ -133,6 +133,6 @@ public class RequestHandlerTests {
 
         var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
 
-        await requestPipelineListener.Received().OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+        await requestPipelineListener.Received(1).OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
     }
 }

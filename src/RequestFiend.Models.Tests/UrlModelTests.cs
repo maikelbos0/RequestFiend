@@ -80,7 +80,7 @@ public class UrlModelTests {
 
         await subject.Confirm(CancellationToken.None);
 
-        await closeMethod.Received().Invoke(expectedUrl, CancellationToken.None);
+        await closeMethod.Received(1).Invoke(expectedUrl, CancellationToken.None);
     }
 
     [Fact]
@@ -104,6 +104,6 @@ public class UrlModelTests {
 
         await subject.Cancel(CancellationToken.None);
 
-        await closeMethod.Received().Invoke(null, CancellationToken.None);
+        await closeMethod.Received(1).Invoke(null, CancellationToken.None);
     }
 }
