@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateModel : PageBoundModelBase {
+public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<RequestTemplateCollectionVariablesUpdatedMessage> {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
@@ -22,6 +24,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly RequestTemplate request;
 
     public string Id { get; } = Guid.NewGuid().ToString();
+    public Dictionary<string, string> Variables { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string> Name { get; }
     public ValidatableProperty<string> Method { get; }
     public ValidatableProperty<string> Url { get; }
@@ -47,6 +50,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         this.collection = collection;
         this.request = request;
 
+        Variables = collection.GetVariables();
         Name = new(() => request.Name, Validator.Required);
         Method = new(() => request.Method, Validator.Required);
         Url = new(() => request.Url, Validator.Required);
@@ -60,6 +64,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
 
         ConfigureState([Name, Method, Url, ContentType, StringContent, Headers]);
+        WeakReferenceMessenger.Default.RegisterAll(this, file);
     }
 
     [RelayCommand]
@@ -154,5 +159,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
             UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
         }
+    }
+
+    public void Receive(RequestTemplateCollectionVariablesUpdatedMessage message) {
+        Variables = collection.GetVariables();
     }
 }

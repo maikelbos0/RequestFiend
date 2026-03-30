@@ -1,18 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class NewRequestTemplateModel : PageBoundModelBase {
+public partial class NewRequestTemplateModel : PageBoundModelBase, IRecipient<RequestTemplateCollectionVariablesUpdatedMessage> {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IMessageService messageService;
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
 
+    public Dictionary<string, string> Variables { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string> Name { get; } = new(() => "", Validator.Required);
     public ValidatableProperty<string> Method { get; } = new(() => "GET", Validator.Required);
     public ValidatableProperty<string> Url { get; }
@@ -28,6 +31,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         this.file = file;
         this.collection = collection;
 
+        Variables = collection.GetVariables();
         Url = new(() => collection.DefaultUrl, Validator.Required);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, file.FilePath, (model, _) => {
             if (!model.Url.IsModified) {
@@ -36,6 +40,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         });
 
         ConfigureState([Name, Method, Url]);
+        WeakReferenceMessenger.Default.RegisterAll(this, file);
     }
 
     [RelayCommand]
@@ -58,5 +63,9 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         await requestTemplateCollectionService.Save(file.FilePath, collection);
         messageService.Send(new OpenTemplateRequestMessage(file.FilePath, collection, request));
         messageService.Send(new SuccessMessage("Request had been added"));
+    }
+
+    public void Receive(RequestTemplateCollectionVariablesUpdatedMessage message) {
+        Variables = collection.GetVariables();
     }
 }

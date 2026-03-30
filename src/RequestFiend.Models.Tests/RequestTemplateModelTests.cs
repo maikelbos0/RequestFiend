@@ -54,7 +54,10 @@ public class RequestTemplateModelTests {
             StringContent = "Content"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = [request],
+            Variables = {
+                new() { Name = "Name", Value = "Value" }
+            }
         };
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request);
@@ -62,6 +65,7 @@ public class RequestTemplateModelTests {
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
         Assert.Equal(request.Name, subject.ShellItemTitleBase);
 
+        Assert.Single(subject.Variables);
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
@@ -464,5 +468,28 @@ public class RequestTemplateModelTests {
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<Guid>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Fact]
+    public void Receive() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request);
+
+        Assert.Empty(subject.Variables);
+
+        collection.Variables.Add(new() { Name = "Name", Value = "Value" });
+        subject.Receive(new());
+
+        Assert.Single(subject.Variables);
     }
 }

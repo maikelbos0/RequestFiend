@@ -78,6 +78,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        messageService.Received(1).Send(Arg.Any<RequestTemplateCollectionVariablesUpdatedMessage>(), new RequestTemplateCollectionFileModel(filePath));
     }
 
     [Theory]
@@ -114,6 +115,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionVariablesUpdatedMessage>(), new RequestTemplateCollectionFileModel(filePath));
     }
 
     [Theory]
@@ -137,5 +139,4 @@ public class RequestTemplateCollectionSettingsModelTests {
         await popupService.Received(1).ShowUrlPopup(collection.DefaultUrl);
         Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
     }
-
 }

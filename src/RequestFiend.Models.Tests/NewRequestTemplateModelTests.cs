@@ -16,13 +16,18 @@ public class NewRequestTemplateModelTests {
 
         var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
-            DefaultUrl = "https://default"
+            DefaultUrl = "https://default",
+            Variables = {
+                new() { Name = "Name", Value = "Value" }
+            }
         };
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, new(filePath), collection);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.PageTitleBase);
         Assert.Equal("New request", subject.ShellItemTitleBase);
+
+        Assert.Single(subject.Variables);
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
@@ -37,9 +42,7 @@ public class NewRequestTemplateModelTests {
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
-        var collection = new RequestTemplateCollection() {
-            DefaultUrl = "https://default"
-        };
+        var collection = new RequestTemplateCollection();
 
         var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, new(filePath), collection);
 
@@ -73,9 +76,7 @@ public class NewRequestTemplateModelTests {
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
-        var collection = new RequestTemplateCollection() {
-            DefaultUrl = "https://default"
-        };
+        var collection = new RequestTemplateCollection();
 
         var subject = new NewRequestTemplateModel(requestTemplateCollectionService, messageService, new(filePath), collection);
 
@@ -93,6 +94,23 @@ public class NewRequestTemplateModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Fact]
+    public void Receive() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var messageService = Substitute.For<IMessageService>();
+        var collection = new RequestTemplateCollection();
+
+        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, new(filePath), collection);
+
+        Assert.Empty(subject.Variables);
+
+        collection.Variables.Add(new() { Name = "Name", Value = "Value" });
+        subject.Receive(new());
+
+        Assert.Single(subject.Variables);
     }
 }
 
