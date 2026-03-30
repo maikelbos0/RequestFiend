@@ -10,6 +10,42 @@ public class RequestTemplateCollectionTests {
     [InlineData("٢٣٤٥٦٧٨٩")]
     [InlineData("１２３")]
     [InlineData("Foo_132")]
+    public void GetVariables_Returns_Deduplicated_Valid_Variables(string name) {
+        var subject = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = name, Value = "Replacement" },
+                new() { Name = name, Value = "Duplicate" }
+            }
+        };
+
+        var result = subject.GetVariables();
+
+        Assert.Equal("Replacement", Assert.Contains(name, result));
+    }
+
+    [Theory]
+    [InlineData("Foo+132")]
+    [InlineData("Foo 132")]
+    [InlineData("Foo/132")]
+    public void GetVariables_Does_Not_Return_Invalid_Variables(string name) {
+        var subject = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = name, Value = "Replacement" }
+            }
+        };
+
+        var result = subject.GetVariables();
+
+        Assert.Empty(result);
+    }
+
+    [Theory]
+    [InlineData("Foo")]
+    [InlineData("123")]
+    [InlineData("Да")]
+    [InlineData("٢٣٤٥٦٧٨٩")]
+    [InlineData("１２３")]
+    [InlineData("Foo_132")]
     public void ApplyVariables_Replaces_Variable_With_Value(string name) {
         var subject = new RequestTemplateCollection() {
             Variables = {

@@ -13,9 +13,15 @@ public class RequestTemplateCollection {
     public List<NameValuePair> DefaultHeaders { get; set; } = [];
     public List<NameValuePair> Variables { get; set; } = [];
 
+    public Dictionary<string, string> GetVariables()
+        => Variables
+            .Where(variable => IsValidVariableName(variable.Name))
+            .DistinctBy(variable => variable.Name)
+            .ToDictionary(variable => variable.Name, variable => variable.Value);
+
     public string ApplyVariables(string value) {
-        foreach (var variable in Variables.Where(variable => IsValidVariableName(variable.Name))) {
-            value = value.Replace($"{{{{{variable.Name}}}}}", variable.Value, StringComparison.InvariantCultureIgnoreCase);
+        foreach (var (variableName, variableValue) in GetVariables()) {
+            value = value.Replace($"{{{{{variableName}}}}}", variableValue, StringComparison.InvariantCultureIgnoreCase);
         }
 
         return value;
