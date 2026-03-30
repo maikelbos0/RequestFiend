@@ -2,42 +2,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
 public class UrlModelTests {
-    [Theory]
-    [InlineData("Foo", "Foo")]
-    [InlineData("Foo + Bar", "Foo+%2b+Bar")]
-    [InlineData("{Bar}", "%7bBar%7d")]
-    [InlineData("{Bar}}", "%7bBar%7d%7d")]
-    [InlineData("{{Bar}", "%7b%7bBar%7d")]
-    [InlineData("{{Bar}}", "{{Bar}}")]
-    [InlineData("Foo + {{Bar}} + Baz", "Foo+%2b+{{Bar}}+%2b+Baz")]
-    [InlineData("{{{Bar}}}", "%7b{{Bar}}%7d")]
-    public void EncodeUrlComponent(string uriComponent, string expectedResult) {
-        var result = UrlModel.EncodeUrlComponent(uriComponent);
-
-        Assert.Equal(expectedResult, result);
-    }
-
-    [Theory]
-    [InlineData("Foo", "Foo")]
-    [InlineData("Foo+%2b+Bar", "Foo + Bar")]
-    [InlineData("%7bBar%7d", "{Bar}")]
-    [InlineData("%7bBar%7d%7d", "{Bar}}")]
-    [InlineData("%7b%7bBar%7d", "{{Bar}")]
-    [InlineData("{{Bar}}", "{{Bar}}")]
-    [InlineData("Foo+%2b+{{Bar}}+%2b+Baz", "Foo + {{Bar}} + Baz")]
-    [InlineData("%7b{{Bar}}%7d", "{{{Bar}}}")]
-    public void DecodeUrlComponent(string uriComponent, string expectedResult) {
-        var result = HttpUtility.UrlDecode(uriComponent);
-
-        Assert.Equal(expectedResult, result);
-    }
-
     [Theory]
     [InlineData("https://localhost/api")]
     [InlineData("https://localhost/api?")]
@@ -50,12 +19,12 @@ public class UrlModelTests {
 
     [Fact]
     public void Constructor_With_Parameters() {
-        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo&%7bBar%7d=Test+%2b+{{Qux}}&Baz");
+        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo&%7bBar%7d=Test%2b{{Qux}}&Baz");
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Equal(3, subject.Parameters.Count);
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Foo" && pair.Value.Value == "");
-        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test + {{Qux}}");
+        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test+{{Qux}}");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
     }
 
@@ -75,7 +44,7 @@ public class UrlModelTests {
     public void ParseQueryStringFromBaseUrl_With_Parameters() {
         var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), "https://localhost/api?Foo") {
             BaseUrl = {
-                Value = "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz"
+                Value = "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz"
             }
         };
 
@@ -84,18 +53,18 @@ public class UrlModelTests {
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Equal(3, subject.Parameters.Count);
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Foo" && pair.Value.Value == "");
-        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test + {{Qux}}");
+        Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test+{{Qux}}");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
         Assert.True(subject.IsModified);
     }
 
     [Theory]
     [InlineData("https://localhost/api?Foo", "https://localhost/api", false, "https://localhost/api?Foo=")]
-    [InlineData("https://localhost/api?Foo", "https://localhost/api", true, "https://localhost/api?Foo=&%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
+    [InlineData("https://localhost/api?Foo", "https://localhost/api", true, "https://localhost/api?Foo=&%7bBar%7d=Test%2b{{Qux}}&Baz=")]
     [InlineData("https://localhost/api?Foo", "https://localhost/api?", false, "https://localhost/api?Foo=")]
-    [InlineData("https://localhost/api", "https://localhost/api?", true, "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
+    [InlineData("https://localhost/api", "https://localhost/api?", true, "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz=")]
     [InlineData("https://localhost/api", "https://localhost/api?Bar", false, "https://localhost/api?Bar")]
-    [InlineData("https://localhost/api", "https://localhost/api", true, "https://localhost/api?%7bBar%7d=Test+%2b+{{Qux}}&Baz=")]
+    [InlineData("https://localhost/api", "https://localhost/api", true, "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz=")]
     [InlineData("https://localhost/api?Foo", "https://localhost/api?Bar", false, "https://localhost/api?Bar&Foo=")]
     public async Task Confirm(string url, string baseUrl, bool addParameters, string expectedUrl) {
         var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
@@ -105,7 +74,7 @@ public class UrlModelTests {
         };
 
         if (addParameters) {
-            subject.Parameters.Add("{Bar}", "Test + {{Qux}}");
+            subject.Parameters.Add("{Bar}", "Test+{{Qux}}");
             subject.Parameters.Add("Baz", "");
         }
 

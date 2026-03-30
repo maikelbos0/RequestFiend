@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
+using RequestFiend.Models.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,40 +12,8 @@ using System.Web;
 namespace RequestFiend.Models;
 
 public partial class UrlModel : BoundModelBase {
-    public static string EncodeUrlComponent(string urlComponent) {
-        if (urlComponent.Length == 0) {
-            return urlComponent;
-        }
-
-        var chunks = new List<(string Value, bool NeedsEncoding)>();
-        var previousPosition = 0;
-
-        for (var position = 0; position < urlComponent.Length; position++) {
-            if (TryGetVariableReferenceLength(urlComponent, position, out var length)) {
-                chunks.Add((urlComponent.Substring(previousPosition, position - previousPosition), true));
-                chunks.Add((urlComponent.Substring(position, length), false));
-                previousPosition = position + length;
-            }
-        }
-
-        chunks.Add((urlComponent.Substring(previousPosition), true));
-
-        return string.Join("", chunks.Select(chunk => chunk.NeedsEncoding ? HttpUtility.UrlEncode(chunk.Value) : chunk.Value));
-    }
-
-    private static bool TryGetVariableReferenceLength(string urlComponent, int position, out int length) {
-        if (urlComponent.Length > position + 4 && urlComponent[position] == '{' && urlComponent[position + 1] == '{') {
-            length = 4;
-
-            while (urlComponent.Length > position + length && RequestTemplateCollection.IsValidVariableCharacter(urlComponent[position + length - 2])) {
-                length++;
-            }
-
-            return urlComponent[position + length - 1] == '}' && urlComponent[position + length - 2] == '}';
-        }
-
-        length = 0;
-        return false;
+    private static string EncodeUrlComponent(string urlComponent) {
+        return string.Join("", VariableService.ProcessText(urlComponent, HttpUtility.UrlEncode, variableReference => variableReference));
     }
 
     private Func<string?, CancellationToken, Task> closeMethod;
