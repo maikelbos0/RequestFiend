@@ -16,11 +16,9 @@
     <Color x:Key="Error">#FFD0E0</Color>
     <Color x:Key="ErrorDark">#300010</Color>
     <Color x:Key="ErrorIcon">#C05030</Color>
-    <Color x:Key="ErrorIconDark">#C05030</Color>
     <Color x:Key="Modified">#C0E0FF</Color>
     <Color x:Key="ModifiedDark">#001030</Color>
     <Color x:Key="ModifiedIcon">#4B6EAE</Color>
-    <Color x:Key="ModifiedIconDark">#4B6EAE</Color>
     <Color x:Key="Success">#40e080</Color>
     <Color x:Key="SuccessDark">#007020</Color>
     <Color x:Key="Danger">#C05060</Color>
