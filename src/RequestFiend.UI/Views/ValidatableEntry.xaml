@@ -26,14 +26,7 @@
         </Entry.Triggers>
     </Entry>
 
-    <Label
-        x:Name="Label"
-        FormattedText="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}, Converter={converters:StringToFormattedVariableStringConverter}, ConverterParameter={StaticResource VariableReference}}"
-        Style="{StaticResource OverlayLabel}"
-        IsVisible="False"
-        AbsoluteLayout.LayoutFlags="WidthProportional"
-        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
-
+    <Label x:Name="Overlay" Style="{StaticResource OverlayLabel}" IsVisible="False" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
         <Label.GestureRecognizers>
             <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
