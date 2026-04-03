@@ -10,8 +10,8 @@ public class RequestTemplateCollection {
 
     public string DefaultUrl { get; set; } = "";
     public List<RequestTemplate> Requests { get; set; } = [];
-    public List<NameValuePair> DefaultHeaders { get; set; } = [];
     public List<NameValuePair> Variables { get; set; } = [];
+    public List<NameValuePair> DefaultHeaders { get; set; } = [];
 
     public Dictionary<string, string> GetVariables()
         => Variables

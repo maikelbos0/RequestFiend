@@ -16,8 +16,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public RequestTemplateCollectionFileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
-    public NameValuePairModelCollection DefaultHeaders { get; }
     public NameValuePairModelCollection Variables { get; }
+    public NameValuePairModelCollection DefaultHeaders { get; }
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -34,8 +34,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         Collection = collection;
 
         DefaultUrl = new(() => collection.DefaultUrl);
-        DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
         Variables = new(collection.Variables, Validator.VariableName);
+        DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 
         ConfigureState([DefaultUrl, DefaultHeaders, Variables]);
     }
@@ -47,12 +47,12 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         }
 
         Collection.DefaultUrl = DefaultUrl.Value;
-        Collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         Collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
+        Collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
 
         DefaultUrl.Reset();
-        DefaultHeaders.Reset(Collection.DefaultHeaders);
         Variables.Reset(Collection.Variables);
+        DefaultHeaders.Reset(Collection.DefaultHeaders);
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));

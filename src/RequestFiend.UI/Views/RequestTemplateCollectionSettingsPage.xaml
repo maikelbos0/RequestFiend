@@ -33,17 +33,17 @@
                     <views:ValidatableEntry Text="{Binding DefaultUrl}" />
 
                     <views:NameValuePairCollectionView
+                        ItemsSource="{Binding Variables}"
+                        NameLabelText="Variable name"
+                        DeleteButtonText="Delete variable"
+                        AddButtonText="Add variable"/>
+
+                    <views:NameValuePairCollectionView
                         ItemsSource="{Binding DefaultHeaders}"
                         NameLabelText="Default header name"
                         DeleteButtonText="Delete default header"
                         AddButtonText="Add default header"
                         Collection="{Binding Collection}"/>
-
-                    <views:NameValuePairCollectionView
-                        ItemsSource="{Binding Variables}"
-                        NameLabelText="Variable name"
-                        DeleteButtonText="Delete variable"
-                        AddButtonText="Add variable"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

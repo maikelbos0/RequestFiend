@@ -51,10 +51,10 @@ public class RequestTemplateCollectionSettingsModelTests {
         var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
-            DefaultHeaders = {
+            Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            Variables = {
+            DefaultHeaders = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
@@ -62,18 +62,18 @@ public class RequestTemplateCollectionSettingsModelTests {
         var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection);
 
         subject.DefaultUrl.Value = defaultUrl;
-        subject.DefaultHeaders[0].Name.Value = headerName;
-        subject.DefaultHeaders[0].Value.Value = headerValue;
         subject.Variables[0].Name.Value = variableName;
         subject.Variables[0].Value.Value = variableValue;
+        subject.DefaultHeaders[0].Name.Value = headerName;
+        subject.DefaultHeaders[0].Value.Value = headerValue;
 
         await subject.Update();
 
         Assert.Equal(defaultUrl, collection.DefaultUrl);
-        Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
-        Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
         Assert.Equal(variableName, collection.Variables[0].Name);
         Assert.Equal(variableValue, collection.Variables[0].Value);
+        Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
+        Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
         Assert.False(subject.DefaultUrl.IsModified);
         Assert.False(subject.DefaultHeaders[0].Name.IsModified);
         Assert.False(subject.DefaultHeaders[0].Value.IsModified);
@@ -97,10 +97,10 @@ public class RequestTemplateCollectionSettingsModelTests {
         var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
-            DefaultHeaders = {
+            Variables = {
                 new() { Name = "PreviousName" }
             },
-            Variables = {
+            DefaultHeaders = {
                 new() { Name = "PreviousName" }
             }
         };
@@ -114,8 +114,8 @@ public class RequestTemplateCollectionSettingsModelTests {
         await subject.Update();
 
         Assert.Equal("https://previous", collection.DefaultUrl);
-        Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
         Assert.Equal("PreviousName", collection.Variables[0].Name);
+        Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
