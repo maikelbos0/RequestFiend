@@ -20,7 +20,7 @@ public class RequestTemplateCollectionService : IRequestTemplateCollectionServic
     public async Task Save(string filePath, RequestTemplateCollection collection) {
         await fileSystem.File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
 
-        messageService.Send(new RequestTemplateCollectionUpdatedMessage(filePath, collection), filePath);
+        messageService.Send(new RequestTemplateCollectionUpdatedMessage(), filePath);
         preferencesService.PushRecentCollection(filePath);
     }
 }

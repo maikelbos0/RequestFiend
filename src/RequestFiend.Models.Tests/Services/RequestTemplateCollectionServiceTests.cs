@@ -30,7 +30,7 @@ public class RequestTemplateCollectionServiceTests {
         await subject.Save(filePath, collection);
 
         await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection), Arg.Any<CancellationToken>());
-        messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionUpdatedMessage>(x => x.FilePath == filePath && x.Collection == collection), filePath);
+        messageService.Received(1).Send(Arg.Any<RequestTemplateCollectionUpdatedMessage>(), filePath);
         preferencesService.Received(1).PushRecentCollection(filePath);
     }
 }
