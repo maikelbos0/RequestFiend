@@ -21,9 +21,9 @@
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="models:NameValuePairModel">
                 <Grid ColumnDefinitions="*,*,44" Style="{StaticResource Table}" ColumnSpacing="10">
-                    <views:ValidatableEntry Text="{Binding Name}" Margin="0, 10, 0, 0"/>
+                    <views:ValidatableEntry Text="{Binding Name}" Margin="0, 10, 0, 0" Collection="{Binding x:DataType='views:NameValuePairCollectionView', Path=Collection, Source={x:Reference Root}}"/>
 
-                    <views:ValidatableEntry Text="{Binding Value}" Margin="0, 10, 0, 0" Grid.Column="1"/>
+                    <views:ValidatableEntry Text="{Binding Value}" Margin="0, 10, 0, 0" Collection="{Binding x:DataType='views:NameValuePairCollectionView', Path=Collection, Source={x:Reference Root}}" Grid.Column="1"/>
 
                     <Button 
                         Text="✕"

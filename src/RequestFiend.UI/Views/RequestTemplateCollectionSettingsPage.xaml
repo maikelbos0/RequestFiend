@@ -36,7 +36,8 @@
                         ItemsSource="{Binding DefaultHeaders}"
                         NameLabelText="Default header name"
                         DeleteButtonText="Delete default header"
-                        AddButtonText="Add default header"/>
+                        AddButtonText="Add default header"
+                        Collection="{Binding Collection}"/>
 
                     <views:NameValuePairCollectionView
                         ItemsSource="{Binding Variables}"

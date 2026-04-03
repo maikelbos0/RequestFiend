@@ -44,14 +44,15 @@
 
                         <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
 
-                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" />
+                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" Collection="{Binding Collection}" />
                     </Grid>
 
                     <views:NameValuePairCollectionView
                         ItemsSource="{Binding Headers}"
                         NameLabelText="Header name"
                         DeleteButtonText="Delete header"
-                        AddButtonText="Add header"/>
+                        AddButtonText="Add header"
+                        Collection="{Binding Collection}"/>
 
                     <Label Text="Content type" Style="{StaticResource EntryLabel}"/>
 
