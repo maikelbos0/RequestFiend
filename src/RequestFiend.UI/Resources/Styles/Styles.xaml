@@ -224,10 +224,10 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="MinimumHeightRequest" Value="{OnPlatform 34, Android=-1}"/>
-        <Setter Property="MinimumWidthRequest" Value="34"/>
-        <Setter Property="Margin" Value="{OnPlatform 5, Android='0,5,0,0'}"/>
-        <Setter Property="Padding" Value="{OnPlatform '6,5', Android='4,7,4,0'}"/>
+        <Setter Property="MinimumHeightRequest" Value="{OnPlatform WinUI=40, Android=-1}"/>
+        <Setter Property="MinimumWidthRequest" Value="{OnPlatform WinUI=40, Android=44}"/>
+        <Setter Property="Margin" Value="{OnPlatform WinUI=2, Android='0,2,0,0'}"/>
+        <Setter Property="Padding" Value="{OnPlatform WinUI='9,8,9,8', Android='4,10,4,0'}"/>
         <Setter Property="LineBreakMode" Value="NoWrap"/>
     </Style>
 
