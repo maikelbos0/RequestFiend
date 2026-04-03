@@ -1,27 +1,38 @@
 using Microsoft.Maui.Controls;
+using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System.Collections.Generic;
 
 namespace RequestFiend.UI.Views;
 
 public partial class ValidatableEntry : AbsoluteLayout {
-    public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(ValidatableProperty<string>), typeof(ValidatableEntry), default(ValidatableProperty<string>));
-    public static readonly BindableProperty VariablesProperty = BindableProperty.Create(nameof(Variables), typeof(Dictionary<string, string>), typeof(ValidatableEntry), default(Dictionary<string, string>));
+    public static readonly BindableProperty TextProperty = BindableProperty.Create(
+        nameof(Text),
+        typeof(ValidatableProperty<string>),
+        typeof(ValidatableEntry),
+        default(ValidatableProperty<string>),
+        propertyChanged: (bindable, _, _) => ((ValidatableEntry)bindable).UpdateOverlay()
+    );
+    public static readonly BindableProperty CollectionProperty = BindableProperty.Create(
+        nameof(Collection),
+        typeof(RequestTemplateCollection),
+        typeof(ValidatableEntry),
+        default(RequestTemplateCollection),
+        propertyChanged: (bindable, _, _) => ((ValidatableEntry)bindable).UpdateOverlay()
+    );
 
     public ValidatableProperty<string> Text {
         get => (ValidatableProperty<string>)GetValue(TextProperty);
         set => SetValue(TextProperty, value);
     }
 
-    public Dictionary<string, string>? Variables {
-        get => GetValue(VariablesProperty) as Dictionary<string, string>;
-        set => SetValue(VariablesProperty, value);
+    public RequestTemplateCollection? Collection {
+        get => GetValue(CollectionProperty) as RequestTemplateCollection;
+        set => SetValue(CollectionProperty, value);
     }
 
     public ValidatableEntry() {
         InitializeComponent();
-        UpdateOverlay();
     }
 
     private void OnOverlayTapped(object sender, TappedEventArgs e) {
@@ -37,11 +48,14 @@ public partial class ValidatableEntry : AbsoluteLayout {
     }
 
     private void OnEntryUnfocused(object sender, FocusEventArgs e) {
-        UpdateOverlay();
+        Overlay.IsVisible = Collection != null;
     }
 
     private void UpdateOverlay() {
-        if (Overlay.IsVisible = Variables != null) {
+        if (Collection != null) {
+            var variables = Collection.GetVariables();
+
+            Overlay.IsVisible = true;
             Overlay.FormattedText = null;
             Overlay.FormattedText = new();
 
@@ -54,7 +68,7 @@ public partial class ValidatableEntry : AbsoluteLayout {
                     Text = variableReference
                 };
 
-                if (Variables!.TryGetValue(variableReference.Trim('{', '}'), out var value)) {
+                if (variables.TryGetValue(variableReference.Trim('{', '}'), out var value)) {
                     span.Style = (Style)Application.Current!.Resources["VariableReference"];
                 }
                 else {

@@ -12,9 +12,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    private readonly RequestTemplateCollectionFileModel file;
-    private readonly RequestTemplateCollection collection;
 
+    public RequestTemplateCollectionFileModel File { get; }
+    public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection DefaultHeaders { get; }
     public NameValuePairModelCollection Variables { get; }
@@ -29,8 +29,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        this.file = file;
-        this.collection = collection;
+
+        File = file;
+        Collection = collection;
 
         DefaultUrl = new(() => collection.DefaultUrl);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
@@ -45,17 +46,17 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             return;
         }
 
-        collection.DefaultUrl = DefaultUrl.Value;
-        collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
-        collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
+        Collection.DefaultUrl = DefaultUrl.Value;
+        Collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        Collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
 
         DefaultUrl.Reset();
-        DefaultHeaders.Reset(collection.DefaultHeaders);
-        Variables.Reset(collection.Variables);
+        DefaultHeaders.Reset(Collection.DefaultHeaders);
+        Variables.Reset(Collection.Variables);
 
-        await requestTemplateCollectionService.Save(file.FilePath, collection);
+        await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
-        messageService.Send(new RequestTemplateCollectionVariablesUpdatedMessage(), file);
+        messageService.Send(new RequestTemplateCollectionVariablesUpdatedMessage(), File);
     }
 
     [RelayCommand]

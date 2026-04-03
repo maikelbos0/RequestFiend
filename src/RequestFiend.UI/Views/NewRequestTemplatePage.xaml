@@ -27,7 +27,7 @@
 
                         <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
 
-                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" Variables="{Binding Variables}" />
+                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" Collection="{Binding Collection}" />
                     </Grid>
                 </VerticalStackLayout>
             </Border>

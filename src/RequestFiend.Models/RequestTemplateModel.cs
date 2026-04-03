@@ -5,7 +5,6 @@ using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
@@ -13,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<RequestTemplateCollectionVariablesUpdatedMessage> {
+public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    private readonly RequestTemplateCollectionFileModel file;
-    private readonly RequestTemplateCollection collection;
-    private readonly RequestTemplate request;
+    
+    public RequestTemplateCollectionFileModel File {get;}
+    public RequestTemplateCollection Collection { get; }
+    public RequestTemplate Request { get; }
 
     public string Id { get; } = Guid.NewGuid().ToString();
-    public Dictionary<string, string> Variables { get => field; set => SetProperty(ref field, value); }
     public ValidatableProperty<string> Name { get; }
     public ValidatableProperty<string> Method { get; }
     public ValidatableProperty<string> Url { get; }
@@ -46,11 +45,11 @@ public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<Reque
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        this.file = file;
-        this.collection = collection;
-        this.request = request;
+        
+        File = file;
+        Collection = collection;
+        Request = request;
 
-        Variables = collection.GetVariables();
         Name = new(() => request.Name, Validator.Required);
         Method = new(() => request.Method, Validator.Required);
         Url = new(() => request.Url, Validator.Required);
@@ -73,7 +72,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<Reque
             return;
         }
 
-        var request = this.request.Clone();
+        var request = this.Request.Clone();
 
         request.Name = Name.Value!;
         request.Method = Method.Value!;
@@ -82,7 +81,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<Reque
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
 
-        messageService.Send(new CreateRequestMessage(file.FilePath, Id, collection, request));
+        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, request));
     }
 
     [RelayCommand]
@@ -91,23 +90,23 @@ public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<Reque
             return;
         }
 
-        request.Name = Name.Value!;
-        request.Method = Method.Value!;
-        request.Url = Url.Value!;
-        request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
-        request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
-        request.StringContent = StringContent.Value;
+        Request.Name = Name.Value!;
+        Request.Method = Method.Value!;
+        Request.Url = Url.Value!;
+        Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        Request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
+        Request.StringContent = StringContent.Value;
 
         Name.Reset();
         Method.Reset();
         Url.Reset();
-        Headers.Reset(request.Headers);
+        Headers.Reset(Request.Headers);
         ContentType.Reset();
         StringContent.Reset();
-        PageTitleBase = $"{file.Name} - {request.Name}";
-        ShellItemTitleBase = request.Name;
+        PageTitleBase = $"{File.Name} - {Request.Name}";
+        ShellItemTitleBase = Request.Name;
 
-        await requestTemplateCollectionService.Save(file.FilePath, collection);
+        await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 
@@ -146,8 +145,8 @@ public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<Reque
     [RelayCommand]
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
-            collection.Requests.Remove(request);
-            await requestTemplateCollectionService.Save(file.FilePath, collection);
+            Collection.Requests.Remove(Request);
+            await requestTemplateCollectionService.Save(File.FilePath, Collection);
             messageService.Send(new RequestTemplateDeletedMessage(), Id);
             messageService.Send(new SuccessMessage("Request has been deleted"));
         }
@@ -159,9 +158,5 @@ public partial class RequestTemplateModel : PageBoundModelBase, IRecipient<Reque
             UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
             UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
         }
-    }
-
-    public void Receive(RequestTemplateCollectionVariablesUpdatedMessage message) {
-        Variables = collection.GetVariables();
     }
 }

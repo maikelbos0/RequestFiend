@@ -27,6 +27,7 @@ public class RequestTemplateCollectionModelTests {
 
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.PageTitleBase);
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitleBase);
+
         Assert.NotNull(subject.Settings);
         Assert.NotNull(subject.NewRequest);
         Assert.NotNull(Assert.Single(subject.Requests));

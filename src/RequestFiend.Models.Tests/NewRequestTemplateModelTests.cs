@@ -16,10 +16,7 @@ public class NewRequestTemplateModelTests {
 
         var messageService = Substitute.For<IMessageService>();
         var collection = new RequestTemplateCollection() {
-            DefaultUrl = "https://default",
-            Variables = {
-                new() { Name = "Name", Value = "Value" }
-            }
+            DefaultUrl = "https://default"
         };
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, new(filePath), collection);
@@ -27,7 +24,9 @@ public class NewRequestTemplateModelTests {
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - New request", subject.PageTitleBase);
         Assert.Equal("New request", subject.ShellItemTitleBase);
 
-        Assert.Single(subject.Variables);
+        Assert.Equal(new RequestTemplateCollectionFileModel(filePath), subject.File);
+        Assert.Equal(collection, subject.Collection);
+
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
@@ -94,23 +93,6 @@ public class NewRequestTemplateModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
-    }
-
-    [Fact]
-    public void Receive() {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var messageService = Substitute.For<IMessageService>();
-        var collection = new RequestTemplateCollection();
-
-        var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), messageService, new(filePath), collection);
-
-        Assert.Empty(subject.Variables);
-
-        collection.Variables.Add(new() { Name = "Name", Value = "Value" });
-        subject.Receive(new());
-
-        Assert.Single(subject.Variables);
     }
 }
 

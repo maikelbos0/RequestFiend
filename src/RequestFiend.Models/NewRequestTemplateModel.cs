@@ -4,22 +4,20 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class NewRequestTemplateModel : PageBoundModelBase, IRecipient<RequestTemplateCollectionVariablesUpdatedMessage> {
+public partial class NewRequestTemplateModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IMessageService messageService;
-    private readonly RequestTemplateCollectionFileModel file;
-    private readonly RequestTemplateCollection collection;
 
-    public Dictionary<string, string> Variables { get => field; set => SetProperty(ref field, value); }
+    public RequestTemplateCollectionFileModel File { get; }
+    public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> Name { get; } = new(() => "", Validator.Required);
     public ValidatableProperty<string> Method { get; } = new(() => "GET", Validator.Required);
     public ValidatableProperty<string> Url { get; }
-
+    
     public NewRequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IMessageService messageService,
@@ -28,10 +26,10 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IRecipient<Re
     ) : base($"{file.Name} - New request", "New request") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.messageService = messageService;
-        this.file = file;
-        this.collection = collection;
 
-        Variables = collection.GetVariables();
+        File = file;        
+        Collection = collection;
+
         Url = new(() => collection.DefaultUrl, Validator.Required);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, file.FilePath, (model, _) => {
             if (!model.Url.IsModified) {
@@ -54,18 +52,14 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IRecipient<Re
             Method = Method.Value!,
             Url = Url.Value!
         };
-        collection.Requests.Add(request);
+        Collection.Requests.Add(request);
 
         Name.Reset();
         Method.Reset();
         Url.Reset();
 
-        await requestTemplateCollectionService.Save(file.FilePath, collection);
-        messageService.Send(new OpenTemplateRequestMessage(file.FilePath, collection, request));
+        await requestTemplateCollectionService.Save(File.FilePath, Collection);
+        messageService.Send(new OpenTemplateRequestMessage(File.FilePath, Collection, request));
         messageService.Send(new SuccessMessage("Request had been added"));
-    }
-
-    public void Receive(RequestTemplateCollectionVariablesUpdatedMessage message) {
-        Variables = collection.GetVariables();
     }
 }
