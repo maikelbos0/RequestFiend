@@ -56,7 +56,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
-        messageService.Send(new RequestTemplateCollectionVariablesUpdatedMessage(), File);
+        messageService.Send(new RequestTemplateCollectionSettingsUpdatedMessage(Collection));
     }
 
     [RelayCommand]

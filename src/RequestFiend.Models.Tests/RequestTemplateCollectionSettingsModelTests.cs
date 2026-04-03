@@ -82,7 +82,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
-        messageService.Received(1).Send(Arg.Any<RequestTemplateCollectionVariablesUpdatedMessage>(), new RequestTemplateCollectionFileModel(filePath));
+        messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.Collection == collection));
     }
 
     [Theory]
@@ -119,7 +119,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
-        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionVariablesUpdatedMessage>(), new RequestTemplateCollectionFileModel(filePath));
+        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
     }
 
     [Theory]

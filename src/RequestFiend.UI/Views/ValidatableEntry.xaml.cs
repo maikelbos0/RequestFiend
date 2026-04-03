@@ -1,5 +1,7 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 
@@ -33,6 +35,11 @@ public partial class ValidatableEntry : AbsoluteLayout {
 
     public ValidatableEntry() {
         InitializeComponent();
+        WeakReferenceMessenger.Default.Register<ValidatableEntry, RequestTemplateCollectionSettingsUpdatedMessage>(this, (_, message) => {
+            if (message.Collection == Collection) {
+                UpdateOverlay();
+            }
+        });
     }
 
     private void OnOverlayTapped(object sender, TappedEventArgs e) {
