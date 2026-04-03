@@ -21,8 +21,8 @@ public partial class ValidatableEntry : AbsoluteLayout {
         propertyChanged: (bindable, _, _) => ((ValidatableEntry)bindable).UpdateOverlay()
     );
 
-    public ValidatableProperty<string> Text {
-        get => (ValidatableProperty<string>)GetValue(TextProperty);
+    public ValidatableProperty<string>? Text {
+        get => GetValue(TextProperty) as ValidatableProperty<string>;
         set => SetValue(TextProperty, value);
     }
 
@@ -48,11 +48,11 @@ public partial class ValidatableEntry : AbsoluteLayout {
     }
 
     private void OnEntryUnfocused(object sender, FocusEventArgs e) {
-        Overlay.IsVisible = Collection != null;
+        UpdateOverlay();
     }
 
     private void UpdateOverlay() {
-        if (Collection != null) {
+        if (Collection != null && Text != null) {
             var variables = Collection.GetVariables();
 
             Overlay.IsVisible = true;
