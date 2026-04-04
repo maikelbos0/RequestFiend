@@ -34,11 +34,14 @@ public class RequestHandler : IRequestHandler {
             }
         }
         catch (Exception exception) {
-            context.Exception = exception;
-            await scriptEvaluator.Evaluate(request.OnExceptionScript, context, cancellationToken);
-            if (requestExchangeListener != null) {
-                await requestExchangeListener.OnExceptionCaught(exception);
+            try {
+                context.Exception = exception;
+                await scriptEvaluator.Evaluate(request.OnExceptionScript, context, cancellationToken);
+                if (requestExchangeListener != null) {
+                    await requestExchangeListener.OnExceptionCaught(exception);
+                }
             }
+            catch (Exception) { }
         }
 
         return context;

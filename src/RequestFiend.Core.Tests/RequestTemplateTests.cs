@@ -15,7 +15,10 @@ public class RequestTemplateTests {
                 new() { Name = "Accept", Value = "application/json" }
             ],
             ContentType = ContentType.Text,
-            StringContent = "Just a piece of text"
+            StringContent = "Just a piece of text",
+            PreExchangeScript = "PreExchangeScript",
+            PostExchangeScript = "PostExchangeScript",
+            OnExceptionScript = "OnExceptionScript"
         };
 
         var result = subject.Clone();
@@ -27,6 +30,9 @@ public class RequestTemplateTests {
         Assert.Equal(subject.Headers.Count, result.Headers.Count);
         Assert.Equal(subject.ContentType, result.ContentType);
         Assert.Equal(subject.StringContent, result.StringContent);
+        Assert.Equal(subject.PreExchangeScript, result.PreExchangeScript);
+        Assert.Equal(subject.PostExchangeScript, result.PostExchangeScript);
+        Assert.Equal(subject.OnExceptionScript, result.OnExceptionScript);
     }
 
     [Theory]

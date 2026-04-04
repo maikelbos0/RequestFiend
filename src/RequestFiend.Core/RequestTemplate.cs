@@ -12,9 +12,9 @@ public class RequestTemplate {
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
     public string StringContent { get; set; } = "";
-    public string PreExchangeScript{ get; set; } = "";
+    public string PreExchangeScript { get; set; } = "";
     public string PostExchangeScript { get; set; } = "";
-    public string OnExceptionScript{ get; set; } = "";
+    public string OnExceptionScript { get; set; } = "";
 
     public RequestTemplate Clone()
         => new() {
@@ -23,7 +23,10 @@ public class RequestTemplate {
             Url = Url,
             Headers = [.. Headers.Select(header => header.Clone())],
             ContentType = ContentType,
-            StringContent = StringContent
+            StringContent = StringContent,
+            PreExchangeScript = PreExchangeScript,
+            PostExchangeScript = PostExchangeScript,
+            OnExceptionScript = OnExceptionScript
         };
 
     public IContentManager GetContentManager() => ContentType switch {
