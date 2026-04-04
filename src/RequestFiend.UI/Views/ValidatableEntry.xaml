@@ -26,7 +26,7 @@
         </Entry.Triggers>
     </Entry>
 
-    <Label x:Name="Overlay" Style="{StaticResource OverlayLabel}" IsVisible="False" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+    <Label x:Name="Overlay" Style="{StaticResource EntryOverlay}" IsVisible="False" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
         <Label.GestureRecognizers>
             <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>

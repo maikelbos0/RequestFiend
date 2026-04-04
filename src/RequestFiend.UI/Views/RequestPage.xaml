@@ -106,7 +106,6 @@
 
                     <Editor 
                         Text="{Binding Response.Content.TextContent}" 
-                        HeightRequest="300"
                         IsReadOnly="True"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Text}}"/>
 
@@ -118,7 +117,6 @@
 
                     <Editor 
                         Text="{Binding Response.Content.BinaryContent, Converter={converters:ByteArrayToHexStringConverter}, Mode=OneWay}" 
-                        HeightRequest="300"
                         IsReadOnly="True"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Unknown}}"/>
                 </VerticalStackLayout>

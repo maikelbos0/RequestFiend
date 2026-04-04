@@ -12,9 +12,10 @@
         Text="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.Value, Source={x:Reference Root}}"
         IsSpellCheckEnabled="False"
         IsTextPredictionEnabled="False"
-        HeightRequest="300"
         AbsoluteLayout.LayoutFlags="WidthProportional"
-        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize"
+        Focused="OnEditorFocused"
+        Unfocused="OnEditorUnfocused">
 
         <Editor.Triggers>
             <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
@@ -26,6 +27,29 @@
         </Editor.Triggers>
     </Editor>
 
+    <Label 
+        Text="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.Value, Source={x:Reference Root}}"
+        x:Name="Overlay"
+        Style="{StaticResource EditorOverlay}"
+        IsVisible="False"
+        AbsoluteLayout.LayoutFlags="WidthProportional"
+        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+        
+        <Label.GestureRecognizers>
+            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
+        </Label.GestureRecognizers>
+
+        <Label.Triggers>
+            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
+            </DataTrigger>
+        </Label.Triggers>
+    </Label>
+
     <Label
         Text="▲"
         TextColor="{x:StaticResource ErrorIcon}"
@@ -36,8 +60,8 @@
         AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
 
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
-            <TapGestureRecognizer Tapped="OnIconTapped"/>
+            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
 
@@ -51,8 +75,8 @@
         AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
 
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
-            <TapGestureRecognizer Tapped="OnIconTapped"/>
+            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
 </AbsoluteLayout>
