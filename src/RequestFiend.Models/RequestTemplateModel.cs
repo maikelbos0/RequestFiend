@@ -33,6 +33,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     public bool UsesStructuredStringContent { get => field; private set => SetProperty(ref field, value); }
     public bool UsesUnstructuredStringContent { get => field; private set => SetProperty(ref field, value); }
     public ValidatableProperty<string> StringContent { get; }
+    public ValidatableProperty<string> PreExchangeScript { get; }
+    public ValidatableProperty<string> PostExchangeScript { get; }
+    public ValidatableProperty<string> OnExceptionScript { get; }
 
     public RequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -56,13 +59,16 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Headers = new(request.Headers, Validator.Required);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
+        PreExchangeScript = new(() => request.PreExchangeScript);
+        PostExchangeScript = new(() => request.PostExchangeScript);
+        OnExceptionScript = new(() => request.OnExceptionScript);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
         UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
 
-        ConfigureState([Name, Method, Url, ContentType, StringContent, Headers]);
+        ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
         WeakReferenceMessenger.Default.RegisterAll(this, file);
     }
 
@@ -80,6 +86,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
+        request.PreExchangeScript = PreExchangeScript.Value;
+        request.PostExchangeScript = PostExchangeScript.Value;
+        request.OnExceptionScript = OnExceptionScript.Value;
 
         messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, request));
     }
@@ -96,6 +105,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         Request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         Request.StringContent = StringContent.Value;
+        Request.PreExchangeScript = PreExchangeScript.Value;
+        Request.PostExchangeScript = PostExchangeScript.Value;
+        Request.OnExceptionScript = OnExceptionScript.Value;
 
         Name.Reset();
         Method.Reset();
@@ -103,6 +115,10 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Headers.Reset(Request.Headers);
         ContentType.Reset();
         StringContent.Reset();
+        PreExchangeScript.Reset();
+        PostExchangeScript.Reset();
+        OnExceptionScript.Reset();
+
         PageTitleBase = $"{File.Name} - {Request.Name}";
         ShellItemTitleBase = Request.Name;
 

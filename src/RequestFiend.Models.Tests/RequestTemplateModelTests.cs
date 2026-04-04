@@ -51,7 +51,10 @@ public class RequestTemplateModelTests {
                 new() { Name = "Name", Value = "Value" }
             },
             ContentType = contentType,
-            StringContent = "Content"
+            StringContent = "Content",
+            PreExchangeScript = "PreExchangeScript",
+            PostExchangeScript = "PostExchangeScript",
+            OnExceptionScript = "OnExceptionScript"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -73,6 +76,10 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Headers[0].Value, subject.Headers[0].Value.Value);
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
+        Assert.Equal(request.PreExchangeScript, subject.PreExchangeScript.Value);
+        Assert.Equal(request.PostExchangeScript, subject.PostExchangeScript.Value);
+        Assert.Equal(request.OnExceptionScript, subject.OnExceptionScript.Value);
+
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
         Assert.Equal(expectedUsesUnstructuredStringContent, subject.UsesUnstructuredStringContent);
@@ -88,6 +95,9 @@ public class RequestTemplateModelTests {
         const string headerValue = "Value";
         const string contentType = "JSON";
         const string stringContent = "Content";
+        const string preExchangeScript = "PreExchangeScript";
+        const string postExchangeScript = "PostExchangeScript";
+        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -99,7 +109,10 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent"
+            StringContent = "PreviousContent",
+            PreExchangeScript = "PreviousPreExchangeScript",
+            PostExchangeScript = "PreviousPostExchangeScript",
+            OnExceptionScript = "PreviousOnExceptionScript"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -114,6 +127,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.PreExchangeScript.Value = preExchangeScript;
+        subject.PostExchangeScript.Value = postExchangeScript;
+        subject.OnExceptionScript.Value = onExceptionScript;
 
         subject.CreateRequest();
 
@@ -124,6 +140,9 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
+        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript);
+        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript);
+        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript);
 
         messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
             => message.FilePath == filePath
@@ -137,9 +156,12 @@ public class RequestTemplateModelTests {
             && message.Request.Headers[0].Name == headerName
             && message.Request.Headers[0].Value == headerValue
             && message.Request.ContentType == Options.ReverseContentTypeMap[contentType]
-            && message.Request.StringContent == stringContent));
+            && message.Request.StringContent == stringContent
+            && message.Request.PreExchangeScript == preExchangeScript
+            && message.Request.PostExchangeScript == postExchangeScript
+            && message.Request.OnExceptionScript == onExceptionScript));
     }
-
+    
     [Theory]
     [InlineData("", "", "", "", "")]
     [InlineData("", "GET", "https://localhost", "Name", "JSON")]
@@ -150,6 +172,9 @@ public class RequestTemplateModelTests {
     public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
+        const string preExchangeScript = "PreExchangeScript";
+        const string postExchangeScript = "PostExchangeScript";
+        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -161,7 +186,10 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent"
+            StringContent = "PreviousContent",
+            PreExchangeScript = "PreviousPreExchangeScript",
+            PostExchangeScript = "PreviousPostExchangeScript",
+            OnExceptionScript = "PreviousOnExceptionScript"
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
@@ -172,6 +200,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.PreExchangeScript.Value = preExchangeScript;
+        subject.PostExchangeScript.Value = postExchangeScript;
+        subject.OnExceptionScript.Value = onExceptionScript;
 
         subject.CreateRequest();
 
@@ -182,10 +213,13 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
+        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript);
+        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript);
+        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript);
 
         messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
-
+    
     [Fact]
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
@@ -196,6 +230,9 @@ public class RequestTemplateModelTests {
         const string headerValue = "Value";
         const string contentType = "JSON";
         const string stringContent = "Content";
+        const string preExchangeScript = "PreExchangeScript";
+        const string postExchangeScript = "PostExchangeScript";
+        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -207,7 +244,10 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent"
+            StringContent = "PreviousContent",
+            PreExchangeScript = "PreviousPreExchangeScript",
+            PostExchangeScript = "PreviousPostExchangeScript",
+            OnExceptionScript = "PreviousOnExceptionScript"
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -222,6 +262,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.PreExchangeScript.Value = preExchangeScript;
+        subject.PostExchangeScript.Value = postExchangeScript;
+        subject.OnExceptionScript.Value = onExceptionScript;
 
         await subject.Update();
 
@@ -232,12 +275,19 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
+        Assert.Equal(preExchangeScript, request.PreExchangeScript);
+        Assert.Equal(postExchangeScript, request.PostExchangeScript);
+        Assert.Equal(onExceptionScript, request.OnExceptionScript);
+
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
         Assert.False(subject.Url.IsModified);
         Assert.False(subject.Headers[0].Name.IsModified);
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
+        Assert.False(subject.PreExchangeScript.IsModified);
+        Assert.False(subject.PostExchangeScript.IsModified);
+        Assert.False(subject.OnExceptionScript.IsModified);
 
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -253,6 +303,9 @@ public class RequestTemplateModelTests {
     public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
+        const string preExchangeScript = "PreExchangeScript";
+        const string postExchangeScript = "PostExchangeScript";
+        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -264,7 +317,10 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent"
+            StringContent = "PreviousContent",
+            PreExchangeScript = "PreviousPreExchangeScript",
+            PostExchangeScript = "PreviousPostExchangeScript",
+            OnExceptionScript = "PreviousOnExceptionScript"
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
@@ -275,6 +331,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.PreExchangeScript.Value = preExchangeScript;
+        subject.PostExchangeScript.Value = postExchangeScript;
+        subject.OnExceptionScript.Value = onExceptionScript;
 
         await subject.Update();
 
@@ -285,6 +344,9 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
+        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript);
+        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript);
+        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
