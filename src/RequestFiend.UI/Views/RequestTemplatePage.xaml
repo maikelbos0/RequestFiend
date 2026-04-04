@@ -80,7 +80,7 @@
                         </Label.FormattedText>
                     </Label>
 
-                    <views:ValidatableContentEditor Text="{Binding StringContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesStringContent}"/>
+                    <views:ValidatableEditor Text="{Binding StringContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesStringContent}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

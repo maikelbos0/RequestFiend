@@ -3,13 +3,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
-    x:Class="RequestFiend.UI.Views.ValidatableContentEditor"
+    x:Class="RequestFiend.UI.Views.ValidatableEditor"
     HorizontalOptions="Fill"
     x:Name="Root">
 
     <Editor
         x:Name="Editor"
-        Text="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.Value, Source={x:Reference Root}}"
+        Text="{Binding x:DataType='viewsValidatableEditorr', Path=Text.Value, Source={x:Reference Root}}"
         IsSpellCheckEnabled="False"
         IsTextPredictionEnabled="False"
         AbsoluteLayout.LayoutFlags="WidthProportional"
@@ -18,10 +18,10 @@
         Unfocused="OnEditorUnfocused">
 
         <Editor.Triggers>
-            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='viewsValidatableEditorr', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
             </DataTrigger>
-            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='viewsValidatableEditorr', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
             </DataTrigger>
         </Editor.Triggers>
@@ -52,7 +52,7 @@
     <Label
         Text="▲"
         TextColor="{x:StaticResource ErrorIcon}"
-        IsVisible="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.HasError, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='viewsValidatableEditorr', Path=Text.HasError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="20"
         AbsoluteLayout.LayoutFlags="XProportional"
@@ -67,7 +67,7 @@
     <Label
         Text="●"
         TextColor="{x:StaticResource ModifiedIcon}"
-        IsVisible="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='viewsValidatableEditorr', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
         AbsoluteLayout.LayoutFlags="XProportional"

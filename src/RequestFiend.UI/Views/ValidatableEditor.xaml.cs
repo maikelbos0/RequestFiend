@@ -7,20 +7,20 @@ using RequestFiend.Models.Services;
 
 namespace RequestFiend.UI.Views;
 
-public partial class ValidatableContentEditor : AbsoluteLayout {
+public partial class ValidatableEditor : AbsoluteLayout {
     public static readonly BindableProperty TextProperty = BindableProperty.Create(
         nameof(Text),
         typeof(ValidatableProperty<string>),
-        typeof(ValidatableContentEditor),
+        typeof(ValidatableEditor),
         default(ValidatableProperty<string>),
-        propertyChanged: (bindable, _, _) => ((ValidatableContentEditor)bindable).UpdateOverlay()
+        propertyChanged: (bindable, _, _) => ((ValidatableEditor)bindable).UpdateOverlay()
     );
     public static readonly BindableProperty CollectionProperty = BindableProperty.Create(
         nameof(Collection),
         typeof(RequestTemplateCollection),
-        typeof(ValidatableContentEditor),
+        typeof(ValidatableEditor),
         default(RequestTemplateCollection),
-        propertyChanged: (bindable, _, _) => ((ValidatableContentEditor)bindable).UpdateOverlay()
+        propertyChanged: (bindable, _, _) => ((ValidatableEditor)bindable).UpdateOverlay()
     );
 
     public ValidatableProperty<string> Text {
@@ -33,9 +33,9 @@ public partial class ValidatableContentEditor : AbsoluteLayout {
         set => SetValue(CollectionProperty, value);
     }
 
-    public ValidatableContentEditor() {
+    public ValidatableEditor() {
         InitializeComponent();
-        WeakReferenceMessenger.Default.Register<ValidatableContentEditor, RequestTemplateCollectionSettingsUpdatedMessage>(this, (_, message) => {
+        WeakReferenceMessenger.Default.Register<ValidatableEditor, RequestTemplateCollectionSettingsUpdatedMessage>(this, (_, message) => {
             if (message.Collection == Collection) {
                 UpdateOverlay();
             }
