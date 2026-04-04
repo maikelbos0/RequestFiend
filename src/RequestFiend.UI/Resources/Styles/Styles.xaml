@@ -505,4 +505,18 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
     </Style>
 
+    <Style TargetType="Span" x:Key="EditorOverlayText">
+        <Setter Property="FontFamily" Value="FiraCodeRegular"/>
+    </Style>
+
+    <Style TargetType="Span" x:Key="EditorOverlayVariableReference">
+        <Setter Property="FontFamily" Value="FiraCodeRegular"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+    </Style>
+
+    <Style TargetType="Span" x:Key="EditorOverlayMissingReference">
+        <Setter Property="FontFamily" Value="FiraCodeRegular"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
+    </Style>
+
 </ResourceDictionary>

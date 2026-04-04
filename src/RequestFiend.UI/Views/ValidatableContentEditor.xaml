@@ -28,7 +28,6 @@
     </Editor>
 
     <Label 
-        Text="{Binding x:DataType='views:ValidatableContentEditor', Path=Text.Value, Source={x:Reference Root}}"
         x:Name="Overlay"
         Style="{StaticResource EditorOverlay}"
         IsVisible="False"
