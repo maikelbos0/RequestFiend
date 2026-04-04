@@ -19,7 +19,7 @@
                     <Label Style="{StaticResource EntryLabel}" Grid.Column="1">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="Default url (optional) (" />
+                                <Span Text="Default url (" />
                                 <Span Style="{StaticResource LinkButton}" Text="edit">
                                     <Span.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ShowDefaultUrlPopupCommand}"/>

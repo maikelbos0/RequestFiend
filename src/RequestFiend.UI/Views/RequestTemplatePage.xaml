@@ -81,6 +81,18 @@
                     </Label>
 
                     <views:ValidatableEditor Text="{Binding StringContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesStringContent}"/>
+
+                    <Label Text="Pre-exchange script" Style="{StaticResource EntryLabel}"/>
+                    
+                    <views:ValidatableEditor Text="{Binding PreExchangeScript}"/>
+
+                    <Label Text="Post-exchange script" Style="{StaticResource EntryLabel}"/>
+                    
+                    <views:ValidatableEditor Text="{Binding PostExchangeScript}"/>
+
+                    <Label Text="On-exception script" Style="{StaticResource EntryLabel}"/>
+                    
+                    <views:ValidatableEditor Text="{Binding OnExceptionScript}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
