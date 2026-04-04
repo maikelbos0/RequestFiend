@@ -7,4 +7,8 @@
 		<NoWarn>$(NoWarn);IDE0290</NoWarn>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.3.0" />
+	</ItemGroup>
+
 </Project>

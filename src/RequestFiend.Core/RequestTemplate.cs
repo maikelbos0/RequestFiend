@@ -12,6 +12,9 @@ public class RequestTemplate {
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
     public string StringContent { get; set; } = "";
+    public string PreExchangeScript{ get; set; } = "";
+    public string PostExchangeScript { get; set; } = "";
+    public string OnExceptionScript{ get; set; } = "";
 
     public RequestTemplate Clone()
         => new() {

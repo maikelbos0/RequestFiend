@@ -33,6 +33,7 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddHttpClient<RequestHandler>();
         mauiAppBuilder.Services.AddSingleton<IRequestHandler, RequestHandler>();
+        mauiAppBuilder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
 
         mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPopupService, Services.PopupService>();
