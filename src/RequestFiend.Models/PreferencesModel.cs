@@ -71,4 +71,12 @@ public partial class PreferencesModel : PageBoundModelBase {
             messageService.Send(new SuccessMessage("Recent collections have been cleared"));
         }
     }
+
+    [RelayCommand]
+    public void ToggleShowRecentCollections()
+        => ShowRecentCollections.Value = !ShowRecentCollections.Value;
+
+    [RelayCommand]
+    public void ToggleAllowScriptExecution()
+        => AllowScriptExecution.Value = !AllowScriptExecution.Value;
 }

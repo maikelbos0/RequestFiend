@@ -165,4 +165,26 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().ClearRecentCollections();
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
+
+    [Fact]
+    public void ToggleShowRecentCollections() {
+        var subject = new PreferencesModel(Substitute.For<IPreferencesService>(), Substitute.For<IMessageService>(), Substitute.For<IPopupService>()) {
+            ShowRecentCollections = { Value = true }
+        };
+
+        subject.ToggleShowRecentCollections();
+
+        Assert.False(subject.ShowRecentCollections.Value);
+    }
+
+    [Fact]
+    public void ToggleAllowScriptExecution() {
+        var subject = new PreferencesModel(Substitute.For<IPreferencesService>(), Substitute.For<IMessageService>(), Substitute.For<IPopupService>()) {
+            AllowScriptExecution = { Value = true }
+        };
+
+        subject.ToggleAllowScriptExecution();
+
+        Assert.False(subject.AllowScriptExecution.Value);
+    }
 }
