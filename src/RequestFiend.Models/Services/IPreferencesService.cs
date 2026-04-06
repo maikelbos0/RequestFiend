@@ -13,4 +13,6 @@ public interface IPreferencesService {
     void PushRecentCollection(string filePath);
     void RemoveRecentCollection(string filePath);
     void Reset();
+    bool GetAllowScriptExecution();
+    void SetAllowScriptExecution(bool allowScriptExecution);
 }

@@ -13,6 +13,7 @@ public partial class PreferencesModel : PageBoundModelBase {
 
     public ValidatableProperty<bool> ShowRecentCollections { get; }
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
+    public ValidatableProperty<bool> AllowScriptExecution { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
@@ -21,8 +22,9 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         ShowRecentCollections = new(() => preferencesService.GetShowRecentCollections());
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
+        AllowScriptExecution = new(() => preferencesService.GetAllowScriptExecution());
 
-        ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount]);
+        ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount, AllowScriptExecution]);
     }
 
     [RelayCommand]
@@ -33,9 +35,11 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         preferencesService.SetShowRecentCollections(ShowRecentCollections.Value);
         preferencesService.SetMaximumRecentCollectionCount(int.Parse(MaximumRecentCollectionCount.Value!));
+        preferencesService.SetAllowScriptExecution(AllowScriptExecution.Value);
 
         ShowRecentCollections.Reset();
         MaximumRecentCollectionCount.Reset();
+        AllowScriptExecution.Reset();
 
         if (ShowRecentCollections.Value) {
             preferencesService.TrimRecentCollections();
@@ -53,6 +57,7 @@ public partial class PreferencesModel : PageBoundModelBase {
             preferencesService.Reset();
             ShowRecentCollections.Reset();
             MaximumRecentCollectionCount.Reset();
+            AllowScriptExecution.Reset();
 
             messageService.Send(new SuccessMessage("Preferences have been reset"));
         }
