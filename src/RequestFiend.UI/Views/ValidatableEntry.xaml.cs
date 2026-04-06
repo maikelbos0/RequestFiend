@@ -46,10 +46,6 @@ public partial class ValidatableEntry : AbsoluteLayout {
         Entry.Focus();
     }
 
-    private void OnOverlayPointerPressed(object sender, PointerEventArgs e) {
-        Entry.Focus();
-    }
-
     private void OnEntryFocused(object sender, FocusEventArgs e) {
         Overlay.IsVisible = false;
     }

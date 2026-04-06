@@ -46,10 +46,6 @@ public partial class ValidatableEditor : AbsoluteLayout {
         Editor.Focus();
     }
 
-    private void OnOverlayPointerPressed(object sender, PointerEventArgs e) {
-        Editor.Focus();
-    }
-
     private void OnEditorFocused(object sender, FocusEventArgs e) {
         Overlay.IsVisible = false;
     }

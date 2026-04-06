@@ -34,8 +34,7 @@
         AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
 
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
-            <TapGestureRecognizer Tapped="OnIconTapped"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
 
@@ -49,8 +48,7 @@
         AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
 
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnIconPointerPressed"/>
-            <TapGestureRecognizer Tapped="OnIconTapped"/>
+            <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
 </AbsoluteLayout>

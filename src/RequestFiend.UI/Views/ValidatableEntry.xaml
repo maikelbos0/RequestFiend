@@ -28,7 +28,6 @@
 
     <Label x:Name="Overlay" Style="{StaticResource EntryOverlay}" IsVisible="False" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
 
@@ -52,7 +51,6 @@
         AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
         
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
@@ -67,7 +65,6 @@
         AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
 
         <Label.GestureRecognizers>
-            <PointerGestureRecognizer PointerPressed="OnOverlayPointerPressed"/>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>

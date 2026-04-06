@@ -22,11 +22,7 @@ public partial class ValidatablePicker : AbsoluteLayout {
         InitializeComponent();
     }
 
-    private void OnIconTapped(object sender, TappedEventArgs e) {
-        Picker.IsOpen = true;
-    }
-
-    private void OnIconPointerPressed(object sender, PointerEventArgs e) {
+    private void OnOverlayTapped(object sender, TappedEventArgs e) {
         Picker.IsOpen = true;
     }
 }
