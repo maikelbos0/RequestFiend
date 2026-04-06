@@ -142,4 +142,34 @@ public class RequestHandlerTests {
         await scriptEvaluator.DidNotReceive().Evaluate(request.PostExchangeScript, Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
         await requestPipelineListener.DidNotReceive().OnResponseReceived(Arg.Any<HttpResponseMessage>());
     }
+
+    [Fact]
+    public async Task Execute_Handles_Script_Execution_Exception() {
+        var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
+        httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(new InvalidOperationException());
+        var httpClient = new HttpClient(httpMessageHandler);
+        var scriptEvaluator = Substitute.For<IScriptEvaluator>();
+        var expectedException = new InvalidOperationException();
+        scriptEvaluator.Evaluate("OnExceptionScript", Arg.Any<RequestContext>(), CancellationToken.None).Throws(expectedException);
+        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost/",
+            PreExchangeScript = "PreExchangeScript",
+            PostExchangeScript = "PostExchangeScript",
+            OnExceptionScript = "OnExceptionScript"
+        };
+
+        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
+
+        Assert.NotNull(result.Request);
+        Assert.Null(result.Response);
+        Assert.Same(expectedException, result.Exception);
+
+        await requestPipelineListener.OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+    }
 }
