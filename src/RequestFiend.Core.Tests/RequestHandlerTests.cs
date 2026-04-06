@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.Logging;
+using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System;
 using System.Net.Http;
@@ -16,7 +17,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(expectedResponse);
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>());
+        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -39,7 +40,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>());
+        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -61,7 +62,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(expectedException);
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>());
+        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -84,7 +85,7 @@ public class RequestHandlerTests {
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
         var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator);
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -117,7 +118,7 @@ public class RequestHandlerTests {
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
         var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator);
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",

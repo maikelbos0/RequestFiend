@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,17 +9,19 @@ namespace RequestFiend.Core;
 public class RequestHandler : IRequestHandler {
     private readonly HttpClient httpClient;
     private readonly IScriptEvaluator scriptEvaluator;
+    private readonly ILoggerFactory loggerFactory;
 
-    public RequestHandler(HttpClient httpClient, IScriptEvaluator scriptEvaluator) {
+    public RequestHandler(HttpClient httpClient, IScriptEvaluator scriptEvaluator, ILoggerFactory loggerFactory) {
         this.httpClient = httpClient;
         this.scriptEvaluator = scriptEvaluator;
+        this.loggerFactory = loggerFactory;
     }
 
     public Task<RequestContext> Execute(RequestTemplate request, RequestTemplateCollection collection, CancellationToken cancellationToken)
         => Execute(request, collection, null, cancellationToken);
 
     public async Task<RequestContext> Execute(RequestTemplate request, RequestTemplateCollection collection, IRequestExchangeListener? requestExchangeListener, CancellationToken cancellationToken) {
-        var context = new RequestContext();
+        var context = new RequestContext(loggerFactory.CreateLogger<RequestContext>());
 
         try {
             context.Request = request.CreateMessage(collection);
@@ -41,7 +44,7 @@ public class RequestHandler : IRequestHandler {
                     await requestExchangeListener.OnExceptionCaught(exception);
                 }
             }
-            catch (Exception) { }
+            catch { }
         }
 
         return context;
