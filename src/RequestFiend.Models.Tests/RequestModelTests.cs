@@ -27,7 +27,7 @@ public class RequestModelTests {
             Requests = [request]
         };
 
-        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), new(filePath), collection, request);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange", subject.PageTitleBase);
         Assert.Equal($"{request.Name} - Exchange", subject.ShellItemTitleBase);
@@ -38,6 +38,8 @@ public class RequestModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestHandler = Substitute.For<IRequestHandler>();
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetAllowScriptExecution().Returns(true);
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -50,7 +52,7 @@ public class RequestModelTests {
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
 
-        var subject = new RequestModel(Substitute.For<IMessageService>(), requestHandler, Substitute.For<IPopupService>(), new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), requestHandler, Substitute.For<IPopupService>(), preferencesService, new(filePath), collection, request);
         subject.PropertyChanged += (_, e) => {
             switch (e.PropertyName) {
                 case nameof(RequestModel.PageTitleBase):
@@ -69,7 +71,7 @@ public class RequestModelTests {
 
         await subject.Execute();
 
-        _ = requestHandler.Received(1).Execute(request, collection, subject, Arg.Any<CancellationToken>());
+        _ = requestHandler.Received(1).Execute(request, collection, new RequestExchangeOptions(true), subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal([$"{request.Name} - Executing request...", $"{request.Name} - Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);
@@ -100,7 +102,7 @@ public class RequestModelTests {
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
 
-        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(contentType, mediaType, [0, 1, 2, 3], null))
         };
 
@@ -130,7 +132,7 @@ public class RequestModelTests {
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
 
-        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
         };
 
@@ -160,7 +162,7 @@ public class RequestModelTests {
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
 
-        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
         };
 
@@ -189,7 +191,7 @@ public class RequestModelTests {
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
 
-        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, new(filePath), collection, request) {
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.None, null, null, null))
         };
 
@@ -215,7 +217,7 @@ public class RequestModelTests {
             Requests = [request]
         };
 
-        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
+        var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), new(filePath), collection, request);
 
         subject.Close();
 
@@ -236,7 +238,7 @@ public class RequestModelTests {
         };
         var expectedRequest = new HttpRequestMessage();
 
-        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), new(filePath), collection, request);
 
         await subject.OnRequestCreated(expectedRequest);
 
@@ -257,7 +259,7 @@ public class RequestModelTests {
         };
         var expectedResponse = new HttpResponseMessage();
 
-        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), new(filePath), collection, request);
 
         await subject.OnResponseReceived(expectedResponse);
 
@@ -278,7 +280,7 @@ public class RequestModelTests {
         };
         var expectedException = new Exception();
 
-        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), new(filePath), collection, request);
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), new(filePath), collection, request);
 
         await subject.OnExceptionCaught(expectedException);
 

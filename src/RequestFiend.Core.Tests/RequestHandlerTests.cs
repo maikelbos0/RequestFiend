@@ -25,7 +25,7 @@ public class RequestHandlerTests {
             Url = "https://localhost/"
         };
 
-        var result = await subject.Execute(request, new(), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false), CancellationToken.None);
 
         Assert.NotNull(result.Request);
         Assert.NotNull(result.Request.RequestUri);
@@ -48,7 +48,7 @@ public class RequestHandlerTests {
             Url = "An invalid URL"
         };
 
-        var result = await subject.Execute(request, new(), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false), CancellationToken.None);
 
         Assert.Null(result.Request);
         Assert.Null(result.Response);
@@ -70,7 +70,7 @@ public class RequestHandlerTests {
             Url = "https://localhost/"
         };
 
-        var result = await subject.Execute(request, new(), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false), CancellationToken.None);
 
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
@@ -96,8 +96,8 @@ public class RequestHandlerTests {
             OnExceptionScript = "OnExceptionScript"
         };
 
-        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
-        
+        var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
+
         Received.InOrder(async () => {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
@@ -129,7 +129,7 @@ public class RequestHandlerTests {
             OnExceptionScript = "OnExceptionScript"
         };
 
-        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
 
         Received.InOrder(async () => {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
@@ -164,12 +164,58 @@ public class RequestHandlerTests {
             OnExceptionScript = "OnExceptionScript"
         };
 
-        var result = await subject.Execute(request, new(), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
 
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
         Assert.Same(expectedException, result.Exception);
 
         await requestPipelineListener.OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+    }
+
+    [Fact]
+    public async Task Execute_Does_Not_Evaluate_Script_If_Not_Allowed() {
+        var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
+        httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
+        var httpClient = new HttpClient(httpMessageHandler);
+        var scriptEvaluator = Substitute.For<IScriptEvaluator>();
+
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost/",
+            PreExchangeScript = "PreExchangeScript",
+            PostExchangeScript = "PostExchangeScript",
+            OnExceptionScript = "OnExceptionScript"
+        };
+
+        await subject.Execute(request, new(), new(false), CancellationToken.None);
+
+        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<string>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Execute_Does_Not_Evaluate_Exception_Script_If_Not_Allowed() {
+        var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
+        httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(new InvalidOperationException());
+        var httpClient = new HttpClient(httpMessageHandler);
+        var scriptEvaluator = Substitute.For<IScriptEvaluator>();
+
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost/",
+            PreExchangeScript = "PreExchangeScript",
+            PostExchangeScript = "PostExchangeScript",
+            OnExceptionScript = "OnExceptionScript"
+        };
+
+        _ = await subject.Execute(request, new(), new(false), CancellationToken.None);
+
+        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<string>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
     }
 }

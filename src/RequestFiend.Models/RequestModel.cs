@@ -15,6 +15,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     private readonly IMessageService messageService;
     private readonly IRequestHandler requestHandler;
     private readonly IPopupService popupService;
+    private readonly IPreferencesService preferencesService;
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
@@ -30,6 +31,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         IMessageService messageService,
         IRequestHandler requestHandler,
         IPopupService popupService,
+        IPreferencesService preferencesService,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
@@ -37,6 +39,8 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         this.messageService = messageService;
         this.requestHandler = requestHandler;
         this.popupService = popupService;
+        this.preferencesService = preferencesService;
+
         this.file = file;
         this.collection = collection;
         this.request = request;
@@ -61,7 +65,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         Response = null;
         Exception = null;
 
-        await requestHandler.Execute(request, collection, this, cancellationTokenSource.Token);
+        await requestHandler.Execute(request, collection, new(preferencesService.GetAllowScriptExecution()), this, cancellationTokenSource.Token);
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = $"{request.Name} - Exchange";
