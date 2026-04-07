@@ -16,7 +16,7 @@ public partial class UrlModel : BoundModelBase {
         return string.Join("", VariableService.ProcessText(urlComponent, HttpUtility.UrlEncode, variableReference => variableReference));
     }
 
-    private Func<string?, CancellationToken, Task> closeMethod;
+    private readonly Func<string?, CancellationToken, Task> closeMethod;
 
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; }
@@ -37,12 +37,12 @@ public partial class UrlModel : BoundModelBase {
 
         BaseUrl.Value = baseUrl;
 
-        foreach (var parameter in parameters) {
-            Parameters.Add(parameter.Name, parameter.Value);
+        foreach (var (Name, Value) in parameters) {
+            Parameters.Add(Name, Value);
         }
     }
 
-    private (string BaseUrl, List<(string Name, string Value)> Parameters) ParseUrl(string url) {
+    private static (string BaseUrl, List<(string Name, string Value)> Parameters) ParseUrl(string url) {
         var index = url.IndexOf('?');
 
         if (index == -1) {

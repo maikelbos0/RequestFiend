@@ -91,9 +91,9 @@ public class NameValuePairModelCollectionTests {
 
     [Fact]
     public void Add() {
-        var subject = new NameValuePairModelCollection([], Validator.VariableName);
-
-        subject.Add("Variable name", "Variable value");
+        var subject = new NameValuePairModelCollection([], Validator.VariableName) {
+            { "Variable name", "Variable value" }
+        };
 
         Assert.True(subject.HasError);
 

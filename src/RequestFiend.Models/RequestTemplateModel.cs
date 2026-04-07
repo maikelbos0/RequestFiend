@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
@@ -18,8 +19,8 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    
-    public RequestTemplateCollectionFileModel File {get;}
+
+    public RequestTemplateCollectionFileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public RequestTemplate Request { get; }
 
@@ -29,9 +30,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     public ValidatableProperty<string> Url { get; }
     public NameValuePairModelCollection Headers { get; }
     public ValidatableProperty<string> ContentType { get; }
-    public bool UsesStringContent { get => field; private set => SetProperty(ref field, value); }
-    public bool UsesStructuredStringContent { get => field; private set => SetProperty(ref field, value); }
-    public bool UsesUnstructuredStringContent { get => field; private set => SetProperty(ref field, value); }
+    [ObservableProperty] public partial bool UsesStringContent { get; private set; }
+    [ObservableProperty] public partial bool UsesStructuredStringContent { get; private set; }
+    [ObservableProperty] public partial bool UsesUnstructuredStringContent { get; private set; }
     public ValidatableProperty<string> StringContent { get; }
     public ValidatableProperty<string> PreExchangeScript { get; }
     public ValidatableProperty<string> PostExchangeScript { get; }
@@ -48,7 +49,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        
+
         File = file;
         Collection = collection;
         Request = request;

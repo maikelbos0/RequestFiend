@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace RequestFiend.Models;
 
-public class BoundModelBase : ObservableObject {
+public partial class BoundModelBase : ObservableObject {
 
     private IEnumerable<IValidatable> validatables = [];
-    public bool HasError { get => field; set => SetProperty(ref field, value); }
-    public bool IsModified { get => field; set => SetProperty(ref field, value); }
-    public bool IsModifiedWithoutError { get => field; set => SetProperty(ref field, value); }
+    [ObservableProperty] public partial bool HasError { get; set; }
+    [ObservableProperty] public partial bool IsModified { get; set; }
+    [ObservableProperty] public partial bool IsModifiedWithoutError { get; set; }
 
     public virtual void ConfigureState(IEnumerable<IValidatable> validatables) {
         this.validatables = validatables;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace RequestFiend.Models.Services;
 
 public class ModelDataProvider : IModelDataProvider {
-    private Dictionary<Type, object> data = [];
+    private readonly Dictionary<Type, object> data = [];
 
     private class Scope : IDisposable {
         private readonly ModelDataProvider provider;

@@ -6,11 +6,11 @@ using System.ComponentModel;
 
 namespace RequestFiend.Models;
 
-public class NameValuePairModel : ObservableObject, IValidatable {
+public partial class NameValuePairModel : ObservableObject, IValidatable {
     public ValidatableProperty<string> Name { get; }
     public ValidatableProperty<string> Value { get; }
-    public bool HasError { get => field; set => SetProperty(ref field, value); }
-    public bool IsModified { get => field; set => SetProperty(ref field, value); }
+    [ObservableProperty] public partial bool HasError { get; set; }
+    [ObservableProperty] public partial bool IsModified { get; set; }
 
     public NameValuePairModel(Func<string, bool> nameValidator) : this("", "", nameValidator) { }
 

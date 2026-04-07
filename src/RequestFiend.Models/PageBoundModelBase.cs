@@ -1,20 +1,21 @@
-﻿using Microsoft.Maui.Controls;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Maui.Controls;
 using System.ComponentModel;
 
 namespace RequestFiend.Models;
 
-public class PageBoundModelBase : BoundModelBase {
+public partial class PageBoundModelBase : BoundModelBase {
     private const double widthBreakpoint = 540;
 
-    public double PageWidth { get => field; set => SetProperty(ref field, value); }
-    public LayoutOptions StackHorizontalOptions { get => field; private set => SetProperty(ref field, value); }
-    public StackOrientation StackOrientation { get => field; private set => SetProperty(ref field, value); }
-    public bool StackIsHorizontal { get => field; private set => SetProperty(ref field, value); }
-    public bool StackIsVertical { get => field; private set => SetProperty(ref field, value); }
-    public string PageTitleBase { get => field; protected set => SetProperty(ref field, value); }
-    public string PageTitle { get => field; protected set => SetProperty(ref field, value); }
-    public string ShellItemTitleBase { get => field; protected set => SetProperty(ref field, value); }
-    public string ShellItemTitle { get => field; protected set => SetProperty(ref field, value); }
+    [ObservableProperty] public partial double PageWidth { get; set; }
+    [ObservableProperty] public partial LayoutOptions StackHorizontalOptions { get; private set; }
+    [ObservableProperty] public partial StackOrientation StackOrientation { get; private set; }
+    [ObservableProperty] public partial bool StackIsHorizontal { get; private set; }
+    [ObservableProperty] public partial bool StackIsVertical { get; private set; }
+    [ObservableProperty] public partial string PageTitleBase { get; protected set; }
+    [ObservableProperty] public partial string PageTitle { get; protected set; }
+    [ObservableProperty] public partial string ShellItemTitleBase { get; protected set; }
+    [ObservableProperty] public partial string ShellItemTitle { get; protected set; }
 
     public PageBoundModelBase(string initialPageTitleBase, string initialShellItemTitleBase) {
         PageTitleBase = PageTitle = initialPageTitleBase;

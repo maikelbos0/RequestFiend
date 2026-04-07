@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Devices;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
@@ -18,8 +19,8 @@ public partial class MainPageModel : PageBoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IFileSystem fileSystem;
 
-    public bool ShowRecentCollections { get => field; set => SetProperty(ref field, value); }
-    public List<RequestTemplateCollectionFileModel> RecentCollections { get => field; set => SetProperty(ref field, value); }
+    [ObservableProperty] public partial bool ShowRecentCollections { get; set; }
+    [ObservableProperty] public partial List<RequestTemplateCollectionFileModel> RecentCollections { get; set; }
 
     public MainPageModel(IPopupService popupService, IMessageService messageService, IPreferencesService preferencesService, IFileSystem fileSystem) : base("Home", "Home") {
         this.popupService = popupService;

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace RequestFiend.Models.PropertyTypes;
 
-public abstract class ValidatableProperty : ObservableObject, IValidatable {
-    public bool HasError { get => field; set => SetProperty(ref field, value); }
-    public bool IsModified { get => field; set => SetProperty(ref field, value); }
-    public bool IsModifiedWithoutError { get => field; set => SetProperty(ref field, value); }
+public abstract partial class ValidatableProperty : ObservableObject, IValidatable {
+    [ObservableProperty] public partial bool HasError { get; set; }
+    [ObservableProperty] public partial bool IsModified { get; set; }
+    [ObservableProperty] public partial bool IsModifiedWithoutError { get; set; }
 }
 
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {

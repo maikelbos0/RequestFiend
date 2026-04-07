@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MimeMapping;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
@@ -22,10 +23,10 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     private CancellationTokenSource? executingCancellationTokenSource;
 
     public string Id { get; } = Guid.NewGuid().ToString();
-    public bool IsExecuting { get => field; set => SetProperty(ref field, value); }
-    public HttpRequestModel? Request { get => field; set => SetProperty(ref field, value); }
-    public HttpResponseModel? Response { get => field; set => SetProperty(ref field, value); }
-    public ExceptionModel? Exception { get => field; set => SetProperty(ref field, value); }
+    [ObservableProperty] public partial bool IsExecuting { get; set; }
+    [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
+    [ObservableProperty] public partial HttpResponseModel? Response { get; set; }
+    [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
 
     public RequestModel(
         IMessageService messageService,
@@ -124,7 +125,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     public async Task OnResponseReceived(HttpResponseMessage response)
         => Response = await HttpResponseModel.Create(response);
 
-    public Task OnExceptionCaught(Exception exception) { 
+    public Task OnExceptionCaught(Exception exception) {
         Exception = new(exception);
         return Task.CompletedTask;
     }
