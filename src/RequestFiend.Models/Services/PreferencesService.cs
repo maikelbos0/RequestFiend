@@ -10,11 +10,11 @@ namespace RequestFiend.Models.Services;
 public class PreferencesService : IPreferencesService {
     public const bool DefaultSaveRecentCollections = true;
     private const int DefaultMaximumRecentCollectionCount = 10;
-    private const bool DefaultAllowScriptExecution = false;
+    private const bool DefaultAllowScriptEvaluation = false;
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
-    private const string AllowScriptExecution = nameof(AllowScriptExecution);
+    private const string AllowScriptEvaluation = nameof(AllowScriptEvaluation);
 
     private readonly IMessageService messageService;
 
@@ -82,11 +82,11 @@ public class PreferencesService : IPreferencesService {
         SetRecentCollections(recentCollections);
     }
 
-    public bool GetAllowScriptExecution()
-        => Preferences.Get(AllowScriptExecution, DefaultAllowScriptExecution);
+    public bool GetAllowScriptEvaluation()
+        => Preferences.Get(AllowScriptEvaluation, DefaultAllowScriptEvaluation);
 
-    public void SetAllowScriptExecution(bool allowScriptExecution)
-        => Preferences.Set(AllowScriptExecution, allowScriptExecution);
+    public void SetAllowScriptEvaluation(bool allowScriptEvaluation)
+        => Preferences.Set(AllowScriptEvaluation, allowScriptEvaluation);
 
     public void Reset() {
         Preferences.Clear();

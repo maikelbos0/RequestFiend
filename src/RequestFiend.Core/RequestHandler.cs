@@ -32,7 +32,7 @@ public class RequestHandler : IRequestHandler {
         try {
             context.Request = request.CreateMessage(collection);
 
-            if (requestExchangeOptions.AllowScriptExecution) {
+            if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PreExchangeScript, context, cancellationToken);
             }
 
@@ -42,7 +42,7 @@ public class RequestHandler : IRequestHandler {
 
             context.Response = await httpClient.SendAsync(context.Request, cancellationToken);
             
-            if (requestExchangeOptions.AllowScriptExecution) {
+            if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PostExchangeScript, context, cancellationToken);
             }
 
@@ -53,7 +53,7 @@ public class RequestHandler : IRequestHandler {
         catch (Exception exception) {
             context.Exception = exception;
 
-            if (requestExchangeOptions.AllowScriptExecution) {
+            if (requestExchangeOptions.AllowScriptEvaluation) {
                 try {
                     await scriptEvaluator.Evaluate(request.OnExceptionScript, context, cancellationToken);
                 }

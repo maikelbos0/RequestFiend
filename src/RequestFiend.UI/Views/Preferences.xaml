@@ -35,11 +35,11 @@
                     <views:ValidatableEntry Text="{Binding MaximumRecentCollectionCount}"/>
 
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
-                        <Switch IsToggled="{Binding AllowScriptExecution.Value}"/>
+                        <Switch IsToggled="{Binding AllowScriptEvaluation.Value}"/>
 
-                        <Label Text="Allow script execution" Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="Allow script evaluation" Grid.Column="1" VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ToggleAllowScriptExecutionCommand}"/>
+                                <TapGestureRecognizer Command="{Binding ToggleAllowScriptEvaluationCommand}"/>
                             </Label.GestureRecognizers>
                         </Label>
                     </Grid>
