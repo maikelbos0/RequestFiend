@@ -56,39 +56,42 @@ public partial class ValidatableEntry : AbsoluteLayout {
 
     private void UpdateOverlay() {
         if (Collection != null && Text != null) {
-            var variables = Collection.GetVariables();
-            var hasVariables = false;
+            try {
+                var variables = Collection.GetVariables();
+                var hasVariables = false;
 
-            Overlay.IsVisible = true;
-            Overlay.FormattedText = null;
-            Overlay.FormattedText = new();
+                Overlay.IsVisible = true;
+                Overlay.FormattedText = null;
+                Overlay.FormattedText = new();
 
-            foreach (var span in VariableService.ProcessText(Text.Value, text => new Span() { Text = text }, CreateVariableReferenceSpan)) {
-                Overlay.FormattedText.Spans.Add(span);
-            }
+                foreach (var span in VariableService.ProcessText(Text.Value, text => new Span() { Text = text }, CreateVariableReferenceSpan)) {
+                    Overlay.FormattedText.Spans.Add(span);
+                }
 
-            Span CreateVariableReferenceSpan(string variableReference) {
-                var span = new Span() {
-                    Text = variableReference
-                };
-
-                if (variables.TryGetValue(variableReference.Trim('{', '}'), out var value)) {
-                    hasVariables = true;
-                    span.Style = (Style)Application.Current!.Resources["VariableReference"];
+                if (hasVariables) {
+                    ToolTipProperties.SetText(Overlay, Collection.ApplyVariables(Text.Value));
                 }
                 else {
-                    span.Style = (Style)Application.Current!.Resources["MissingReference"];
+                    ToolTipProperties.SetText(Overlay, default!);
                 }
 
-                return span;
-            }
+                Span CreateVariableReferenceSpan(string variableReference) {
+                    var span = new Span() {
+                        Text = variableReference
+                    };
 
-            if (hasVariables) {
-                ToolTipProperties.SetText(Overlay, Collection.ApplyVariables(Text.Value));
+                    if (variables.TryGetValue(variableReference.Trim('{', '}'), out var value)) {
+                        hasVariables = true;
+                        span.Style = (Style)Application.Current!.Resources["VariableReference"];
+                    }
+                    else {
+                        span.Style = (Style)Application.Current!.Resources["MissingReference"];
+                    }
+
+                    return span;
+                }
             }
-            else {
-                ToolTipProperties.SetText(Overlay, default!);
-            }
+            catch { }
         }
     }
 }
