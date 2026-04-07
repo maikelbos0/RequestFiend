@@ -34,15 +34,9 @@
 
                     <views:ValidatableEntry Text="{Binding MaximumRecentCollectionCount}"/>
 
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
-                        <Switch IsToggled="{Binding AllowScriptEvaluation.Value}"/>
+                    <Label Text="Script evaluation" Style="{StaticResource EntryLabel}"/>
 
-                        <Label Text="Allow script evaluation" Grid.Column="1" VerticalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ToggleAllowScriptEvaluationCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Grid>
+                    <views:ValidatablePicker SelectedItem="{Binding ScriptEvaluationMode}" ItemsSource="{x:Static models:Options.ScriptEvaluationModes}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

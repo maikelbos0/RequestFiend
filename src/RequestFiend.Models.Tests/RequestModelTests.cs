@@ -39,7 +39,7 @@ public class RequestModelTests {
 
         var requestHandler = Substitute.For<IRequestHandler>();
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetAllowScriptEvaluation().Returns(true);
+        preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",

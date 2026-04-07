@@ -8,14 +8,14 @@ namespace RequestFiend.Models.Tests;
 
 public class PreferencesModelTests {
     [Theory]
-    [InlineData(0, false, true)]
-    [InlineData(1, true, false)]
-    [InlineData(10, true, true)]
-    public void Constructor(int maximumRecentCollectionCount, bool saveRecentCollections, bool allowScriptEvaluation) {
+    [InlineData(0, false, ScriptEvaluationMode.Disabled)]
+    [InlineData(1, true, ScriptEvaluationMode.Enabled)]
+    [InlineData(10, true, ScriptEvaluationMode.CollectionScoped)]
+    public void Constructor(int maximumRecentCollectionCount, bool saveRecentCollections, ScriptEvaluationMode scriptEvaluationMode) {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetShowRecentCollections().Returns(saveRecentCollections);
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
-        preferencesService.GetAllowScriptEvaluation().Returns(allowScriptEvaluation);
+        preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
@@ -23,14 +23,16 @@ public class PreferencesModelTests {
         Assert.Equal("Preferences", subject.ShellItemTitleBase);
         Assert.Equal(saveRecentCollections, subject.ShowRecentCollections.Value);
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
-        Assert.Equal(allowScriptEvaluation, subject.AllowScriptEvaluation.Value);
+        Assert.Equal(Options.ScriptEvaluationModeMap[scriptEvaluationMode], subject.ScriptEvaluationMode.Value);
     }
 
     [Theory]
-    [InlineData(10, false, true)]
-    [InlineData(0, true, false)]
-    [InlineData(10, true, true)]
-    public void Update(int maximumRecentCollectionCount, bool showRecentCollections, bool allowScriptEvaluation) {
+    [InlineData(10, false)]
+    [InlineData(0, true)]
+    [InlineData(10, true)]
+    public void Update(int maximumRecentCollectionCount, bool showRecentCollections) {
+        const ScriptEvaluationMode scriptEvaluationMode = ScriptEvaluationMode.Enabled;
+
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetShowRecentCollections().Returns(showRecentCollections);
         var messageService = Substitute.For<IMessageService>();
@@ -38,18 +40,18 @@ public class PreferencesModelTests {
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
             ShowRecentCollections = { Value = showRecentCollections },
-            AllowScriptEvaluation = { Value = allowScriptEvaluation }
+            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] }
         };
 
         subject.Update();
 
         preferencesService.Received(1).SetShowRecentCollections(showRecentCollections);
         preferencesService.Received(1).SetMaximumRecentCollectionCount(maximumRecentCollectionCount);
-        preferencesService.Received(1).SetAllowScriptEvaluation(allowScriptEvaluation);
+        preferencesService.Received(1).SetScriptEvaluationMode(scriptEvaluationMode);
 
         Assert.False(subject.ShowRecentCollections.IsModified);
         Assert.False(subject.MaximumRecentCollectionCount.IsModified);
-        Assert.False(subject.AllowScriptEvaluation.IsModified);
+        Assert.False(subject.ScriptEvaluationMode.IsModified);
 
         if (showRecentCollections) {
             preferencesService.Received(1).TrimRecentCollections();
@@ -76,7 +78,7 @@ public class PreferencesModelTests {
 
         preferencesService.DidNotReceive().SetShowRecentCollections(Arg.Any<bool>());
         preferencesService.DidNotReceive().SetMaximumRecentCollectionCount(Arg.Any<int>());
-        preferencesService.DidNotReceive().SetAllowScriptEvaluation(Arg.Any<bool>());
+        preferencesService.DidNotReceive().SetScriptEvaluationMode(Arg.Any<ScriptEvaluationMode>());
 
         preferencesService.DidNotReceive().TrimRecentCollections();
         preferencesService.DidNotReceive().ClearRecentCollections();
@@ -89,7 +91,7 @@ public class PreferencesModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetShowRecentCollections().Returns(true);
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
-        preferencesService.GetAllowScriptEvaluation().Returns(true);
+        preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
@@ -97,14 +99,14 @@ public class PreferencesModelTests {
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
             ShowRecentCollections = { Value = false },
             MaximumRecentCollectionCount = { Value = "25" },
-            AllowScriptEvaluation = { Value = false }
+            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] }
         };
 
         await subject.Reset();
 
         Assert.Equal(preferencesService.GetShowRecentCollections(), subject.ShowRecentCollections.Value);
         Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
-        Assert.Equal(preferencesService.GetAllowScriptEvaluation(), subject.AllowScriptEvaluation.Value);
+        Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -115,7 +117,7 @@ public class PreferencesModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetShowRecentCollections().Returns(true);
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
-        preferencesService.GetAllowScriptEvaluation().Returns(true);
+        preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
@@ -123,14 +125,14 @@ public class PreferencesModelTests {
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
             ShowRecentCollections = { Value = false },
             MaximumRecentCollectionCount = { Value = "25" },
-            AllowScriptEvaluation = { Value = false }
+            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] }
         };
 
         await subject.Reset();
 
         Assert.False(subject.ShowRecentCollections.Value);
         Assert.Equal("25", subject.MaximumRecentCollectionCount.Value);
-        Assert.False(subject.AllowScriptEvaluation.Value);
+        Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled], subject.ScriptEvaluationMode.Value);
 
         preferencesService.DidNotReceive().Reset();
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
@@ -175,16 +177,5 @@ public class PreferencesModelTests {
         subject.ToggleShowRecentCollections();
 
         Assert.False(subject.ShowRecentCollections.Value);
-    }
-
-    [Fact]
-    public void ToggleAllowScriptEvaluation() {
-        var subject = new PreferencesModel(Substitute.For<IPreferencesService>(), Substitute.For<IMessageService>(), Substitute.For<IPopupService>()) {
-            AllowScriptEvaluation = { Value = true }
-        };
-
-        subject.ToggleAllowScriptEvaluation();
-
-        Assert.False(subject.AllowScriptEvaluation.Value);
     }
 }

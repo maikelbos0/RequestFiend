@@ -13,7 +13,7 @@ public partial class PreferencesModel : PageBoundModelBase {
 
     public ValidatableProperty<bool> ShowRecentCollections { get; }
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
-    public ValidatableProperty<bool> AllowScriptEvaluation { get; }
+    public ValidatableProperty<string> ScriptEvaluationMode { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
@@ -22,9 +22,9 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         ShowRecentCollections = new(() => preferencesService.GetShowRecentCollections());
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
-        AllowScriptEvaluation = new(() => preferencesService.GetAllowScriptEvaluation());
+        ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()]);
 
-        ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount, AllowScriptEvaluation]);
+        ConfigureState([ShowRecentCollections, MaximumRecentCollectionCount, ScriptEvaluationMode]);
     }
 
     [RelayCommand]
@@ -35,11 +35,11 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         preferencesService.SetShowRecentCollections(ShowRecentCollections.Value);
         preferencesService.SetMaximumRecentCollectionCount(int.Parse(MaximumRecentCollectionCount.Value!));
-        preferencesService.SetAllowScriptEvaluation(AllowScriptEvaluation.Value);
+        preferencesService.SetScriptEvaluationMode(Options.ReverseScriptEvaluationModeMap[ScriptEvaluationMode.Value]);
 
         ShowRecentCollections.Reset();
         MaximumRecentCollectionCount.Reset();
-        AllowScriptEvaluation.Reset();
+        ScriptEvaluationMode.Reset();
 
         if (ShowRecentCollections.Value) {
             preferencesService.TrimRecentCollections();
@@ -57,7 +57,7 @@ public partial class PreferencesModel : PageBoundModelBase {
             preferencesService.Reset();
             ShowRecentCollections.Reset();
             MaximumRecentCollectionCount.Reset();
-            AllowScriptEvaluation.Reset();
+            ScriptEvaluationMode.Reset();
 
             messageService.Send(new SuccessMessage("Preferences have been reset"));
         }
@@ -75,8 +75,4 @@ public partial class PreferencesModel : PageBoundModelBase {
     [RelayCommand]
     public void ToggleShowRecentCollections()
         => ShowRecentCollections.Value = !ShowRecentCollections.Value;
-
-    [RelayCommand]
-    public void ToggleAllowScriptEvaluation()
-        => AllowScriptEvaluation.Value = !AllowScriptEvaluation.Value;
 }

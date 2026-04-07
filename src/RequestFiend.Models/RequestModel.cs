@@ -66,7 +66,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         Response = null;
         Exception = null;
 
-        await requestHandler.Execute(request, collection, new(preferencesService.GetAllowScriptEvaluation()), this, cancellationTokenSource.Token);
+        await requestHandler.Execute(request, collection, new(preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.Enabled), this, cancellationTokenSource.Token);
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = $"{request.Name} - Exchange";

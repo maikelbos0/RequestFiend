@@ -10,11 +10,10 @@ namespace RequestFiend.Models.Services;
 public class PreferencesService : IPreferencesService {
     public const bool DefaultSaveRecentCollections = true;
     private const int DefaultMaximumRecentCollectionCount = 10;
-    private const bool DefaultAllowScriptEvaluation = false;
+    private const int DefaultScriptEvaluationMode = (int)ScriptEvaluationMode.Disabled;
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
-    private const string AllowScriptEvaluation = nameof(AllowScriptEvaluation);
 
     private readonly IMessageService messageService;
 
@@ -24,7 +23,7 @@ public class PreferencesService : IPreferencesService {
 
     public bool GetShowRecentCollections()
         => Preferences.Get(ShowRecentCollections, DefaultSaveRecentCollections);
-    
+
     public void SetShowRecentCollections(bool saveRecentCollections) {
         Preferences.Set(ShowRecentCollections, saveRecentCollections);
         messageService.Send(new ShowRecentCollectionsChangedMessage());
@@ -82,11 +81,11 @@ public class PreferencesService : IPreferencesService {
         SetRecentCollections(recentCollections);
     }
 
-    public bool GetAllowScriptEvaluation()
-        => Preferences.Get(AllowScriptEvaluation, DefaultAllowScriptEvaluation);
+    public ScriptEvaluationMode GetScriptEvaluationMode()
+        => (ScriptEvaluationMode)Preferences.Get(nameof(ScriptEvaluationMode), DefaultScriptEvaluationMode);
 
-    public void SetAllowScriptEvaluation(bool allowScriptEvaluation)
-        => Preferences.Set(AllowScriptEvaluation, allowScriptEvaluation);
+    public void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode)
+        => Preferences.Set(nameof(ScriptEvaluationMode), (int)scriptEvaluationMode);
 
     public void Reset() {
         Preferences.Clear();
