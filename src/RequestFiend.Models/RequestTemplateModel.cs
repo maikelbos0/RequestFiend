@@ -70,7 +70,6 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
 
         ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
-        WeakReferenceMessenger.Default.RegisterAll(this, file);
     }
 
     [RelayCommand]
@@ -79,7 +78,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             return;
         }
 
-        var request = this.Request.Clone();
+        var request = Request.Clone();
 
         request.Name = Name.Value!;
         request.Method = Method.Value!;
