@@ -16,7 +16,7 @@
             
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding ShowAllowScriptEvaluation}">
                         <Switch IsToggled="{Binding AllowScriptEvaluation.Value}"/>
 
                         <Label Text="Allow script evaluation" Grid.Column="1" VerticalOptions="Center">

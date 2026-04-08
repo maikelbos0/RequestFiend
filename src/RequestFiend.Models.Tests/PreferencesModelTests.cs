@@ -60,6 +60,7 @@ public class PreferencesModelTests {
             preferencesService.Received(1).ClearRecentCollections();
         }
 
+        messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
@@ -83,6 +84,7 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().TrimRecentCollections();
         preferencesService.DidNotReceive().ClearRecentCollections();
 
+        messageService.DidNotReceive().Send(Arg.Any<PreferencesUpdatedMessage>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 

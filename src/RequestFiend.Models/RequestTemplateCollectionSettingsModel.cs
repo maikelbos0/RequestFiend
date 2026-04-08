@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -14,6 +16,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IMessageService messageService;
     private readonly IPreferencesService preferencesService;
 
+    [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
     public RequestTemplateCollectionFileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<bool> AllowScriptEvaluation { get; set; }
@@ -37,12 +40,15 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         File = file;
         Collection = collection;
 
+        ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
         AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath));
         DefaultUrl = new(() => collection.DefaultUrl);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 
         ConfigureState([AllowScriptEvaluation, DefaultUrl, DefaultHeaders, Variables]);
+        WeakReferenceMessenger.Default.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _)
+            => ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped);
     }
 
     [RelayCommand]

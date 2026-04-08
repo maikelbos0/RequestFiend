@@ -10,12 +10,16 @@ using Xunit;
 namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateCollectionSettingsModelTests {
-    [Fact]
-    public void Constructor() {
+    [Theory]
+    [InlineData(ScriptEvaluationMode.Disabled, false)]
+    [InlineData(ScriptEvaluationMode.Enabled, false)]
+    [InlineData(ScriptEvaluationMode.CollectionScoped, true)]
+    public void Constructor(ScriptEvaluationMode scriptEvaluationMode, bool expectedShowAllowScriptEvaluation) {
         const string filePath = @"C:\Documents\External data requests.json";
         const bool allowScriptEvaluation = true;
 
         var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
         preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(allowScriptEvaluation);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default",
@@ -40,6 +44,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(new RequestTemplateCollectionFileModel(filePath), subject.File);
         Assert.Equal(collection, subject.Collection);
 
+        Assert.Equal(expectedShowAllowScriptEvaluation, subject.ShowAllowScriptEvaluation);
         Assert.Equal(allowScriptEvaluation, subject.AllowScriptEvaluation.Value);
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
