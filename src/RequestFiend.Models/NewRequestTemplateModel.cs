@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -38,7 +37,6 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         });
 
         ConfigureState([Name, Method, Url]);
-        WeakReferenceMessenger.Default.RegisterAll(this, file);
     }
 
     [RelayCommand]
