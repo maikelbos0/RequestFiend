@@ -21,6 +21,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
         );
@@ -43,6 +44,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
         );
@@ -72,6 +74,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
         );
@@ -103,6 +106,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
         );
@@ -131,6 +135,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
         );

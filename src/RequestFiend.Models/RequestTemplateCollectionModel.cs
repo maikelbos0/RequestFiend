@@ -22,6 +22,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
+        IPreferencesService preferencesService,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection
     ) : base(file.Name, file.Name) {
@@ -31,7 +32,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         this.file = file;
         this.collection = collection;
 
-        Settings = new(requestTemplateCollectionService, popupService, messageService, file, collection);
+        Settings = new(requestTemplateCollectionService, popupService, messageService, preferencesService, file, collection);
         Settings.PropertyChanged += OnChildStateChanged;
         NewRequest = new(requestTemplateCollectionService, messageService, file, collection);
         NewRequest.PropertyChanged += OnChildStateChanged;

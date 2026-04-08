@@ -11,9 +11,11 @@ public class PreferencesService : IPreferencesService {
     public const bool DefaultSaveRecentCollections = true;
     private const int DefaultMaximumRecentCollectionCount = 10;
     private const int DefaultScriptEvaluationMode = (int)ScriptEvaluationMode.Disabled;
+    private const bool DefaultCollectionAllowScriptEvaluation = false;
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
+    private const string CollectionAllowScriptEvaluation = nameof(CollectionAllowScriptEvaluation);
 
     private readonly IMessageService messageService;
 
@@ -86,6 +88,12 @@ public class PreferencesService : IPreferencesService {
 
     public void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode)
         => Preferences.Set(nameof(ScriptEvaluationMode), (int)scriptEvaluationMode);
+
+    public void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation)
+        => Preferences.Set($"{CollectionAllowScriptEvaluation}_{filePath}", allowScriptEvaluation);
+
+    public bool GetCollectionAllowScriptEvaluation(string filePath)
+        => Preferences.Get($"{CollectionAllowScriptEvaluation}_{filePath}", DefaultCollectionAllowScriptEvaluation);
 
     public void Reset() {
         Preferences.Clear();

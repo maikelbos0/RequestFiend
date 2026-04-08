@@ -16,6 +16,16 @@
             
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                        <Switch IsToggled="{Binding AllowScriptEvaluation.Value}"/>
+
+                        <Label Text="Allow script evaluation" Grid.Column="1" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleAllowScriptEvaluationCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                    
                     <Label Style="{StaticResource EntryLabel}" Grid.Column="1">
                         <Label.FormattedText>
                             <FormattedString>

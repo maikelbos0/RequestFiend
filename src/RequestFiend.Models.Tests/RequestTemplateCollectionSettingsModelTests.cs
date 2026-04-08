@@ -13,7 +13,10 @@ public class RequestTemplateCollectionSettingsModelTests {
     [Fact]
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";
+        const bool allowScriptEvaluation = true;
 
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(allowScriptEvaluation);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default",
             DefaultHeaders = {
@@ -22,7 +25,14 @@ public class RequestTemplateCollectionSettingsModelTests {
             }
         };
 
-        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection);
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            preferencesService,
+            new(filePath),
+            collection
+        );
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitleBase);
         Assert.Equal("Collection settings", subject.ShellItemTitleBase);
@@ -30,6 +40,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(new RequestTemplateCollectionFileModel(filePath), subject.File);
         Assert.Equal(collection, subject.Collection);
 
+        Assert.Equal(allowScriptEvaluation, subject.AllowScriptEvaluation.Value);
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
@@ -46,9 +57,12 @@ public class RequestTemplateCollectionSettingsModelTests {
         const string headerValue = "Value";
         const string variableName = "Name";
         const string variableValue = "Value";
+        const bool allowScriptEvaluation = true;
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(!allowScriptEvaluation);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             Variables = {
@@ -59,8 +73,16 @@ public class RequestTemplateCollectionSettingsModelTests {
             }
         };
 
-        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection);
+        var subject = new RequestTemplateCollectionSettingsModel(
+            requestTemplateCollectionService,
+            Substitute.For<IPopupService>(),
+            messageService,
+            preferencesService,
+            new(filePath),
+            collection
+        );
 
+        subject.AllowScriptEvaluation.Value = allowScriptEvaluation;
         subject.DefaultUrl.Value = defaultUrl;
         subject.Variables[0].Name.Value = variableName;
         subject.Variables[0].Value.Value = variableValue;
@@ -74,12 +96,14 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(variableValue, collection.Variables[0].Value);
         Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
         Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
+        Assert.False(subject.AllowScriptEvaluation.IsModified);
         Assert.False(subject.DefaultUrl.IsModified);
         Assert.False(subject.DefaultHeaders[0].Name.IsModified);
         Assert.False(subject.DefaultHeaders[0].Value.IsModified);
         Assert.False(subject.Variables[0].Name.IsModified);
         Assert.False(subject.Variables[0].Value.IsModified);
 
+        preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, allowScriptEvaluation);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
         messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.Collection == collection));
@@ -95,6 +119,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
+        var preferencesService = Substitute.For<IPreferencesService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             Variables = {
@@ -105,7 +130,14 @@ public class RequestTemplateCollectionSettingsModelTests {
             }
         };
 
-        var subject = new RequestTemplateCollectionSettingsModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection);
+        var subject = new RequestTemplateCollectionSettingsModel(
+            requestTemplateCollectionService,
+            Substitute.For<IPopupService>(),
+            messageService,
+            preferencesService,
+            new(filePath),
+            collection
+        );
 
         subject.DefaultUrl.Value = defaultUrl;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -117,9 +149,30 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal("PreviousName", collection.Variables[0].Name);
         Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
 
+        preferencesService.DidNotReceive().SetCollectionAllowScriptEvaluation(Arg.Any<string>(), Arg.Any<bool>());
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
+    }
+
+    [Fact]
+    public void ToggleShowRecentCollections() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            new()
+        ) {
+            AllowScriptEvaluation = { Value = true },
+        };
+
+        subject.ToggleAllowScriptEvaluation();
+
+        Assert.False(subject.AllowScriptEvaluation.Value);
     }
 
     [Theory]
@@ -136,7 +189,14 @@ public class RequestTemplateCollectionSettingsModelTests {
         popupResult.Result.Returns(returnValue);
         popupService.ShowUrlPopup(collection.DefaultUrl).Returns(popupResult);
 
-        var subject = new RequestTemplateCollectionSettingsModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), new(filePath), collection);
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            popupService,
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
 
         await subject.ShowDefaultUrlPopup();
 
