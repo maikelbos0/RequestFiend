@@ -33,13 +33,18 @@ public class RequestModelTests {
         Assert.Equal($"{request.Name} - Exchange", subject.ShellItemTitleBase);
     }
 
-    [Fact]
-    public async Task Execute() {
+    [Theory]
+    [InlineData(ScriptEvaluationMode.Disabled, true, false)]
+    [InlineData(ScriptEvaluationMode.Enabled, false, true)]
+    [InlineData(ScriptEvaluationMode.CollectionScoped, false, false)]
+    [InlineData(ScriptEvaluationMode.CollectionScoped, true, true)]
+    public async Task Execute(ScriptEvaluationMode scriptEvaluationMode, bool collectionAllowScriptEvaluation, bool expectedAllowScriptEvaluation) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestHandler = Substitute.For<IRequestHandler>();
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
+        preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
+        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(collectionAllowScriptEvaluation);
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -71,7 +76,7 @@ public class RequestModelTests {
 
         await subject.Execute();
 
-        _ = requestHandler.Received(1).Execute(request, collection, new RequestExchangeOptions(true), subject, Arg.Any<CancellationToken>());
+        _ = requestHandler.Received(1).Execute(request, collection, new RequestExchangeOptions(expectedAllowScriptEvaluation), subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal([$"{request.Name} - Executing request...", $"{request.Name} - Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);

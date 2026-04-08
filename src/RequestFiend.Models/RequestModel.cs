@@ -66,7 +66,17 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         Response = null;
         Exception = null;
 
-        await requestHandler.Execute(request, collection, new(preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.Enabled), this, cancellationTokenSource.Token);
+        var scriptEvaluationMode = preferencesService.GetScriptEvaluationMode();
+        var options = new RequestExchangeOptions(
+            preferencesService.GetScriptEvaluationMode() switch {
+                ScriptEvaluationMode.Disabled => false,
+                ScriptEvaluationMode.Enabled => true,
+                ScriptEvaluationMode.CollectionScoped => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath),
+                _ => throw new NotImplementedException($"Received unknown script evaluation mode '{scriptEvaluationMode}'.")
+            }
+        );
+
+        await requestHandler.Execute(request, collection, options, this, cancellationTokenSource.Token);
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = $"{request.Name} - Exchange";
