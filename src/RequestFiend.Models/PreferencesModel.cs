@@ -60,6 +60,7 @@ public partial class PreferencesModel : PageBoundModelBase {
             MaximumRecentCollectionCount.Reset();
             ScriptEvaluationMode.Reset();
 
+            messageService.Send(new PreferencesUpdatedMessage());
             messageService.Send(new SuccessMessage("Preferences have been reset"));
         }
     }

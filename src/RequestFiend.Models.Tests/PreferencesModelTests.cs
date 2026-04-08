@@ -111,6 +111,7 @@ public class PreferencesModelTests {
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
 
         preferencesService.Received(1).Reset();
+        messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
@@ -137,6 +138,7 @@ public class PreferencesModelTests {
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled], subject.ScriptEvaluationMode.Value);
 
         preferencesService.DidNotReceive().Reset();
+        messageService.DidNotReceive().Send(Arg.Any<PreferencesUpdatedMessage>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 

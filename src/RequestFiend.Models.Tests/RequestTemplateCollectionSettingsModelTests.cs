@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
@@ -18,6 +19,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
         const bool allowScriptEvaluation = true;
 
+        var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
         preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(allowScriptEvaluation);
@@ -32,7 +34,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
-            Substitute.For<IMessageService>(),
+            messageService,
             preferencesService,
             new(filePath),
             collection
@@ -52,6 +54,8 @@ public class RequestTemplateCollectionSettingsModelTests {
         foreach (var header in collection.DefaultHeaders) {
             Assert.Equal(header.Value, Assert.Single(subject.DefaultHeaders, headerModel => headerModel.Name.Value == header.Name).Value.Value);
         }
+
+        messageService.Received(1).Register(subject, Arg.Any<MessageHandler<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>>());
     }
 
     [Fact]

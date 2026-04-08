@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -47,8 +46,10 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 
         ConfigureState([AllowScriptEvaluation, DefaultUrl, DefaultHeaders, Variables]);
-        WeakReferenceMessenger.Default.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _)
-            => ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped);
+        messageService.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _) => {
+            ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
+            AllowScriptEvaluation.Reset();
+        });
     }
 
     [RelayCommand]
