@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
-    x:Class="RequestFiend.UI.Views.Preferences"
+    x:Class="RequestFiend.UI.Views.PreferencesPage"
     x:DataType="models:PreferencesModel"
     Title="{Binding PageTitle}">
 

@@ -48,5 +48,5 @@
 
     <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
 
-    <ShellContent Title="Preferences" Icon="gears_solid_full.png" ContentTemplate="{DataTemplate views:Preferences}" Route="Preferences" />
+    <ShellContent Title="Preferences" Icon="gears_solid_full.png" ContentTemplate="{DataTemplate views:PreferencesPage}" Route="PreferencesPage" />
 </Shell>
