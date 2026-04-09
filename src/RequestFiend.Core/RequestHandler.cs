@@ -27,7 +27,7 @@ public class RequestHandler : IRequestHandler {
         IRequestExchangeListener? requestExchangeListener,
         CancellationToken cancellationToken
     ) {
-        var context = new RequestContext(collection.GetSessionData(), loggerFactory.CreateLogger<RequestContext>());
+        var context = new RequestContext(collection.GetSessionData(), collection.GetSessionVariables(), loggerFactory.CreateLogger<RequestContext>());
 
         try {
             context.Request = request.CreateMessage(collection);

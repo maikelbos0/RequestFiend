@@ -9,6 +9,7 @@ public class RequestTemplateCollection {
     public static bool IsValidVariableName(string name) => !string.IsNullOrEmpty(name) && name.All(IsValidVariableCharacter);
 
     private readonly Dictionary<string, object> sessionData = [];
+    private readonly Dictionary<string, string> sessionVariables = [];
 
     public string DefaultUrl { get; set; } = "";
     public List<RequestTemplate> Requests { get; set; } = [];
@@ -16,9 +17,13 @@ public class RequestTemplateCollection {
     public List<NameValuePair> DefaultHeaders { get; set; } = [];
 
     public Dictionary<string, object> GetSessionData() => sessionData;
-    
+
+    public Dictionary<string, string> GetSessionVariables() => sessionVariables;
+
     public Dictionary<string, string> GetVariables()
-        => Variables
+        => sessionVariables
+            .Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value })
+            .Concat(Variables)
             .Where(variable => IsValidVariableName(variable.Name))
             .DistinctBy(variable => variable.Name)
             .ToDictionary(variable => variable.Name, variable => variable.Value);

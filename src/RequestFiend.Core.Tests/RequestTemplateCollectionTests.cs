@@ -10,13 +10,37 @@ public class RequestTemplateCollectionTests {
     [InlineData("٢٣٤٥٦٧٨٩")]
     [InlineData("１２３")]
     [InlineData("Foo_132")]
-    public void GetVariables_Returns_Deduplicated_Valid_Variables(string name) {
+    public void GetVariables_Returns_Deduplicated_Valid_Session_Variables(string name) {
+        var subject = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = name, Value = "Duplicate" }
+            }
+        };
+
+        subject.GetSessionVariables().Add(name, "Replacement");
+
+        var result = subject.GetVariables();
+
+        Assert.Equal("Replacement", Assert.Contains(name, result));
+    }
+
+    [Theory]
+    [InlineData("Foo")]
+    [InlineData("123")]
+    [InlineData("Да")]
+    [InlineData("٢٣٤٥٦٧٨٩")]
+    [InlineData("１２３")]
+    [InlineData("Foo_132")]
+    public void GetVariables_Returns_Deduplicated_Valid_Persisted_Variables(string name) {
         var subject = new RequestTemplateCollection() {
             Variables = {
                 new() { Name = name, Value = "Replacement" },
                 new() { Name = name, Value = "Duplicate" }
             }
         };
+
+        var sessionVariables = subject.GetSessionVariables();
+        sessionVariables.Add(name, "Replacement");
 
         var result = subject.GetVariables();
 
@@ -34,6 +58,8 @@ public class RequestTemplateCollectionTests {
             }
         };
 
+        subject.GetSessionVariables().Add(name, "Replacement");
+
         var result = subject.GetVariables();
 
         Assert.Empty(result);
@@ -46,7 +72,28 @@ public class RequestTemplateCollectionTests {
     [InlineData("٢٣٤٥٦٧٨٩")]
     [InlineData("１２３")]
     [InlineData("Foo_132")]
-    public void ApplyVariables_Replaces_Variable_With_Value(string name) {
+    public void ApplyVariables_Replaces_Variable_With_Session_Value(string name) {
+        var subject = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = name, Value = "Duplicate" }
+            }
+        };
+
+        subject.GetSessionVariables().Add(name, "Replacement");
+
+        var result = subject.ApplyVariables($"We change {{{{{name}}}}} to Replacement");
+
+        Assert.Equal("We change Replacement to Replacement", result);
+    }
+
+    [Theory]
+    [InlineData("Foo")]
+    [InlineData("123")]
+    [InlineData("Да")]
+    [InlineData("٢٣٤٥٦٧٨٩")]
+    [InlineData("１２３")]
+    [InlineData("Foo_132")]
+    public void ApplyVariables_Replaces_Variable_With_Persisted_Value(string name) {
         var subject = new RequestTemplateCollection() {
             Variables = {
                 new() { Name = name, Value = "Replacement" }
@@ -70,6 +117,8 @@ public class RequestTemplateCollectionTests {
                 new() { Name = name, Value = "Replacement" }
             }
         };
+
+        subject.GetSessionVariables().Add(name, "Replacement");
 
         var result = subject.ApplyVariables(input);
 

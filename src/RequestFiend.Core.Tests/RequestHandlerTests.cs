@@ -29,6 +29,7 @@ public class RequestHandlerTests {
         var result = await subject.Execute(request, collection, new(false), CancellationToken.None);
 
         Assert.Same(result.SessionData, collection.GetSessionData());
+        Assert.Same(result.SessionVariables, collection.GetSessionVariables());
         Assert.NotNull(result.Request);
         Assert.NotNull(result.Request.RequestUri);
         Assert.Equal(request.Url, result.Request.RequestUri.ToString());
