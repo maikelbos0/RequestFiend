@@ -24,9 +24,11 @@ public class RequestHandlerTests {
             Method = "GET",
             Url = "https://localhost/"
         };
+        var collection = new RequestTemplateCollection();
 
-        var result = await subject.Execute(request, new(), new(false), CancellationToken.None);
+        var result = await subject.Execute(request, collection, new(false), CancellationToken.None);
 
+        Assert.Same(result.SessionData, collection.GetSessionData());
         Assert.NotNull(result.Request);
         Assert.NotNull(result.Request.RequestUri);
         Assert.Equal(request.Url, result.Request.RequestUri.ToString());
