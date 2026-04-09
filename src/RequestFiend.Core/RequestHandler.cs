@@ -63,7 +63,7 @@ public class RequestHandler : IRequestHandler {
             }
 
             if (requestExchangeListener != null) {
-                await requestExchangeListener.OnExceptionCaught(exception);
+                await requestExchangeListener.OnExceptionCaught(context.Exception);
             }
         }
 

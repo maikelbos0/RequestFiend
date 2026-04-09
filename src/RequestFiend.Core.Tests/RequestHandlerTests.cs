@@ -173,7 +173,7 @@ public class RequestHandlerTests {
         Assert.Null(result.Response);
         Assert.Same(expectedException, result.Exception);
 
-        await requestPipelineListener.OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+        await requestPipelineListener.Received(1).OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
     }
 
     [Fact]
