@@ -365,14 +365,15 @@ public class RequestTemplateModelTests {
             Method = "GET",
             Url = "https://localhost"
         };
+        var collection = new RequestTemplateCollection();
         popupResult.Result.Returns(returnValue);
-        popupService.ShowUrlPopup(request.Url).Returns(popupResult);
+        popupService.ShowUrlPopup(collection, request.Url).Returns(popupResult);
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(request.Url);
+        await popupService.Received(1).ShowUrlPopup(collection, request.Url);
         Assert.Equal(expectedUrl, subject.Url.Value);
     }
 

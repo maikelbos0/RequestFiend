@@ -18,13 +18,15 @@ public partial class UrlModel : BoundModelBase {
 
     private readonly Func<string?, CancellationToken, Task> closeMethod;
 
+    public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; }
 
-    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, string url) {
+    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, RequestTemplateCollection collection, string url) {
         this.closeMethod = closeMethod;
         var (baseUrl, parameters) = ParseUrl(url);
 
+        Collection = collection;
         BaseUrl = new(() => baseUrl, Validator.Required);
         Parameters = new([.. parameters.Select(parameter => new NameValuePair() { Name = parameter.Name, Value = parameter.Value })], Validator.Required);
 

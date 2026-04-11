@@ -196,7 +196,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             DefaultUrl = "https://localhost"
         };
         popupResult.Result.Returns(returnValue);
-        popupService.ShowUrlPopup(collection.DefaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(collection, collection.DefaultUrl).Returns(popupResult);
 
         var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
@@ -209,7 +209,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection.DefaultUrl);
+        await popupService.Received(1).ShowUrlPopup(collection, collection.DefaultUrl);
         Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
     }
 }

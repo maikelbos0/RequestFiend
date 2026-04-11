@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
+using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using RequestFiend.UI.Views;
 using System.IO;
@@ -26,6 +27,6 @@ public class PopupService : IPopupService {
     public Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions)
         => FilePicker.Default.PickAsync(pickOptions);
 
-    public Task<IPopupResult<string>> ShowUrlPopup(string url)
-        => Shell.Current.ShowPopupAsync<string>(new UrlPopup(url));
+    public Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url)
+        => Shell.Current.ShowPopupAsync<string>(new UrlPopup(collection, url));
 }

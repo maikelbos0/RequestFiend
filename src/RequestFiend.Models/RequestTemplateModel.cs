@@ -127,7 +127,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     [RelayCommand]
     public async Task ShowUrlPopup() {
-        var result = await popupService.ShowUrlPopup(Url.Value);
+        var result = await popupService.ShowUrlPopup(Collection, Url.Value);
 
         if (result.Result != null) {
             Url.Value = result.Result;

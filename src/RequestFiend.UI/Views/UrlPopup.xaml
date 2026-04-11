@@ -33,12 +33,13 @@
             </Label.FormattedText>
         </Label>
 
-        <views:ValidatableEntry Text="{Binding BaseUrl}" />
+        <views:ValidatableEntry Text="{Binding BaseUrl}" Collection="{Binding Collection}" />
 
         <views:NameValuePairCollectionView
             ItemsSource="{Binding Parameters}"
             NameLabelText="Parameter name"
             DeleteButtonText="Delete parameter"
-            AddButtonText="Add parameter"/>
+            AddButtonText="Add parameter"
+            Collection="{Binding Collection}"/>
     </VerticalStackLayout>
 </toolkit:Popup>
