@@ -161,7 +161,7 @@ public class RequestTemplateModelTests {
             && message.Request.PostExchangeScript == postExchangeScript
             && message.Request.OnExceptionScript == onExceptionScript));
     }
-    
+
     [Theory]
     [InlineData("", "", "", "", "")]
     [InlineData("", "GET", "https://localhost", "Name", "JSON")]
@@ -219,7 +219,7 @@ public class RequestTemplateModelTests {
 
         messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
-    
+
     [Fact]
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
@@ -352,29 +352,56 @@ public class RequestTemplateModelTests {
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 
-    [Theory]
-    [InlineData(null, "https://localhost")]
-    [InlineData("https://localhost/api", "https://localhost/api")]
-    public async Task ShowUrlPopup(string? returnValue, string expectedUrl) {
+    [Fact]
+    public async Task ShowUrlPopup() {
         const string filePath = @"C:\Documents\External data requests.json";
+        const string expectedUrl = "https://localhost/api";
 
         var popupService = Substitute.For<IPopupService>();
         var popupResult = Substitute.For<IPopupResult<string>>();
+        var collection = new RequestTemplateCollection();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost"
         };
-        var collection = new RequestTemplateCollection();
-        popupResult.Result.Returns(returnValue);
+        popupResult.Result.Returns(expectedUrl);
         popupService.ShowUrlPopup(collection, request.Url).Returns(popupResult);
+        var messageService = Substitute.For<IMessageService>();
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
         await popupService.Received(1).ShowUrlPopup(collection, request.Url);
         Assert.Equal(expectedUrl, subject.Url.Value);
+        messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.Url));
+    }
+
+    [Fact]
+    public async Task ShowUrlPopup_Without_Result() {
+        const string filePath = @"C:\Documents\External data requests.json";
+        const string expectedUrl = "https://localhost";
+
+        var popupService = Substitute.For<IPopupService>();
+        var popupResult = Substitute.For<IPopupResult<string>>();
+        var collection = new RequestTemplateCollection();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = expectedUrl
+        };
+        popupResult.Result.Returns((string?)null);
+        popupService.ShowUrlPopup(collection, request.Url).Returns(popupResult);
+        var messageService = Substitute.For<IMessageService>();
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
+
+        await subject.ShowUrlPopup();
+
+        await popupService.Received(1).ShowUrlPopup(collection, request.Url);
+        Assert.Equal(expectedUrl, subject.Url.Value);
+        messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }
 
     [Theory]

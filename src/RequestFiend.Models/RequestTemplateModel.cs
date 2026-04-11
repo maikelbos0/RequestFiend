@@ -131,6 +131,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
         if (result.Result != null) {
             Url.Value = result.Result;
+            messageService.Send(new ValidatablePropertyUpdatedMessage(Url));
         }
     }
 

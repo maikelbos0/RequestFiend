@@ -40,6 +40,11 @@ public partial class ValidatableEditor : AbsoluteLayout {
                 UpdateOverlay();
             }
         });
+        WeakReferenceMessenger.Default.Register<ValidatableEditor, ValidatablePropertyUpdatedMessage>(this, (_, message) => {
+            if (message.Property == Text) {
+                UpdateOverlay();
+            }
+        });
     }
 
     private void OnOverlayTapped(object sender, TappedEventArgs e) {

@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Services;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -71,6 +70,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
 
         if (result.Result != null) {
             Url.Value = result.Result;
+            messageService.Send(new ValidatablePropertyUpdatedMessage(Url));
         }
     }
 }

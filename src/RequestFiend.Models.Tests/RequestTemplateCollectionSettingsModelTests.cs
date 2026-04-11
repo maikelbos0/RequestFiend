@@ -184,24 +184,24 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.False(subject.AllowScriptEvaluation.Value);
     }
 
-    [Theory]
-    [InlineData(null, "https://localhost")]
-    [InlineData("https://localhost/api", "https://localhost/api")]
-    public async Task ShowDefaultUrlPopup(string? returnValue, string expectedUrl) {
+    [Fact]
+    public async Task ShowDefaultUrlPopup() {
         const string filePath = @"C:\Documents\External data requests.json";
+        const string expectedUrl = "https://localhost/api";
 
         var popupService = Substitute.For<IPopupService>();
         var popupResult = Substitute.For<IPopupResult<string>>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://localhost"
         };
-        popupResult.Result.Returns(returnValue);
+        popupResult.Result.Returns(expectedUrl);
         popupService.ShowUrlPopup(collection, collection.DefaultUrl).Returns(popupResult);
+        var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             popupService,
-            Substitute.For<IMessageService>(),
+            messageService,
             Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
@@ -211,5 +211,36 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await popupService.Received(1).ShowUrlPopup(collection, collection.DefaultUrl);
         Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
+        messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.DefaultUrl));
+    }
+
+    [Fact]
+    public async Task ShowUrlPopup_Without_Result() {
+        const string filePath = @"C:\Documents\External data requests.json";
+        const string expectedUrl = "https://localhost";
+
+        var popupService = Substitute.For<IPopupService>();
+        var popupResult = Substitute.For<IPopupResult<string>>();
+        var collection = new RequestTemplateCollection() {
+            DefaultUrl = expectedUrl
+        };
+        popupResult.Result.Returns((string?)null);
+        popupService.ShowUrlPopup(collection, collection.DefaultUrl).Returns(popupResult);
+        var messageService = Substitute.For<IMessageService>();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            popupService,
+            messageService,
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        await subject.ShowDefaultUrlPopup();
+
+        await popupService.Received(1).ShowUrlPopup(collection, collection.DefaultUrl);
+        Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
+        messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }
 }

@@ -83,6 +83,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         if (result.Result != null) {
             DefaultUrl.Value = result.Result;
+            messageService.Send(new ValidatablePropertyUpdatedMessage(DefaultUrl));
         }
     }
 }
