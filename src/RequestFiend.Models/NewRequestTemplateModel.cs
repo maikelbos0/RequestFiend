@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Services;
+using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
@@ -9,6 +10,7 @@ namespace RequestFiend.Models;
 
 public partial class NewRequestTemplateModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
+    private readonly IPopupService popupService;
     private readonly IMessageService messageService;
 
     public RequestTemplateCollectionFileModel File { get; }
@@ -19,11 +21,13 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
     
     public NewRequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
+        IPopupService popupService,
         IMessageService messageService,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection
     ) : base($"{file.Name} - New request", "New request") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
+        this.popupService = popupService;
         this.messageService = messageService;
 
         File = file;        
@@ -59,5 +63,14 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new OpenTemplateRequestMessage(File.FilePath, Collection, request));
         messageService.Send(new SuccessMessage("Request had been added"));
+    }
+
+    [RelayCommand]
+    public async Task ShowUrlPopup() {
+        var result = await popupService.ShowUrlPopup(Collection, Url.Value);
+
+        if (result.Result != null) {
+            Url.Value = result.Result;
+        }
     }
 }

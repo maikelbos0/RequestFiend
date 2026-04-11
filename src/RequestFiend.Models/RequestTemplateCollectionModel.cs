@@ -34,7 +34,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
 
         Settings = new(requestTemplateCollectionService, popupService, messageService, preferencesService, file, collection);
         Settings.PropertyChanged += OnChildStateChanged;
-        NewRequest = new(requestTemplateCollectionService, messageService, file, collection);
+        NewRequest = new(requestTemplateCollectionService, popupService, messageService, file, collection);
         NewRequest.PropertyChanged += OnChildStateChanged;
 
         foreach (var request in collection.Requests) {
