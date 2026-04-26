@@ -24,9 +24,9 @@ public class RequestTemplate {
             Headers = [.. Headers.Select(header => header.Clone())],
             ContentType = ContentType,
             StringContent = StringContent,
-            PreExchangeScript = { Code = PreExchangeScript.Code },
-            PostExchangeScript = { Code = PostExchangeScript.Code },
-            OnExceptionScript = { Code = OnExceptionScript.Code }
+            PreExchangeScript = PreExchangeScript.Clone(),
+            PostExchangeScript = PostExchangeScript.Clone(),
+            OnExceptionScript = OnExceptionScript.Clone()
         };
 
     public IContentManager GetContentManager() => ContentType switch {

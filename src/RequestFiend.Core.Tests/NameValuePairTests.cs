@@ -10,8 +10,9 @@ public class NameValuePairTests {
             Value = "Value"
         };
 
-        var result = subject.Clone(); 
+        var result = subject.Clone();
 
+        Assert.NotSame(subject, result);
         Assert.Equal(subject.Name, result.Name);
         Assert.Equal(subject.Value, result.Value);
     }
