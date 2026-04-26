@@ -25,6 +25,10 @@ public class RequestTemplateCollectionSettingsModelTests {
         preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(allowScriptEvaluation);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default",
+            IgnoreRemoteCertificateNotAvailable = true,
+            IgnoreRemoteCertificateNameMismatch = true,
+            IgnoreRemoteCertificateChainErrors = true,
+            // TODO add variables?
             DefaultHeaders = {
                 new() { Name = "Accept", Value = "application/json" },
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
@@ -49,6 +53,9 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(expectedShowAllowScriptEvaluation, subject.ShowAllowScriptEvaluation);
         Assert.Equal(allowScriptEvaluation, subject.AllowScriptEvaluation.Value);
         Assert.Equal(collection.DefaultUrl, subject.DefaultUrl.Value);
+        Assert.Equal(collection.IgnoreRemoteCertificateNotAvailable, subject.IgnoreRemoteCertificateNotAvailable.Value);
+        Assert.Equal(collection.IgnoreRemoteCertificateNameMismatch, subject.IgnoreRemoteCertificateNameMismatch.Value);
+        Assert.Equal(collection.IgnoreRemoteCertificateChainErrors, subject.IgnoreRemoteCertificateChainErrors.Value);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
         foreach (var header in collection.DefaultHeaders) {
@@ -62,6 +69,9 @@ public class RequestTemplateCollectionSettingsModelTests {
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string defaultUrl = "https://default";
+        const bool ignoreRemoteCertificateNotAvailable = true;
+        const bool ignoreRemoteCertificateNameMismatch = true;
+        const bool ignoreRemoteCertificateChainErrors = true;
         const string headerName = "Name";
         const string headerValue = "Value";
         const string variableName = "Name";
@@ -74,6 +84,9 @@ public class RequestTemplateCollectionSettingsModelTests {
         preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(!allowScriptEvaluation);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
+            IgnoreRemoteCertificateNotAvailable = false,
+            IgnoreRemoteCertificateNameMismatch = false,
+            IgnoreRemoteCertificateChainErrors = false,
             Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
@@ -93,6 +106,9 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         subject.AllowScriptEvaluation.Value = allowScriptEvaluation;
         subject.DefaultUrl.Value = defaultUrl;
+        subject.IgnoreRemoteCertificateNotAvailable.Value = ignoreRemoteCertificateNotAvailable;
+        subject.IgnoreRemoteCertificateNameMismatch.Value = ignoreRemoteCertificateNameMismatch;
+        subject.IgnoreRemoteCertificateChainErrors.Value = ignoreRemoteCertificateChainErrors;
         subject.Variables[0].Name.Value = variableName;
         subject.Variables[0].Value.Value = variableValue;
         subject.DefaultHeaders[0].Name.Value = headerName;
@@ -101,12 +117,18 @@ public class RequestTemplateCollectionSettingsModelTests {
         await subject.Update();
 
         Assert.Equal(defaultUrl, collection.DefaultUrl);
+        Assert.Equal(ignoreRemoteCertificateNotAvailable, collection.IgnoreRemoteCertificateNotAvailable);
+        Assert.Equal(ignoreRemoteCertificateNameMismatch, collection.IgnoreRemoteCertificateNameMismatch);
+        Assert.Equal(ignoreRemoteCertificateChainErrors, collection.IgnoreRemoteCertificateChainErrors);
         Assert.Equal(variableName, collection.Variables[0].Name);
         Assert.Equal(variableValue, collection.Variables[0].Value);
         Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
         Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
         Assert.False(subject.AllowScriptEvaluation.IsModified);
         Assert.False(subject.DefaultUrl.IsModified);
+        Assert.False(subject.IgnoreRemoteCertificateNotAvailable.IsModified);
+        Assert.False(subject.IgnoreRemoteCertificateNameMismatch.IsModified);
+        Assert.False(subject.IgnoreRemoteCertificateChainErrors.IsModified);
         Assert.False(subject.DefaultHeaders[0].Name.IsModified);
         Assert.False(subject.DefaultHeaders[0].Value.IsModified);
         Assert.False(subject.Variables[0].Name.IsModified);
@@ -131,6 +153,9 @@ public class RequestTemplateCollectionSettingsModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
+            IgnoreRemoteCertificateNotAvailable = false,
+            IgnoreRemoteCertificateNameMismatch = false,
+            IgnoreRemoteCertificateChainErrors = false,
             Variables = {
                 new() { Name = "PreviousName" }
             },
@@ -149,12 +174,18 @@ public class RequestTemplateCollectionSettingsModelTests {
         );
 
         subject.DefaultUrl.Value = defaultUrl;
+        subject.IgnoreRemoteCertificateNotAvailable.Value = true;
+        subject.IgnoreRemoteCertificateNameMismatch.Value = true;
+        subject.IgnoreRemoteCertificateChainErrors.Value = true;
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.Variables[0].Name.Value = variableName;
 
         await subject.Update();
 
         Assert.Equal("https://previous", collection.DefaultUrl);
+        Assert.False(collection.IgnoreRemoteCertificateNotAvailable);
+        Assert.False(collection.IgnoreRemoteCertificateNameMismatch);
+        Assert.False(collection.IgnoreRemoteCertificateChainErrors);
         Assert.Equal("PreviousName", collection.Variables[0].Name);
         Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
 

@@ -13,7 +13,7 @@
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
                 <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
             </StackLayout>
-            
+
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding ShowAllowScriptEvaluation}">
@@ -25,7 +25,7 @@
                             </Label.GestureRecognizers>
                         </Label>
                     </Grid>
-                    
+
                     <Label Style="{StaticResource EntryLabel}" Grid.Column="1">
                         <Label.FormattedText>
                             <FormattedString>
@@ -41,6 +41,24 @@
                     </Label>
 
                     <views:ValidatableEntry Text="{Binding DefaultUrl}" Collection="{Binding Collection}" />
+
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                        <Switch IsToggled="{Binding IgnoreRemoteCertificateNotAvailable.Value}"/>
+
+                        <Label Text="Ignore certificate not available errors" Grid.Column="1" VerticalOptions="Center"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                        <Switch IsToggled="{Binding IgnoreRemoteCertificateNameMismatch.Value}"/>
+
+                        <Label Text="Ignore certificate name mismatch errors" Grid.Column="1" VerticalOptions="Center"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                        <Switch IsToggled="{Binding IgnoreRemoteCertificateChainErrors.Value}"/>
+
+                        <Label Text="Ignore certificate chain errors" Grid.Column="1" VerticalOptions="Center"/>
+                    </Grid>
 
                     <views:NameValuePairCollectionView
                         ItemsSource="{Binding Variables}"

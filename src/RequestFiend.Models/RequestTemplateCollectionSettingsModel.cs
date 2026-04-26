@@ -22,6 +22,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection Variables { get; }
     public NameValuePairModelCollection DefaultHeaders { get; }
+    public ValidatableProperty<bool> IgnoreRemoteCertificateNotAvailable { get; }
+    public ValidatableProperty<bool> IgnoreRemoteCertificateNameMismatch { get; }
+    public ValidatableProperty<bool> IgnoreRemoteCertificateChainErrors { get; }
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -42,10 +45,13 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
         AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath));
         DefaultUrl = new(() => collection.DefaultUrl);
+        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable);
+        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch);
+        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 
-        ConfigureState([AllowScriptEvaluation, DefaultUrl, DefaultHeaders, Variables]);
+        ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, DefaultHeaders, Variables]);
         messageService.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _) => {
             ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
             AllowScriptEvaluation.Reset();
@@ -62,9 +68,15 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         Collection.DefaultUrl = DefaultUrl.Value;
         Collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
         Collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        Collection.IgnoreRemoteCertificateNotAvailable = IgnoreRemoteCertificateNotAvailable.Value;
+        Collection.IgnoreRemoteCertificateNameMismatch = IgnoreRemoteCertificateNameMismatch.Value;
+        Collection.IgnoreRemoteCertificateChainErrors = IgnoreRemoteCertificateChainErrors.Value;
 
         AllowScriptEvaluation.Reset();
         DefaultUrl.Reset();
+        IgnoreRemoteCertificateNotAvailable.Reset();
+        IgnoreRemoteCertificateNameMismatch.Reset();
+        IgnoreRemoteCertificateChainErrors.Reset();
         Variables.Reset(Collection.Variables);
         DefaultHeaders.Reset(Collection.DefaultHeaders);
 
