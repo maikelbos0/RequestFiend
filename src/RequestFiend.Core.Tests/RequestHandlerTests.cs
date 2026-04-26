@@ -10,23 +10,35 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class RequestHandlerTests {
-    [Fact]
-    public async Task Execute() {
+    [Theory]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    public async Task Execute(bool ignoreRemoteCertificateNotAvailable, bool ignoreRemoteCertificateNameMismatch, bool ignoreRemoteCertificateChainErrors) {
         var expectedResponse = new HttpResponseMessage();
         var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(expectedResponse);
         var httpClient = new HttpClient(httpMessageHandler);
+        var serverCertificateValidationHandler = Substitute.For<IServerCertificateValidationHandler>();
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), serverCertificateValidationHandler, Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost/"
         };
-        var collection = new RequestTemplateCollection();
+        var collection = new RequestTemplateCollection() {
+            IgnoreRemoteCertificateNotAvailable = ignoreRemoteCertificateNotAvailable,
+            IgnoreRemoteCertificateNameMismatch = ignoreRemoteCertificateNameMismatch,
+            IgnoreRemoteCertificateChainErrors = ignoreRemoteCertificateChainErrors
+        };
 
         var result = await subject.Execute(request, collection, new(false), CancellationToken.None);
+
+        serverCertificateValidationHandler.Received().IgnoreRemoteCertificateNotAvailable = ignoreRemoteCertificateNotAvailable;
+        serverCertificateValidationHandler.Received().IgnoreRemoteCertificateNameMismatch = ignoreRemoteCertificateNameMismatch;
+        serverCertificateValidationHandler.Received().IgnoreRemoteCertificateChainErrors = ignoreRemoteCertificateChainErrors;
 
         Assert.Same(result.SessionData, collection.GetSessionData());
         Assert.Same(result.SessionVariables, collection.GetSessionVariables());
@@ -43,7 +55,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -65,7 +77,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(expectedException);
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -88,7 +100,7 @@ public class RequestHandlerTests {
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
         var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -121,7 +133,7 @@ public class RequestHandlerTests {
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
         var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -156,7 +168,7 @@ public class RequestHandlerTests {
         scriptEvaluator.Evaluate(Arg.Is<Script>(script => script.Code == "OnExceptionScript"), Arg.Any<RequestContext>(), CancellationToken.None).Throws(expectedException);
         var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -183,7 +195,7 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -206,7 +218,7 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
+        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",

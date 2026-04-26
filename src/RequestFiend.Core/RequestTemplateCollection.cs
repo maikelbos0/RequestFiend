@@ -15,6 +15,9 @@ public class RequestTemplateCollection {
     public List<RequestTemplate> Requests { get; set; } = [];
     public List<NameValuePair> Variables { get; set; } = [];
     public List<NameValuePair> DefaultHeaders { get; set; } = [];
+    public bool IgnoreRemoteCertificateNotAvailable { get; set; }
+    public bool IgnoreRemoteCertificateNameMismatch { get; set; }
+    public bool IgnoreRemoteCertificateChainErrors { get; set; }
 
     public Dictionary<string, object> GetSessionData() => sessionData;
 

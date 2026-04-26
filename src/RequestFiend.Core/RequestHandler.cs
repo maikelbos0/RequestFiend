@@ -9,11 +9,13 @@ namespace RequestFiend.Core;
 public class RequestHandler : IRequestHandler {
     private readonly HttpClient httpClient;
     private readonly IScriptEvaluator scriptEvaluator;
+    private readonly IServerCertificateValidationHandler serverCertificateValidationHandler;
     private readonly ILoggerFactory loggerFactory;
 
-    public RequestHandler(HttpClient httpClient, IScriptEvaluator scriptEvaluator, ILoggerFactory loggerFactory) {
+    public RequestHandler(HttpClient httpClient, IScriptEvaluator scriptEvaluator, IServerCertificateValidationHandler serverCertificateValidationHandler, ILoggerFactory loggerFactory) {
         this.httpClient = httpClient;
         this.scriptEvaluator = scriptEvaluator;
+        this.serverCertificateValidationHandler = serverCertificateValidationHandler;
         this.loggerFactory = loggerFactory;
     }
 
@@ -28,6 +30,10 @@ public class RequestHandler : IRequestHandler {
         CancellationToken cancellationToken
     ) {
         var context = new RequestContext(collection.GetSessionData(), collection.GetSessionVariables(), loggerFactory.CreateLogger<RequestContext>());
+
+        serverCertificateValidationHandler.IgnoreRemoteCertificateNotAvailable = collection.IgnoreRemoteCertificateNotAvailable;
+        serverCertificateValidationHandler.IgnoreRemoteCertificateNameMismatch = collection.IgnoreRemoteCertificateNameMismatch;
+        serverCertificateValidationHandler.IgnoreRemoteCertificateChainErrors = collection.IgnoreRemoteCertificateChainErrors;
 
         try {
             context.Request = request.CreateMessage(collection);

@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace RequestFiend.Core;
 
-public class ServerCertificateValidationHandler {
+public class ServerCertificateValidationHandler : IServerCertificateValidationHandler {
     public bool IgnoreRemoteCertificateNotAvailable { get; set; }
     public bool IgnoreRemoteCertificateNameMismatch { get; set; }
     public bool IgnoreRemoteCertificateChainErrors { get; set; }
