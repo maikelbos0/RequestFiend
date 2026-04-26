@@ -59,9 +59,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Headers = new(request.Headers, Validator.Required);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
-        PreExchangeScript = new(() => request.PreExchangeScript);
-        PostExchangeScript = new(() => request.PostExchangeScript);
-        OnExceptionScript = new(() => request.OnExceptionScript);
+        PreExchangeScript = new(() => request.PreExchangeScript.Code);
+        PostExchangeScript = new(() => request.PostExchangeScript.Code);
+        OnExceptionScript = new(() => request.OnExceptionScript.Code);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
@@ -85,9 +85,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
-        request.PreExchangeScript = PreExchangeScript.Value;
-        request.PostExchangeScript = PostExchangeScript.Value;
-        request.OnExceptionScript = OnExceptionScript.Value;
+        request.PreExchangeScript.Code = PreExchangeScript.Value;
+        request.PostExchangeScript.Code = PostExchangeScript.Value;
+        request.OnExceptionScript.Code = OnExceptionScript.Value;
 
         messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, request));
     }
@@ -104,9 +104,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         Request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         Request.StringContent = StringContent.Value;
-        Request.PreExchangeScript = PreExchangeScript.Value;
-        Request.PostExchangeScript = PostExchangeScript.Value;
-        Request.OnExceptionScript = OnExceptionScript.Value;
+        Request.PreExchangeScript.Code = PreExchangeScript.Value;
+        Request.PostExchangeScript.Code = PostExchangeScript.Value;
+        Request.OnExceptionScript.Code = OnExceptionScript.Value;
 
         Name.Reset();
         Method.Reset();

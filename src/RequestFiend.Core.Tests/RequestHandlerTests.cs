@@ -94,9 +94,9 @@ public class RequestHandlerTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost/",
-            PreExchangeScript = "PreExchangeScript",
-            PostExchangeScript = "PostExchangeScript",
-            OnExceptionScript = "OnExceptionScript"
+            PreExchangeScript = { Code = "PreExchangeScript" },
+            PostExchangeScript = { Code = "PostExchangeScript" },
+            OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
         var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
@@ -127,9 +127,9 @@ public class RequestHandlerTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost/",
-            PreExchangeScript = "PreExchangeScript",
-            PostExchangeScript = "PostExchangeScript",
-            OnExceptionScript = "OnExceptionScript"
+            PreExchangeScript = { Code = "PreExchangeScript" },
+            PostExchangeScript = { Code = "PostExchangeScript" },
+            OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
         var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
@@ -153,7 +153,7 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
         var expectedException = new InvalidOperationException();
-        scriptEvaluator.Evaluate("OnExceptionScript", Arg.Any<RequestContext>(), CancellationToken.None).Throws(expectedException);
+        scriptEvaluator.Evaluate(Arg.Is<Script>(script => script.Code == "OnExceptionScript"), Arg.Any<RequestContext>(), CancellationToken.None).Throws(expectedException);
         var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
 
         var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<ILoggerFactory>());
@@ -162,9 +162,9 @@ public class RequestHandlerTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost/",
-            PreExchangeScript = "PreExchangeScript",
-            PostExchangeScript = "PostExchangeScript",
-            OnExceptionScript = "OnExceptionScript"
+            PreExchangeScript = { Code = "PreExchangeScript" },
+            PostExchangeScript = { Code = "PostExchangeScript" },
+            OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
         var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
@@ -189,14 +189,14 @@ public class RequestHandlerTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost/",
-            PreExchangeScript = "PreExchangeScript",
-            PostExchangeScript = "PostExchangeScript",
-            OnExceptionScript = "OnExceptionScript"
+            PreExchangeScript = { Code = "PreExchangeScript" },
+            PostExchangeScript = { Code = "PostExchangeScript" },
+            OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
         await subject.Execute(request, new(), new(false), CancellationToken.None);
 
-        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<string>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
+        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -212,13 +212,13 @@ public class RequestHandlerTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost/",
-            PreExchangeScript = "PreExchangeScript",
-            PostExchangeScript = "PostExchangeScript",
-            OnExceptionScript = "OnExceptionScript"
+            PreExchangeScript = { Code = "PreExchangeScript" },
+            PostExchangeScript = { Code = "PostExchangeScript" },
+            OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
         _ = await subject.Execute(request, new(), new(false), CancellationToken.None);
 
-        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<string>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
+        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
     }
 }

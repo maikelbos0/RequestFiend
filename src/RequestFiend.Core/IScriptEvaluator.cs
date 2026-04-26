@@ -4,5 +4,5 @@ using System.Threading.Tasks;
 namespace RequestFiend.Core;
 
 public interface IScriptEvaluator {
-    Task Evaluate(string script, RequestContext context, CancellationToken cancellationToken);
+    Task Evaluate(Script script, RequestContext context, CancellationToken cancellationToken);
 }

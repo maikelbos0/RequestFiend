@@ -52,9 +52,9 @@ public class RequestTemplateModelTests {
             },
             ContentType = contentType,
             StringContent = "Content",
-            PreExchangeScript = "PreExchangeScript",
-            PostExchangeScript = "PostExchangeScript",
-            OnExceptionScript = "OnExceptionScript"
+            PreExchangeScript = { Code = "PreExchangeScript" },
+            PostExchangeScript = { Code = "PostExchangeScript" },
+            OnExceptionScript = { Code = "OnExceptionScript" }
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -76,9 +76,9 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Headers[0].Value, subject.Headers[0].Value.Value);
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
-        Assert.Equal(request.PreExchangeScript, subject.PreExchangeScript.Value);
-        Assert.Equal(request.PostExchangeScript, subject.PostExchangeScript.Value);
-        Assert.Equal(request.OnExceptionScript, subject.OnExceptionScript.Value);
+        Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Value);
+        Assert.Equal(request.PostExchangeScript.Code, subject.PostExchangeScript.Value);
+        Assert.Equal(request.OnExceptionScript.Code, subject.OnExceptionScript.Value);
 
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
@@ -110,9 +110,9 @@ public class RequestTemplateModelTests {
             },
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent",
-            PreExchangeScript = "PreviousPreExchangeScript",
-            PostExchangeScript = "PreviousPostExchangeScript",
-            OnExceptionScript = "PreviousOnExceptionScript"
+            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
+            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
+            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -140,9 +140,9 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
-        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript);
-        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript);
-        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript);
+        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
+        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
+        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
 
         messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
             => message.FilePath == filePath
@@ -157,9 +157,9 @@ public class RequestTemplateModelTests {
             && message.Request.Headers[0].Value == headerValue
             && message.Request.ContentType == Options.ReverseContentTypeMap[contentType]
             && message.Request.StringContent == stringContent
-            && message.Request.PreExchangeScript == preExchangeScript
-            && message.Request.PostExchangeScript == postExchangeScript
-            && message.Request.OnExceptionScript == onExceptionScript));
+            && message.Request.PreExchangeScript.Code == preExchangeScript
+            && message.Request.PostExchangeScript.Code == postExchangeScript
+            && message.Request.OnExceptionScript.Code == onExceptionScript));
     }
 
     [Theory]
@@ -187,9 +187,9 @@ public class RequestTemplateModelTests {
             },
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent",
-            PreExchangeScript = "PreviousPreExchangeScript",
-            PostExchangeScript = "PreviousPostExchangeScript",
-            OnExceptionScript = "PreviousOnExceptionScript"
+            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
+            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
+            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
@@ -213,9 +213,9 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
-        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript);
-        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript);
-        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript);
+        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
+        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
+        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
 
         messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
@@ -245,9 +245,9 @@ public class RequestTemplateModelTests {
             },
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent",
-            PreExchangeScript = "PreviousPreExchangeScript",
-            PostExchangeScript = "PreviousPostExchangeScript",
-            OnExceptionScript = "PreviousOnExceptionScript"
+            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
+            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
+            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
         };
         var collection = new RequestTemplateCollection() {
             Requests = [request]
@@ -275,9 +275,9 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
-        Assert.Equal(preExchangeScript, request.PreExchangeScript);
-        Assert.Equal(postExchangeScript, request.PostExchangeScript);
-        Assert.Equal(onExceptionScript, request.OnExceptionScript);
+        Assert.Equal(preExchangeScript, request.PreExchangeScript.Code);
+        Assert.Equal(postExchangeScript, request.PostExchangeScript.Code);
+        Assert.Equal(onExceptionScript, request.OnExceptionScript.Code);
 
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
@@ -318,9 +318,9 @@ public class RequestTemplateModelTests {
             },
             ContentType = Core.ContentType.Text,
             StringContent = "PreviousContent",
-            PreExchangeScript = "PreviousPreExchangeScript",
-            PostExchangeScript = "PreviousPostExchangeScript",
-            OnExceptionScript = "PreviousOnExceptionScript"
+            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
+            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
+            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
@@ -344,9 +344,9 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.Equal("PreviousContent", request.StringContent);
-        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript);
-        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript);
-        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript);
+        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
+        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
+        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
