@@ -16,7 +16,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
 
     public RequestTemplateCollectionSettingsModel Settings { get; }
     public NewRequestTemplateModel NewRequest { get; }
-    public IReadOnlyList<RequestTemplateModel> Requests => requests;
+    public IEnumerable<RequestTemplateModel> Requests => requests;
 
     public RequestTemplateCollectionModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -51,6 +51,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         return model;
     }
 
+    // TODO remove these overrides
     private void OnChildStateChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
             UpdateState();

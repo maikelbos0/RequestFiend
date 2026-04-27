@@ -7,14 +7,17 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public partial class BoundModelBase : ObservableObject {
+    private List<IValidatable> validatables = [];
 
-    private IEnumerable<IValidatable> validatables = [];
     [ObservableProperty] public partial bool HasError { get; set; }
     [ObservableProperty] public partial bool IsModified { get; set; }
     [ObservableProperty] public partial bool IsModifiedWithoutError { get; set; }
+    // TODO test results
+    public IEnumerable<IValidatable> Validatables => validatables;
 
+    // TODO rename?
     public virtual void ConfigureState(IEnumerable<IValidatable> validatables) {
-        this.validatables = validatables;
+        this.validatables.AddRange(validatables);
 
         foreach (var validatableProperty in validatables) {
             validatableProperty.PropertyChanged += OnValidatablePropertyChanged;

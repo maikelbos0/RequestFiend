@@ -18,6 +18,7 @@ public class BoundModelBaseTests {
 
         subject.ConfigureState([validatable]);
 
+        Assert.Equal([validatable], subject.Validatables);
         Assert.Equal(expectedHasError, subject.HasError);
         Assert.Equal(expectedIsModified, subject.IsModified);
         Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);

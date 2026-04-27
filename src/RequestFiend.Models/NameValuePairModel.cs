@@ -1,16 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using RequestFiend.Core;
+﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using System;
-using System.ComponentModel;
 
 namespace RequestFiend.Models;
 
-public partial class NameValuePairModel : ObservableObject, IValidatable {
+public partial class NameValuePairModel : BoundModelBase, IValidatable {
     public ValidatableProperty<string> Name { get; }
     public ValidatableProperty<string> Value { get; }
-    [ObservableProperty] public partial bool HasError { get; set; }
-    [ObservableProperty] public partial bool IsModified { get; set; }
 
     public NameValuePairModel(Func<string, bool> nameValidator) : this("", "", nameValidator) { }
 
@@ -22,25 +18,11 @@ public partial class NameValuePairModel : ObservableObject, IValidatable {
         Name = new(nameProvider, nameValidator);
         Value = new(valueProvider);
 
-        Name.PropertyChanged += OnValidatablePropertyChanged;
-        Value.PropertyChanged += OnValidatablePropertyChanged;
-
-        UpdateState();
+        ConfigureState([Name, Value]);
     }
 
     public void Reset(NameValuePair pair) {
         Name.Reset(() => pair.Name);
         Value.Reset(() => pair.Value);
-    }
-
-    private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(ValidatableProperty.IsModified) || e.PropertyName == nameof(ValidatableProperty.HasError)) {
-            UpdateState();
-        }
-    }
-
-    private void UpdateState() {
-        HasError = Name.HasError || Value.HasError;
-        IsModified = Name.IsModified || Value.IsModified;
     }
 }
