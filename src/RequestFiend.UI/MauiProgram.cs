@@ -5,6 +5,7 @@ using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 using RequestFiend.Core;
 using RequestFiend.Models;
+using System;
 using System.IO.Abstractions;
 using System.Net.Http;
 
@@ -33,8 +34,11 @@ public static class MauiProgram {
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddHttpClient<IRequestHandler, RequestHandler>()
-            .ConfigurePrimaryHttpMessageHandler(static (serviceProvider) => new HttpClientHandler() {
-                ServerCertificateCustomValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
+            .ConfigurePrimaryHttpMessageHandler(static (serviceProvider) => new SocketsHttpHandler() {
+                PooledConnectionLifetime = TimeSpan.Zero,
+                SslOptions = {
+                    RemoteCertificateValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
+                }
             });
         mauiAppBuilder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
         mauiAppBuilder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();

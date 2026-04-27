@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using System.Net.Security;
+﻿using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
@@ -16,7 +15,7 @@ public class ServerCertificateValidationHandler : IServerCertificateValidationHa
         ignoreRemoteCertificateChainErrors.Value = collection.IgnoreRemoteCertificateChainErrors;
     }
 
-    public bool Handle(HttpRequestMessage httpRequestMessage, X509Certificate2? x509Certificate2, X509Chain? x509Chain, SslPolicyErrors sslPolicyErrors) {
+    public bool Handle(object sender, X509Certificate? x509Certificate2, X509Chain? x509Chain, SslPolicyErrors sslPolicyErrors) {
         if (!ignoreRemoteCertificateNotAvailable.Value && sslPolicyErrors.HasFlag(SslPolicyErrors.RemoteCertificateNotAvailable)) {
             return false;
         }
