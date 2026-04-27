@@ -31,9 +31,7 @@ public class RequestHandler : IRequestHandler {
     ) {
         var context = new RequestContext(collection.GetSessionData(), collection.GetSessionVariables(), loggerFactory.CreateLogger<RequestContext>());
 
-        serverCertificateValidationHandler.IgnoreRemoteCertificateNotAvailable = collection.IgnoreRemoteCertificateNotAvailable;
-        serverCertificateValidationHandler.IgnoreRemoteCertificateNameMismatch = collection.IgnoreRemoteCertificateNameMismatch;
-        serverCertificateValidationHandler.IgnoreRemoteCertificateChainErrors = collection.IgnoreRemoteCertificateChainErrors;
+        serverCertificateValidationHandler.Initialize(collection);
 
         try {
             context.Request = request.CreateMessage(collection);
@@ -47,7 +45,7 @@ public class RequestHandler : IRequestHandler {
             }
 
             context.Response = await httpClient.SendAsync(context.Request, cancellationToken);
-            
+
             if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PostExchangeScript, context, cancellationToken);
             }

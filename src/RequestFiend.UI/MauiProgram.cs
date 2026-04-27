@@ -36,7 +36,6 @@ public static class MauiProgram {
             .ConfigurePrimaryHttpMessageHandler(static (serviceProvider) => new HttpClientHandler() {
                 ServerCertificateCustomValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
             });
-        // TODO this should be scoped to a collection but how? The handler is singleton/pooled. Perhaps Task.Run and MainThread.BeginInvokeOnMainThread can work together with ThreadLocal.
         mauiAppBuilder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
         mauiAppBuilder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
 

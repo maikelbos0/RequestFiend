@@ -10,11 +10,8 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class RequestHandlerTests {
-    [Theory]
-    [InlineData(true, false, false)]
-    [InlineData(false, true, false)]
-    [InlineData(false, false, true)]
-    public async Task Execute(bool ignoreRemoteCertificateNotAvailable, bool ignoreRemoteCertificateNameMismatch, bool ignoreRemoteCertificateChainErrors) {
+    [Fact]
+    public async Task Execute() {
         var expectedResponse = new HttpResponseMessage();
         var httpMessageHandler = Substitute.ForPartsOf<FakeHttpMessageHandler>();
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(expectedResponse);
@@ -28,17 +25,14 @@ public class RequestHandlerTests {
             Method = "GET",
             Url = "https://localhost/"
         };
-        var collection = new RequestTemplateCollection() {
-            IgnoreRemoteCertificateNotAvailable = ignoreRemoteCertificateNotAvailable,
-            IgnoreRemoteCertificateNameMismatch = ignoreRemoteCertificateNameMismatch,
-            IgnoreRemoteCertificateChainErrors = ignoreRemoteCertificateChainErrors
-        };
+        var collection = new RequestTemplateCollection();
 
         var result = await subject.Execute(request, collection, new(false), CancellationToken.None);
 
-        serverCertificateValidationHandler.Received().IgnoreRemoteCertificateNotAvailable = ignoreRemoteCertificateNotAvailable;
-        serverCertificateValidationHandler.Received().IgnoreRemoteCertificateNameMismatch = ignoreRemoteCertificateNameMismatch;
-        serverCertificateValidationHandler.Received().IgnoreRemoteCertificateChainErrors = ignoreRemoteCertificateChainErrors;
+        Received.InOrder(async () => {
+            serverCertificateValidationHandler.Initialize(collection);
+            await httpMessageHandler.SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
+        });
 
         Assert.Same(result.SessionData, collection.GetSessionData());
         Assert.Same(result.SessionVariables, collection.GetSessionVariables());
