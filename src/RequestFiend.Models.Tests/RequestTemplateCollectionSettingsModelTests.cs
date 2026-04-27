@@ -28,7 +28,9 @@ public class RequestTemplateCollectionSettingsModelTests {
             IgnoreRemoteCertificateNotAvailable = true,
             IgnoreRemoteCertificateNameMismatch = true,
             IgnoreRemoteCertificateChainErrors = true,
-            // TODO add variables?
+            Variables = {
+                new() { Name = "Foo", Value = "Bar" }
+            },
             DefaultHeaders = {
                 new() { Name = "Accept", Value = "application/json" },
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
@@ -56,6 +58,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(collection.IgnoreRemoteCertificateNotAvailable, subject.IgnoreRemoteCertificateNotAvailable.Value);
         Assert.Equal(collection.IgnoreRemoteCertificateNameMismatch, subject.IgnoreRemoteCertificateNameMismatch.Value);
         Assert.Equal(collection.IgnoreRemoteCertificateChainErrors, subject.IgnoreRemoteCertificateChainErrors.Value);
+        Assert.Equal(collection.Variables.Count, subject.Variables.Count);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
         foreach (var header in collection.DefaultHeaders) {
