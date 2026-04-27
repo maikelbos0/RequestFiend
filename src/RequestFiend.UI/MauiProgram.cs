@@ -6,6 +6,7 @@ using Microsoft.Maui.Hosting;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using System.IO.Abstractions;
+using System.Net.Http;
 
 namespace RequestFiend.UI;
 
@@ -31,8 +32,12 @@ public static class MauiProgram {
 
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
-        mauiAppBuilder.Services.AddHttpClient<RequestHandler>();
-        mauiAppBuilder.Services.AddSingleton<IRequestHandler, RequestHandler>();
+        mauiAppBuilder.Services.AddHttpClient<IRequestHandler, RequestHandler>()
+            .ConfigurePrimaryHttpMessageHandler(static (serviceProvider) => new HttpClientHandler() {
+                ServerCertificateCustomValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
+            });
+        // TODO this should be scoped to a collection but how? The handler is singleton/pooled. Perhaps Task.Run and MainThread.BeginInvokeOnMainThread can work together with ThreadLocal.
+        mauiAppBuilder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
         mauiAppBuilder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
 
         mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
