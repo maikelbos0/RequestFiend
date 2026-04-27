@@ -90,6 +90,18 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         => AllowScriptEvaluation.Value = !AllowScriptEvaluation.Value;
 
     [RelayCommand]
+    public void ToggleIgnoreRemoteCertificateNotAvailable()
+        => IgnoreRemoteCertificateNotAvailable.Value = !IgnoreRemoteCertificateNotAvailable.Value;
+
+    [RelayCommand]
+    public void ToggleIgnoreRemoteCertificateNameMismatch()
+        => IgnoreRemoteCertificateNameMismatch.Value = !IgnoreRemoteCertificateNameMismatch.Value;
+
+    [RelayCommand]
+    public void ToggleIgnoreRemoteCertificateChainErrors()
+        => IgnoreRemoteCertificateChainErrors.Value = !IgnoreRemoteCertificateChainErrors.Value;
+
+    [RelayCommand]
     public async Task ShowDefaultUrlPopup() {
         var result = await popupService.ShowUrlPopup(Collection, DefaultUrl.Value);
 

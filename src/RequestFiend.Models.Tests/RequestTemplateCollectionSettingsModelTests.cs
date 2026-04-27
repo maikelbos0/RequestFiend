@@ -219,6 +219,66 @@ public class RequestTemplateCollectionSettingsModelTests {
     }
 
     [Fact]
+    public void ToggleIgnoreRemoteCertificateNotAvailable() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            new()
+        ) {
+            IgnoreRemoteCertificateNotAvailable = { Value = true },
+        };
+
+        subject.ToggleIgnoreRemoteCertificateNotAvailable();
+
+        Assert.False(subject.IgnoreRemoteCertificateNotAvailable.Value);
+    }
+
+    [Fact]
+    public void ToggleIgnoreRemoteCertificateNameMismatch() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            new()
+        ) {
+            IgnoreRemoteCertificateNameMismatch = { Value = true },
+        };
+
+        subject.ToggleIgnoreRemoteCertificateNameMismatch();
+
+        Assert.False(subject.IgnoreRemoteCertificateNameMismatch.Value);
+    }
+
+    [Fact]
+    public void ToggleIgnoreRemoteCertificateChainErrors() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            new()
+        ) {
+            IgnoreRemoteCertificateChainErrors = { Value = true },
+        };
+
+        subject.ToggleIgnoreRemoteCertificateChainErrors();
+
+        Assert.False(subject.IgnoreRemoteCertificateChainErrors.Value);
+    }
+
+    [Fact]
     public async Task ShowDefaultUrlPopup() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string expectedUrl = "https://localhost/api";

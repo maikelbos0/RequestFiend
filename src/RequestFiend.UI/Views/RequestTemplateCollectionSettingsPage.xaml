@@ -45,19 +45,31 @@
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateNotAvailable.Value}"/>
 
-                        <Label Text="Ignore certificate not available errors" Grid.Column="1" VerticalOptions="Center"/>
+                        <Label Text="Ignore certificate not available errors" Grid.Column="1" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleIgnoreRemoteCertificateNotAvailableCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Grid>
 
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateNameMismatch.Value}"/>
 
-                        <Label Text="Ignore certificate name mismatch errors" Grid.Column="1" VerticalOptions="Center"/>
+                        <Label Text="Ignore certificate name mismatch errors" Grid.Column="1" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleIgnoreRemoteCertificateNameMismatchCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Grid>
 
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateChainErrors.Value}"/>
 
-                        <Label Text="Ignore certificate chain errors" Grid.Column="1" VerticalOptions="Center"/>
+                        <Label Text="Ignore certificate chain errors" Grid.Column="1" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleIgnoreRemoteCertificateChainErrorsCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Grid>
 
                     <views:NameValuePairCollectionView
