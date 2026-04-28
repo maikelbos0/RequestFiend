@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace RequestFiend.Models;
 
-public partial class BoundModelBase : ObservableObject {
+public partial class BoundModelBase : ObservableObject, IValidatable {
     private List<IValidatable> validatables = [];
 
     [ObservableProperty] public partial bool HasError { get; set; }

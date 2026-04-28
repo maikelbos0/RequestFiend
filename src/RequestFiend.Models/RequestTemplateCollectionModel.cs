@@ -1,7 +1,6 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace RequestFiend.Models;
@@ -33,41 +32,16 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         this.collection = collection;
 
         Settings = new(requestTemplateCollectionService, popupService, messageService, preferencesService, file, collection);
-        Settings.PropertyChanged += OnChildStateChanged;
         NewRequest = new(requestTemplateCollectionService, popupService, messageService, file, collection);
-        NewRequest.PropertyChanged += OnChildStateChanged;
+        requests.AddRange(collection.Requests.Select(request => new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, file, collection, request)));
 
-        foreach (var request in collection.Requests) {
-            AddRequest(request);
-        }
-
-        UpdateState();
+        ConfigureState([Settings, NewRequest, .. requests]);
     }
 
     public RequestTemplateModel AddRequest(RequestTemplate request) {
         var model = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, file, collection, request);
-        model.PropertyChanged += OnChildStateChanged;
         requests.Add(model);
+        ConfigureState([model]);
         return model;
-    }
-
-    // TODO remove these overrides
-    private void OnChildStateChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(IsModified) || e.PropertyName == nameof(HasError)) {
-            UpdateState();
-        }
-    }
-
-    protected override void UpdateState() {
-        var models = requests.Cast<PageBoundModelBase>().Append(Settings).Append(NewRequest);
-        var isModified = IsModified;
-
-        HasError = models.Any(model => model.HasError);
-        IsModified = models.Any(model => model.IsModified);
-        IsModifiedWithoutError = IsModified && !HasError;
-
-        if (isModified != IsModified) {
-            UpdateTitles();
-        }
     }
 }

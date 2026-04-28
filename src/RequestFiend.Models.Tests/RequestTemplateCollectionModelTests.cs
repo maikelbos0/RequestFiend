@@ -29,9 +29,18 @@ public class RequestTemplateCollectionModelTests {
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.PageTitleBase);
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitleBase);
 
-        Assert.NotNull(subject.Settings);
-        Assert.NotNull(subject.NewRequest);
-        Assert.NotNull(Assert.Single(subject.Requests));
+        Assert.Same(collection, subject.Settings.Collection);
+        Assert.Equal(new(filePath), subject.Settings.File);
+
+        Assert.Same(collection, subject.NewRequest.Collection);
+        Assert.Equal(new(filePath), subject.NewRequest.File);
+
+        var requestModel = Assert.Single(subject.Requests);
+        Assert.Same(collection, requestModel.Collection);
+        Assert.Same(collection.Requests[0], requestModel.Request);
+        Assert.Equal(new(filePath), requestModel.File);
+
+        Assert.Equal([subject.Settings, subject.NewRequest, requestModel], subject.Validatables);
     }
 
     [Fact]
@@ -55,103 +64,13 @@ public class RequestTemplateCollectionModelTests {
             Url = "https://localhost"
         };
 
-        subject.AddRequest(request);
+        var requestModel = subject.AddRequest(request);
 
-        Assert.NotNull(Assert.Single(subject.Requests));
-    }
+        Assert.Same(requestModel, Assert.Single(subject.Requests));
+        Assert.Same(collection, requestModel.Collection);
+        Assert.Same(request, requestModel.Request);
+        Assert.Equal(new(filePath), requestModel.File);
 
-    [Theory]
-    [InlineData(false, false, false, false, false, "External data requests", "External data requests")]
-    [InlineData(true, false, true, false, false, "External data requests", "External data requests")]
-    [InlineData(true, true, true, true, false, "External data requests ●", "External data requests ●")]
-    [InlineData(false, true, false, true, true, "External data requests ●", "External data requests ●")]
-    public void Changing_Settings_State_Updates_State(bool settingsHasError, bool settingsIsModified, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, string expectedPageTitle, string expectedShellItemTitle) {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var collection = new RequestTemplateCollection();
-
-        var subject = new RequestTemplateCollectionModel(
-            Substitute.For<IRequestTemplateCollectionService>(),
-            Substitute.For<IPopupService>(),
-            Substitute.For<IMessageService>(),
-            Substitute.For<IPreferencesService>(),
-            new(filePath),
-            collection
-        );
-
-        subject.Settings.HasError = settingsHasError;
-        subject.Settings.IsModified = settingsIsModified;
-
-        // Required since it defaults to true
-        subject.NewRequest.HasError = false;
-
-        Assert.Equal(expectedHasError, subject.HasError);
-        Assert.Equal(expectedIsModified, subject.IsModified);
-        Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
-    }
-
-    [Theory]
-    [InlineData(false, false, false, false, false, "External data requests", "External data requests")]
-    [InlineData(true, false, true, false, false, "External data requests", "External data requests")]
-    [InlineData(true, true, true, true, false, "External data requests ●", "External data requests ●")]
-    [InlineData(false, true, false, true, true, "External data requests ●", "External data requests ●")]
-    public void Changing_NewRequest_State_Updates_State(bool newRequestHasError, bool newRequestIsModified, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, string expectedPageTitle, string expectedShellItemTitle) {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var collection = new RequestTemplateCollection();
-
-        var subject = new RequestTemplateCollectionModel(
-            Substitute.For<IRequestTemplateCollectionService>(),
-            Substitute.For<IPopupService>(),
-            Substitute.For<IMessageService>(),
-            Substitute.For<IPreferencesService>(),
-            new(filePath),
-            collection
-        );
-
-        subject.NewRequest.HasError = newRequestHasError;
-        subject.NewRequest.IsModified = newRequestIsModified;
-
-        Assert.Equal(expectedHasError, subject.HasError);
-        Assert.Equal(expectedIsModified, subject.IsModified);
-        Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
-    }
-
-    [Theory]
-    [InlineData(false, false, false, false, false, "External data requests", "External data requests")]
-    [InlineData(true, false, true, false, false, "External data requests", "External data requests")]
-    [InlineData(true, true, true, true, false, "External data requests ●", "External data requests ●")]
-    [InlineData(false, true, false, true, true, "External data requests ●", "External data requests ●")]
-    public void Changing_Request_State_Updates_State(bool requestHasError, bool requestIsModified, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, string expectedPageTitle, string expectedShellItemTitle) {
-        const string filePath = @"C:\Documents\External data requests.json";
-
-        var collection = new RequestTemplateCollection();
-
-        var subject = new RequestTemplateCollectionModel(
-            Substitute.For<IRequestTemplateCollectionService>(),
-            Substitute.For<IPopupService>(),
-            Substitute.For<IMessageService>(),
-            Substitute.For<IPreferencesService>(),
-            new(filePath),
-            collection
-        );
-
-        var request = subject.AddRequest(new() { Name = "Request", Method = "GET", Url = "https://localhost" });
-
-        request.HasError = requestHasError;
-        request.IsModified = requestIsModified;
-
-        // Required since it defaults to true
-        subject.NewRequest.HasError = false;
-
-        Assert.Equal(expectedHasError, subject.HasError);
-        Assert.Equal(expectedIsModified, subject.IsModified);
-        Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
-        Assert.Equal(expectedPageTitle, subject.PageTitle);
-        Assert.Equal(expectedShellItemTitle, subject.ShellItemTitle);
+        Assert.Equal([subject.Settings, subject.NewRequest, requestModel], subject.Validatables);
     }
 }
