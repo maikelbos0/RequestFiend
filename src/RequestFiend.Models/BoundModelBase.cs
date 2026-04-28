@@ -12,10 +12,8 @@ public partial class BoundModelBase : ObservableObject, IValidatable {
     [ObservableProperty] public partial bool HasError { get; set; }
     [ObservableProperty] public partial bool IsModified { get; set; }
     [ObservableProperty] public partial bool IsModifiedWithoutError { get; set; }
-    // TODO test results
     public IEnumerable<IValidatable> Validatables => validatables;
 
-    // TODO rename?
     public virtual void ConfigureState(IEnumerable<IValidatable> validatables) {
         this.validatables.AddRange(validatables);
 

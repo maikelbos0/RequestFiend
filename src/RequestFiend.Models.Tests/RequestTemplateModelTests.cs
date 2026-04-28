@@ -83,6 +83,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
         Assert.Equal(expectedUsesUnstructuredStringContent, subject.UsesUnstructuredStringContent);
+
+        Assert.Equal([subject.Name, subject.Method, subject.Url, subject.Headers, subject.ContentType, subject.StringContent, subject.PreExchangeScript, subject.PostExchangeScript, subject.OnExceptionScript], subject.Validatables);
     }
 
     [Fact]

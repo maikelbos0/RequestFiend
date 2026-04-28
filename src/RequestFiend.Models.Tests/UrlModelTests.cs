@@ -20,6 +20,8 @@ public class UrlModelTests {
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Empty(subject.Parameters);
+
+        Assert.Equal([subject.BaseUrl, subject.Parameters], subject.Validatables);
     }
 
     [Fact]
@@ -31,6 +33,8 @@ public class UrlModelTests {
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Foo" && pair.Value.Value == "");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "{Bar}" && pair.Value.Value == "Test+{{Qux}}");
         Assert.Contains(subject.Parameters, pair => pair.Name.Value == "Baz" && pair.Value.Value == "");
+
+        Assert.Equal([subject.BaseUrl, subject.Parameters], subject.Validatables);
     }
 
     [Fact]

@@ -31,6 +31,8 @@ public class NewRequestTemplateModelTests {
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
+
+        Assert.Equal([subject.Name, subject.Method, subject.Url], subject.Validatables);
     }
 
     [Fact]

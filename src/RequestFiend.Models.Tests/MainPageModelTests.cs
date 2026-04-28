@@ -37,6 +37,8 @@ public class MainPageModelTests {
 
         messageService.Received(1).Register(subject, Arg.Any<MessageHandler<MainPageModel, RecentCollectionsChangedMessage>>());
         messageService.Received(1).Register(subject, Arg.Any<MessageHandler<MainPageModel, ShowRecentCollectionsChangedMessage>>());
+
+        Assert.Equal([], subject.Validatables);
     }
 
     [Fact]

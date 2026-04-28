@@ -51,7 +51,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 
-        ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, DefaultHeaders, Variables]);
+        ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, Variables, DefaultHeaders]);
         messageService.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _) => {
             ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
             AllowScriptEvaluation.Reset();

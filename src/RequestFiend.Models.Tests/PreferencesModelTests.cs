@@ -21,9 +21,12 @@ public class PreferencesModelTests {
 
         Assert.Equal("Preferences", subject.PageTitleBase);
         Assert.Equal("Preferences", subject.ShellItemTitleBase);
+
         Assert.Equal(saveRecentCollections, subject.ShowRecentCollections.Value);
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[scriptEvaluationMode], subject.ScriptEvaluationMode.Value);
+
+        Assert.Equal([subject.ShowRecentCollections, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode], subject.Validatables);
     }
 
     [Theory]

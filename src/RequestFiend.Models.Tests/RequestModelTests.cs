@@ -31,6 +31,8 @@ public class RequestModelTests {
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange", subject.PageTitleBase);
         Assert.Equal($"{request.Name} - Exchange", subject.ShellItemTitleBase);
+
+        Assert.Equal([], subject.Validatables);
     }
 
     [Theory]

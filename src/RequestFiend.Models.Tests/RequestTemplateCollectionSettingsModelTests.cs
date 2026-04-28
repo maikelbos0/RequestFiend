@@ -61,11 +61,17 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(collection.Variables.Count, subject.Variables.Count);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
-        foreach (var header in collection.DefaultHeaders) {
-            Assert.Equal(header.Value, Assert.Single(subject.DefaultHeaders, headerModel => headerModel.Name.Value == header.Name).Value.Value);
-        }
-
         messageService.Received(1).Register(subject, Arg.Any<MessageHandler<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>>());
+
+        Assert.Equal([
+            subject.AllowScriptEvaluation,
+            subject.DefaultUrl,
+            subject.IgnoreRemoteCertificateNotAvailable,
+            subject.IgnoreRemoteCertificateNameMismatch,
+            subject.IgnoreRemoteCertificateChainErrors,
+            subject.Variables,
+            subject.DefaultHeaders
+        ], subject.Validatables);
     }
 
     [Fact]
