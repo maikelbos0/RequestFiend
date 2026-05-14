@@ -24,6 +24,6 @@ public class ScriptEvaluator : IScriptEvaluator {
     ]);
 
     public Task Evaluate(Script script, RequestContext context, CancellationToken cancellationToken)
-        => CSharpScript.EvaluateAsync(script.Code, scriptOptions, context, cancellationToken: cancellationToken);
+        => CSharpScript.EvaluateAsync(script.Code, scriptOptions.AddReferences(script.References), context, cancellationToken: cancellationToken);
 }
  
