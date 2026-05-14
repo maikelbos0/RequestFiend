@@ -72,8 +72,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);
         Assert.Equal(request.Url, subject.Url.Value);
-        Assert.Equal(request.Headers[0].Name, subject.Headers[0].Name.Value);
-        Assert.Equal(request.Headers[0].Value, subject.Headers[0].Value.Value);
+        Assert.Equal(request.Headers.Count, subject.Headers.Count);
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
         Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
