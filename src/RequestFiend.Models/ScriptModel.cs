@@ -1,4 +1,6 @@
-﻿using RequestFiend.Core;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
 using System;
 using System.Linq;
@@ -11,10 +13,12 @@ public partial class ScriptModel : BoundModelBase, IValidatable {
     [GeneratedRegex(@"[\r\n]+", RegexOptions.Compiled)]
     private static partial Regex GetNewLineFinder();
 
+    [ObservableProperty] public partial bool ShowReferences { get; set; }
     public ValidatableProperty<string> References { get; }
     public ValidatableProperty<string> Code { get; }
 
     public ScriptModel(Script script) {
+        ShowReferences = script.References.Count > 0;
         References = new(() => string.Join(Environment.NewLine, script.References));
         Code = new(() => script.Code);
 
@@ -32,4 +36,8 @@ public partial class ScriptModel : BoundModelBase, IValidatable {
         References.Reset();
         Code.Reset();
     }
+
+    [RelayCommand]
+    public void ToggleShowReferences()
+        => ShowReferences = !ShowReferences;
 }

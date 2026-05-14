@@ -9,6 +9,12 @@
     x:DataType="models:RequestTemplateModel"
     Title="{Binding PageTitle}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:BoolToObjectConverter x:Key="ToggleReferencesTextConverter" TrueObject="hide references" FalseObject="show references"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView>
         <VerticalStackLayout>
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
@@ -82,15 +88,57 @@
 
                     <views:ValidatableEditor Text="{Binding StringContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesStringContent}"/>
 
-                    <Label Text="Pre-exchange script" Style="{StaticResource EntryLabel}"/>
-                    
+                    <Label Style="{StaticResource EntryLabel}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Pre-exchange script (" />
+                                <Span Style="{StaticResource LinkButton}" Text="{Binding PreExchangeScript.ShowReferences, Converter={StaticResource ToggleReferencesTextConverter}}">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PreExchangeScript.ToggleShowReferencesCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=")" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <views:ValidatableEditor Text="{Binding PreExchangeScript.References}" IsVisible="{Binding PreExchangeScript.ShowReferences}"/>
+
                     <views:ValidatableEditor Text="{Binding PreExchangeScript.Code}"/>
 
-                    <Label Text="Post-exchange script" Style="{StaticResource EntryLabel}"/>
+                    <Label Style="{StaticResource EntryLabel}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Post-exchange script (" />
+                                <Span Style="{StaticResource LinkButton}" Text="{Binding PostExchangeScript.ShowReferences, Converter={StaticResource ToggleReferencesTextConverter}}">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PostExchangeScript.ToggleShowReferencesCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=")" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <views:ValidatableEditor Text="{Binding PostExchangeScript.References}" IsVisible="{Binding PostExchangeScript.ShowReferences}"/>
 
                     <views:ValidatableEditor Text="{Binding PostExchangeScript.Code}"/>
 
-                    <Label Text="On-exception script" Style="{StaticResource EntryLabel}"/>
+                    <Label Style="{StaticResource EntryLabel}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="On-exception script (" />
+                                <Span Style="{StaticResource LinkButton}" Text="{Binding OnExceptionScript.ShowReferences, Converter={StaticResource ToggleReferencesTextConverter}}">
+                                    <Span.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding OnExceptionScript.ToggleShowReferencesCommand}"/>
+                                    </Span.GestureRecognizers>
+                                </Span>
+                                <Span Text=")" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <views:ValidatableEditor Text="{Binding OnExceptionScript.References}" IsVisible="{Binding OnExceptionScript.ShowReferences}"/>
 
                     <views:ValidatableEditor Text="{Binding OnExceptionScript.Code}"/>
                 </VerticalStackLayout>

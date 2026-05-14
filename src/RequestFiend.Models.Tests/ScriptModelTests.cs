@@ -6,15 +6,18 @@ using Xunit.Internal;
 namespace RequestFiend.Models.Tests;
 
 public class ScriptModelTests {
-    [Fact]
-    public void Constructor() {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true, "Foo", "Bar")]
+    public void Constructor(bool expectedShowReferences, params string[] references) {
         var script = new Script() {
-            References = ["Foo", "Bar"],
+            References = [.. references],
             Code = "Script"
         };
 
         var subject = new ScriptModel(script);
 
+        Assert.Equal(expectedShowReferences, subject.ShowReferences);
         Assert.Equal(string.Join(Environment.NewLine, script.References), subject.References.Value);
         Assert.Equal(script.Code, subject.Code.Value);
 
@@ -31,7 +34,7 @@ public class ScriptModelTests {
 
         subject.References.Value = " \r\n Foo \r\n\r Bar \r\n \r\n";
         subject.Code.Value = code;
-        
+
         subject.Update(script);
 
         Assert.Equal(["Foo", "Bar"], script.References);
@@ -56,5 +59,16 @@ public class ScriptModelTests {
         Assert.False(subject.References.IsModified);
         Assert.Equal(script.Code, subject.Code.Value);
         Assert.False(subject.Code.IsModified);
+    }
+
+    [Fact]
+    public void ToggleShowReferences() {
+        var subject = new ScriptModel(new()) {
+            ShowReferences = true
+        };
+
+        subject.ToggleShowReferences();
+
+        Assert.False(subject.ShowReferences);
     }
 }
