@@ -18,10 +18,10 @@
         Unfocused="OnEditorUnfocused">
 
         <Editor.Triggers>
-            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='viewsValidatableEditorr', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableEditor', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
             </DataTrigger>
-            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='viewsValidatableEditorr', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
             </DataTrigger>
         </Editor.Triggers>
@@ -39,10 +39,10 @@
         </Label.GestureRecognizers>
 
         <Label.Triggers>
-            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEditor', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}" />
             </DataTrigger>
-            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
+            <DataTrigger TargetType="Label" Binding="{Binding x:DataType='views:ValidatableEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}" Value="True">
                 <Setter Property="Background" Value="{StaticResource ModifiedBackgroundBrush}" />
             </DataTrigger>
         </Label.Triggers>
@@ -51,7 +51,7 @@
     <Label
         Text="▲"
         TextColor="{x:StaticResource ErrorIcon}"
-        IsVisible="{Binding x:DataType='viewsValidatableEditorr', Path=Text.HasError, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='views:ValidatableEditor', Path=Text.HasError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="20"
         AbsoluteLayout.LayoutFlags="XProportional"
@@ -65,7 +65,7 @@
     <Label
         Text="●"
         TextColor="{x:StaticResource ModifiedIcon}"
-        IsVisible="{Binding x:DataType='viewsValidatableEditorr', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
+        IsVisible="{Binding x:DataType='views:ValidatableEditor', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
         AbsoluteLayout.LayoutFlags="XProportional"
