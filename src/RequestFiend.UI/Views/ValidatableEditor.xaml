@@ -15,7 +15,8 @@
         AbsoluteLayout.LayoutFlags="WidthProportional"
         AbsoluteLayout.LayoutBounds="0,0,1,AutoSize"
         Focused="OnEditorFocused"
-        Unfocused="OnEditorUnfocused">
+        Unfocused="OnEditorUnfocused"
+        Style="{Binding x:DataType='views:ValidatableEditor', Path=EditorStyle, Source={x:Reference Root}}">
 
         <Editor.Triggers>
             <DataTrigger TargetType="Editor" Binding="{Binding x:DataType='views:ValidatableEditor', Path=Text.HasError, Source={x:Reference Root}}" Value="True">

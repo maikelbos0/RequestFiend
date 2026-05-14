@@ -149,6 +149,10 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Editor" x:Key="SmallEditor">
+        <Setter Property="HeightRequest" Value="100"/>
+    </Style>
+
     <Style TargetType="Entry">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}" />

@@ -22,6 +22,12 @@ public partial class ValidatableEditor : AbsoluteLayout {
         default(RequestTemplateCollection),
         propertyChanged: (bindable, _, _) => ((ValidatableEditor)bindable).UpdateOverlay()
     );
+    public static readonly BindableProperty EditorStyleProperty = BindableProperty.Create(
+        nameof(EditorStyle),
+        typeof(Style),
+        typeof(ValidatableEditor),
+        default(Style)
+    );
 
     public ValidatableProperty<string> Text {
         get => (ValidatableProperty<string>)GetValue(TextProperty);
@@ -31,6 +37,11 @@ public partial class ValidatableEditor : AbsoluteLayout {
     public RequestTemplateCollection? Collection {
         get => GetValue(CollectionProperty) as RequestTemplateCollection;
         set => SetValue(CollectionProperty, value);
+    }
+
+    public Style? EditorStyle {
+        get => GetValue(EditorStyleProperty) as Style;
+        set => SetValue(EditorStyleProperty, value);
     }
 
     public ValidatableEditor() {
