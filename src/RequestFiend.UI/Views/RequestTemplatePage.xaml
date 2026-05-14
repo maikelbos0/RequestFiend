@@ -84,15 +84,15 @@
 
                     <Label Text="Pre-exchange script" Style="{StaticResource EntryLabel}"/>
                     
-                    <views:ValidatableEditor Text="{Binding PreExchangeScript}"/>
+                    <views:ValidatableEditor Text="{Binding PreExchangeScript.Code}"/>
 
                     <Label Text="Post-exchange script" Style="{StaticResource EntryLabel}"/>
-                    
-                    <views:ValidatableEditor Text="{Binding PostExchangeScript}"/>
+
+                    <views:ValidatableEditor Text="{Binding PostExchangeScript.Code}"/>
 
                     <Label Text="On-exception script" Style="{StaticResource EntryLabel}"/>
-                    
-                    <views:ValidatableEditor Text="{Binding OnExceptionScript}"/>
+
+                    <views:ValidatableEditor Text="{Binding OnExceptionScript.Code}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

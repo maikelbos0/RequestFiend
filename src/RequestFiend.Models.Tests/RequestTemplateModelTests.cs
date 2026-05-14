@@ -76,9 +76,9 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Headers[0].Value, subject.Headers[0].Value.Value);
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
-        Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Value);
-        Assert.Equal(request.PostExchangeScript.Code, subject.PostExchangeScript.Value);
-        Assert.Equal(request.OnExceptionScript.Code, subject.OnExceptionScript.Value);
+        Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
+        Assert.Equal(request.PostExchangeScript.Code, subject.PostExchangeScript.Code.Value);
+        Assert.Equal(request.OnExceptionScript.Code, subject.OnExceptionScript.Code.Value);
 
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
@@ -129,9 +129,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
-        subject.PreExchangeScript.Value = preExchangeScript;
-        subject.PostExchangeScript.Value = postExchangeScript;
-        subject.OnExceptionScript.Value = onExceptionScript;
+        subject.PreExchangeScript.Code.Value = preExchangeScript;
+        subject.PostExchangeScript.Code.Value = postExchangeScript;
+        subject.OnExceptionScript.Code.Value = onExceptionScript;
 
         subject.CreateRequest();
 
@@ -202,9 +202,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
-        subject.PreExchangeScript.Value = preExchangeScript;
-        subject.PostExchangeScript.Value = postExchangeScript;
-        subject.OnExceptionScript.Value = onExceptionScript;
+        subject.PreExchangeScript.Code.Value = preExchangeScript;
+        subject.PostExchangeScript.Code.Value = postExchangeScript;
+        subject.OnExceptionScript.Code.Value = onExceptionScript;
 
         subject.CreateRequest();
 
@@ -264,9 +264,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
-        subject.PreExchangeScript.Value = preExchangeScript;
-        subject.PostExchangeScript.Value = postExchangeScript;
-        subject.OnExceptionScript.Value = onExceptionScript;
+        subject.PreExchangeScript.Code.Value = preExchangeScript;
+        subject.PostExchangeScript.Code.Value = postExchangeScript;
+        subject.OnExceptionScript.Code.Value = onExceptionScript;
 
         await subject.Update();
 
@@ -333,9 +333,9 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
-        subject.PreExchangeScript.Value = preExchangeScript;
-        subject.PostExchangeScript.Value = postExchangeScript;
-        subject.OnExceptionScript.Value = onExceptionScript;
+        subject.PreExchangeScript.Code.Value = preExchangeScript;
+        subject.PostExchangeScript.Code.Value = postExchangeScript;
+        subject.OnExceptionScript.Code.Value = onExceptionScript;
 
         await subject.Update();
 
