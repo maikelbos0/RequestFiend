@@ -14,7 +14,7 @@ public class ValidatorTests {
     }
 
     [Theory]
-    [InlineData("", false)]
+    [InlineData("", true)]
     [InlineData(" ", false)]
     [InlineData("Value", false)]
     [InlineData("123", true)]

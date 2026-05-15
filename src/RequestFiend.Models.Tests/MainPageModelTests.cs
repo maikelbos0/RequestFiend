@@ -20,23 +20,19 @@ namespace RequestFiend.Models.Tests;
 public class MainPageModelTests {
     [Fact]
     public void Constructor() {
-        const bool showRecentCollections = true;
         var recentCollection = new List<RequestTemplateCollectionFileModel>();
 
         var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetShowRecentCollections().Returns(showRecentCollections);
         preferencesService.GetRecentCollections().Returns(recentCollection);
 
         var subject = new MainPageModel(Substitute.For<IPopupService>(), messageService, preferencesService, Substitute.For<IFileSystem>());
 
         Assert.Equal("Home", subject.PageTitleBase);
         Assert.Equal("Home", subject.ShellItemTitleBase);
-        Assert.Equal(showRecentCollections, subject.ShowRecentCollections);
         Assert.Equal(recentCollection, subject.RecentCollections);
 
         messageService.Received(1).Register(subject, Arg.Any<MessageHandler<MainPageModel, RecentCollectionsChangedMessage>>());
-        messageService.Received(1).Register(subject, Arg.Any<MessageHandler<MainPageModel, ShowRecentCollectionsChangedMessage>>());
 
         Assert.Equal([], subject.Validatables);
     }

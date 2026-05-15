@@ -8,7 +8,6 @@ using System.Text.Json;
 namespace RequestFiend.Models.Services;
 
 public class PreferencesService : IPreferencesService {
-    public const bool DefaultSaveRecentCollections = true;
     private const int DefaultMaximumRecentCollectionCount = 10;
     private const int DefaultScriptEvaluationMode = (int)ScriptEvaluationMode.Disabled;
     private const bool DefaultCollectionAllowScriptEvaluation = false;
@@ -21,14 +20,6 @@ public class PreferencesService : IPreferencesService {
 
     public PreferencesService(IMessageService messageService) {
         this.messageService = messageService;
-    }
-
-    public bool GetShowRecentCollections()
-        => Preferences.Get(ShowRecentCollections, DefaultSaveRecentCollections);
-
-    public void SetShowRecentCollections(bool saveRecentCollections) {
-        Preferences.Set(ShowRecentCollections, saveRecentCollections);
-        messageService.Send(new ShowRecentCollectionsChangedMessage());
     }
 
     public int GetMaximumRecentCollectionCount()
@@ -54,10 +45,6 @@ public class PreferencesService : IPreferencesService {
     }
 
     public void PushRecentCollection(string filePath) {
-        if (!GetShowRecentCollections()) {
-            return;
-        }
-
         var recentCollections = GetRecentCollections();
         var maximumRecentCollectionCount = GetMaximumRecentCollectionCount();
 
@@ -72,10 +59,6 @@ public class PreferencesService : IPreferencesService {
     }
 
     public void RemoveRecentCollection(string filePath) {
-        if (!GetShowRecentCollections()) {
-            return;
-        }
-
         var recentCollections = GetRecentCollections();
 
         recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));

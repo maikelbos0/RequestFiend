@@ -20,16 +20,6 @@
 
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
-                        <Switch IsToggled="{Binding ShowRecentCollections.Value}"/>
-
-                        <Label Text="Show recent collections" Grid.Column="1" VerticalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ToggleShowRecentCollectionsCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Grid>
-
                     <Label Text="Maximum recent collections" Style="{StaticResource EntryLabel}"/>
 
                     <views:ValidatableEntry Text="{Binding MaximumRecentCollectionCount}"/>
