@@ -111,7 +111,7 @@
 
                     <Image 
                         HeightRequest="300"
-                        Source="{Binding Response.Content.BinaryContent, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                        Source="{Binding Response.Content.ImageContent, Converter={toolkit:ByteArrayToImageSourceConverter}}"
                         IsAnimationPlaying="true"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Image}}"/>
 

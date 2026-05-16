@@ -45,4 +45,6 @@ public partial record HttpContentModel(HttpContentType Type, string? MediaType, 
 
     [GeneratedRegex(@"^application\/(.*\+)?(json|xml)$", RegexOptions.Compiled)]
     private static partial Regex GetApplicationTextMediaTypeFinder();
+
+    public byte[]? ImageContent => Type == HttpContentType.Image ? BinaryContent : null;
 };

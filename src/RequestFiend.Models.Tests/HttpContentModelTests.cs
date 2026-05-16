@@ -50,5 +50,12 @@ public class HttpContentModelTests {
         Assert.Equal(mediaType, subject.MediaType);
         Assert.Equal([67, 111, 110, 116, 101, 110, 116], subject.BinaryContent);
         Assert.Equal(expectedTextContent, subject.TextContent);
+
+        if (subject.Type == HttpContentType.Image) {
+            Assert.Equal([67, 111, 110, 116, 101, 110, 116], subject.ImageContent);
+        }
+        else {
+            Assert.Null(subject.ImageContent);
+        }
     }
 }
