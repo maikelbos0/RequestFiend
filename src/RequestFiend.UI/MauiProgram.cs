@@ -44,6 +44,7 @@ public static class MauiProgram {
             .ConfigureHttpClient(static httpClient => httpClient.Timeout = Timeout.InfiniteTimeSpan);
         mauiAppBuilder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
         mauiAppBuilder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
+        mauiAppBuilder.Services.AddSingleton<IUserInterface, UserInterface>();
 
         mauiAppBuilder.Services.AddSingleton<Models.Services.IMessageService, Models.Services.MessageService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IPopupService, Services.PopupService>();

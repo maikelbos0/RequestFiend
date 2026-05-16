@@ -5,7 +5,7 @@ namespace RequestFiend.Models.Tests;
 
 public class ExceptionModelTests {
     [Fact]
-    public void Constructor() {
+    public void Create() {
         Exception exception;
 
         try {
@@ -15,7 +15,7 @@ public class ExceptionModelTests {
             exception = ex;
         }
 
-        var subject = new ExceptionModel(exception);
+        var subject = ExceptionModel.Create(exception);
 
         Assert.Equal(exception.GetType().FullName, subject.Type);
         Assert.Equal(exception.Message, subject.Message);

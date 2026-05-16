@@ -17,6 +17,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     private readonly IRequestHandler requestHandler;
     private readonly IPopupService popupService;
     private readonly IPreferencesService preferencesService;
+    private readonly IUserInterface userInterface;
     private readonly RequestTemplateCollectionFileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
@@ -33,6 +34,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         IRequestHandler requestHandler,
         IPopupService popupService,
         IPreferencesService preferencesService,
+        IUserInterface userInterface,
         RequestTemplateCollectionFileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
@@ -41,6 +43,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         this.requestHandler = requestHandler;
         this.popupService = popupService;
         this.preferencesService = preferencesService;
+        this.userInterface = userInterface;
 
         this.file = file;
         this.collection = collection;
@@ -79,7 +82,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
             }
         );
 
-        await requestHandler.Execute(request, collection, options, this, cancellationTokenSource.Token);
+        await Task.Run(() => requestHandler.Execute(request, collection, options, this, cancellationTokenSource.Token));
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = $"{request.Name} - Exchange";
@@ -131,15 +134,19 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     }
 
     public Task OnRequestCreated(HttpRequestMessage request) {
-        Request = HttpRequestModel.Create(request);
+        var model = HttpRequestModel.Create(request);
+        userInterface.BeginInvokeOnMainThread(() => Request = model);
         return Task.CompletedTask;
     }
 
-    public async Task OnResponseReceived(HttpResponseMessage response)
-        => Response = await HttpResponseModel.Create(response);
+    public async Task OnResponseReceived(HttpResponseMessage response) {
+        var model = await HttpResponseModel.Create(response);
+        userInterface.BeginInvokeOnMainThread(() => Response = model);
+    }
 
     public Task OnExceptionCaught(Exception exception) {
-        Exception = new(exception);
+        var model = ExceptionModel.Create(exception);
+        userInterface.BeginInvokeOnMainThread(() => Exception = model);
         return Task.CompletedTask;
     }
 
