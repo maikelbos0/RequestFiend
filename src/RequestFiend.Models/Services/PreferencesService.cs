@@ -11,10 +11,13 @@ public class PreferencesService : IPreferencesService {
     private const int DefaultMaximumRecentCollectionCount = 10;
     private const int DefaultScriptEvaluationMode = (int)ScriptEvaluationMode.Disabled;
     private const bool DefaultCollectionAllowScriptEvaluation = false;
+    private const int InfiniteRequestTimeoutInSeconds = -1;
+    private const int DefaultRequestTimeoutInSeconds = InfiniteRequestTimeoutInSeconds;
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
     private const string CollectionAllowScriptEvaluation = nameof(CollectionAllowScriptEvaluation);
+    private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
 
     private readonly IMessageService messageService;
 
@@ -72,11 +75,24 @@ public class PreferencesService : IPreferencesService {
     public void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode)
         => Preferences.Set(nameof(ScriptEvaluationMode), (int)scriptEvaluationMode);
 
+    public bool GetCollectionAllowScriptEvaluation(string filePath)
+        => Preferences.Get($"{CollectionAllowScriptEvaluation}_{filePath}", DefaultCollectionAllowScriptEvaluation);
+
     public void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation)
         => Preferences.Set($"{CollectionAllowScriptEvaluation}_{filePath}", allowScriptEvaluation);
 
-    public bool GetCollectionAllowScriptEvaluation(string filePath)
-        => Preferences.Get($"{CollectionAllowScriptEvaluation}_{filePath}", DefaultCollectionAllowScriptEvaluation);
+    public int? GetRequestTimeoutInSeconds() {
+        var requestTimeoutInSeconds = Preferences.Get(RequestTimeoutInSeconds, DefaultRequestTimeoutInSeconds);
+
+        if (requestTimeoutInSeconds == InfiniteRequestTimeoutInSeconds) {
+            return null;
+        }
+
+        return requestTimeoutInSeconds;
+    }
+
+    public void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds)
+        => Preferences.Set(RequestTimeoutInSeconds, requestTimeoutInSeconds ?? InfiniteRequestTimeoutInSeconds);
 
     public void Reset() {
         Preferences.Clear();

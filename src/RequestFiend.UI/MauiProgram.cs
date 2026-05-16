@@ -8,6 +8,7 @@ using RequestFiend.Models;
 using System;
 using System.IO.Abstractions;
 using System.Net.Http;
+using System.Threading;
 
 namespace RequestFiend.UI;
 
@@ -34,12 +35,13 @@ public static class MauiProgram {
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddHttpClient<IRequestHandler, RequestHandler>()
-            .ConfigurePrimaryHttpMessageHandler(static (serviceProvider) => new SocketsHttpHandler() {
+            .ConfigurePrimaryHttpMessageHandler(static serviceProvider => new SocketsHttpHandler() {
                 PooledConnectionLifetime = TimeSpan.Zero,
                 SslOptions = {
                     RemoteCertificateValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
                 }
-            });
+            })
+            .ConfigureHttpClient(static httpClient => httpClient.Timeout = Timeout.InfiniteTimeSpan);
         mauiAppBuilder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
         mauiAppBuilder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
 

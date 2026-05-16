@@ -13,6 +13,8 @@ public interface IPreferencesService {
     void Reset();
     ScriptEvaluationMode GetScriptEvaluationMode();
     void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode);
-    void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation);
     bool GetCollectionAllowScriptEvaluation(string filePath);
+    void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation);
+    int? GetRequestTimeoutInSeconds();
+    void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds);
 }

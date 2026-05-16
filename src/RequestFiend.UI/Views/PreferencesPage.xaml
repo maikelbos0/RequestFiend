@@ -27,6 +27,10 @@
                     <Label Text="Script evaluation" Style="{StaticResource EntryLabel}"/>
 
                     <views:ValidatablePicker SelectedItem="{Binding ScriptEvaluationMode}" ItemsSource="{x:Static models:Options.ScriptEvaluationModes}"/>
+                    
+                    <Label Text="Request timeout in seconds (leave blank for infinite)" Style="{StaticResource EntryLabel}"/>
+
+                    <views:ValidatableEntry Text="{Binding RequestTimeoutInSeconds}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

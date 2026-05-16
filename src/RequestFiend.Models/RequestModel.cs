@@ -51,7 +51,10 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
 
     [RelayCommand]
     public async Task Execute() {
-        using var cancellationTokenSource = new CancellationTokenSource();
+        var requestTimeoutInSeconds = preferencesService.GetRequestTimeoutInSeconds();
+        using var cancellationTokenSource = requestTimeoutInSeconds.HasValue
+            ? new CancellationTokenSource(TimeSpan.FromSeconds(requestTimeoutInSeconds.Value))
+            : new CancellationTokenSource();
 
         if (Interlocked.CompareExchange(ref executingCancellationTokenSource, cancellationTokenSource, null) != null) {
             cancellationTokenSource.Dispose();

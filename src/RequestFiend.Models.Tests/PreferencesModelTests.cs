@@ -8,13 +8,16 @@ namespace RequestFiend.Models.Tests;
 
 public class PreferencesModelTests {
     [Theory]
-    [InlineData(0, ScriptEvaluationMode.Disabled)]
-    [InlineData(1, ScriptEvaluationMode.Enabled)]
-    [InlineData(10, ScriptEvaluationMode.CollectionScoped)]
-    public void Constructor(int maximumRecentCollectionCount, ScriptEvaluationMode scriptEvaluationMode) {
+    [InlineData(ScriptEvaluationMode.Disabled)]
+    [InlineData(ScriptEvaluationMode.Enabled)]
+    [InlineData(ScriptEvaluationMode.CollectionScoped)]
+    public void Constructor(ScriptEvaluationMode scriptEvaluationMode) {
+        const int maximumRecentCollectionCount = 10;
+        const int requestTimeoutInSeconds = 90;
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
+        preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
@@ -23,16 +26,17 @@ public class PreferencesModelTests {
 
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[scriptEvaluationMode], subject.ScriptEvaluationMode.Value);
+        Assert.Equal(requestTimeoutInSeconds.ToString(), subject.RequestTimeoutInSeconds.Value);
 
-        Assert.Equal([subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode], subject.Validatables);
+        Assert.Equal([subject.RequestTimeoutInSeconds, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode], subject.Validatables);
     }
 
     [Theory]
-    [InlineData("", 0)]
-    [InlineData("0", 0)]
-    [InlineData("1", 1)]
-    [InlineData("10", 10)]
-    public void Update(string maximumRecentCollectionCount, int expectedMaximumRecentCollectionCount) {
+    [InlineData("", 0, "10", 10)]
+    [InlineData("0", 0, "1", 1)]
+    [InlineData("1", 1, "0", 0)]
+    [InlineData("10", 10, "", null)]
+    public void Update(string maximumRecentCollectionCount, int expectedMaximumRecentCollectionCount, string requestTimeoutInSeconds, int? expectedRequestTimeoutInSeconds) {
         const ScriptEvaluationMode scriptEvaluationMode = ScriptEvaluationMode.Enabled;
 
         var preferencesService = Substitute.For<IPreferencesService>();
@@ -40,16 +44,19 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
-            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] }
+            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] },
+            RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds }
         };
 
         subject.Update();
 
         preferencesService.Received(1).SetMaximumRecentCollectionCount(expectedMaximumRecentCollectionCount);
         preferencesService.Received(1).SetScriptEvaluationMode(scriptEvaluationMode);
+        preferencesService.Received(1).SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
 
         Assert.False(subject.MaximumRecentCollectionCount.IsModified);
         Assert.False(subject.ScriptEvaluationMode.IsModified);
+        Assert.False(subject.RequestTimeoutInSeconds.IsModified);
 
         preferencesService.Received(1).TrimRecentCollections();
 
@@ -57,19 +64,23 @@ public class PreferencesModelTests {
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
-    [Fact]
-    public void Update_Fails_When_Invalid() {
+    [Theory]
+    [InlineData("Invalid", "10")]
+    [InlineData("10", "Invalid")]
+    public void Update_Fails_When_Invalid(string maximumRecentCollectionCount,string requestTimeoutInSeconds) {
         var preferencesService = Substitute.For<IPreferencesService>();
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
-            MaximumRecentCollectionCount = { Value = "Invalid" },
+            MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount },
+            RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds }
         };
 
         subject.Update();
 
         preferencesService.DidNotReceive().SetMaximumRecentCollectionCount(Arg.Any<int>());
         preferencesService.DidNotReceive().SetScriptEvaluationMode(Arg.Any<ScriptEvaluationMode>());
+        preferencesService.DidNotReceive().SetRequestTimeoutInSeconds(Arg.Any<int?>());
 
         preferencesService.DidNotReceive().TrimRecentCollections();
 

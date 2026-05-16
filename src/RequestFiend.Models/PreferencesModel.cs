@@ -13,6 +13,7 @@ public partial class PreferencesModel : PageBoundModelBase {
 
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
     public ValidatableProperty<string> ScriptEvaluationMode { get; }
+    public ValidatableProperty<string> RequestTimeoutInSeconds { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
@@ -21,8 +22,9 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()]);
+        RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
 
-        ConfigureState([MaximumRecentCollectionCount, ScriptEvaluationMode]);
+        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode]);
     }
 
     [RelayCommand]
@@ -33,9 +35,11 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + MaximumRecentCollectionCount.Value));
         preferencesService.SetScriptEvaluationMode(Options.ReverseScriptEvaluationModeMap[ScriptEvaluationMode.Value]);
+        preferencesService.SetRequestTimeoutInSeconds(RequestTimeoutInSeconds.Value.Length == 0 ? null : int.Parse(RequestTimeoutInSeconds.Value));
 
         MaximumRecentCollectionCount.Reset();
         ScriptEvaluationMode.Reset();
+        RequestTimeoutInSeconds.Reset();
         preferencesService.TrimRecentCollections();
 
         messageService.Send(new PreferencesUpdatedMessage());
