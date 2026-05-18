@@ -57,5 +57,12 @@ public class HttpContentModelTests {
         else {
             Assert.Null(subject.ImageContent);
         }
+
+        if (subject.Type == HttpContentType.Unknown) {
+            Assert.Equal([67, 111, 110, 116, 101, 110, 116], subject.UnknownContent);
+        }
+        else {
+            Assert.Null(subject.UnknownContent);
+        }
     }
 }

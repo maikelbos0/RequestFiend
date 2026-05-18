@@ -47,4 +47,6 @@ public partial record HttpContentModel(HttpContentType Type, string? MediaType, 
     private static partial Regex GetApplicationTextMediaTypeFinder();
 
     public byte[]? ImageContent => Type == HttpContentType.Image ? BinaryContent : null;
+
+    public byte[]? UnknownContent => Type == HttpContentType.Unknown ? BinaryContent : null;
 };

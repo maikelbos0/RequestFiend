@@ -115,8 +115,8 @@
                         IsAnimationPlaying="true"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Image}}"/>
 
-                    <Editor 
-                        Text="{Binding Response.Content.BinaryContent, Converter={converters:ByteArrayToHexStringConverter}, Mode=OneWay}" 
+                    <Editor
+                        Text="{Binding Response.Content.UnknownContent, Converter={converters:ByteArrayToHexStringConverter}, Mode=OneWay}"
                         IsReadOnly="True"
                         IsVisible="{Binding Response.Content.Type, Converter={toolkit:EnumToBoolConverter}, ConverterParameter={x:Static models:HttpContentType.Unknown}}"/>
                 </VerticalStackLayout>
