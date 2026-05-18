@@ -42,6 +42,7 @@ public class RequestTemplateTests {
     [InlineData(ContentType.None, typeof(NoneContentManager))]
     [InlineData(ContentType.Text, typeof(TextContentManager))]
     [InlineData(ContentType.Json, typeof(JsonContentManager))]
+    [InlineData(ContentType.Xml, typeof(XmlContentManager))]
     public void GetContentManager(ContentType type, Type expectedManagerType) {
         var subject = new RequestTemplate() {
             Name = "Request",

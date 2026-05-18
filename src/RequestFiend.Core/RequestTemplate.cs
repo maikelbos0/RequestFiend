@@ -33,6 +33,7 @@ public class RequestTemplate {
         ContentType.None => new NoneContentManager(),
         ContentType.Text => new TextContentManager(),
         ContentType.Json => new JsonContentManager(),
+        ContentType.Xml => new XmlContentManager(),
         _ => throw new NotImplementedException($"Received unknown content type '{ContentType}'.")
     };
 
