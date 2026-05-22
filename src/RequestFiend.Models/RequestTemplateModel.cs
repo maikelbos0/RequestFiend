@@ -64,8 +64,10 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         OnExceptionScript = new(request.OnExceptionScript);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
-        UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
-        UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+        UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
+            || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]
+            || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
+        UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
         UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
 
         ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
@@ -171,8 +173,10 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(ValidatableProperty<>.Value)) {
-            UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
-            UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json];
+            UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
+                || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]
+                || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
+            UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
             UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
         }
     }

@@ -15,6 +15,7 @@ public class RequestTemplateModelTests {
     [InlineData(Core.ContentType.None, false, false, false)]
     [InlineData(Core.ContentType.Text, true, false, true)]
     [InlineData(Core.ContentType.Json, true, true, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false)]
     public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
@@ -40,6 +41,7 @@ public class RequestTemplateModelTests {
     [InlineData(Core.ContentType.None, false, false, false)]
     [InlineData(Core.ContentType.Text, true, false, true)]
     [InlineData(Core.ContentType.Json, true, true, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false)]
     public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
