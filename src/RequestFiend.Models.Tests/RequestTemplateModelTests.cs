@@ -408,9 +408,10 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("{\"Object\":{\"Field\":\"Value\"}}")]
-    [InlineData("{\"Array\":[0,1,2,3,4,5]}")]
-    public async Task ValidateStructuredText_When_Valid(string stringContent) {
+    [InlineData(Core.ContentType.Json, "{\"Object\":{\"Field\":\"Value\"}}")]
+    [InlineData(Core.ContentType.Json, "{\"Array\":[0,1,2,3,4,5]}")]
+    [InlineData(Core.ContentType.Xml, "<data lang=\"nl\"><value>1</value><value>2</value><value>3</value></data>")]
+    public async Task ValidateStructuredText_When_Valid(ContentType contentType, string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -419,7 +420,7 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost",
-            ContentType = Core.ContentType.Json,
+            ContentType = contentType,
             StringContent = stringContent
         };
 
@@ -432,10 +433,13 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("Text")]
-    [InlineData("\"Field\":\"Value\"")]
-    public async Task ValidateStructuredText_When_Invalid(string stringContent) {
+    [InlineData(Core.ContentType.Json, "")]
+    [InlineData(Core.ContentType.Json, "Text")]
+    [InlineData(Core.ContentType.Json, "\"Field\":\"Value\"")]
+    [InlineData(Core.ContentType.Xml, "")]
+    [InlineData(Core.ContentType.Xml, "Text")]
+    [InlineData(Core.ContentType.Xml, "<data></value>")]
+    public async Task ValidateStructuredText_When_Invalid(ContentType contentType, string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -444,7 +448,7 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost",
-            ContentType = Core.ContentType.Json,
+            ContentType = contentType,
             StringContent = stringContent
         };
 
@@ -457,9 +461,10 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
-    [InlineData("{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
-    public async Task FormatStructuredText_When_Valid(string stringContent, string expectedStringContent) {
+    [InlineData(Core.ContentType.Json, "{\"Object\":{\"Field\":\"Value\"}}", "{\r\n  \"Object\": {\r\n    \"Field\": \"Value\"\r\n  }\r\n}")]
+    [InlineData(Core.ContentType.Json, "{\"Array\":[0,1,2,3,4,5]}", "{\r\n  \"Array\": [\r\n    0,\r\n    1,\r\n    2,\r\n    3,\r\n    4,\r\n    5\r\n  ]\r\n}")]
+    [InlineData(Core.ContentType.Xml, "<data lang=\"nl\"><value>1</value><value>2</value><value>3</value></data>", "<data lang=\"nl\">\r\n  <value>1</value>\r\n  <value>2</value>\r\n  <value>3</value>\r\n</data>")]
+    public async Task FormatStructuredText_When_Valid(ContentType contentType, string stringContent, string expectedStringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -468,7 +473,7 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost",
-            ContentType = Core.ContentType.Json,
+            ContentType = contentType,
             StringContent = stringContent
         };
 
@@ -476,17 +481,20 @@ public class RequestTemplateModelTests {
 
         await subject.FormatStructuredText();
 
-        Assert.Equal(subject.StringContent.Value, expectedStringContent);
+        Assert.Equal(expectedStringContent, subject.StringContent.Value);
 
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("Text")]
-    [InlineData("\"Field\":\"Value\"")]
-    public async Task FormatStructuredText_When_Invalid(string stringContent) {
+    [InlineData(Core.ContentType.Json, "")]
+    [InlineData(Core.ContentType.Json, "Text")]
+    [InlineData(Core.ContentType.Json, "\"Field\":\"Value\"")]
+    [InlineData(Core.ContentType.Xml, "")]
+    [InlineData(Core.ContentType.Xml, "Text")]
+    [InlineData(Core.ContentType.Xml, "<data></value>")]
+    public async Task FormatStructuredText_When_Invalid(ContentType contentType, string stringContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -495,7 +503,7 @@ public class RequestTemplateModelTests {
             Name = "Name",
             Method = "GET",
             Url = "https://localhost",
-            ContentType = Core.ContentType.Json,
+            ContentType = contentType,
             StringContent = stringContent
         };
 

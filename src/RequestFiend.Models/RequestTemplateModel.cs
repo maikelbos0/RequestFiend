@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RequestFiend.Models;
 
@@ -87,7 +88,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
-        
+
         PreExchangeScript.Update(request.PreExchangeScript);
         PostExchangeScript.Update(request.PostExchangeScript);
         OnExceptionScript.Update(request.OnExceptionScript);
@@ -140,24 +141,53 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     [RelayCommand]
     public async Task ValidateStructuredText() {
-        try {
-            _ = JsonDocument.Parse(StringContent.Value);
-            messageService.Send(new SuccessMessage("JSON content has been validated"));
+        if (ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]) {
+            try {
+                _ = JsonDocument.Parse(StringContent.Value);
+                messageService.Send(new SuccessMessage("JSON content has been validated"));
+            }
+            catch (Exception exception) {
+                await popupService.ShowErrorPopup($"Failed to validate JSON content: {exception.Message}");
+            }
         }
-        catch (Exception exception) {
-            await popupService.ShowErrorPopup($"Failed to validate JSON content: {exception.Message}");
+        else if (ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml]) {
+            try {
+                _ = XDocument.Parse(StringContent.Value ?? "");
+                messageService.Send(new SuccessMessage("XML content has been validated"));
+            }
+            catch (Exception exception) {
+                await popupService.ShowErrorPopup($"Failed to validate XML content: {exception.Message}");
+            }
+        }
+        else {
+            throw new NotImplementedException($"Missing implementation for {nameof(ContentType)}: {ContentType}");
         }
     }
 
     [RelayCommand]
     public async Task FormatStructuredText() {
-        try {
-            var document = JsonDocument.Parse(StringContent.Value ?? "");
-            StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
-            messageService.Send(new SuccessMessage("JSON content has been formatted"));
+        if (ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]) {
+            try {
+                var document = JsonDocument.Parse(StringContent.Value ?? "");
+                StringContent.Value = JsonSerializer.Serialize(document, jsonSerializerOptions);
+                messageService.Send(new SuccessMessage("JSON content has been formatted"));
+            }
+            catch (Exception exception) {
+                await popupService.ShowErrorPopup($"Failed to format JSON content: {exception.Message}");
+            }
         }
-        catch (Exception exception) {
-            await popupService.ShowErrorPopup($"Failed to format JSON content: {exception.Message}");
+        else if (ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml]) {
+            try {
+                var document = XDocument.Parse(StringContent.Value ?? "");
+                StringContent.Value = document.ToString();
+                messageService.Send(new SuccessMessage("XML content has been formatted"));
+            }
+            catch (Exception exception) {
+                await popupService.ShowErrorPopup($"Failed to format XML content: {exception.Message}");
+            }
+        }
+        else {
+            throw new NotImplementedException($"Missing implementation for {nameof(ContentType)}: {ContentType}");
         }
     }
 
