@@ -12,6 +12,7 @@ public class RequestTemplate {
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
     public string StringContent { get; set; } = "";
+    public string FilePathContent { get; set; } = "";
     public Script PreExchangeScript { get; set; } = new();
     public Script PostExchangeScript { get; set; } = new();
     public Script OnExceptionScript { get; set; } = new();
@@ -34,6 +35,7 @@ public class RequestTemplate {
         ContentType.Text => new TextContentManager(),
         ContentType.Json => new JsonContentManager(),
         ContentType.Xml => new XmlContentManager(),
+        ContentType.File => new FileContentManager(),
         _ => throw new NotImplementedException($"Received unknown content type '{ContentType}'.")
     };
 

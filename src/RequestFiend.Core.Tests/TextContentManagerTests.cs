@@ -10,7 +10,7 @@ public class TextContentManagerTests {
         var subject = new TextContentManager();
         var request = new RequestTemplate() {
             Name = "Request",
-            Method = "GET",
+            Method = "POST",
             Url = "https://localhost",
             StringContent = "The {{first}} and {{second}} get replaced"
         };

@@ -4,5 +4,6 @@ public enum ContentType {
     None = 0,
     Text = 1,
     Json = 2,
-    Xml = 4
+    Xml = 4,
+    File = 5
 }

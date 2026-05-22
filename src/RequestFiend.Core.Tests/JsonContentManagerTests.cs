@@ -10,7 +10,7 @@ public class JsonContentManagerTests {
         var subject = new JsonContentManager();
         var request = new RequestTemplate() {
             Name = "Request",
-            Method = "GET",
+            Method = "POST",
             Url = "https://localhost",
             StringContent = "[{{Node}}, {{Node}}]"
         };

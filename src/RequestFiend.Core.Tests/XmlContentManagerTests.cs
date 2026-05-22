@@ -10,7 +10,7 @@ public class XmlContentManagerTests {
         var subject = new XmlContentManager();
         var request = new RequestTemplate() {
             Name = "Request",
-            Method = "GET",
+            Method = "POST",
             Url = "https://localhost",
             StringContent = "<{{TagName}}>{{Value}}</{{TagName}}>"
         };
