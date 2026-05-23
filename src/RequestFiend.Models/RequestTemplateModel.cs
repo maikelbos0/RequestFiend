@@ -33,7 +33,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     [ObservableProperty] public partial bool UsesStringContent { get; private set; }
     [ObservableProperty] public partial bool UsesStructuredStringContent { get; private set; }
     [ObservableProperty] public partial bool UsesUnstructuredStringContent { get; private set; }
+    [ObservableProperty] public partial bool UsesFileContent { get; private set; }
     public ValidatableProperty<string> StringContent { get; }
+    public ValidatableProperty<string> FileContent { get; }
     public ScriptModel PreExchangeScript { get; }
     public ScriptModel PostExchangeScript { get; }
     public ScriptModel OnExceptionScript { get; }
@@ -60,6 +62,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Headers = new(request.Headers, Validator.Required);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
+        FileContent = new(() => request.FileContent, Validator.ConditionallyRequired(() => UsesFileContent));
         PreExchangeScript = new(request.PreExchangeScript);
         PostExchangeScript = new(request.PostExchangeScript);
         OnExceptionScript = new(request.OnExceptionScript);
@@ -70,8 +73,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
         UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
         UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
+        UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
 
-        ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
+        ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, FileContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
     }
 
     [RelayCommand]
@@ -88,6 +92,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         request.StringContent = StringContent.Value;
+        request.FileContent = FileContent.Value;
 
         PreExchangeScript.Update(request.PreExchangeScript);
         PostExchangeScript.Update(request.PostExchangeScript);
@@ -108,6 +113,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         Request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
         Request.StringContent = StringContent.Value;
+        Request.FileContent = FileContent.Value;
         PreExchangeScript.Update(Request.PreExchangeScript);
         PostExchangeScript.Update(Request.PostExchangeScript);
         OnExceptionScript.Update(Request.OnExceptionScript);
@@ -117,6 +123,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Url.Reset();
         Headers.Reset(Request.Headers);
         ContentType.Reset();
+        FileContent.Reset();
         StringContent.Reset();
         PreExchangeScript.Reset();
         PostExchangeScript.Reset();
@@ -208,6 +215,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
                 || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
             UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
             UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
+            UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
         }
     }
 }

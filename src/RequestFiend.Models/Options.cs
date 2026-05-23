@@ -17,7 +17,8 @@ public static class Options {
         [ContentType.None] = "None",
         [ContentType.Text] = "Text",
         [ContentType.Json] = "JSON",
-        [ContentType.Xml] = "XML"
+        [ContentType.Xml] = "XML",
+        [ContentType.File] = "File"
     };
     public static Dictionary<string, ContentType> ReverseContentTypeMap { get; } = ContentTypeMap.ToDictionary(pair => pair.Value, pair => pair.Key);
     public static List<string> ContentTypes { get; } = [.. ContentTypeMap.Values];

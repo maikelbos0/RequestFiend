@@ -12,11 +12,12 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false)]
-    [InlineData(Core.ContentType.Text, true, false, true)]
-    [InlineData(Core.ContentType.Json, true, true, false)]
-    [InlineData(Core.ContentType.Xml, true, true, false)]
-    public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent) {
+    [InlineData(Core.ContentType.None, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true, false)]
+    [InlineData(Core.ContentType.Json, true, true, false, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false, false)]
+    [InlineData(Core.ContentType.File, false, false, false, true)]
+    public void ContentType(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent, bool expectedUsesFileContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -35,14 +36,16 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
         Assert.Equal(expectedUsesUnstructuredStringContent, subject.UsesUnstructuredStringContent);
+        Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
     }
 
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false)]
-    [InlineData(Core.ContentType.Text, true, false, true)]
-    [InlineData(Core.ContentType.Json, true, true, false)]
-    [InlineData(Core.ContentType.Xml, true, true, false)]
-    public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent) {
+    [InlineData(Core.ContentType.None, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true, false)]
+    [InlineData(Core.ContentType.Json, true, true, false, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false, false)]
+    [InlineData(Core.ContentType.File, false, false, false, true)]
+    public void Constructor(ContentType contentType, bool expectedUsesStringContent, bool expectedUsesStructuredStringContent, bool expectedUsesUnstructuredStringContent, bool expectedUsesFileContent) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -53,7 +56,8 @@ public class RequestTemplateModelTests {
                 new() { Name = "Name", Value = "Value" }
             },
             ContentType = contentType,
-            StringContent = "Content",
+            StringContent = "StringContent",
+            FileContent = "FileContent",
             PreExchangeScript = { Code = "PreExchangeScript" },
             PostExchangeScript = { Code = "PostExchangeScript" },
             OnExceptionScript = { Code = "OnExceptionScript" }
@@ -77,6 +81,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Headers.Count, subject.Headers.Count);
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
+        Assert.Equal(request.FileContent, subject.FileContent.Value);
         Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
         Assert.Equal(request.PostExchangeScript.Code, subject.PostExchangeScript.Code.Value);
         Assert.Equal(request.OnExceptionScript.Code, subject.OnExceptionScript.Code.Value);
@@ -84,8 +89,9 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesStructuredStringContent, subject.UsesStructuredStringContent);
         Assert.Equal(expectedUsesUnstructuredStringContent, subject.UsesUnstructuredStringContent);
+        Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
 
-        Assert.Equal([subject.Name, subject.Method, subject.Url, subject.Headers, subject.ContentType, subject.StringContent, subject.PreExchangeScript, subject.PostExchangeScript, subject.OnExceptionScript], subject.Validatables);
+        Assert.Equal([subject.Name, subject.Method, subject.Url, subject.Headers, subject.ContentType, subject.StringContent, subject.FileContent, subject.PreExchangeScript, subject.PostExchangeScript, subject.OnExceptionScript], subject.Validatables);
     }
 
     [Fact]
@@ -96,8 +102,9 @@ public class RequestTemplateModelTests {
         const string url = "https://localhost";
         const string headerName = "Name";
         const string headerValue = "Value";
-        const string contentType = "JSON";
-        const string stringContent = "Content";
+        const string contentType = "File";
+        const string stringContent = "StringContent";
+        const string fileContent = "FileContent";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -112,7 +119,8 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent",
+            StringContent = "PreviousStringContent",
+            FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -130,6 +138,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -142,7 +151,8 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousName", request.Headers[0].Name);
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
-        Assert.Equal("PreviousContent", request.StringContent);
+        Assert.Equal("PreviousStringContent", request.StringContent);
+        Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
@@ -160,21 +170,23 @@ public class RequestTemplateModelTests {
             && message.Request.Headers[0].Value == headerValue
             && message.Request.ContentType == Options.ReverseContentTypeMap[contentType]
             && message.Request.StringContent == stringContent
+            && message.Request.FileContent == fileContent
             && message.Request.PreExchangeScript.Code == preExchangeScript
             && message.Request.PostExchangeScript.Code == postExchangeScript
             && message.Request.OnExceptionScript.Code == onExceptionScript));
     }
 
     [Theory]
-    [InlineData("", "", "", "", "")]
-    [InlineData("", "GET", "https://localhost", "Name", "JSON")]
-    [InlineData("Name", "", "https://localhost", "Name", "JSON")]
-    [InlineData("Name", "GET", "", "Name", "JSON")]
-    [InlineData("Name", "GET", "https://localhost", "", "JSON")]
-    [InlineData("Name", "GET", "https://localhost", "Name", "")]
-    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
+    [InlineData("", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "")]
+    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent) {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string stringContent = "Content";
+        const string stringContent = "StringContent";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -189,7 +201,8 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent",
+            StringContent = "PreviousStringContent",
+            FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -203,6 +216,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -215,7 +229,8 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousName", request.Headers[0].Name);
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
-        Assert.Equal("PreviousContent", request.StringContent);
+        Assert.Equal("PreviousStringContent", request.StringContent);
+        Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
@@ -231,8 +246,9 @@ public class RequestTemplateModelTests {
         const string url = "https://localhost";
         const string headerName = "Name";
         const string headerValue = "Value";
-        const string contentType = "JSON";
-        const string stringContent = "Content";
+        const string contentType = "File";
+        const string stringContent = "StringContent";
+        const string fileContent = "FileContent";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -247,7 +263,8 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent",
+            StringContent = "PreviousStringContent",
+            FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -265,6 +282,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -278,6 +296,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
         Assert.Equal(stringContent, request.StringContent);
+        Assert.Equal(fileContent, request.FileContent);
         Assert.Equal(preExchangeScript, request.PreExchangeScript.Code);
         Assert.Equal(postExchangeScript, request.PostExchangeScript.Code);
         Assert.Equal(onExceptionScript, request.OnExceptionScript.Code);
@@ -288,6 +307,7 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Headers[0].Name.IsModified);
         Assert.False(subject.Headers[0].Value.IsModified);
         Assert.False(subject.StringContent.IsModified);
+        Assert.False(subject.FileContent.IsModified);
         Assert.False(subject.PreExchangeScript.IsModified);
         Assert.False(subject.PostExchangeScript.IsModified);
         Assert.False(subject.OnExceptionScript.IsModified);
@@ -297,13 +317,14 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("", "", "", "", "")]
-    [InlineData("", "GET", "https://localhost", "Name", "JSON")]
-    [InlineData("Name", "", "https://localhost", "Name", "JSON")]
-    [InlineData("Name", "GET", "", "Name", "JSON")]
-    [InlineData("Name", "GET", "https://localhost", "", "JSON")]
-    [InlineData("Name", "GET", "https://localhost", "Name", "")]
-    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType) {
+    [InlineData("", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "")]
+    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "Content";
         const string preExchangeScript = "PreExchangeScript";
@@ -320,7 +341,8 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
-            StringContent = "PreviousContent",
+            StringContent = "PreviousStringContent",
+            FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -334,6 +356,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
         subject.StringContent.Value = stringContent;
+        subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -346,7 +369,8 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousName", request.Headers[0].Name);
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
-        Assert.Equal("PreviousContent", request.StringContent);
+        Assert.Equal("PreviousStringContent", request.StringContent);
+        Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
