@@ -64,9 +64,9 @@
 
                     <views:ValidatablePicker SelectedItem="{Binding ContentType}" ItemsSource="{x:Static models:Options.ContentTypes}"/>
 
-                    <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesUnstructuredStringContent}"/>
+                    <Label Text="Content" Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesUnstructuredContent}"/>
 
-                    <Label Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStructuredStringContent}">
+                    <Label Style="{StaticResource EntryLabel}" IsVisible="{Binding UsesStructuredContent}">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="Content (" />

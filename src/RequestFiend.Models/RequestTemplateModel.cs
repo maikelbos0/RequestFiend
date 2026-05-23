@@ -30,9 +30,9 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     public ValidatableProperty<string> Url { get; }
     public NameValuePairModelCollection Headers { get; }
     public ValidatableProperty<string> ContentType { get; }
+    [ObservableProperty] public partial bool UsesStructuredContent { get; private set; }
+    [ObservableProperty] public partial bool UsesUnstructuredContent { get; private set; }
     [ObservableProperty] public partial bool UsesStringContent { get; private set; }
-    [ObservableProperty] public partial bool UsesStructuredStringContent { get; private set; }
-    [ObservableProperty] public partial bool UsesUnstructuredStringContent { get; private set; }
     [ObservableProperty] public partial bool UsesFileContent { get; private set; }
     public ValidatableProperty<string> StringContent { get; }
     public ValidatableProperty<string> FileContent { get; }
@@ -68,11 +68,11 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         OnExceptionScript = new(request.OnExceptionScript);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
+        UsesStructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
+        UsesUnstructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
         UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
             || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]
             || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-        UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-        UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
         UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
 
         ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, FileContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
@@ -210,11 +210,11 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(ValidatableProperty<>.Value)) {
+            UsesStructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
+            UsesUnstructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
             UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
                 || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]
                 || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-            UsesStructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-            UsesUnstructuredStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text];
             UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
         }
     }
