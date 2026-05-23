@@ -88,6 +88,19 @@
 
                     <views:ValidatableEditor Text="{Binding StringContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesStringContent}"/>
 
+                    <Grid ColumnDefinitions="*,44" RowDefinitions="*" IsVisible="{Binding UsesFileContent}">
+                        <views:ValidatableEntry Text="{Binding FileContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesFileContent}" />
+
+                        <Button 
+                            Text="…"
+                            Command="{Binding PickFileContentCommand}"
+                            Style="{StaticResource SecondaryButton}" 
+                            HorizontalOptions="Fill"
+                            MinimumWidthRequest="-1"
+                            Grid.Column="1" 
+                            SemanticProperties.Description="Pick file content" />
+                    </Grid>
+
                     <Label Style="{StaticResource EntryLabel}">
                         <Label.FormattedText>
                             <FormattedString>

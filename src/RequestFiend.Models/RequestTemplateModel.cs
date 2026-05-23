@@ -199,6 +199,16 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     }
 
     [RelayCommand]
+    public async Task PickFileContent() {
+        var file = await popupService.ShowPickFileDialog(new());
+
+        if (file != null) {
+            FileContent.Value = file.FullPath;
+            messageService.Send(new ValidatablePropertyUpdatedMessage(FileContent));
+        }
+    }
+
+    [RelayCommand]
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
             Collection.Requests.Remove(Request);
