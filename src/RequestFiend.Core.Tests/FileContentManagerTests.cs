@@ -14,7 +14,7 @@ public class FileContentManagerTests {
             Name = "Request",
             Method = "POST",
             Url = "https://localhost",
-            FilePathContent = "./{{FileName}}"
+            FileContent = "./{{FileName}}"
         };
         var collection = new RequestTemplateCollection() {
             Variables = {

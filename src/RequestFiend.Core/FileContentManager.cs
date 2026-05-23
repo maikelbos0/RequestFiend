@@ -5,5 +5,5 @@ namespace RequestFiend.Core;
 
 public class FileContentManager : IContentManager {
     public HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection)
-        => new ByteArrayContent(File.ReadAllBytes(collection.ApplyVariables(request.FilePathContent)));
+        => new ByteArrayContent(File.ReadAllBytes(collection.ApplyVariables(request.FileContent)));
 }

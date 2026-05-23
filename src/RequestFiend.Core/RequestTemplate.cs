@@ -12,7 +12,7 @@ public class RequestTemplate {
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
     public string StringContent { get; set; } = "";
-    public string FilePathContent { get; set; } = "";
+    public string FileContent { get; set; } = "";
     public Script PreExchangeScript { get; set; } = new();
     public Script PostExchangeScript { get; set; } = new();
     public Script OnExceptionScript { get; set; } = new();
