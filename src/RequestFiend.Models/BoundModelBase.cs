@@ -17,15 +17,15 @@ public partial class BoundModelBase : ObservableObject, IValidatable {
     public virtual void ConfigureState(IEnumerable<IValidatable> validatables) {
         this.validatables.AddRange(validatables);
 
-        foreach (var validatableProperty in validatables) {
-            validatableProperty.PropertyChanged += OnValidatablePropertyChanged;
+        foreach (var validatable in validatables) {
+            validatable.PropertyChanged += OnValidatableChanged;
         }
 
         UpdateState();
     }
 
-    private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(ValidatableProperty.IsModified) || e.PropertyName == nameof(ValidatableProperty.HasError)) {
+    private void OnValidatableChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(IValidatable.IsModified) || e.PropertyName == nameof(IValidatable.HasError)) {
             UpdateState();
         }
     }

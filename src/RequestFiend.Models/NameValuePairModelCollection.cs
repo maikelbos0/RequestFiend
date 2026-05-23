@@ -83,21 +83,21 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         if (e.OldItems != null) {
             foreach (var pair in e.OldItems.Cast<NameValuePairModel>()) {
-                pair.PropertyChanged -= OnValidatablePropertyChanged;
+                pair.PropertyChanged -= OnValidatableChanged;
             }
         }
 
         if (e.NewItems != null) {
             foreach (var pair in e.NewItems.Cast<NameValuePairModel>()) {
-                pair.PropertyChanged += OnValidatablePropertyChanged;
+                pair.PropertyChanged += OnValidatableChanged;
             }
         }
 
         UpdateState();
     }
 
-    private void OnValidatablePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(NameValuePairModel.IsModified) || e.PropertyName == nameof(NameValuePairModel.HasError)) {
+    private void OnValidatableChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(IValidatable.IsModified) || e.PropertyName == nameof(IValidatable.HasError)) {
             UpdateState();
         }
     }

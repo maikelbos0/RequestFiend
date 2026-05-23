@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace RequestFiend.Models.PropertyTypes;
 
@@ -17,18 +18,22 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         get => field;
         set {
             if (SetProperty(ref field, value)) {
-                SetState();
+                UpdateState();
             }
         }
     }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider) : this(defaultValueProvider, _ => true) { }
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, params IValidatable[] dependencies) : this(defaultValueProvider, _ => true, dependencies) { }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator) {
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
         DefaultValueProvider = defaultValueProvider;
         Validator = validator;
         Value = DefaultValueProvider();
-        SetState();
+        UpdateState();
+
+        foreach (var dependency in dependencies) {
+            dependency.PropertyChanged += (_, _) => UpdateState();
+        }
     }
 
     public void Reset(Func<TProperty> defaultValueProvider) {
@@ -38,10 +43,16 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
 
     public void Reset() {
         Value = DefaultValueProvider();
-        SetState();
+        UpdateState();
     }
 
-    private void SetState() {
+    private void OnDependencyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(IValidatable.IsModified) || e.PropertyName == nameof(IValidatable.HasError)) {
+            UpdateState();
+        }
+    }
+
+    private void UpdateState() {
         HasError = !Validator(Value);
         IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, DefaultValueProvider());
         IsModifiedWithoutError = IsModified && !HasError;

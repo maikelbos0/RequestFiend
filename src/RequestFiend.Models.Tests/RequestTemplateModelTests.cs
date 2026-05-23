@@ -12,12 +12,12 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false, false)]
-    [InlineData(Core.ContentType.Text, false, true, true, false)]
-    [InlineData(Core.ContentType.Json, true, false, true, false)]
-    [InlineData(Core.ContentType.Xml, true, false, true, false)]
-    [InlineData(Core.ContentType.File, false, true, false, true)]
-    public void ContentType(ContentType contentType, bool expectedUsesStructuredContent, bool expectedUsesUnstructuredContent, bool expectedUsesStringContent, bool expectedUsesFileContent) {
+    [InlineData(Core.ContentType.None, false, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, false, true, true, false, false)]
+    [InlineData(Core.ContentType.Json, true, false, true, false, false)]
+    [InlineData(Core.ContentType.Xml, true, false, true, false, false)]
+    [InlineData(Core.ContentType.File, false, true, false, true, true)]
+    public void ContentType(ContentType contentType, bool expectedUsesStructuredContent, bool expectedUsesUnstructuredContent, bool expectedUsesStringContent, bool expectedUsesFileContent, bool expectedFileContentHasError) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -37,6 +37,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesUnstructuredContent, subject.UsesUnstructuredContent);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
+        Assert.Equal(expectedFileContentHasError, subject.FileContent.HasError);
     }
 
     [Theory]

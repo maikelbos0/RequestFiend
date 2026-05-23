@@ -62,7 +62,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Headers = new(request.Headers, Validator.Required);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         StringContent = new(() => request.StringContent);
-        FileContent = new(() => request.FileContent, Validator.ConditionallyRequired(() => UsesFileContent));
+        FileContent = new(() => request.FileContent, Validator.ConditionallyRequired(() => UsesFileContent), ContentType);
         PreExchangeScript = new(request.PreExchangeScript);
         PostExchangeScript = new(request.PostExchangeScript);
         OnExceptionScript = new(request.OnExceptionScript);
@@ -210,6 +210,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(ValidatableProperty<>.Value)) {
+
             UsesStructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
             UsesUnstructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
             UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
