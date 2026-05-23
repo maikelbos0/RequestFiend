@@ -14,6 +14,21 @@ public class ValidatorTests {
     }
 
     [Theory]
+    [InlineData(true, "", false)]
+    [InlineData(true, " ", true)]
+    [InlineData(true, "Value", true)]
+    [InlineData(true, "123", true)]
+    [InlineData(false, "", true)]
+    [InlineData(false, " ", true)]
+    [InlineData(false, "Value", true)]
+    [InlineData(false, "123", true)]
+    public void ConditionallyRequired(bool isRequired, string value, bool expectedResult) {
+        var subject = Validator.ConditionallyRequired(() =>  isRequired);
+
+        Assert.Equal(expectedResult, subject(value));
+    }
+
+    [Theory]
     [InlineData("", true)]
     [InlineData(" ", false)]
     [InlineData("Value", false)]
