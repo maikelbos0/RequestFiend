@@ -11,6 +11,7 @@ public class RequestTemplate {
     public required string Url { get; set; }
     public List<NameValuePair> Headers { get; set; } = [];
     public ContentType ContentType { get; set; } = ContentType.None;
+    public bool HasManualContentTypeHeader { get; set; }
     public string StringContent { get; set; } = "";
     public string FileContent { get; set; } = "";
     public Script PreExchangeScript { get; set; } = new();

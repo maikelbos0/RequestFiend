@@ -5,13 +5,16 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class JsonContentManagerTests {
-    [Fact]
-    public async Task GetContent() {
+    [Theory]
+    [InlineData(false, JsonContentManager.DefaultMediaType)]
+    [InlineData(true, null)]
+    public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
         var subject = new JsonContentManager();
         var request = new RequestTemplate() {
             Name = "Request",
             Method = "POST",
             Url = "https://localhost",
+            HasManualContentTypeHeader = hasManualContentTypeHeader,
             StringContent = "[{{Node}}, {{Node}}]"
         };
         var collection = new RequestTemplateCollection() {
@@ -22,7 +25,7 @@ public class JsonContentManagerTests {
 
         var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
 
-        Assert.Equal(JsonContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
+        Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("[{\"Meaning\": 42}, {\"Meaning\": 42}]", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 }

@@ -5,13 +5,16 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class XmlContentManagerTests {
-    [Fact]
-    public async Task GetContent() {
+    [Theory]
+    [InlineData(false, XmlContentManager.DefaultMediaType)]
+    [InlineData(true, null)]
+    public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
         var subject = new XmlContentManager();
         var request = new RequestTemplate() {
             Name = "Request",
             Method = "POST",
             Url = "https://localhost",
+            HasManualContentTypeHeader = hasManualContentTypeHeader,
             StringContent = "<{{TagName}}>{{Value}}</{{TagName}}>"
         };
         var collection = new RequestTemplateCollection() {
@@ -23,7 +26,7 @@ public class XmlContentManagerTests {
 
         var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
 
-        Assert.Equal(XmlContentManager.DefaultMediaType, result.Headers.ContentType?.MediaType);
+        Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("<Data>42</Data>", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 }
