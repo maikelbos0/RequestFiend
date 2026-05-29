@@ -101,7 +101,7 @@
                             SemanticProperties.Description="Pick file content" />
                     </Grid>
 
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding UsesContent}">
                         <Switch IsToggled="{Binding HasManualContentTypeHeader.Value}"/>
 
                         <Label Text="Has manually added content type header" Grid.Column="1" VerticalOptions="Center">

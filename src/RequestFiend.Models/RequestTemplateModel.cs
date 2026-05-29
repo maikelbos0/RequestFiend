@@ -31,6 +31,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     public NameValuePairModelCollection Headers { get; }
     public ValidatableProperty<string> ContentType { get; }
     public ValidatableProperty<bool> HasManualContentTypeHeader { get; }
+    [ObservableProperty] public partial bool UsesContent { get; private set; }
     [ObservableProperty] public partial bool UsesStructuredContent { get; private set; }
     [ObservableProperty] public partial bool UsesUnstructuredContent { get; private set; }
     [ObservableProperty] public partial bool UsesStringContent { get; private set; }
@@ -70,12 +71,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         OnExceptionScript = new(request.OnExceptionScript);
 
         ContentType.PropertyChanged += OnContentTypeChanged;
-        UsesStructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-        UsesUnstructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
-        UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
-            || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]
-            || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-        UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
+        SetContentTypeUsage();
 
         ConfigureState([Name, Method, Url, Headers, ContentType, HasManualContentTypeHeader, StringContent, FileContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
     }
@@ -92,7 +88,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Method = Method.Value!;
         request.Url = Url.Value!;
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
-        request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
+        request.ContentType = GetContentType();
         request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         request.StringContent = StringContent.Value;
         request.FileContent = FileContent.Value;
@@ -114,7 +110,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Method = Method.Value!;
         Request.Url = Url.Value!;
         Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
-        Request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
+        Request.ContentType = GetContentType();
         Request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         Request.StringContent = StringContent.Value;
         Request.FileContent = FileContent.Value;
@@ -225,14 +221,26 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     private void OnContentTypeChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(ValidatableProperty<>.Value)) {
-
-            UsesStructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-            UsesUnstructuredContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text] || ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
-            UsesStringContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.Text]
-                || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Json]
-                || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
-            UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
+            SetContentTypeUsage();
         }
+    }
+
+    private void SetContentTypeUsage() {
+        var contentType = GetContentType();
+
+        UsesContent = contentType != Core.ContentType.None;
+        UsesStructuredContent = contentType == Core.ContentType.Json || contentType == Core.ContentType.Xml;
+        UsesUnstructuredContent = contentType == Core.ContentType.Text || contentType == Core.ContentType.File;
+        UsesStringContent = contentType == Core.ContentType.Text || contentType == Core.ContentType.Json || contentType == Core.ContentType.Xml;
+        UsesFileContent = contentType == Core.ContentType.File;
+    }
+
+    private ContentType GetContentType() {
+        if (Options.ReverseContentTypeMap.TryGetValue(ContentType.Value, out var contentType)) {
+            return contentType;
+        }
+
+        return Core.ContentType.None;
     }
 
     [RelayCommand]

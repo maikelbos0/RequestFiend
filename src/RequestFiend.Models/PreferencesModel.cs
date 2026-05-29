@@ -34,7 +34,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         }
 
         preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + MaximumRecentCollectionCount.Value));
-        preferencesService.SetScriptEvaluationMode(Options.ReverseScriptEvaluationModeMap[ScriptEvaluationMode.Value]);
+        preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode());
         preferencesService.SetRequestTimeoutInSeconds(RequestTimeoutInSeconds.Value.Length == 0 ? null : int.Parse(RequestTimeoutInSeconds.Value));
 
         MaximumRecentCollectionCount.Reset();
@@ -44,6 +44,14 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         messageService.Send(new PreferencesUpdatedMessage());
         messageService.Send(new SuccessMessage("Preferences have been updated"));
+    }
+
+    private ScriptEvaluationMode GetScriptEvaluationMode() {
+        if (Options.ReverseScriptEvaluationModeMap.TryGetValue(ScriptEvaluationMode.Value, out var scriptEvaluationMode)) {
+            return scriptEvaluationMode;
+        }
+
+        return Models.ScriptEvaluationMode.Disabled;
     }
 
     [RelayCommand]
