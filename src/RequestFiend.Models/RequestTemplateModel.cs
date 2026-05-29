@@ -30,6 +30,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     public ValidatableProperty<string> Url { get; }
     public NameValuePairModelCollection Headers { get; }
     public ValidatableProperty<string> ContentType { get; }
+    public ValidatableProperty<bool> HasManualContentTypeHeader { get; }
     [ObservableProperty] public partial bool UsesStructuredContent { get; private set; }
     [ObservableProperty] public partial bool UsesUnstructuredContent { get; private set; }
     [ObservableProperty] public partial bool UsesStringContent { get; private set; }
@@ -61,6 +62,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Url = new(() => request.Url, Validator.Required);
         Headers = new(request.Headers, Validator.Required);
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
+        HasManualContentTypeHeader = new(() => request.HasManualContentTypeHeader);
         StringContent = new(() => request.StringContent);
         FileContent = new(() => request.FileContent, Validator.ConditionallyRequired(() => UsesFileContent), ContentType);
         PreExchangeScript = new(request.PreExchangeScript);
@@ -75,7 +77,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             || ContentType.Value == Options.ContentTypeMap[Core.ContentType.Xml];
         UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
 
-        ConfigureState([Name, Method, Url, Headers, ContentType, StringContent, FileContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
+        ConfigureState([Name, Method, Url, Headers, ContentType, HasManualContentTypeHeader, StringContent, FileContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
     }
 
     [RelayCommand]
@@ -91,6 +93,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Url = Url.Value!;
         request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
+        request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         request.StringContent = StringContent.Value;
         request.FileContent = FileContent.Value;
 
@@ -112,6 +115,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Url = Url.Value!;
         Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
         Request.ContentType = Options.ReverseContentTypeMap[ContentType.Value!];
+        Request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         Request.StringContent = StringContent.Value;
         Request.FileContent = FileContent.Value;
         PreExchangeScript.Update(Request.PreExchangeScript);
@@ -123,6 +127,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Url.Reset();
         Headers.Reset(Request.Headers);
         ContentType.Reset();
+        HasManualContentTypeHeader.Reset();
         FileContent.Reset();
         StringContent.Reset();
         PreExchangeScript.Reset();
@@ -229,4 +234,8 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             UsesFileContent = ContentType.Value == Options.ContentTypeMap[Core.ContentType.File];
         }
     }
+
+    [RelayCommand]
+    public void ToggleHasManualContentTypeHeader()
+        => HasManualContentTypeHeader.Value = !HasManualContentTypeHeader.Value;
 }

@@ -101,6 +101,16 @@
                             SemanticProperties.Description="Pick file content" />
                     </Grid>
 
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                        <Switch IsToggled="{Binding HasManualContentTypeHeader.Value}"/>
+
+                        <Label Text="Has manually added content type header" Grid.Column="1" VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleHasManualContentTypeHeaderCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
                     <Label Style="{StaticResource EntryLabel}">
                         <Label.FormattedText>
                             <FormattedString>

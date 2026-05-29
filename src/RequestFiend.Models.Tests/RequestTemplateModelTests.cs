@@ -58,6 +58,7 @@ public class RequestTemplateModelTests {
                 new() { Name = "Name", Value = "Value" }
             },
             ContentType = contentType,
+            HasManualContentTypeHeader = true,
             StringContent = "StringContent",
             FileContent = "FileContent",
             PreExchangeScript = { Code = "PreExchangeScript" },
@@ -82,6 +83,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.Url, subject.Url.Value);
         Assert.Equal(request.Headers.Count, subject.Headers.Count);
         Assert.Equal(Options.ContentTypeMap[request.ContentType], subject.ContentType.Value);
+        Assert.Equal(request.HasManualContentTypeHeader, subject.HasManualContentTypeHeader.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
         Assert.Equal(request.FileContent, subject.FileContent.Value);
         Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
@@ -93,7 +95,19 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
 
-        Assert.Equal([subject.Name, subject.Method, subject.Url, subject.Headers, subject.ContentType, subject.StringContent, subject.FileContent, subject.PreExchangeScript, subject.PostExchangeScript, subject.OnExceptionScript], subject.Validatables);
+        Assert.Equal([
+            subject.Name,
+            subject.Method,
+            subject.Url,
+            subject.Headers,
+            subject.ContentType,
+            subject.HasManualContentTypeHeader,
+            subject.StringContent,
+            subject.FileContent,
+            subject.PreExchangeScript,
+            subject.PostExchangeScript,
+            subject.OnExceptionScript
+        ], subject.Validatables);
     }
 
     [Fact]
@@ -105,6 +119,7 @@ public class RequestTemplateModelTests {
         const string headerName = "Name";
         const string headerValue = "Value";
         const string contentType = "File";
+        const bool hasManualContentTypeHeader = false;
         const string stringContent = "StringContent";
         const string fileContent = "FileContent";
         const string preExchangeScript = "PreExchangeScript";
@@ -121,6 +136,7 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
+            HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
@@ -139,6 +155,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
+        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
@@ -153,6 +170,7 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousName", request.Headers[0].Name);
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
+        Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
@@ -171,6 +189,7 @@ public class RequestTemplateModelTests {
             && message.Request.Headers[0].Name == headerName
             && message.Request.Headers[0].Value == headerValue
             && message.Request.ContentType == Options.ReverseContentTypeMap[contentType]
+            && message.Request.HasManualContentTypeHeader == hasManualContentTypeHeader
             && message.Request.StringContent == stringContent
             && message.Request.FileContent == fileContent
             && message.Request.PreExchangeScript.Code == preExchangeScript
@@ -189,6 +208,7 @@ public class RequestTemplateModelTests {
     public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "StringContent";
+        const bool hasManualContentTypeHeader = false;
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -203,6 +223,7 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
+            HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
@@ -217,6 +238,7 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
+        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
@@ -231,6 +253,7 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousName", request.Headers[0].Name);
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
+        Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
@@ -249,6 +272,7 @@ public class RequestTemplateModelTests {
         const string headerName = "Name";
         const string headerValue = "Value";
         const string contentType = "File";
+        const bool hasManualContentTypeHeader = false;
         const string stringContent = "StringContent";
         const string fileContent = "FileContent";
         const string preExchangeScript = "PreExchangeScript";
@@ -265,6 +289,7 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
+            HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
@@ -283,6 +308,7 @@ public class RequestTemplateModelTests {
         subject.Headers[0].Name.Value = headerName;
         subject.Headers[0].Value.Value = headerValue;
         subject.ContentType.Value = contentType;
+        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
@@ -297,6 +323,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(headerName, request.Headers[0].Name);
         Assert.Equal(headerValue, request.Headers[0].Value);
         Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
+        Assert.Equal(hasManualContentTypeHeader, request.HasManualContentTypeHeader);
         Assert.Equal(stringContent, request.StringContent);
         Assert.Equal(fileContent, request.FileContent);
         Assert.Equal(preExchangeScript, request.PreExchangeScript.Code);
@@ -308,6 +335,8 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Url.IsModified);
         Assert.False(subject.Headers[0].Name.IsModified);
         Assert.False(subject.Headers[0].Value.IsModified);
+        Assert.False(subject.ContentType.IsModified);
+        Assert.False(subject.HasManualContentTypeHeader.IsModified);
         Assert.False(subject.StringContent.IsModified);
         Assert.False(subject.FileContent.IsModified);
         Assert.False(subject.PreExchangeScript.IsModified);
@@ -328,6 +357,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "POST", "https://localhost", "Name", "File", "")]
     public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent) {
         const string filePath = @"C:\Documents\External data requests.json";
+        const bool hasManualContentTypeHeader = false;
         const string stringContent = "Content";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
@@ -343,6 +373,7 @@ public class RequestTemplateModelTests {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             ContentType = Core.ContentType.Text,
+            HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
@@ -357,6 +388,7 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
+        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
@@ -371,6 +403,7 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousName", request.Headers[0].Name);
         Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
+        Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
@@ -615,6 +648,29 @@ public class RequestTemplateModelTests {
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), subject.Id);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Fact]
+    public async Task ToggleHasManualContentTypeHeader() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            HasManualContentTypeHeader = { Value = true }
+        };
+
+        subject.ToggleHasManualContentTypeHeader();
+
+        Assert.False(subject.HasManualContentTypeHeader.Value);
     }
 
     [Fact]
