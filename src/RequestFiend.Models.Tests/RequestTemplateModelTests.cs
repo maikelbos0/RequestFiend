@@ -51,19 +51,18 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false, false, false, false)]
-    [InlineData(Core.ContentType.Text, true, false, true, true, false, false)]
-    [InlineData(Core.ContentType.Json, true, true, false, true, false, false)]
-    [InlineData(Core.ContentType.Xml, true, true, false, true, false, false)]
-    [InlineData(Core.ContentType.File, true, false, true, false, true, true)]
+    [InlineData(Core.ContentType.None, false, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true, true, false)]
+    [InlineData(Core.ContentType.Json, true, true, false, true, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false, true, false)]
+    [InlineData(Core.ContentType.File, true, false, true, false, true)]
     public void Constructor(
         ContentType contentType,
         bool expectedUsesContent,
         bool expectedUsesStructuredContent,
         bool expectedUsesUnstructuredContent,
         bool expectedUsesStringContent,
-        bool expectedUsesFileContent,
-        bool expectedFileContentHasError
+        bool expectedUsesFileContent
     ) {
         const string filePath = @"C:\Documents\External data requests.json";
 
