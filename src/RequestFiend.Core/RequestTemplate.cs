@@ -14,6 +14,8 @@ public class RequestTemplate {
     public bool HasManualContentTypeHeader { get; set; }
     public string StringContent { get; set; } = "";
     public string FileContent { get; set; } = "";
+    public List<NameValuePair> FormFieldContent { get; set; } = [];
+    public List<NameValuePair> FormFileContent { get; set; } = [];
     public Script PreExchangeScript { get; set; } = new();
     public Script PostExchangeScript { get; set; } = new();
     public Script OnExceptionScript { get; set; } = new();
