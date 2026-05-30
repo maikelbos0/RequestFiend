@@ -5,14 +5,14 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class FormContentManagerTests {
+public class FormDataContentManagerTests {
     [Theory]
     [InlineData(false, "multipart/form-data")]
     [InlineData(true, null)]
     public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
         File.WriteAllBytes("./Data.json", [70, 111, 111]);
 
-        var subject = new FormContentManager();
+        var subject = new FormDataContentManager();
         var request = new RequestTemplate() {
 
             Name = "Request",

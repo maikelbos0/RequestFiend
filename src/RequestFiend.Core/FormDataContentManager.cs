@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace RequestFiend.Core;
 
-public class FormContentManager : IContentManager {
+public class FormDataContentManager : IContentManager {
     public HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection) {
         var content = new MultipartFormDataContent();
 
