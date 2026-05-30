@@ -13,19 +13,18 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false, false, false, false)]
-    [InlineData(Core.ContentType.Text, true, false, true, true, false, false)]
-    [InlineData(Core.ContentType.Json, true, true, false, true, false, false)]
-    [InlineData(Core.ContentType.Xml, true, true, false, true, false, false)]
-    [InlineData(Core.ContentType.File, true, false, true, false, true, true)]
+    [InlineData(Core.ContentType.None, false, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true, true, false)]
+    [InlineData(Core.ContentType.Json, true, true, false, true, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false, true, false)]
+    [InlineData(Core.ContentType.File, true, false, true, false, true)]
     public void ContentType(
-        ContentType contentType, 
+        ContentType contentType,
         bool expectedUsesContent,
-        bool expectedUsesStructuredContent, 
-        bool expectedUsesUnstructuredContent, 
-        bool expectedUsesStringContent, 
-        bool expectedUsesFileContent, 
-        bool expectedFileContentHasError
+        bool expectedUsesStructuredContent,
+        bool expectedUsesUnstructuredContent,
+        bool expectedUsesStringContent,
+        bool expectedUsesFileContent
     ) {
         const string filePath = @"C:\Documents\External data requests.json";
 
@@ -47,7 +46,6 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesUnstructuredContent, subject.UsesUnstructuredContent);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
-        Assert.Equal(expectedFileContentHasError, subject.FileContent.HasError);
     }
 
     [Theory]
@@ -138,10 +136,12 @@ public class RequestTemplateModelTests {
         const string contentType = "File";
         const bool hasManualContentTypeHeader = false;
         const string stringContent = "StringContent";
-        const string fileContent = "FileContent";
+        const string fileContent = "./Data.json";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
+
+        File.WriteAllBytes(fileContent, [70, 111, 111]);
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -291,10 +291,12 @@ public class RequestTemplateModelTests {
         const string contentType = "File";
         const bool hasManualContentTypeHeader = false;
         const string stringContent = "StringContent";
-        const string fileContent = "FileContent";
+        const string fileContent = "./Data.json";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
+
+        File.WriteAllBytes(fileContent, [70, 111, 111]);
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -671,7 +673,6 @@ public class RequestTemplateModelTests {
     public async Task ToggleHasManualContentTypeHeader() {
         const string filePath = @"C:\Documents\External data requests.json";
 
-        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",

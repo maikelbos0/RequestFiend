@@ -1,4 +1,5 @@
 ﻿using RequestFiend.Models.PropertyTypes;
+using System.IO;
 using Xunit;
 
 namespace RequestFiend.Models.Tests.PropertyTypes;
@@ -14,18 +15,13 @@ public class ValidatorTests {
     }
 
     [Theory]
-    [InlineData(true, "", false)]
-    [InlineData(true, " ", true)]
-    [InlineData(true, "Value", true)]
-    [InlineData(true, "123", true)]
-    [InlineData(false, "", true)]
-    [InlineData(false, " ", true)]
-    [InlineData(false, "Value", true)]
-    [InlineData(false, "123", true)]
-    public void ConditionallyRequired(bool isRequired, string value, bool expectedResult) {
-        var subject = Validator.ConditionallyRequired(() =>  isRequired);
+    [InlineData("", false)]
+    [InlineData("./Values.json", false)]
+    [InlineData("./Data.json", true)]
+    public void FilePath(string value, bool expectedResult) {
+        File.WriteAllBytes("./Data.json", [70, 111, 111]);
 
-        Assert.Equal(expectedResult, subject(value));
+        Assert.Equal(expectedResult, Validator.FilePath(value));
     }
 
     [Theory]
@@ -49,5 +45,16 @@ public class ValidatorTests {
     [InlineData("Foo/132", false)]
     public void VariableName(string value, bool expectedResult) {
         Assert.Equal(expectedResult, Validator.VariableName(value));
+    }
+
+    [Theory]
+    [InlineData(true, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, true)]
+    [InlineData(false, false, true)]
+    public void Conditional(bool isRequired, bool isValid, bool expectedResult) {
+        var subject = Validator.Conditional(() => isRequired, _ => isValid);
+
+        Assert.Equal(expectedResult, subject("Value"));
     }
 }
