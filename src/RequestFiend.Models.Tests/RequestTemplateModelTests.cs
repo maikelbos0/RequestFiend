@@ -13,18 +13,20 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false, false, false)]
-    [InlineData(Core.ContentType.Text, true, false, true, true, false)]
-    [InlineData(Core.ContentType.Json, true, true, false, true, false)]
-    [InlineData(Core.ContentType.Xml, true, true, false, true, false)]
-    [InlineData(Core.ContentType.File, true, false, true, false, true)]
+    [InlineData(Core.ContentType.None, false, false, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true, true, false, false)]
+    [InlineData(Core.ContentType.Json, true, true, false, true, false, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false, true, false, false)]
+    [InlineData(Core.ContentType.File, true, false, true, false, true, false)]
+    [InlineData(Core.ContentType.FormData, true, false, true, false, false, true)]
     public void ContentType(
         ContentType contentType,
         bool expectedUsesContent,
         bool expectedUsesStructuredContent,
         bool expectedUsesUnstructuredContent,
         bool expectedUsesStringContent,
-        bool expectedUsesFileContent
+        bool expectedUsesFileContent,
+        bool expectedUsesFormDataContent
     ) {
         const string filePath = @"C:\Documents\External data requests.json";
 
@@ -46,21 +48,24 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesUnstructuredContent, subject.UsesUnstructuredContent);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
+        Assert.Equal(expectedUsesFormDataContent, subject.UsesFormDataContent);
     }
 
     [Theory]
-    [InlineData(Core.ContentType.None, false, false, false, false, false)]
-    [InlineData(Core.ContentType.Text, true, false, true, true, false)]
-    [InlineData(Core.ContentType.Json, true, true, false, true, false)]
-    [InlineData(Core.ContentType.Xml, true, true, false, true, false)]
-    [InlineData(Core.ContentType.File, true, false, true, false, true)]
+    [InlineData(Core.ContentType.None, false, false, false, false, false, false)]
+    [InlineData(Core.ContentType.Text, true, false, true, true, false, false)]
+    [InlineData(Core.ContentType.Json, true, true, false, true, false, false)]
+    [InlineData(Core.ContentType.Xml, true, true, false, true, false, false)]
+    [InlineData(Core.ContentType.File, true, false, true, false, true, false)]
+    [InlineData(Core.ContentType.FormData, true, false, true, false, false, true)]
     public void Constructor(
         ContentType contentType,
         bool expectedUsesContent,
         bool expectedUsesStructuredContent,
         bool expectedUsesUnstructuredContent,
         bool expectedUsesStringContent,
-        bool expectedUsesFileContent
+        bool expectedUsesFileContent,
+        bool expectedUsesFormDataContent
     ) {
         const string filePath = @"C:\Documents\External data requests.json";
 
@@ -113,6 +118,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(expectedUsesUnstructuredContent, subject.UsesUnstructuredContent);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
+        Assert.Equal(expectedUsesFormDataContent, subject.UsesFormDataContent);
 
         Assert.Equal([
             subject.Name,

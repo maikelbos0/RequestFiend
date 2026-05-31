@@ -36,6 +36,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     [ObservableProperty] public partial bool UsesUnstructuredContent { get; private set; }
     [ObservableProperty] public partial bool UsesStringContent { get; private set; }
     [ObservableProperty] public partial bool UsesFileContent { get; private set; }
+    [ObservableProperty] public partial bool UsesFormDataContent { get; private set; }
     public ValidatableProperty<string> StringContent { get; }
     public ValidatableProperty<string> FileContent { get; }
     public NameValuePairModelCollection FormFieldContent { get; }
@@ -235,9 +236,10 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
         UsesContent = contentType != Core.ContentType.None;
         UsesStructuredContent = contentType == Core.ContentType.Json || contentType == Core.ContentType.Xml;
-        UsesUnstructuredContent = contentType == Core.ContentType.Text || contentType == Core.ContentType.File;
+        UsesUnstructuredContent = contentType == Core.ContentType.Text || contentType == Core.ContentType.File || contentType == Core.ContentType.FormData;
         UsesStringContent = contentType == Core.ContentType.Text || contentType == Core.ContentType.Json || contentType == Core.ContentType.Xml;
         UsesFileContent = contentType == Core.ContentType.File;
+        UsesFormDataContent = contentType == Core.ContentType.FormData;
     }
 
     private ContentType GetContentType() {

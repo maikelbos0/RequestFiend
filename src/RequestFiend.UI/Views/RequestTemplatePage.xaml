@@ -106,7 +106,8 @@
                         NameLabelText="Form field name"
                         DeleteButtonText="Delete form field"
                         AddButtonText="Add form field"
-                        Collection="{Binding Collection}"/>
+                        Collection="{Binding Collection}"
+                        IsVisible="{Binding UsesFormDataContent}"/>
 
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding UsesContent}">
                         <Switch IsToggled="{Binding HasManualContentTypeHeader.Value}"/>
