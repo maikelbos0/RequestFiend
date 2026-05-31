@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -24,6 +24,16 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\RequestFiend.Core\RequestFiend.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Data.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Data.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>

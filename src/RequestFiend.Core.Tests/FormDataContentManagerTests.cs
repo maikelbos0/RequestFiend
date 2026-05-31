@@ -10,8 +10,6 @@ public class FormDataContentManagerTests {
     [InlineData(false, "multipart/form-data")]
     [InlineData(true, null)]
     public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
-        File.WriteAllBytes("./Data.json", [70, 111, 111]);
-
         var subject = new FormDataContentManager();
         var request = new RequestTemplate() {
 
@@ -38,7 +36,6 @@ public class FormDataContentManagerTests {
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await Assert.IsType<StringContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Description")).ReadAsStringAsync(TestContext.Current.CancellationToken));
-        Assert.Equal([70, 111, 111], await Assert.IsType<ByteArrayContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Data")).ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
-
+        Assert.Equal(File.ReadAllBytes("./Data.json"), await Assert.IsType<ByteArrayContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Data")).ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
     }
 }

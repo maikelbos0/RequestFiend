@@ -154,8 +154,6 @@ public class RequestTemplateModelTests {
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
 
-        File.WriteAllBytes(fileContent, [70, 111, 111]);
-
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
@@ -326,8 +324,6 @@ public class RequestTemplateModelTests {
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
-
-        File.WriteAllBytes(fileContent, [70, 111, 111]);
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();

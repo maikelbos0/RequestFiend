@@ -10,8 +10,6 @@ public class FileContentManagerTests {
     [InlineData(false, "application/json")]
     [InlineData(true, null)]
     public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
-        File.WriteAllBytes("./Data.json", [70, 111, 111]);
-
         var subject = new FileContentManager();
         var request = new RequestTemplate() {
             Name = "Request",
@@ -29,6 +27,6 @@ public class FileContentManagerTests {
         var result = Assert.IsType<ByteArrayContent>(subject.GetContent(request, collection));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
-        Assert.Equal([70, 111, 111], await result.ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(File.ReadAllBytes("./Data.json"), await result.ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
     }
 }

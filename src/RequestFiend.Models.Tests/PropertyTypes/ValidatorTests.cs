@@ -1,5 +1,4 @@
 ﻿using RequestFiend.Models.PropertyTypes;
-using System.IO;
 using Xunit;
 
 namespace RequestFiend.Models.Tests.PropertyTypes;
@@ -19,8 +18,6 @@ public class ValidatorTests {
     [InlineData("./Values.json", false)]
     [InlineData("./Data.json", true)]
     public void FilePath(string value, bool expectedResult) {
-        File.WriteAllBytes("./Data.json", [70, 111, 111]);
-
         Assert.Equal(expectedResult, Validator.FilePath(value));
     }
 
