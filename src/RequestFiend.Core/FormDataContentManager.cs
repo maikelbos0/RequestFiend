@@ -8,22 +8,22 @@ public class FormDataContentManager : IContentManager {
     public HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection) {
         var content = new MultipartFormDataContent();
 
-        foreach (var formFieldItem in request.FormFieldContent) {
-            content.Add(new StringContent(collection.ApplyVariables(formFieldItem.Value)) {
+        foreach (var formField in request.FormFieldContent) {
+            content.Add(new StringContent(collection.ApplyVariables(formField.Value)) {
                 Headers = { 
                     ContentType = null 
                 } 
-            }, collection.ApplyVariables(formFieldItem.Name));
+            }, collection.ApplyVariables(formField.Name));
         }
 
-        foreach (var formFileItem in request.FormFileContent) {
-            var filePath = collection.ApplyVariables(formFileItem.Value);
+        foreach (var formFile in request.FormFileContent) {
+            var filePath = collection.ApplyVariables(formFile.Value);
 
-            content.Add(new ByteArrayContent(File.ReadAllBytes(collection.ApplyVariables(formFileItem.Value))) {
+            content.Add(new ByteArrayContent(File.ReadAllBytes(collection.ApplyVariables(formFile.Value))) {
                 Headers = {
                     ContentType = new(MimeUtility.GetMimeMapping(filePath))
                 }
-            }, collection.ApplyVariables(formFileItem.Name));
+            }, collection.ApplyVariables(formFile.Name));
         }
 
         if (request.HasManualContentTypeHeader) {

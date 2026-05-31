@@ -75,6 +75,9 @@ public class RequestTemplateModelTests {
             HasManualContentTypeHeader = true,
             StringContent = "StringContent",
             FileContent = "FileContent",
+            FormFieldContent = {
+                new() { Name = "Name", Value = "Value" }
+            },
             PreExchangeScript = { Code = "PreExchangeScript" },
             PostExchangeScript = { Code = "PostExchangeScript" },
             OnExceptionScript = { Code = "OnExceptionScript" }
@@ -100,6 +103,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.HasManualContentTypeHeader, subject.HasManualContentTypeHeader.Value);
         Assert.Equal(request.StringContent, subject.StringContent.Value);
         Assert.Equal(request.FileContent, subject.FileContent.Value);
+        Assert.Equal(request.FormFieldContent.Count, subject.FormFieldContent.Count);
         Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
         Assert.Equal(request.PostExchangeScript.Code, subject.PostExchangeScript.Code.Value);
         Assert.Equal(request.OnExceptionScript.Code, subject.OnExceptionScript.Code.Value);
@@ -119,6 +123,7 @@ public class RequestTemplateModelTests {
             subject.HasManualContentTypeHeader,
             subject.StringContent,
             subject.FileContent,
+            subject.FormFieldContent,
             subject.PreExchangeScript,
             subject.PostExchangeScript,
             subject.OnExceptionScript
@@ -137,6 +142,8 @@ public class RequestTemplateModelTests {
         const bool hasManualContentTypeHeader = false;
         const string stringContent = "StringContent";
         const string fileContent = "./Data.json";
+        const string formFieldName = "Name";
+        const string formFieldValue = "Value";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -156,6 +163,9 @@ public class RequestTemplateModelTests {
             HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
+            FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -175,6 +185,8 @@ public class RequestTemplateModelTests {
         subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
+        subject.FormFieldContent[0].Name.Value = formFieldName;
+        subject.FormFieldContent[0].Value.Value = formFieldValue;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -190,6 +202,8 @@ public class RequestTemplateModelTests {
         Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
+        Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
+        Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
@@ -209,20 +223,23 @@ public class RequestTemplateModelTests {
             && message.Request.HasManualContentTypeHeader == hasManualContentTypeHeader
             && message.Request.StringContent == stringContent
             && message.Request.FileContent == fileContent
+            && message.Request.FormFieldContent[0].Name == formFieldName
+            && message.Request.FormFieldContent[0].Value == formFieldValue
             && message.Request.PreExchangeScript.Code == preExchangeScript
             && message.Request.PostExchangeScript.Code == postExchangeScript
             && message.Request.OnExceptionScript.Code == onExceptionScript));
     }
 
     [Theory]
-    [InlineData("", "", "", "", "", "")]
-    [InlineData("", "POST", "https://localhost", "Name", "JSON", "")]
-    [InlineData("Name", "", "https://localhost", "Name", "JSON", "")]
-    [InlineData("Name", "POST", "", "Name", "JSON", "")]
-    [InlineData("Name", "POST", "https://localhost", "", "JSON", "")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "", "")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "File", "")]
-    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent) {
+    [InlineData("", "", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "JSON", "", "")]
+    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "StringContent";
         const bool hasManualContentTypeHeader = false;
@@ -243,6 +260,9 @@ public class RequestTemplateModelTests {
             HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
+            FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -258,6 +278,7 @@ public class RequestTemplateModelTests {
         subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
+        subject.FormFieldContent[0].Name.Value = formFieldName;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -273,6 +294,8 @@ public class RequestTemplateModelTests {
         Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
+        Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
+        Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
@@ -292,6 +315,8 @@ public class RequestTemplateModelTests {
         const bool hasManualContentTypeHeader = false;
         const string stringContent = "StringContent";
         const string fileContent = "./Data.json";
+        const string formFieldName = "Name";
+        const string formFieldValue = "Value";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -311,6 +336,9 @@ public class RequestTemplateModelTests {
             HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
+            FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -330,6 +358,8 @@ public class RequestTemplateModelTests {
         subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
+        subject.FormFieldContent[0].Name.Value = formFieldName;
+        subject.FormFieldContent[0].Value.Value = formFieldValue;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -345,6 +375,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(hasManualContentTypeHeader, request.HasManualContentTypeHeader);
         Assert.Equal(stringContent, request.StringContent);
         Assert.Equal(fileContent, request.FileContent);
+        Assert.Equal(formFieldName, request.FormFieldContent[0].Name);
+        Assert.Equal(formFieldValue, request.FormFieldContent[0].Value);
         Assert.Equal(preExchangeScript, request.PreExchangeScript.Code);
         Assert.Equal(postExchangeScript, request.PostExchangeScript.Code);
         Assert.Equal(onExceptionScript, request.OnExceptionScript.Code);
@@ -358,6 +390,8 @@ public class RequestTemplateModelTests {
         Assert.False(subject.HasManualContentTypeHeader.IsModified);
         Assert.False(subject.StringContent.IsModified);
         Assert.False(subject.FileContent.IsModified);
+        Assert.False(subject.FormFieldContent[0].Name.IsModified);
+        Assert.False(subject.FormFieldContent[0].Value.IsModified);
         Assert.False(subject.PreExchangeScript.IsModified);
         Assert.False(subject.PostExchangeScript.IsModified);
         Assert.False(subject.OnExceptionScript.IsModified);
@@ -367,14 +401,15 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("", "", "", "", "", "")]
-    [InlineData("", "POST", "https://localhost", "Name", "JSON", "")]
-    [InlineData("Name", "", "https://localhost", "Name", "JSON", "")]
-    [InlineData("Name", "POST", "", "Name", "JSON", "")]
-    [InlineData("Name", "POST", "https://localhost", "", "JSON", "")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "", "")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "File", "")]
-    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent) {
+    [InlineData("", "", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "JSON", "", "")]
+    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName) {
         const string filePath = @"C:\Documents\External data requests.json";
         const bool hasManualContentTypeHeader = false;
         const string stringContent = "Content";
@@ -395,6 +430,9 @@ public class RequestTemplateModelTests {
             HasManualContentTypeHeader = true,
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
+            FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -410,6 +448,7 @@ public class RequestTemplateModelTests {
         subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
+        subject.FormFieldContent[0].Name.Value = formFieldName;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -425,6 +464,8 @@ public class RequestTemplateModelTests {
         Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
+        Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
+        Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);

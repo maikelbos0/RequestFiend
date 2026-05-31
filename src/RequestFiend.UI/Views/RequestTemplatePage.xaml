@@ -101,6 +101,13 @@
                             SemanticProperties.Description="Pick file content" />
                     </Grid>
 
+                    <views:NameValuePairCollectionView
+                        ItemsSource="{Binding FormFieldContent}"
+                        NameLabelText="Form field name"
+                        DeleteButtonText="Delete form field"
+                        AddButtonText="Add form field"
+                        Collection="{Binding Collection}"/>
+
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding UsesContent}">
                         <Switch IsToggled="{Binding HasManualContentTypeHeader.Value}"/>
 
