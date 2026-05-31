@@ -80,6 +80,9 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         IsModified = false;
     }
 
+    public List<NameValuePair> GetNameValuePairs()
+        => [.. this.Select(pair => pair.GetNameValuePair())];
+
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         if (e.OldItems != null) {
             foreach (var pair in e.OldItems.Cast<NameValuePairModel>()) {

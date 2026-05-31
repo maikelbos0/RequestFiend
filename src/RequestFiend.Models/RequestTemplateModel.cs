@@ -90,12 +90,12 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Name = Name.Value!;
         request.Method = Method.Value!;
         request.Url = Url.Value!;
-        request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        request.Headers = Headers.GetNameValuePairs();
         request.ContentType = GetContentType();
         request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         request.StringContent = StringContent.Value;
         request.FileContent = FileContent.Value;
-        request.FormFieldContent = [.. FormFieldContent.Select(formField => new NameValuePair() { Name = formField.Name.Value, Value = formField.Value.Value })];
+        request.FormFieldContent = FormFieldContent.GetNameValuePairs();
 
         PreExchangeScript.Update(request.PreExchangeScript);
         PostExchangeScript.Update(request.PostExchangeScript);
@@ -113,12 +113,12 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Name = Name.Value!;
         Request.Method = Method.Value!;
         Request.Url = Url.Value!;
-        Request.Headers = [.. Headers.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        Request.Headers = Headers.GetNameValuePairs();
         Request.ContentType = GetContentType();
         Request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         Request.StringContent = StringContent.Value;
         Request.FileContent = FileContent.Value;
-        Request.FormFieldContent = [.. FormFieldContent.Select(formField => new NameValuePair() { Name = formField.Name.Value, Value = formField.Value.Value })];
+        Request.FormFieldContent = FormFieldContent.GetNameValuePairs();
         PreExchangeScript.Update(Request.PreExchangeScript);
         PostExchangeScript.Update(Request.PostExchangeScript);
         OnExceptionScript.Update(Request.OnExceptionScript);

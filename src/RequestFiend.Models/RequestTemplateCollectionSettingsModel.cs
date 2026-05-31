@@ -66,8 +66,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
         Collection.DefaultUrl = DefaultUrl.Value;
-        Collection.Variables = [.. Variables.Select(variable => new NameValuePair() { Name = variable.Name.Value!, Value = variable.Value.Value!, })];
-        Collection.DefaultHeaders = [.. DefaultHeaders.Select(header => new NameValuePair() { Name = header.Name.Value!, Value = header.Value.Value! })];
+        Collection.Variables = Variables.GetNameValuePairs();
+        Collection.DefaultHeaders = DefaultHeaders.GetNameValuePairs();
         Collection.IgnoreRemoteCertificateNotAvailable = IgnoreRemoteCertificateNotAvailable.Value;
         Collection.IgnoreRemoteCertificateNameMismatch = IgnoreRemoteCertificateNameMismatch.Value;
         Collection.IgnoreRemoteCertificateChainErrors = IgnoreRemoteCertificateChainErrors.Value;

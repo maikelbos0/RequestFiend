@@ -31,4 +31,14 @@ public class NameValuePairModelTests {
         Assert.Equal(resetPair.Value, subject.Value.Value);
         Assert.False(subject.Value.IsModified);
     }
+
+    [Fact]
+    public void GetNameValuePair() {
+        var subject = new NameValuePairModel("Name", "Value", Validator.Required);
+
+        var result = subject.GetNameValuePair();
+
+        Assert.Equal(subject.Name.Value, result.Name);
+        Assert.Equal(subject.Value.Value, result.Value);
+    }
 }

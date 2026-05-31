@@ -25,4 +25,7 @@ public partial class NameValuePairModel : BoundModelBase, IValidatable {
         Name.Reset(() => pair.Name);
         Value.Reset(() => pair.Value);
     }
+
+    public NameValuePair GetNameValuePair()
+        => new() { Name = Name.Value, Value = Value.Value };
 }
