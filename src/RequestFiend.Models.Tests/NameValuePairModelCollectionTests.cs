@@ -52,7 +52,7 @@ public class NameValuePairModelCollectionTests {
         }
 
         for (var i = 0; i < pairsToAdd; i++) {
-            subject.Add(new("", "", Validator.Required));
+            subject.Add(new(() => "", () => "", Validator.Required));
         }
 
         Assert.Equal(expectedHasError, subject.HasError);
@@ -62,11 +62,11 @@ public class NameValuePairModelCollectionTests {
 
     [Fact]
     public void OnRemoveClicked() {
-        var pair = new NameValuePairModel("", "", Validator.Required);
+        var pair = new NameValuePairModel(() => "", () => "", Validator.Required);
         var subject = new NameValuePairModelCollection([], Validator.Required) {
-            new("", "", Validator.Required),
+            new(() => "", () => "", Validator.Required),
             pair,
-            new("", "", Validator.Required)
+            new(() => "", () => "", Validator.Required)
         };
 
         subject.OnRemoveClicked(pair);
@@ -108,7 +108,7 @@ public class NameValuePairModelCollectionTests {
     [Fact]
     public void Reset() {
         var subject = new NameValuePairModelCollection([], Validator.Required) {
-            new("", "", Validator.Required)
+            new(() => "", () => "", Validator.Required)
         };
 
         var collection = new List<NameValuePair>() {
@@ -116,7 +116,7 @@ public class NameValuePairModelCollectionTests {
             new() { Name = "SecondName", Value = "SecondValue" }
         };
 
-        subject.Add(new("", "", Validator.Required));
+        subject.Add(new(() => "", () => "", Validator.Required));
 
         subject.Reset(collection);
 
@@ -152,8 +152,8 @@ public class NameValuePairModelCollectionTests {
     [InlineData(3)]
     public void Reset_Throws_For_Wrong_Length(int collectionLength) {
         var subject = new NameValuePairModelCollection([], Validator.Required) {
-            new("", "", Validator.Required),
-            new("", "", Validator.Required)
+            new(() => "", () => "", Validator.Required),
+            new(() => "", () => "", Validator.Required)
         };
 
         var collection = Enumerable.Range(0, collectionLength)

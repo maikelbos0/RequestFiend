@@ -47,7 +47,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            Add(new(item, nameValidator));
+            Add(new(() => item.Name, () => item.Value, nameValidator));
         }
 
         unmodifiedCount = Count;
@@ -61,10 +61,10 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     [RelayCommand]
     public void OnAddClicked()
-        => Add(new("", "", nameValidator));
+        => Add("", "");
 
     public void Add(string name, string value) {
-        Add(new(name, value, nameValidator));
+        Add(new(() => name, () => value, nameValidator));
     }
 
     public void Reset(List<NameValuePair> collection) {
