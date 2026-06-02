@@ -39,8 +39,8 @@ public partial class UrlModel : BoundModelBase {
 
         BaseUrl.Value = baseUrl;
 
-        foreach (var (Name, Value) in parameters) {
-            Parameters.Add(Name, Value);
+        foreach (var (name, value) in parameters) {
+            Parameters.Add(name, value);
         }
     }
 

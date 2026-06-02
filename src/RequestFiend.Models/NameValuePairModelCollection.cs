@@ -61,7 +61,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     [RelayCommand]
     public void OnAddClicked()
-        => Add(new(nameValidator));
+        => Add(new("", "", nameValidator));
 
     public void Add(string name, string value) {
         Add(new(name, value, nameValidator));

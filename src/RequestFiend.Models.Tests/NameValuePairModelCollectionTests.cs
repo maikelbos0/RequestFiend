@@ -52,7 +52,7 @@ public class NameValuePairModelCollectionTests {
         }
 
         for (var i = 0; i < pairsToAdd; i++) {
-            subject.Add(new(Validator.Required));
+            subject.Add(new("", "", Validator.Required));
         }
 
         Assert.Equal(expectedHasError, subject.HasError);
@@ -61,23 +61,12 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void OnAddClicked() {
-        var subject = new NameValuePairModelCollection([], Validator.Required);
-
-        subject.OnAddClicked();
-
-        Assert.True(subject.IsModified);
-        Assert.True(subject.HasItems);
-        Assert.Single(subject);
-    }
-
-    [Fact]
     public void OnRemoveClicked() {
-        var pair = new NameValuePairModel(Validator.Required);
+        var pair = new NameValuePairModel("", "", Validator.Required);
         var subject = new NameValuePairModelCollection([], Validator.Required) {
-            new(Validator.Required),
+            new("", "", Validator.Required),
             pair,
-            new(Validator.Required)
+            new("", "", Validator.Required)
         };
 
         subject.OnRemoveClicked(pair);
@@ -89,22 +78,37 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void Add() {
-        var subject = new NameValuePairModelCollection([], Validator.VariableName) {
-            { "Variable name", "Variable value" }
-        };
+    public void OnAddClicked() {
+        var subject = new NameValuePairModelCollection([], Validator.Required);
 
-        Assert.True(subject.HasError);
+        subject.OnAddClicked();
+
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasItems);
 
         var pair = Assert.Single(subject);
-        Assert.Equal("Variable name", pair.Name.Value);
-        Assert.Equal("Variable value", pair.Value.Value);
+        Assert.Equal("", pair.Name.Value);
+        Assert.Equal("", pair.Value.Value);
+    }
+
+    [Fact]
+    public void Add() {
+        var subject = new NameValuePairModelCollection([], Validator.VariableName) {
+            { "Name", "Value" }
+        };
+
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasItems);
+
+        var pair = Assert.Single(subject);
+        Assert.Equal("Name", pair.Name.Value);
+        Assert.Equal("Value", pair.Value.Value);
     }
 
     [Fact]
     public void Reset() {
         var subject = new NameValuePairModelCollection([], Validator.Required) {
-            new(Validator.Required)
+            new("", "", Validator.Required)
         };
 
         var collection = new List<NameValuePair>() {
@@ -112,7 +116,7 @@ public class NameValuePairModelCollectionTests {
             new() { Name = "SecondName", Value = "SecondValue" }
         };
 
-        subject.Add(new(Validator.Required));
+        subject.Add(new("", "", Validator.Required));
 
         subject.Reset(collection);
 
@@ -148,8 +152,8 @@ public class NameValuePairModelCollectionTests {
     [InlineData(3)]
     public void Reset_Throws_For_Wrong_Length(int collectionLength) {
         var subject = new NameValuePairModelCollection([], Validator.Required) {
-            new(Validator.Required),
-            new(Validator.Required)
+            new("", "", Validator.Required),
+            new("", "", Validator.Required)
         };
 
         var collection = Enumerable.Range(0, collectionLength)
