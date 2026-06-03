@@ -8,9 +8,12 @@ public partial class NameValuePairModel : BoundModelBase, IValidatable {
     public ValidatableProperty<string> Name { get; }
     public ValidatableProperty<string> Value { get; }
 
-    public NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider, Func<string, bool> nameValidator) {
+    public NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider, Func<string, bool> nameValidator)
+        : this(nameProvider, valueProvider, nameValidator, _ => true) { }
+
+    public NameValuePairModel(Func<string> nameProvider, Func<string> valueProvider, Func<string, bool> nameValidator, Func<string, bool> valueValidator) {
         Name = new(nameProvider, nameValidator);
-        Value = new(valueProvider);
+        Value = new(valueProvider, valueValidator);
 
         ConfigureState([Name, Value]);
     }

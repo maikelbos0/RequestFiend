@@ -9,11 +9,16 @@ public class NameValuePairModelTests {
     public void Constructor() {
         const string name = "Name";
         const string value = "Value";
-        
-        var subject = new NameValuePairModel(() => name, () => value, Validator.Required);
+
+        var nameValidator = (string value) => true;
+        var valueValidator = (string value) => true;
+
+        var subject = new NameValuePairModel(() => name, () => value, nameValidator, valueValidator);
 
         Assert.Equal(name, subject.Name.Value);
+        Assert.Equal(nameValidator, subject.Name.Validator);
         Assert.Equal(value, subject.Value.Value);
+        Assert.Equal(valueValidator, subject.Value.Validator);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
 

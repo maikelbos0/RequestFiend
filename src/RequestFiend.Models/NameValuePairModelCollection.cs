@@ -11,6 +11,7 @@ namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel>, IValidatable {
     private readonly Func<string, bool> nameValidator;
+    private readonly Func<string, bool> valueValidator;
     private int unmodifiedCount;
 
     public bool HasError {
@@ -43,16 +44,19 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         }
     }
 
-    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator) {
+    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator) : this(collection, nameValidator, _ => true) { }
+
+    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, Func<string, bool> valueValidator) {
         CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            Add(new(() => item.Name, () => item.Value, nameValidator));
+            Add(new(() => item.Name, () => item.Value, nameValidator, valueValidator));
         }
 
         unmodifiedCount = Count;
         IsModified = false;
         this.nameValidator = nameValidator;
+        this.valueValidator = valueValidator;
     }
 
     [RelayCommand]
@@ -64,7 +68,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         => Add("", "");
 
     public void Add(string name, string value) {
-        Add(new(() => name, () => value, nameValidator));
+        Add(new(() => name, () => value, nameValidator, valueValidator));
     }
 
     public void Reset(List<NameValuePair> collection) {
