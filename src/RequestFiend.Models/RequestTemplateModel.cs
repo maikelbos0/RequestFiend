@@ -68,7 +68,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         HasManualContentTypeHeader = new(() => request.HasManualContentTypeHeader);
         StringContent = new(() => request.StringContent);
         FileContent = new(() => request.FileContent, Validator.Conditional(() => UsesFileContent, Validator.FilePath));
-        FormFieldContent = new(request.FormFieldContent, Validator.Required);
+        FormFieldContent = new(request.FormFieldContent, Validator.Conditional(() => UsesFormDataContent, Validator.Required));
         PreExchangeScript = new(request.PreExchangeScript);
         PostExchangeScript = new(request.PostExchangeScript);
         OnExceptionScript = new(request.OnExceptionScript);

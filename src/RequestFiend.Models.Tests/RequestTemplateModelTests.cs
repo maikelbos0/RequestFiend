@@ -242,7 +242,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name")]
     [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name")]
     [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "JSON", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "")]
     public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "StringContent";
@@ -410,7 +410,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name")]
     [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name")]
     [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "JSON", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "")]
     public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName) {
         const string filePath = @"C:\Documents\External data requests.json";
         const bool hasManualContentTypeHeader = false;
