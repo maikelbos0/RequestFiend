@@ -6,7 +6,6 @@ using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -67,8 +66,8 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
         HasManualContentTypeHeader = new(() => request.HasManualContentTypeHeader);
         StringContent = new(() => request.StringContent);
-        FileContent = new(() => request.FileContent, Validator.Conditional(() => UsesFileContent, Validator.FilePath));
-        FormFieldContent = new(request.FormFieldContent, Validator.Conditional(() => UsesFormDataContent, Validator.Required));
+        FileContent = new(() => request.FileContent, Validator.Conditional(() => GetContentType() == Core.ContentType.File, Validator.FilePath), ContentType);
+        FormFieldContent = new(request.FormFieldContent, Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.Required), ContentType);
         PreExchangeScript = new(request.PreExchangeScript);
         PostExchangeScript = new(request.PostExchangeScript);
         OnExceptionScript = new(request.OnExceptionScript);

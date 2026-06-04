@@ -32,7 +32,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         UpdateState();
 
         foreach (var dependency in dependencies) {
-            dependency.PropertyChanged += (_, _) => UpdateState();
+            dependency.PropertyChanged += OnDependencyChanged;
         }
     }
 

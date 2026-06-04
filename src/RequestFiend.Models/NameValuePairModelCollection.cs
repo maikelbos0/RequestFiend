@@ -12,6 +12,7 @@ namespace RequestFiend.Models;
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel>, IValidatable {
     private readonly Func<string, bool> nameValidator;
     private readonly Func<string, bool> valueValidator;
+    private readonly IValidatable[] dependencies;
     private int unmodifiedCount;
 
     public bool HasError {
@@ -44,19 +45,21 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         }
     }
 
-    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator) : this(collection, nameValidator, _ => true) { }
+    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, params IValidatable[] dependencies) 
+        : this(collection, nameValidator, _ => true, dependencies) { }
 
-    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, Func<string, bool> valueValidator) {
+    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, Func<string, bool> valueValidator, params IValidatable[] dependencies) {
         CollectionChanged += OnCollectionChanged;
 
         foreach (var item in collection) {
-            Add(new(() => item.Name, () => item.Value, nameValidator, valueValidator));
+            Add(new(() => item.Name, () => item.Value, nameValidator, valueValidator, dependencies));
         }
 
         unmodifiedCount = Count;
         IsModified = false;
         this.nameValidator = nameValidator;
         this.valueValidator = valueValidator;
+        this.dependencies = dependencies;
     }
 
     [RelayCommand]
@@ -68,7 +71,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         => Add("", "");
 
     public void Add(string name, string value) {
-        Add(new(() => name, () => value, nameValidator, valueValidator));
+        Add(new(() => name, () => value, nameValidator, valueValidator, dependencies));
     }
 
     public void Reset(List<NameValuePair> collection) {
