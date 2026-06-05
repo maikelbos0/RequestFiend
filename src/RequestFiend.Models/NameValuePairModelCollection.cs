@@ -63,11 +63,11 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     }
 
     [RelayCommand]
-    public void OnRemoveClicked(NameValuePairModel pair)
-        => Remove(pair);
+    public new void Remove(NameValuePairModel pair)
+        => base.Remove(pair);
 
     [RelayCommand]
-    public void OnAddClicked()
+    public void Add()
         => Add("", "");
 
     public void Add(string name, string value) {

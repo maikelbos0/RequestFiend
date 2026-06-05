@@ -63,7 +63,7 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void OnRemoveClicked() {
+    public void Remove() {
         var subject = new NameValuePairModelCollection([
             new() { Name = "", Value = "" },
             new() { Name = "", Value = "" },
@@ -72,7 +72,7 @@ public class NameValuePairModelCollectionTests {
 
         var pair = subject[1];
 
-        subject.OnRemoveClicked(pair);
+        subject.Remove(pair);
 
         Assert.True(subject.IsModified);
         Assert.True(subject.HasItems);
@@ -81,13 +81,13 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void OnAddClicked() {
+    public void Add_Empty() {
         var nameValidator = (string value) => true;
         var valueValidator = (string value) => true;
 
         var subject = new NameValuePairModelCollection([], nameValidator, valueValidator);
 
-        subject.OnAddClicked();
+        subject.Add();
 
         Assert.True(subject.IsModified);
         Assert.True(subject.HasItems);
@@ -100,7 +100,7 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
-    public void Add() {
+    public void Add_String_Values() {
         const string name = "Name";
         const string value = "Value";
 
