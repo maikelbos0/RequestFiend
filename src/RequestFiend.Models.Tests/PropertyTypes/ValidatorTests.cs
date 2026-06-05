@@ -14,14 +14,6 @@ public class ValidatorTests {
     }
 
     [Theory]
-    [InlineData("", false)]
-    [InlineData("./Values.json", false)]
-    [InlineData("./Data.json", true)]
-    public void FilePath(string value, bool expectedResult) {
-        Assert.Equal(expectedResult, Validator.FilePath(value));
-    }
-
-    [Theory]
     [InlineData("", true)]
     [InlineData(" ", false)]
     [InlineData("Value", false)]

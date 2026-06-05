@@ -26,14 +26,4 @@
 		<ProjectReference Include="..\RequestFiend.Models\RequestFiend.Models.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Remove="Data.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="Data.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
 </Project>
