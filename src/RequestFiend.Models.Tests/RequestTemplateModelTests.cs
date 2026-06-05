@@ -691,6 +691,52 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
+    public async Task PickFormFileContent() {
+        const string filePath = @"C:\Documents\External data requests.json";
+        const string fileContents = "FileContent";
+
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(fileContents));
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "POST",
+            Url = "https://localhost"
+        };
+        var pair = new NameValuePairModel(() => "Name", () => "PreviousValue", _ => true);
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+
+        await subject.PickFormFileContent(pair);
+
+        Assert.Equal(fileContents, pair.Value.Value);
+        messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == pair.Value));
+    }
+
+    [Fact]
+    public async Task PickFormFileContent_Does_Nothing_Without_Selected_File() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns((Storage.FileResult?)null);
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "POST",
+            Url = "https://localhost"
+        };
+
+        var pair = new NameValuePairModel(() => "Name", () => "PreviousValue", _ => true);
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+
+        await subject.PickFormFileContent(pair);
+
+        Assert.Equal("PreviousValue", pair.Value.Value);
+        messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
+    }
+
+    [Fact]
     public async Task PickFileContent() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string fileContents = "FileContent";
