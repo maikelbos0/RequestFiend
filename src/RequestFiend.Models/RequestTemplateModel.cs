@@ -39,6 +39,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     public ValidatableProperty<string> StringContent { get; }
     public ValidatableProperty<string> FileContent { get; }
     public NameValuePairModelCollection FormFieldContent { get; }
+    public NameValuePairModelCollection FormFileContent { get; }
     public ScriptModel PreExchangeScript { get; }
     public ScriptModel PostExchangeScript { get; }
     public ScriptModel OnExceptionScript { get; }
@@ -68,6 +69,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         StringContent = new(() => request.StringContent);
         FileContent = new(() => request.FileContent, Validator.Conditional(() => GetContentType() == Core.ContentType.File, Validator.FilePath), ContentType);
         FormFieldContent = new(request.FormFieldContent, Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.Required), ContentType);
+        FormFileContent = new(request.FormFileContent, Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.Required), Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.FilePath), ContentType);
         PreExchangeScript = new(request.PreExchangeScript);
         PostExchangeScript = new(request.PostExchangeScript);
         OnExceptionScript = new(request.OnExceptionScript);
@@ -75,7 +77,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         ContentType.PropertyChanged += OnContentTypeChanged;
         SetContentTypeUsage();
 
-        ConfigureState([Name, Method, Url, Headers, ContentType, HasManualContentTypeHeader, StringContent, FileContent, FormFieldContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
+        ConfigureState([Name, Method, Url, Headers, ContentType, HasManualContentTypeHeader, StringContent, FileContent, FormFieldContent, FormFileContent, PreExchangeScript, PostExchangeScript, OnExceptionScript]);
     }
 
     [RelayCommand]
@@ -95,7 +97,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.StringContent = StringContent.Value;
         request.FileContent = FileContent.Value;
         request.FormFieldContent = FormFieldContent.GetNameValuePairs();
-
+        request.FormFileContent = FormFileContent.GetNameValuePairs();
         PreExchangeScript.Update(request.PreExchangeScript);
         PostExchangeScript.Update(request.PostExchangeScript);
         OnExceptionScript.Update(request.OnExceptionScript);
@@ -118,6 +120,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.StringContent = StringContent.Value;
         Request.FileContent = FileContent.Value;
         Request.FormFieldContent = FormFieldContent.GetNameValuePairs();
+        Request.FormFileContent = FormFileContent.GetNameValuePairs();
         PreExchangeScript.Update(Request.PreExchangeScript);
         PostExchangeScript.Update(Request.PostExchangeScript);
         OnExceptionScript.Update(Request.OnExceptionScript);
@@ -131,6 +134,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         FileContent.Reset();
         StringContent.Reset();
         FormFieldContent.Reset(Request.FormFieldContent);
+        FormFileContent.Reset(Request.FormFileContent);
         PreExchangeScript.Reset();
         PostExchangeScript.Reset();
         OnExceptionScript.Reset();

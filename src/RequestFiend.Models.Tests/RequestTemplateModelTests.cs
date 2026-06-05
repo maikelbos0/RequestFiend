@@ -81,7 +81,13 @@ public class RequestTemplateModelTests {
             StringContent = "StringContent",
             FileContent = "FileContent",
             FormFieldContent = {
-                new() { Name = "Name", Value = "Value" }
+                new() { Name = "Name", Value = "Value" },
+                new() { Name = "Key", Value = "Value" }
+            },
+            FormFileContent = {
+                new() { Name = "Data", Value = "Value" },
+                new() { Name = "File", Value = "Value" },
+                new() { Name = "Image", Value = "Value" }
             },
             PreExchangeScript = { Code = "PreExchangeScript" },
             PostExchangeScript = { Code = "PostExchangeScript" },
@@ -109,6 +115,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(request.StringContent, subject.StringContent.Value);
         Assert.Equal(request.FileContent, subject.FileContent.Value);
         Assert.Equal(request.FormFieldContent.Count, subject.FormFieldContent.Count);
+        Assert.Equal(request.FormFileContent.Count, subject.FormFileContent.Count);
         Assert.Equal(request.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
         Assert.Equal(request.PostExchangeScript.Code, subject.PostExchangeScript.Code.Value);
         Assert.Equal(request.OnExceptionScript.Code, subject.OnExceptionScript.Code.Value);
@@ -130,6 +137,7 @@ public class RequestTemplateModelTests {
             subject.StringContent,
             subject.FileContent,
             subject.FormFieldContent,
+            subject.FormFileContent,
             subject.PreExchangeScript,
             subject.PostExchangeScript,
             subject.OnExceptionScript
@@ -150,6 +158,8 @@ public class RequestTemplateModelTests {
         const string fileContent = "./Data.json";
         const string formFieldName = "Name";
         const string formFieldValue = "Value";
+        const string formFiledName = "Name";
+        const string formFileValue = "Value";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -168,6 +178,9 @@ public class RequestTemplateModelTests {
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
             FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            FormFileContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
@@ -191,6 +204,8 @@ public class RequestTemplateModelTests {
         subject.FileContent.Value = fileContent;
         subject.FormFieldContent[0].Name.Value = formFieldName;
         subject.FormFieldContent[0].Value.Value = formFieldValue;
+        subject.FormFileContent[0].Name.Value = formFiledName;
+        subject.FormFileContent[0].Value.Value = formFileValue;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -208,6 +223,8 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
         Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
+        Assert.Equal("PreviousName", request.FormFileContent[0].Name);
+        Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
@@ -229,23 +246,28 @@ public class RequestTemplateModelTests {
             && message.Request.FileContent == fileContent
             && message.Request.FormFieldContent[0].Name == formFieldName
             && message.Request.FormFieldContent[0].Value == formFieldValue
+            && message.Request.FormFileContent[0].Name == formFiledName
+            && message.Request.FormFileContent[0].Value == formFileValue
             && message.Request.PreExchangeScript.Code == preExchangeScript
             && message.Request.PostExchangeScript.Code == postExchangeScript
             && message.Request.OnExceptionScript.Code == onExceptionScript));
     }
 
     [Theory]
-    [InlineData("", "", "", "", "", "", "")]
-    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name")]
-    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name")]
-    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "")]
-    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName) {
+    [InlineData("", "", "", "", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "", "Name", "./Data.json")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "", "./Data.json")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "Name", "")]
+    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
         const string filePath = @"C:\Documents\External data requests.json";
         const string stringContent = "StringContent";
+        const string formFieldValue = "Value";
         const bool hasManualContentTypeHeader = false;
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
@@ -267,6 +289,9 @@ public class RequestTemplateModelTests {
             FormFieldContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
+            FormFileContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -283,6 +308,9 @@ public class RequestTemplateModelTests {
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.FormFieldContent[0].Name.Value = formFieldName;
+        subject.FormFieldContent[0].Value.Value = formFieldValue;
+        subject.FormFileContent[0].Name.Value = formFileName;
+        subject.FormFileContent[0].Value.Value = formFileValue;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -300,6 +328,8 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
         Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
+        Assert.Equal("PreviousName", request.FormFileContent[0].Name);
+        Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
@@ -321,6 +351,8 @@ public class RequestTemplateModelTests {
         const string fileContent = "./Data.json";
         const string formFieldName = "Name";
         const string formFieldValue = "Value";
+        const string formFileName = "Name";
+        const string formFileValue = "Value";
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -339,6 +371,9 @@ public class RequestTemplateModelTests {
             StringContent = "PreviousStringContent",
             FileContent = "PreviousFileContent",
             FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            FormFileContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
@@ -362,6 +397,8 @@ public class RequestTemplateModelTests {
         subject.FileContent.Value = fileContent;
         subject.FormFieldContent[0].Name.Value = formFieldName;
         subject.FormFieldContent[0].Value.Value = formFieldValue;
+        subject.FormFileContent[0].Name.Value = formFileName;
+        subject.FormFileContent[0].Value.Value = formFileValue;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -379,6 +416,8 @@ public class RequestTemplateModelTests {
         Assert.Equal(fileContent, request.FileContent);
         Assert.Equal(formFieldName, request.FormFieldContent[0].Name);
         Assert.Equal(formFieldValue, request.FormFieldContent[0].Value);
+        Assert.Equal(formFileName, request.FormFileContent[0].Name);
+        Assert.Equal(formFileValue, request.FormFileContent[0].Value);
         Assert.Equal(preExchangeScript, request.PreExchangeScript.Code);
         Assert.Equal(postExchangeScript, request.PostExchangeScript.Code);
         Assert.Equal(onExceptionScript, request.OnExceptionScript.Code);
@@ -394,6 +433,8 @@ public class RequestTemplateModelTests {
         Assert.False(subject.FileContent.IsModified);
         Assert.False(subject.FormFieldContent[0].Name.IsModified);
         Assert.False(subject.FormFieldContent[0].Value.IsModified);
+        Assert.False(subject.FormFileContent[0].Name.IsModified);
+        Assert.False(subject.FormFileContent[0].Value.IsModified);
         Assert.False(subject.PreExchangeScript.IsModified);
         Assert.False(subject.PostExchangeScript.IsModified);
         Assert.False(subject.OnExceptionScript.IsModified);
@@ -403,18 +444,21 @@ public class RequestTemplateModelTests {
     }
 
     [Theory]
-    [InlineData("", "", "", "", "", "", "")]
-    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name")]
-    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name")]
-    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name")]
-    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "")]
-    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName) {
+    [InlineData("", "", "", "", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "", "Name", "./Data.json")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "", "./Data.json")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "Name", "")]
+    public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
         const string filePath = @"C:\Documents\External data requests.json";
-        const bool hasManualContentTypeHeader = false;
         const string stringContent = "Content";
+        const string formFieldValue = "Value";
+        const bool hasManualContentTypeHeader = false;
         const string preExchangeScript = "PreExchangeScript";
         const string postExchangeScript = "PostExchangeScript";
         const string onExceptionScript = "OnExceptionScript";
@@ -435,6 +479,9 @@ public class RequestTemplateModelTests {
             FormFieldContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
+            FormFileContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
             PreExchangeScript = { Code = "PreviousPreExchangeScript" },
             PostExchangeScript = { Code = "PreviousPostExchangeScript" },
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
@@ -451,6 +498,9 @@ public class RequestTemplateModelTests {
         subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.FormFieldContent[0].Name.Value = formFieldName;
+        subject.FormFieldContent[0].Value.Value = formFieldValue;
+        subject.FormFileContent[0].Name.Value = formFileName;
+        subject.FormFileContent[0].Value.Value = formFileValue;
         subject.PreExchangeScript.Code.Value = preExchangeScript;
         subject.PostExchangeScript.Code.Value = postExchangeScript;
         subject.OnExceptionScript.Code.Value = onExceptionScript;
@@ -468,6 +518,8 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousFileContent", request.FileContent);
         Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
         Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
+        Assert.Equal("PreviousName", request.FormFileContent[0].Name);
+        Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
         Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
         Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
         Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);

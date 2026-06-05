@@ -109,6 +109,14 @@
                         Collection="{Binding Collection}"
                         IsVisible="{Binding UsesFormDataContent}"/>
 
+                    <views:NameValuePairCollectionView
+                        ItemsSource="{Binding FormFileContent}"
+                        NameLabelText="Form file name"
+                        DeleteButtonText="Delete form file"
+                        AddButtonText="Add form file"
+                        Collection="{Binding Collection}"
+                        IsVisible="{Binding UsesFormDataContent}"/>
+
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding UsesContent}">
                         <Switch IsToggled="{Binding HasManualContentTypeHeader.Value}"/>
 
