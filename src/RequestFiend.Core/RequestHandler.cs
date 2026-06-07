@@ -32,6 +32,8 @@ public class RequestHandler : IRequestHandler {
         CancellationToken cancellationToken
     ) {
         var context = new RequestContext(collection.GetSessionData(), collection.GetSessionVariables(), loggerFactory.CreateLogger<RequestContext>());
+        Timer? timer = null;
+        Stopwatch? stopwatch = null;
 
         serverCertificateValidationHandler.Initialize(collection);
 
@@ -52,18 +54,17 @@ public class RequestHandler : IRequestHandler {
                 cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(requestExchangeOptions.RequestTimeoutInSeconds.Value));
             }
 
-            using var timer = new Timer() {
-                Interval = 100
-            };
-
             if (requestExchangeListener != null) {
-                var stopwatch = Stopwatch.StartNew();
+                stopwatch = new Stopwatch();
+                timer = new Timer(100);
                 timer.Elapsed += (_, _) => requestExchangeListener.OnRequestElapsed(stopwatch.Elapsed);
                 timer.Start();
+                stopwatch.Start();
             }
 
             context.Response = await httpClient.SendAsync(context.Request, cancellationTokenSource.Token);
-            timer.Stop();
+
+            await CompleteRequestElapsed();
 
             if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PostExchangeScript, context, cancellationToken);
@@ -74,6 +75,8 @@ public class RequestHandler : IRequestHandler {
             }
         }
         catch (Exception exception) {
+            await CompleteRequestElapsed();
+
             context.Exception = exception;
 
             if (requestExchangeOptions.AllowScriptEvaluation) {
@@ -91,5 +94,15 @@ public class RequestHandler : IRequestHandler {
         }
 
         return context;
+
+        async Task CompleteRequestElapsed() {
+            stopwatch?.Stop();
+            timer?.Stop();
+            timer?.Dispose();
+
+            if (requestExchangeListener != null && stopwatch != null) {
+                await requestExchangeListener.OnRequestElapsed(stopwatch.Elapsed);
+            }
+        }
     }
 }

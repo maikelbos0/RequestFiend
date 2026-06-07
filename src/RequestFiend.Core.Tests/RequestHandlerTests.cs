@@ -111,6 +111,7 @@ public class RequestHandlerTests {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
+            await requestPipelineListener.Received().OnRequestElapsed(Arg.Any<TimeSpan>());
             await scriptEvaluator.Evaluate(request.PostExchangeScript, result, CancellationToken.None);
             await requestPipelineListener.OnResponseReceived(Arg.Is<HttpResponseMessage>(response => response == result.Response));
         });
@@ -144,6 +145,7 @@ public class RequestHandlerTests {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
+            await requestPipelineListener.Received().OnRequestElapsed(Arg.Any<TimeSpan>());
             await scriptEvaluator.Evaluate(request.OnExceptionScript, result, CancellationToken.None);
             await requestPipelineListener.OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
         });
