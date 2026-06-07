@@ -18,6 +18,17 @@
                     FontSize="32"
                     LineBreakMode="TailTruncation"/>
 
+                <Label
+                    x:Name="SuccessLabel"
+	                BackgroundColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"
+	                FontSize="18"
+	                HorizontalOptions="Fill"
+	                HorizontalTextAlignment="Center"
+                    VerticalTextAlignment="Center"
+	                Padding="25,10,25,10"
+	                IsVisible="False"
+                    Grid.ColumnSpan="2"/>
+
                 <Button
                     BindingContext="{x:Reference Shell}"
                     Text="✕"
@@ -31,18 +42,6 @@
                     Grid.Column="1"
                     IsVisible="{Binding CurrentItem.StyleId, Converter={toolkit:IsNotNullConverter}}"/>
             </Grid>
-
-            <Label
-                x:Name="SuccessLabel"
-	            BackgroundColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}"
-	            FontSize="18"
-	            HorizontalOptions="Fill"
-	            HorizontalTextAlignment="Center"
-                VerticalTextAlignment="Center"
-	            Padding="25,10,25,10"
-	            IsVisible="False"
-                AbsoluteLayout.LayoutFlags="All"
-                AbsoluteLayout.LayoutBounds="0,0,1,1"/>
         </AbsoluteLayout>
     </Shell.TitleView>
 
