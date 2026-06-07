@@ -23,11 +23,12 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     private readonly RequestTemplate request;
     private CancellationTokenSource? executingCancellationTokenSource;
 
-    public string Id { get; } = Guid.NewGuid().ToString();
+public string Id { get; } = Guid.NewGuid().ToString();
     [ObservableProperty] public partial bool IsExecuting { get; set; }
     [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
     [ObservableProperty] public partial HttpResponseModel? Response { get; set; }
     [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
+    [ObservableProperty] public partial double? RequestSecondsElapsed { get; set; }
 
     public RequestModel(
         IMessageService messageService,
@@ -68,7 +69,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         Request = null;
         Response = null;
         Exception = null;
-        RequestDurationInSeconds = null;
+        RequestSecondsElapsed = null;
 
         var scriptEvaluationMode = preferencesService.GetScriptEvaluationMode();
         var options = new RequestExchangeOptions(
@@ -146,6 +147,11 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
     public Task OnExceptionCaught(Exception exception) {
         var model = ExceptionModel.Create(exception);
         userInterface.BeginInvokeOnMainThread(() => Exception = model);
+        return Task.CompletedTask;
+    }
+
+    public Task OnRequestSecondsElapsed(double requestSecondsElapsed) {
+        RequestSecondsElapsed = requestSecondsElapsed;
         return Task.CompletedTask;
     }
 

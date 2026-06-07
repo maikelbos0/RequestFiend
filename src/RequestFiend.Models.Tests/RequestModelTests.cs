@@ -246,11 +246,10 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var expectedRequest = new HttpRequestMessage();
-
+        
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
-        await subject.OnRequestCreated(expectedRequest);
+        await subject.OnRequestCreated(new HttpRequestMessage());
 
         Assert.NotNull(subject.Request);
     }
@@ -269,11 +268,10 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var expectedResponse = new HttpResponseMessage();
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
-        await subject.OnResponseReceived(expectedResponse);
+        await subject.OnResponseReceived(new HttpResponseMessage());
 
         Assert.NotNull(subject.Response);
     }
@@ -292,12 +290,35 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
+        
+        var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
+
+        await subject.OnExceptionCaught(new Exception());
+
+        Assert.NotNull(subject.Exception);
+    }
+
+    [Fact]
+    public async Task OnRequestSecondsElapsed() {
+        const string filePath = @"C:\Documents\External data requests.json";
+        const double requestSecondsElapsed = 5.5;
+
+        var userInterface = Substitute.For<IUserInterface>();
+        userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = [request]
+        };
         var expectedException = new Exception();
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
-        await subject.OnExceptionCaught(expectedException);
+        await subject.OnRequestSecondsElapsed(requestSecondsElapsed);
 
-        Assert.NotNull(subject.Exception);
+        Assert.Equal(requestSecondsElapsed, subject.RequestSecondsElapsed);
     }
 }

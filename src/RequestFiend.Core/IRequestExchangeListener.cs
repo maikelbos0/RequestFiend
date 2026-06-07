@@ -8,4 +8,5 @@ public interface IRequestExchangeListener {
     Task OnRequestCreated(HttpRequestMessage request);
     Task OnResponseReceived(HttpResponseMessage response);
     Task OnExceptionCaught(Exception exception);
+    Task OnRequestSecondsElapsed(double requestSecondsElapsed);
 }
