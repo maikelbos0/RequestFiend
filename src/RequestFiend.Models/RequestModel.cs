@@ -28,7 +28,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
     [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
     [ObservableProperty] public partial HttpResponseModel? Response { get; set; }
     [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
-    [ObservableProperty] public partial TimeSpan? RequestElapsed { get; set; }
+    [ObservableProperty] public partial string? RequestElapsed { get; set; }
 
     public RequestModel(
         IMessageService messageService,
@@ -151,7 +151,19 @@ public string Id { get; } = Guid.NewGuid().ToString();
     }
 
     public Task OnRequestElapsed(TimeSpan requestElapsed) {
-        RequestElapsed = TimeSpan.FromMilliseconds(Math.Round(requestElapsed.TotalMilliseconds));
+        if (requestElapsed.Days > 0) {
+            RequestElapsed = requestElapsed.ToString("%d\\.hh\\:mm\\:ss\\.fff");
+        }
+        else if (requestElapsed.Hours > 0) {
+            RequestElapsed = requestElapsed.ToString("%h\\:mm\\:ss\\.fff");
+        }
+        else if (requestElapsed.Minutes > 0) {
+            RequestElapsed = requestElapsed.ToString("%m\\:ss\\.fff");
+        }
+        else {
+            RequestElapsed = requestElapsed.ToString("%s\\.fff");
+        }
+
         return Task.CompletedTask;
     }
 

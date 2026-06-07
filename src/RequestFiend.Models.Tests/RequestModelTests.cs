@@ -298,8 +298,13 @@ public class RequestModelTests {
         Assert.NotNull(subject.Exception);
     }
 
-    [Fact]
-    public async Task OnRequestElapsed() {
+    [Theory]
+    [InlineData(0.0454, "0.045")]
+    [InlineData(5.0454, "5.045")]
+    [InlineData(125.0454, "2:025.045")]
+    [InlineData(3725.0454, "1:02:05.045")]
+    [InlineData(176525.0454, "2.01:02:05.045")]
+    public async Task OnRequestElapsed(double elapsedSeconds, string expectedResult) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var userInterface = Substitute.For<IUserInterface>();
@@ -316,8 +321,8 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
-        await subject.OnRequestElapsed(TimeSpan.FromSeconds(5.51789));
+        await subject.OnRequestElapsed(TimeSpan.FromSeconds(elapsedSeconds));
 
-        Assert.Equal(TimeSpan.FromSeconds(5.518), subject.RequestElapsed);
+        Assert.Equal(expectedResult, subject.RequestElapsed);
     }
 }

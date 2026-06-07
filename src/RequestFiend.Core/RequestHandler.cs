@@ -56,7 +56,7 @@ public class RequestHandler : IRequestHandler {
 
             if (requestExchangeListener != null) {
                 stopwatch = new Stopwatch();
-                timer = new Timer(100);
+                timer = new Timer(42);
                 timer.Elapsed += (_, _) => requestExchangeListener.OnRequestElapsed(stopwatch.Elapsed);
                 timer.Start();
                 stopwatch.Start();
