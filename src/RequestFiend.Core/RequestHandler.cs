@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Timer = System.Timers.Timer;
 
 namespace RequestFiend.Core;
 
@@ -50,7 +52,18 @@ public class RequestHandler : IRequestHandler {
                 cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(requestExchangeOptions.RequestTimeoutInSeconds.Value));
             }
 
+            using var timer = new Timer() {
+                Interval = 100
+            };
+
+            if (requestExchangeListener != null) {
+                var stopwatch = Stopwatch.StartNew();
+                timer.Elapsed += (_, _) => requestExchangeListener.OnRequestElapsed(stopwatch.Elapsed);
+                timer.Start();
+            }
+
             context.Response = await httpClient.SendAsync(context.Request, cancellationTokenSource.Token);
+            timer.Stop();
 
             if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PostExchangeScript, context, cancellationToken);

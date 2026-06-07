@@ -299,9 +299,8 @@ public class RequestModelTests {
     }
 
     [Fact]
-    public async Task OnRequestSecondsElapsed() {
+    public async Task OnRequestElapsed() {
         const string filePath = @"C:\Documents\External data requests.json";
-        const double requestSecondsElapsed = 5.5;
 
         var userInterface = Substitute.For<IUserInterface>();
         userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
@@ -317,8 +316,8 @@ public class RequestModelTests {
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
-        await subject.OnRequestSecondsElapsed(requestSecondsElapsed);
+        await subject.OnRequestElapsed(TimeSpan.FromSeconds(5.51789));
 
-        Assert.Equal(requestSecondsElapsed, subject.RequestSecondsElapsed);
+        Assert.Equal(TimeSpan.FromSeconds(5.518), subject.RequestElapsed);
     }
 }

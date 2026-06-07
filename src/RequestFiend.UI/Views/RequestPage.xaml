@@ -24,7 +24,6 @@
 
             <Border IsVisible="{Binding Request, Converter={toolkit:IsNotNullConverter}}">
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-
                     <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
                         <Label Text="Method" Style="{StaticResource EntryLabel}"/>
 
@@ -53,6 +52,10 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                    <Label Text="Elapsed time" Style="{StaticResource EntryLabel}"/>
+
+                    <Entry Text="{Binding RequestElapsed}" IsReadOnly="True" />
                 </VerticalStackLayout>
             </Border>
 

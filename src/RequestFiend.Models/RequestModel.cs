@@ -28,7 +28,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
     [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
     [ObservableProperty] public partial HttpResponseModel? Response { get; set; }
     [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
-    [ObservableProperty] public partial double? RequestSecondsElapsed { get; set; }
+    [ObservableProperty] public partial TimeSpan? RequestElapsed { get; set; }
 
     public RequestModel(
         IMessageService messageService,
@@ -69,7 +69,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
         Request = null;
         Response = null;
         Exception = null;
-        RequestSecondsElapsed = null;
+        RequestElapsed = null;
 
         var scriptEvaluationMode = preferencesService.GetScriptEvaluationMode();
         var options = new RequestExchangeOptions(
@@ -150,8 +150,8 @@ public string Id { get; } = Guid.NewGuid().ToString();
         return Task.CompletedTask;
     }
 
-    public Task OnRequestSecondsElapsed(double requestSecondsElapsed) {
-        RequestSecondsElapsed = requestSecondsElapsed;
+    public Task OnRequestElapsed(TimeSpan requestElapsed) {
+        RequestElapsed = TimeSpan.FromMilliseconds(Math.Round(requestElapsed.TotalMilliseconds));
         return Task.CompletedTask;
     }
 
