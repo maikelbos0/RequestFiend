@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg viewBox="0 0 700 700" width="700" height="700" version="1.1" xmlns="http://www.w3.org/2000/svg">
-	<path fill="#00A2C9" d="M 50 100 Q 0 300, 200 600 Q 100 300, 150 200 L 600 200 L 700 150 L 600 100 Z"/>
-	<path fill="#4B6EAE" d="M 650 250 Q 700 450, 500 650 Q 600 450, 550 350 L 100 350 L 0 300 L 100 250 Z"/>
+<svg viewBox="0 0 800 800" width="800" height="800" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<path fill="#00A2C9" d="M 200 150 Q 100 400, 350 600 Q 250 400, 300 250 L 600 250 L 700 200 L 600 150 Z"/>
+	<path fill="#3B5EBE" d="M 600 300 Q 650 550, 450 600 Q 550 500, 500 400 L 200 400 L 100 350 L 200 300 Z"/>
 </svg>
