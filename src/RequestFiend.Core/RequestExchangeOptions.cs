@@ -1,3 +1,3 @@
 ﻿namespace RequestFiend.Core;
 
-public record RequestExchangeOptions(bool AllowScriptEvaluation);
+public record RequestExchangeOptions(bool AllowScriptEvaluation, int? RequestTimeoutInSeconds);

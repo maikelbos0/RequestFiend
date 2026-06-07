@@ -54,10 +54,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
 
     [RelayCommand]
     public async Task Execute() {
-        var requestTimeoutInSeconds = preferencesService.GetRequestTimeoutInSeconds();
-        using var cancellationTokenSource = requestTimeoutInSeconds.HasValue
-            ? new CancellationTokenSource(TimeSpan.FromSeconds(requestTimeoutInSeconds.Value))
-            : new CancellationTokenSource();
+        using var cancellationTokenSource = new CancellationTokenSource();
 
         if (Interlocked.CompareExchange(ref executingCancellationTokenSource, cancellationTokenSource, null) != null) {
             cancellationTokenSource.Dispose();
@@ -71,6 +68,7 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
         Request = null;
         Response = null;
         Exception = null;
+        RequestDurationInSeconds = null;
 
         var scriptEvaluationMode = preferencesService.GetScriptEvaluationMode();
         var options = new RequestExchangeOptions(
@@ -79,7 +77,8 @@ public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener
                 ScriptEvaluationMode.Enabled => true,
                 ScriptEvaluationMode.CollectionScoped => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath),
                 _ => throw new NotImplementedException($"Received unknown script evaluation mode '{scriptEvaluationMode}'.")
-            }
+            },
+            preferencesService.GetRequestTimeoutInSeconds()
         );
 
         await Task.Run(() => requestHandler.Execute(request, collection, options, this, cancellationTokenSource.Token));

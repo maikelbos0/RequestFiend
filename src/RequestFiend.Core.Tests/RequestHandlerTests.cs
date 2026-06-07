@@ -27,7 +27,7 @@ public class RequestHandlerTests {
         };
         var collection = new RequestTemplateCollection();
 
-        var result = await subject.Execute(request, collection, new(false), CancellationToken.None);
+        var result = await subject.Execute(request, collection, new(false, null), CancellationToken.None);
 
         Received.InOrder(async () => {
             serverCertificateValidationHandler.Initialize(collection);
@@ -57,7 +57,7 @@ public class RequestHandlerTests {
             Url = "An invalid URL"
         };
 
-        var result = await subject.Execute(request, new(), new(false), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         Assert.Null(result.Request);
         Assert.Null(result.Response);
@@ -79,7 +79,7 @@ public class RequestHandlerTests {
             Url = "https://localhost/"
         };
 
-        var result = await subject.Execute(request, new(), new(false), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
@@ -105,7 +105,7 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null), requestPipelineListener, CancellationToken.None);
 
         Received.InOrder(async () => {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
@@ -138,7 +138,7 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null), requestPipelineListener, CancellationToken.None);
 
         Received.InOrder(async () => {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
@@ -173,7 +173,7 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        var result = await subject.Execute(request, new(), new(true), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null), requestPipelineListener, CancellationToken.None);
 
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
@@ -200,7 +200,7 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        await subject.Execute(request, new(), new(false), CancellationToken.None);
+        await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
     }
@@ -223,7 +223,7 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        _ = await subject.Execute(request, new(), new(false), CancellationToken.None);
+        _ = await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
     }

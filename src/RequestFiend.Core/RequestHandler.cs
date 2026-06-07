@@ -44,7 +44,13 @@ public class RequestHandler : IRequestHandler {
                 await requestExchangeListener.OnRequestCreated(context.Request);
             }
 
-            context.Response = await httpClient.SendAsync(context.Request, cancellationToken);
+            using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+            if (requestExchangeOptions.RequestTimeoutInSeconds.HasValue) {
+                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(requestExchangeOptions.RequestTimeoutInSeconds.Value));
+            }
+
+            context.Response = await httpClient.SendAsync(context.Request, cancellationTokenSource.Token);
 
             if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PostExchangeScript, context, cancellationToken);
