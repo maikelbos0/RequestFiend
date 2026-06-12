@@ -10,11 +10,13 @@ public interface IPreferencesService {
     void ClearRecentCollections();
     void PushRecentCollection(string filePath);
     void RemoveRecentCollection(string filePath);
-    void Reset();
     ScriptEvaluationMode GetScriptEvaluationMode();
     void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode);
     bool GetCollectionAllowScriptEvaluation(string filePath);
     void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation);
     int? GetRequestTimeoutInSeconds();
     void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds);
+    string GetRequestLoggingPath();
+    void SetRequestLoggingPath(string requestLoggingPath);
+    void Reset();
 }

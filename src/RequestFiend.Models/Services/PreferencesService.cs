@@ -13,11 +13,13 @@ public class PreferencesService : IPreferencesService {
     private const bool DefaultCollectionAllowScriptEvaluation = false;
     private const int InfiniteRequestTimeoutInSeconds = -1;
     private const int DefaultRequestTimeoutInSeconds = InfiniteRequestTimeoutInSeconds;
+    private const string DefaultRequestLoggingPath = "";
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
     private const string CollectionAllowScriptEvaluation = nameof(CollectionAllowScriptEvaluation);
     private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
+    private const string RequestLoggingPath = nameof(RequestLoggingPath);
 
     private readonly IMessageService messageService;
 
@@ -93,6 +95,12 @@ public class PreferencesService : IPreferencesService {
 
     public void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds)
         => Preferences.Set(RequestTimeoutInSeconds, requestTimeoutInSeconds ?? InfiniteRequestTimeoutInSeconds);
+
+    public string GetRequestLoggingPath()
+        => Preferences.Get(RequestLoggingPath, DefaultRequestLoggingPath);
+
+    public void SetRequestLoggingPath(string? requestLoggingPath)
+        => Preferences.Set(RequestLoggingPath, requestLoggingPath);
 
     public void Reset() {
         Preferences.Clear();

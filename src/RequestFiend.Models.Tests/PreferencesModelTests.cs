@@ -14,10 +14,13 @@ public class PreferencesModelTests {
     public void Constructor(ScriptEvaluationMode scriptEvaluationMode) {
         const int maximumRecentCollectionCount = 10;
         const int requestTimeoutInSeconds = 90;
+        const string requestLoggingPath = "./Path";
+
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
         preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
+        preferencesService.GetRequestLoggingPath().Returns(requestLoggingPath);
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
@@ -27,8 +30,9 @@ public class PreferencesModelTests {
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[scriptEvaluationMode], subject.ScriptEvaluationMode.Value);
         Assert.Equal(requestTimeoutInSeconds.ToString(), subject.RequestTimeoutInSeconds.Value);
+        Assert.Equal(requestLoggingPath, subject.RequestLoggingPath.Value);
 
-        Assert.Equal([subject.RequestTimeoutInSeconds, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode], subject.Validatables);
+        Assert.Equal([subject.RequestTimeoutInSeconds, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode, subject.RequestLoggingPath], subject.Validatables);
     }
 
     [Theory]
@@ -38,6 +42,7 @@ public class PreferencesModelTests {
     [InlineData("10", 10, "", null)]
     public void Update(string maximumRecentCollectionCount, int expectedMaximumRecentCollectionCount, string requestTimeoutInSeconds, int? expectedRequestTimeoutInSeconds) {
         const ScriptEvaluationMode scriptEvaluationMode = ScriptEvaluationMode.Enabled;
+        const string requestLoggingPath = "./Path";
 
         var preferencesService = Substitute.For<IPreferencesService>();
         var messageService = Substitute.For<IMessageService>();
@@ -45,7 +50,8 @@ public class PreferencesModelTests {
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] },
-            RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds }
+            RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds },
+            RequestLoggingPath = { Value = requestLoggingPath }
         };
 
         subject.Update();
@@ -53,10 +59,12 @@ public class PreferencesModelTests {
         preferencesService.Received(1).SetMaximumRecentCollectionCount(expectedMaximumRecentCollectionCount);
         preferencesService.Received(1).SetScriptEvaluationMode(scriptEvaluationMode);
         preferencesService.Received(1).SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
+        preferencesService.Received(1).SetRequestLoggingPath(requestLoggingPath);
 
         Assert.False(subject.MaximumRecentCollectionCount.IsModified);
         Assert.False(subject.ScriptEvaluationMode.IsModified);
         Assert.False(subject.RequestTimeoutInSeconds.IsModified);
+        Assert.False(subject.RequestLoggingPath.IsModified);
 
         preferencesService.Received(1).TrimRecentCollections();
 
@@ -81,6 +89,7 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().SetMaximumRecentCollectionCount(Arg.Any<int>());
         preferencesService.DidNotReceive().SetScriptEvaluationMode(Arg.Any<ScriptEvaluationMode>());
         preferencesService.DidNotReceive().SetRequestTimeoutInSeconds(Arg.Any<int?>());
+        preferencesService.DidNotReceive().SetRequestLoggingPath(Arg.Any<string>());
 
         preferencesService.DidNotReceive().TrimRecentCollections();
 
@@ -94,6 +103,7 @@ public class PreferencesModelTests {
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
         preferencesService.GetRequestTimeoutInSeconds().Returns(30);
+        preferencesService.GetRequestLoggingPath().Returns("./Path");
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
@@ -101,7 +111,8 @@ public class PreferencesModelTests {
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
             MaximumRecentCollectionCount = { Value = "25" },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] },
-            RequestTimeoutInSeconds = { Value = "300" }
+            RequestTimeoutInSeconds = { Value = "300" },
+            RequestLoggingPath = { Value = "./Location" }
         };
 
         await subject.Reset();
@@ -109,6 +120,7 @@ public class PreferencesModelTests {
         Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
         Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
+        Assert.Equal(preferencesService.GetRequestLoggingPath().ToString(), subject.RequestLoggingPath.Value);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());

@@ -31,6 +31,10 @@
                     <Label Text="Request timeout in seconds (leave blank for infinite)" Style="{StaticResource EntryLabel}"/>
 
                     <views:ValidatableEntry Text="{Binding RequestTimeoutInSeconds}"/>
+
+                    <Label Text="Request logging path (leave blank to disable)" Style="{StaticResource EntryLabel}"/>
+
+                    <views:ValidatableEntry Text="{Binding RequestLoggingPath}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
