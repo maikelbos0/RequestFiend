@@ -301,7 +301,7 @@ public class RequestModelTests {
     [Theory]
     [InlineData(0.0454, "0.045")]
     [InlineData(5.0454, "5.045")]
-    [InlineData(125.0454, "2:025.045")]
+    [InlineData(125.0454, "2:05.045")]
     [InlineData(3725.0454, "1:02:05.045")]
     [InlineData(176525.0454, "2.01:02:05.045")]
     public async Task OnRequestElapsed(double elapsedSeconds, string expectedResult) {
