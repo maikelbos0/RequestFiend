@@ -18,5 +18,7 @@ public interface IPreferencesService {
     void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds);
     string GetRequestLoggingPath();
     void SetRequestLoggingPath(string requestLoggingPath);
+    string GetRequestLoggingOutputTemplate();
+    void SetRequestLoggingOutputTemplate(string requestLoggingOutputTemplate);
     void Reset();
 }

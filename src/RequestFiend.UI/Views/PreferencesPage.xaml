@@ -37,6 +37,12 @@
                     <views:ValidatableEntry Text="{Binding RequestLoggingPath}"/>
                     
                     <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
+
+                    <Label Text="Request logging output template (Serilog style)" Style="{StaticResource EntryLabel}"/>
+
+                    <views:ValidatableEntry Text="{Binding RequestLoggingOutputTemplate}"/>
+                    
+                    <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

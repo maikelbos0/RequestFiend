@@ -15,12 +15,14 @@ public class PreferencesModelTests {
         const int maximumRecentCollectionCount = 10;
         const int requestTimeoutInSeconds = 90;
         const string requestLoggingPath = "./Path";
+        const string requestLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
         preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
         preferencesService.GetRequestLoggingPath().Returns(requestLoggingPath);
+        preferencesService.GetRequestLoggingOutputTemplate().Returns(requestLoggingOutputTemplate);
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
@@ -31,8 +33,9 @@ public class PreferencesModelTests {
         Assert.Equal(Options.ScriptEvaluationModeMap[scriptEvaluationMode], subject.ScriptEvaluationMode.Value);
         Assert.Equal(requestTimeoutInSeconds.ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(requestLoggingPath, subject.RequestLoggingPath.Value);
+        Assert.Equal(requestLoggingOutputTemplate, subject.RequestLoggingOutputTemplate.Value);
 
-        Assert.Equal([subject.RequestTimeoutInSeconds, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode, subject.RequestLoggingPath], subject.Validatables);
+        Assert.Equal([subject.RequestTimeoutInSeconds, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode, subject.RequestLoggingPath, subject.RequestLoggingOutputTemplate], subject.Validatables);
     }
 
     [Theory]
@@ -43,6 +46,7 @@ public class PreferencesModelTests {
     public void Update(string maximumRecentCollectionCount, int expectedMaximumRecentCollectionCount, string requestTimeoutInSeconds, int? expectedRequestTimeoutInSeconds) {
         const ScriptEvaluationMode scriptEvaluationMode = ScriptEvaluationMode.Enabled;
         const string requestLoggingPath = "./Path";
+        const string requestLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         var preferencesService = Substitute.For<IPreferencesService>();
         var messageService = Substitute.For<IMessageService>();
@@ -51,7 +55,8 @@ public class PreferencesModelTests {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] },
             RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds },
-            RequestLoggingPath = { Value = requestLoggingPath }
+            RequestLoggingPath = { Value = requestLoggingPath },
+            RequestLoggingOutputTemplate = { Value = requestLoggingOutputTemplate }
         };
 
         subject.Update();
@@ -60,11 +65,13 @@ public class PreferencesModelTests {
         preferencesService.Received(1).SetScriptEvaluationMode(scriptEvaluationMode);
         preferencesService.Received(1).SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
         preferencesService.Received(1).SetRequestLoggingPath(requestLoggingPath);
+        preferencesService.Received(1).SetRequestLoggingOutputTemplate(requestLoggingOutputTemplate);
 
         Assert.False(subject.MaximumRecentCollectionCount.IsModified);
         Assert.False(subject.ScriptEvaluationMode.IsModified);
         Assert.False(subject.RequestTimeoutInSeconds.IsModified);
         Assert.False(subject.RequestLoggingPath.IsModified);
+        Assert.False(subject.RequestLoggingOutputTemplate.IsModified);
 
         preferencesService.Received(1).TrimRecentCollections();
 
@@ -75,7 +82,7 @@ public class PreferencesModelTests {
     [Theory]
     [InlineData("Invalid", "10")]
     [InlineData("10", "Invalid")]
-    public void Update_Fails_When_Invalid(string maximumRecentCollectionCount,string requestTimeoutInSeconds) {
+    public void Update_Fails_When_Invalid(string maximumRecentCollectionCount, string requestTimeoutInSeconds) {
         var preferencesService = Substitute.For<IPreferencesService>();
         var messageService = Substitute.For<IMessageService>();
 
@@ -90,6 +97,7 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().SetScriptEvaluationMode(Arg.Any<ScriptEvaluationMode>());
         preferencesService.DidNotReceive().SetRequestTimeoutInSeconds(Arg.Any<int?>());
         preferencesService.DidNotReceive().SetRequestLoggingPath(Arg.Any<string>());
+        preferencesService.DidNotReceive().SetRequestLoggingOutputTemplate(Arg.Any<string>());
 
         preferencesService.DidNotReceive().TrimRecentCollections();
 
@@ -104,6 +112,7 @@ public class PreferencesModelTests {
         preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
         preferencesService.GetRequestTimeoutInSeconds().Returns(30);
         preferencesService.GetRequestLoggingPath().Returns("./Path");
+        preferencesService.GetRequestLoggingOutputTemplate().Returns("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
@@ -112,7 +121,8 @@ public class PreferencesModelTests {
             MaximumRecentCollectionCount = { Value = "25" },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] },
             RequestTimeoutInSeconds = { Value = "300" },
-            RequestLoggingPath = { Value = "./Location" }
+            RequestLoggingPath = { Value = "./Location" },
+            RequestLoggingOutputTemplate = { Value = "{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}" }
         };
 
         await subject.Reset();
@@ -120,7 +130,8 @@ public class PreferencesModelTests {
         Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
         Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
-        Assert.Equal(preferencesService.GetRequestLoggingPath().ToString(), subject.RequestLoggingPath.Value);
+        Assert.Equal(preferencesService.GetRequestLoggingPath(), subject.RequestLoggingPath.Value);
+        Assert.Equal(preferencesService.GetRequestLoggingOutputTemplate(), subject.RequestLoggingOutputTemplate.Value);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
@@ -132,19 +143,28 @@ public class PreferencesModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
+        preferencesService.GetRequestTimeoutInSeconds().Returns(30);
+        preferencesService.GetRequestLoggingPath().Returns("./Path");
+        preferencesService.GetRequestLoggingOutputTemplate().Returns("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
 
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
             MaximumRecentCollectionCount = { Value = "25" },
-            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] }
+            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] },
+            RequestTimeoutInSeconds = { Value = "300" },
+            RequestLoggingPath = { Value = "./Location" },
+            RequestLoggingOutputTemplate = { Value = "{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}" }
         };
 
         await subject.Reset();
 
         Assert.Equal("25", subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled], subject.ScriptEvaluationMode.Value);
+        Assert.Equal("300", subject.RequestTimeoutInSeconds.Value);
+        Assert.Equal("./Location", subject.RequestLoggingPath.Value);
+        Assert.Equal("{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}", subject.RequestLoggingOutputTemplate.Value);
 
         preferencesService.DidNotReceive().Reset();
         messageService.DidNotReceive().Send(Arg.Any<PreferencesUpdatedMessage>());

@@ -64,10 +64,12 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient<RequestModel>();
 
         mauiAppBuilder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
-            var requestLoggingPath = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>().GetRequestLoggingPath();
+            var preferencesService = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>();
+            var requestLoggingPath = preferencesService.GetRequestLoggingPath();
+            var requestLoggingOutputTemplate = preferencesService.GetRequestLoggingOutputTemplate();
 
             if (!string.IsNullOrWhiteSpace(requestLoggingPath)) {
-                loggerConfiguration.WriteTo.File(requestLoggingPath);
+                loggerConfiguration.WriteTo.File(requestLoggingPath, outputTemplate: requestLoggingOutputTemplate, rollingInterval: RollingInterval.Day);
             }
         });
 

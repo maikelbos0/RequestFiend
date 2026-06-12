@@ -14,12 +14,14 @@ public class PreferencesService : IPreferencesService {
     private const int InfiniteRequestTimeoutInSeconds = -1;
     private const int DefaultRequestTimeoutInSeconds = InfiniteRequestTimeoutInSeconds;
     private const string DefaultRequestLoggingPath = "";
+    private const string DefaultRequestLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
     private const string CollectionAllowScriptEvaluation = nameof(CollectionAllowScriptEvaluation);
     private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
     private const string RequestLoggingPath = nameof(RequestLoggingPath);
+    private const string RequestLoggingOutputTemplate = nameof(RequestLoggingOutputTemplate);
 
     private readonly IMessageService messageService;
 
@@ -101,6 +103,12 @@ public class PreferencesService : IPreferencesService {
 
     public void SetRequestLoggingPath(string? requestLoggingPath)
         => Preferences.Set(RequestLoggingPath, requestLoggingPath);
+
+    public string GetRequestLoggingOutputTemplate()
+        => Preferences.Get(RequestLoggingOutputTemplate, DefaultRequestLoggingOutputTemplate);
+
+    public void SetRequestLoggingOutputTemplate(string? requestLoggingOutputTemplate)
+        => Preferences.Set(RequestLoggingOutputTemplate, requestLoggingOutputTemplate);
 
     public void Reset() {
         Preferences.Clear();
