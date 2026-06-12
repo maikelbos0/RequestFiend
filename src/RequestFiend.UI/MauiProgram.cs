@@ -5,6 +5,7 @@ using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 using RequestFiend.Core;
 using RequestFiend.Models;
+using Serilog;
 using System;
 using System.IO.Abstractions;
 using System.Net.Http;
@@ -61,6 +62,14 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient<PreferencesModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<RequestModel>();
+
+        mauiAppBuilder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
+            var requestLoggingPath = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>().GetRequestLoggingPath();
+
+            if (!string.IsNullOrWhiteSpace(requestLoggingPath)) {
+                loggerConfiguration.WriteTo.File(requestLoggingPath);
+            }
+        });
 
         return mauiAppBuilder;
     }

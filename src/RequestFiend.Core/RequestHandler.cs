@@ -38,6 +38,7 @@ public class RequestHandler : IRequestHandler {
         serverCertificateValidationHandler.Initialize(collection);
 
         try {
+            context.Logger.LogInformation("Starting execution of request {RequestName}", request.Name);
             context.Request = request.CreateMessage(collection);
 
             if (requestExchangeOptions.AllowScriptEvaluation) {
@@ -73,9 +74,11 @@ public class RequestHandler : IRequestHandler {
             if (requestExchangeListener != null) {
                 await requestExchangeListener.OnResponseReceived(context.Response);
             }
+            context.Logger.LogInformation("Finished execution of request {RequestName}", request.Name);
         }
         catch (Exception exception) {
             await CompleteRequestElapsed();
+            context.Logger.LogError(exception, "Exception occurred during execution of request {RequestName}", request.Name);
 
             context.Exception = exception;
 

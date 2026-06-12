@@ -35,6 +35,8 @@
                     <Label Text="Request logging path (leave blank to disable)" Style="{StaticResource EntryLabel}"/>
 
                     <views:ValidatableEntry Text="{Binding RequestLoggingPath}"/>
+                    
+                    <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>
