@@ -58,8 +58,9 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollection>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplate>());
 
-        mauiAppBuilder.Services.AddTransient<MainPageModel>();
-        mauiAppBuilder.Services.AddTransient<PreferencesModel>();
+        mauiAppBuilder.Services.AddSingleton<MainPageModel>();
+        mauiAppBuilder.Services.AddSingleton<PreferencesModel>();
+        mauiAppBuilder.Services.AddSingleton(new RequestLogModel(1000));
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<RequestModel>();
 
@@ -67,6 +68,8 @@ public static class MauiProgram {
             var preferencesService = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>();
             var requestLoggingPath = preferencesService.GetRequestLoggingPath();
             var requestLoggingOutputTemplate = preferencesService.GetRequestLoggingOutputTemplate();
+
+            loggerConfiguration.WriteTo.Sink(new Models.Services.RequestLogSink(serviceProvider.GetRequiredService<RequestLogModel>(), requestLoggingOutputTemplate));
 
             if (!string.IsNullOrWhiteSpace(requestLoggingPath)) {
                 loggerConfiguration.WriteTo.File(requestLoggingPath, outputTemplate: requestLoggingOutputTemplate, rollingInterval: RollingInterval.Day);
