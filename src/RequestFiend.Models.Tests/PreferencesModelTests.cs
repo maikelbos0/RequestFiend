@@ -93,19 +93,22 @@ public class PreferencesModelTests {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
+        preferencesService.GetRequestTimeoutInSeconds().Returns(30);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
 
         var subject = new PreferencesModel(preferencesService, messageService, popupService) {
             MaximumRecentCollectionCount = { Value = "25" },
-            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] }
+            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] },
+            RequestTimeoutInSeconds = { Value = "300" }
         };
 
         await subject.Reset();
 
         Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
+        Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
