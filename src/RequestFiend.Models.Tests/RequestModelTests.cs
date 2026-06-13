@@ -97,7 +97,7 @@ public class RequestModelTests {
 
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
-        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(filePath, null));
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, null));
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
@@ -106,9 +106,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var isExecutingValues = new List<bool>();
-        var pageTitleBaseValues = new List<string>();
-        var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(contentType, mediaType, [0, 1, 2, 3], null))
@@ -136,9 +133,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var isExecutingValues = new List<bool>();
-        var pageTitleBaseValues = new List<string>();
-        var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
@@ -166,9 +160,6 @@ public class RequestModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = [request]
         };
-        var isExecutingValues = new List<bool>();
-        var pageTitleBaseValues = new List<string>();
-        var shellItemTitleBaseValues = new List<string>();
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
