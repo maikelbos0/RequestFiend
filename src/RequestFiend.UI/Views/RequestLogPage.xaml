@@ -1,0 +1,21 @@
+<views:ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.RequestLogPage"
+    x:DataType="models:RequestLogModel"
+    Title="{Binding PageTitle}">
+
+    <VerticalStackLayout>
+        <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+            <Button Text="Clear" Command="{Binding ClearCommand}" Style="{StaticResource DangerButton}"/>
+        </StackLayout>
+
+        <Border>
+            <VerticalStackLayout Style="{StaticResource ElementGroup}">
+                <Editor Text="{Binding LogEvents}" IsReadOnly="True" Style="{StaticResource LargeEditor}"/>
+            </VerticalStackLayout>
+        </Border>
+    </VerticalStackLayout>
+</views:ContentPage>

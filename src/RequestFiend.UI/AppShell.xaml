@@ -48,4 +48,6 @@
     <ShellContent Title="Home" Icon="house_solid_full.png" ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
 
     <ShellContent Title="Preferences" Icon="gears_solid_full.png" ContentTemplate="{DataTemplate views:PreferencesPage}" Route="PreferencesPage" />
+
+    <ShellContent Title="Request log" Icon="file_lines_solid_full.png" ContentTemplate="{DataTemplate views:RequestLogPage}" Route="RequestLogPage" />
 </Shell>

@@ -7,6 +7,16 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestLogModelTests {
     [Fact]
+    public void Constructor() {
+        var subject = new RequestLogModel(1);
+
+        Assert.Equal("Request log", subject.PageTitleBase);
+        Assert.Equal("Request log", subject.ShellItemTitleBase);
+
+        Assert.Equal([], subject.Validatables);
+    }
+
+    [Fact]
     public async Task Add_And_StartUpdating() {
         var subject = new RequestLogModel(1);
         var cancellationTokenSource = new CancellationTokenSource();

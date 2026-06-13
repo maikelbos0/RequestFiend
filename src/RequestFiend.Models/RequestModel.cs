@@ -62,7 +62,6 @@ public string Id { get; } = Guid.NewGuid().ToString();
             throw new InvalidOperationException("The request is already executing.");
         }
 
-        executingCancellationTokenSource = cancellationTokenSource;
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
         ShellItemTitleBase = $"{request.Name} - Executing request...";
         IsExecuting = true;

@@ -1,20 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestLogModel : ObservableObject {
+public partial class RequestLogModel : PageBoundModelBase {
     private readonly ConcurrentQueue<string> logEventQueue = [];
     private readonly int updateDelayInMilliseconds;
     private int needsUpdating = 0;
 
     [ObservableProperty] public partial string LogEvents { get; private set; } = "";
 
-    public RequestLogModel(int updateDelayInMilliseconds) {
+    public RequestLogModel(int updateDelayInMilliseconds) : base("Request log", "Request log") {
         this.updateDelayInMilliseconds = updateDelayInMilliseconds;
     }
 
