@@ -9,6 +9,8 @@
 
     <VerticalStackLayout>
         <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
+            <Button Text="Save" Command="{Binding SaveCommand}"/>
+            
             <Button Text="Clear" Command="{Binding ClearCommand}" Style="{StaticResource DangerButton}"/>
         </StackLayout>
 

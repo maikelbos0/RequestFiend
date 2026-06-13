@@ -1,4 +1,12 @@
-﻿using System;
+﻿using CommunityToolkit.Maui.Storage;
+using NSubstitute;
+using RequestFiend.Core;
+using RequestFiend.Models.Messages;
+using RequestFiend.Models.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -8,7 +16,7 @@ namespace RequestFiend.Models.Tests;
 public class RequestLogModelTests {
     [Fact]
     public void Constructor() {
-        var subject = new RequestLogModel(1);
+        var subject = new RequestLogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
 
         Assert.Equal("Request log", subject.PageTitleBase);
         Assert.Equal("Request log", subject.ShellItemTitleBase);
@@ -18,7 +26,7 @@ public class RequestLogModelTests {
 
     [Fact]
     public async Task Add_And_StartUpdating() {
-        var subject = new RequestLogModel(1);
+        var subject = new RequestLogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
@@ -35,7 +43,7 @@ public class RequestLogModelTests {
 
     [Fact]
     public async Task Clear_And_StartUpdating() {
-        var subject = new RequestLogModel(1);
+        var subject = new RequestLogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
@@ -46,9 +54,60 @@ public class RequestLogModelTests {
 
         cancellationTokenSource.Cancel();
         await updatingTask;
-        
+
         await Task.Delay(10, TestContext.Current.CancellationToken);
 
         Assert.Empty(subject.LogEvents);
+    }
+
+    [Fact]
+    public async Task Save() {
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, null));
+
+        var subject = new RequestLogModel(messageService, popupService, 1) {
+            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
+        };
+
+        await subject.Save();
+
+        await popupService.Received(1).ShowSaveDialog(".log", Arg.Is<MemoryStream>(stream => stream.ToArray().SequenceEqual(Encoding.UTF8.GetBytes(subject.LogEvents))));
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task Save_Fails_For_Invalid_FileSaverResult() {
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new Exception()));
+
+        var subject = new RequestLogModel(messageService, popupService, 1) {
+            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
+        };
+
+        await subject.Save();
+
+        await popupService.Received(1).ShowSaveDialog(".log", Arg.Is<MemoryStream>(stream => stream.ToArray().SequenceEqual(Encoding.UTF8.GetBytes(subject.LogEvents))));
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task Save_Does_Nothing_When_Canceled() {
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
+
+        var subject = new RequestLogModel(messageService, popupService, 1) {
+            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
+        };
+
+        await subject.Save();
+
+        await popupService.Received(1).ShowSaveDialog(".log", Arg.Is<MemoryStream>(stream => stream.ToArray().SequenceEqual(Encoding.UTF8.GetBytes(subject.LogEvents))));
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 }

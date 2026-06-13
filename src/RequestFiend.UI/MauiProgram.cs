@@ -60,7 +60,11 @@ public static class MauiProgram {
 
         mauiAppBuilder.Services.AddSingleton<MainPageModel>();
         mauiAppBuilder.Services.AddSingleton<PreferencesModel>();
-        mauiAppBuilder.Services.AddSingleton(new RequestLogModel(1000));
+        mauiAppBuilder.Services.AddSingleton(serviceProvider => new RequestLogModel(
+            serviceProvider.GetRequiredService<Models.Services.IMessageService>(),
+            serviceProvider.GetRequiredService<Models.Services.IPopupService>(),
+            1000
+        ));
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<RequestModel>();
 
