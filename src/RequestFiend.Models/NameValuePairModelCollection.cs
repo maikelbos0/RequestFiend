@@ -16,7 +16,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     private int unmodifiedCount;
 
     public bool HasError {
-        get => field;
+        get;
         set {
             if (field != value) {
                 field = value;
@@ -26,7 +26,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     }
 
     public bool IsModified {
-        get => field;
+        get;
         set {
             if (field != value) {
                 field = value;
@@ -36,7 +36,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     }
 
     public bool HasItems {
-        get => field;
+        get;
         private set {
             if (field != value) {
                 field = value;

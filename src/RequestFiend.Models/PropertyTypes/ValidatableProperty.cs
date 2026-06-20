@@ -15,7 +15,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     public Func<TProperty> DefaultValueProvider { get; private set; }
     public Func<TProperty, bool> Validator { get; }
     public TProperty Value {
-        get => field;
+        get;
         set {
             if (SetProperty(ref field, value)) {
                 UpdateState();

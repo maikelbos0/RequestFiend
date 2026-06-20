@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using RequestFiend.Models.PropertyTypes;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public partial class BoundModelBase : ObservableObject, IValidatable {
-    private List<IValidatable> validatables = [];
+    private readonly List<IValidatable> validatables = [];
 
     [ObservableProperty] public partial bool HasError { get; set; }
     [ObservableProperty] public partial bool IsModified { get; set; }
