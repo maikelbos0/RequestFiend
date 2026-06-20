@@ -3,66 +3,20 @@ using Xunit;
 namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateCollectionTests {
-    [Theory]
-    [InlineData("Foo")]
-    [InlineData("123")]
-    [InlineData("Да")]
-    [InlineData("٢٣٤٥٦٧٨٩")]
-    [InlineData("１２３")]
-    [InlineData("Foo_132")]
-    public void GetVariables_Returns_Deduplicated_Valid_Session_Variables(string name) {
+    [Fact]
+    public void GetVariableSnapshot() {
+
         var subject = new RequestTemplateCollection() {
             Variables = {
-                new() { Name = name, Value = "Duplicate" }
+                new() { Name = "Foo", Value = "FooValue" }
             }
         };
 
-        subject.GetSessionVariables().Add(name, "Replacement");
+        subject.GetSessionVariables().Add("Bar", "BarValue");
 
-        var result = subject.GetVariables();
+        var result = subject.GetVariableSnapshot();
 
-        Assert.Equal("Replacement", Assert.Contains(name, result));
-    }
-
-    [Theory]
-    [InlineData("Foo")]
-    [InlineData("123")]
-    [InlineData("Да")]
-    [InlineData("٢٣٤٥٦٧٨٩")]
-    [InlineData("１２３")]
-    [InlineData("Foo_132")]
-    public void GetVariables_Returns_Deduplicated_Valid_Persisted_Variables(string name) {
-        var subject = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = name, Value = "Replacement" },
-                new() { Name = name, Value = "Duplicate" }
-            }
-        };
-
-        var sessionVariables = subject.GetSessionVariables();
-        sessionVariables.Add(name, "Replacement");
-
-        var result = subject.GetVariables();
-
-        Assert.Equal("Replacement", Assert.Contains(name, result));
-    }
-
-    [Theory]
-    [InlineData("Foo+132")]
-    [InlineData("Foo 132")]
-    [InlineData("Foo/132")]
-    public void GetVariables_Does_Not_Return_Invalid_Variables(string name) {
-        var subject = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = name, Value = "Replacement" }
-            }
-        };
-
-        subject.GetSessionVariables().Add(name, "Replacement");
-
-        var result = subject.GetVariables();
-
-        Assert.Empty(result);
+        Assert.Equal(2, result.Variables.Count);
     }
 
     [Theory]

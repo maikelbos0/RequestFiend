@@ -23,17 +23,12 @@ public class RequestTemplateCollection {
 
     public Dictionary<string, string> GetSessionVariables() => sessionVariables;
 
-    public Dictionary<string, string> GetVariables()
-        => sessionVariables
-            .Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value })
-            .Concat(Variables)
-            .Where(variable => IsValidVariableName(variable.Name))
-            .DistinctBy(variable => variable.Name)
-            .ToDictionary(variable => variable.Name, variable => variable.Value);
+    public VariableSnapshot GetVariableSnapshot()
+        => new(sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }), Variables);
 
     public string ApplyVariables(string value) {
-        foreach (var (variableName, variableValue) in GetVariables()) {
-            value = value.Replace($"{{{{{variableName}}}}}", variableValue, StringComparison.InvariantCultureIgnoreCase);
+        foreach (var (variableName, variableValue) in GetVariableSnapshot().Variables) {
+            value = value.Replace(variableName, variableValue, StringComparison.InvariantCultureIgnoreCase);
         }
 
         return value;

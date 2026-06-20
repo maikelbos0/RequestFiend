@@ -62,7 +62,7 @@ public partial class ValidatableEntry : AbsoluteLayout {
     private void UpdateOverlay() {
         if (Collection != null && Text != null) {
             try {
-                var variables = Collection.GetVariables();
+                var variableSnapshot = Collection.GetVariableSnapshot();
                 var hasVariables = false;
 
                 Overlay.IsVisible = true;
@@ -74,7 +74,7 @@ public partial class ValidatableEntry : AbsoluteLayout {
                 }
 
                 if (hasVariables) {
-                    ToolTipProperties.SetText(Overlay, Collection.ApplyVariables(Text.Value));
+                    ToolTipProperties.SetText(Overlay, variableSnapshot.Apply(Text.Value));
                 }
                 else {
                     ToolTipProperties.SetText(Overlay, default!);
@@ -85,7 +85,7 @@ public partial class ValidatableEntry : AbsoluteLayout {
                         Text = variableReference
                     };
 
-                    if (variables.TryGetValue(variableReference.Trim('{', '}'), out var value)) {
+                    if (variableSnapshot.Variables.TryGetValue(variableReference, out var value)) {
                         hasVariables = true;
                         span.Style = (Style)Application.Current!.Resources["VariableReference"];
                     }
