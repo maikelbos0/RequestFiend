@@ -28,7 +28,7 @@ public static class VariableService {
         if (text.Length > position + 4 && text[position] == '{' && text[position + 1] == '{') {
             length = 4;
 
-            while (text.Length > position + length && RequestTemplateCollection.IsValidVariableCharacter(text[position + length - 2])) {
+            while (text.Length > position + length && VariableSnapshot.IsValidVariableCharacter(text[position + length - 2])) {
                 length++;
             }
 
