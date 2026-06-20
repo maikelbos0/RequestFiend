@@ -25,14 +25,14 @@ public class VariableSnapshotTests {
             ]
         ]);
 
-        Assert.Equal(7, subject.Variables.Length);
-        Assert.Equal(("{{Foo}}", "FooValue"), subject.Variables[0]);
-        Assert.Equal(("{{Bar}}", "BarValue"), subject.Variables[1]);
-        Assert.Equal(("{{123}}", "123Value"), subject.Variables[2]);
-        Assert.Equal(("{{Да}}", "ДаValue"), subject.Variables[3]);
-        Assert.Equal(("{{٢٣٤٥٦٧٨٩}}", "٢٣٤٥٦٧٨٩Value"), subject.Variables[4]);
-        Assert.Equal(("{{１２３}}", "１２３Value"), subject.Variables[5]);
-        Assert.Equal(("{{Qux_123}}", "Qux_123Value"), subject.Variables[6]);
+        Assert.Equal(7, subject.Variables.Count);
+        Assert.Equal("FooValue", Assert.Contains("{{Foo}}", subject.Variables));
+        Assert.Equal("BarValue", Assert.Contains("{{Bar}}", subject.Variables));
+        Assert.Equal("123Value", Assert.Contains("{{123}}", subject.Variables));
+        Assert.Equal("ДаValue", Assert.Contains("{{Да}}", subject.Variables));
+        Assert.Equal("٢٣٤٥٦٧٨٩Value", Assert.Contains("{{٢٣٤٥٦٧٨٩}}", subject.Variables));
+        Assert.Equal("１２３Value", Assert.Contains("{{１２３}}", subject.Variables));
+        Assert.Equal("Qux_123Value", Assert.Contains("{{Qux_123}}", subject.Variables));
     }
 
     [Theory]
