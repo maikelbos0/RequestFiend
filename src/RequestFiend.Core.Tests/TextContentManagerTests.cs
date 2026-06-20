@@ -17,14 +17,12 @@ public class TextContentManagerTests {
             HasManualContentTypeHeader = hasManualContentTypeHeader,
             StringContent = "The {{first}} and {{second}} get replaced"
         };
-        var collection = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = "First", Value = "Replacement" },
-                new() { Name =  "Second", Value = "Another" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "First", Value = "Replacement" },
+            new NameValuePair() { Name =  "Second", Value = "Another" }
+        ]);
 
-        var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
+        var result = Assert.IsType<StringContent>(subject.GetContent(request, variableSnapshot));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));

@@ -5,8 +5,8 @@ using System.Net.Http;
 namespace RequestFiend.Core;
 
 public class FileContentManager : IContentManager {
-    public HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection) {
-        var filePath = collection.ApplyVariables(request.FileContent);
+    public HttpContent? GetContent(RequestTemplate request, VariableSnapshot variableSnapshot) {
+        var filePath = variableSnapshot.Apply(request.FileContent);
         var content = new ByteArrayContent(File.ReadAllBytes(filePath));
 
         if (!request.HasManualContentTypeHeader) {

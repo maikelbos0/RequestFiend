@@ -3,5 +3,5 @@
 namespace RequestFiend.Core;
 
 public interface IContentManager {
-    HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection);
+    HttpContent? GetContent(RequestTemplate request, VariableSnapshot collection);
 }

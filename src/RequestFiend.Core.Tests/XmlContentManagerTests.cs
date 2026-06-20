@@ -17,14 +17,12 @@ public class XmlContentManagerTests {
             HasManualContentTypeHeader = hasManualContentTypeHeader,
             StringContent = "<{{TagName}}>{{Value}}</{{TagName}}>"
         };
-        var collection = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = "TagName", Value = "Data" },
-                new() { Name = "Value", Value = "42" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "TagName", Value = "Data" },
+            new NameValuePair() { Name = "Value", Value = "42" }
+        ]);
 
-        var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
+        var result = Assert.IsType<StringContent>(subject.GetContent(request, variableSnapshot));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("<Data>42</Data>", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));

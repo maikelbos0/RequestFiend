@@ -5,25 +5,25 @@ using System.Net.Http;
 namespace RequestFiend.Core;
 
 public class FormDataContentManager : IContentManager {
-    public HttpContent? GetContent(RequestTemplate request, RequestTemplateCollection collection) {
+    public HttpContent? GetContent(RequestTemplate request, VariableSnapshot variableSnapshot) {
         var content = new MultipartFormDataContent();
 
         foreach (var formField in request.FormFieldContent) {
-            content.Add(new StringContent(collection.ApplyVariables(formField.Value)) {
+            content.Add(new StringContent(variableSnapshot.Apply(formField.Value)) {
                 Headers = { 
                     ContentType = null 
                 } 
-            }, collection.ApplyVariables(formField.Name));
+            }, variableSnapshot.Apply(formField.Name));
         }
 
         foreach (var formFile in request.FormFileContent) {
-            var filePath = collection.ApplyVariables(formFile.Value);
+            var filePath = variableSnapshot.Apply(formFile.Value);
 
-            content.Add(new ByteArrayContent(File.ReadAllBytes(collection.ApplyVariables(formFile.Value))) {
+            content.Add(new ByteArrayContent(File.ReadAllBytes(variableSnapshot.Apply(formFile.Value))) {
                 Headers = {
                     ContentType = new(MimeUtility.GetMimeMapping(filePath))
                 }
-            }, collection.ApplyVariables(formFile.Name));
+            }, variableSnapshot.Apply(formFile.Name));
         }
 
         if (request.HasManualContentTypeHeader) {

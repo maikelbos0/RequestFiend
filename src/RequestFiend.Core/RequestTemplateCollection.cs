@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,12 +24,4 @@ public class RequestTemplateCollection {
 
     public VariableSnapshot GetVariableSnapshot()
         => new(sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }), Variables);
-
-    public string ApplyVariables(string value) {
-        foreach (var (variableName, variableValue) in GetVariableSnapshot().Variables) {
-            value = value.Replace(variableName, variableValue, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        return value;
-    }
 }

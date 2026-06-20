@@ -44,16 +44,17 @@ public class RequestTemplate {
     };
 
     public HttpRequestMessage CreateMessage(RequestTemplateCollection collection) {
-        var message = new HttpRequestMessage(HttpMethod.Parse(Method), new Uri(collection.ApplyVariables(Url)));
+        var variableSnapshot = collection.GetVariableSnapshot();
+        var message = new HttpRequestMessage(HttpMethod.Parse(Method), new Uri(variableSnapshot.Apply(Url)));
 
         foreach (var header in Headers) {
-            message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
+            message.Headers.Add(variableSnapshot.Apply(header.Name), variableSnapshot.Apply(header.Value));
         }
         foreach (var header in collection.DefaultHeaders) {
-            message.Headers.Add(collection.ApplyVariables(header.Name), collection.ApplyVariables(header.Value));
+            message.Headers.Add(variableSnapshot.Apply(header.Name), variableSnapshot.Apply(header.Value));
         }
 
-        message.Content = GetContentManager().GetContent(this, collection);
+        message.Content = GetContentManager().GetContent(this, variableSnapshot);
 
         return message;
     }

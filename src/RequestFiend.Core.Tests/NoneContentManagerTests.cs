@@ -12,8 +12,7 @@ public class NoneContentManagerTests {
             Url = "https://localhost",
             StringContent = "Just a piece of text"
         };
-        var collection = new RequestTemplateCollection();
 
-        Assert.Null(subject.GetContent(request, collection));
+        Assert.Null(subject.GetContent(request, new()));
     }
 }

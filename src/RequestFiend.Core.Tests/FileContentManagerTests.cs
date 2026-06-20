@@ -18,13 +18,11 @@ public class FileContentManagerTests {
             HasManualContentTypeHeader = hasManualContentTypeHeader,
             FileContent = "./{{FileName}}"
         };
-        var collection = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = "FileName", Value = "Data.json" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "FileName", Value = "Data.json" }
+        ]);
 
-        var result = Assert.IsType<ByteArrayContent>(subject.GetContent(request, collection));
+        var result = Assert.IsType<ByteArrayContent>(subject.GetContent(request, variableSnapshot));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal(File.ReadAllBytes("./Data.json"), await result.ReadAsByteArrayAsync(TestContext.Current.CancellationToken));

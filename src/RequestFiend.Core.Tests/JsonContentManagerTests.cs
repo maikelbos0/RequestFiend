@@ -17,13 +17,11 @@ public class JsonContentManagerTests {
             HasManualContentTypeHeader = hasManualContentTypeHeader,
             StringContent = "[{{Node}}, {{Node}}]"
         };
-        var collection = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = "Node", Value = "{\"Meaning\": 42}" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "Node", Value = "{\"Meaning\": 42}" }
+        ]);
 
-        var result = Assert.IsType<StringContent>(subject.GetContent(request, collection));
+        var result = Assert.IsType<StringContent>(subject.GetContent(request, variableSnapshot));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("[{\"Meaning\": 42}, {\"Meaning\": 42}]", await result.ReadAsStringAsync(TestContext.Current.CancellationToken));

@@ -24,15 +24,13 @@ public class FormDataContentManagerTests {
                 new() { Name = "Data", Value = "./{{FileName}}" }
             ]
         };
-        var collection = new RequestTemplateCollection() {
-            Variables = {
-                new() { Name = "FileName", Value = "Data.json" },
-                new() { Name = "First", Value = "Replacement" },
-                new() { Name =  "Second", Value = "Another" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "FileName", Value = "Data.json" },
+            new NameValuePair() { Name = "First", Value = "Replacement" },
+            new NameValuePair() { Name =  "Second", Value = "Another" }
+        ]);
 
-        var result = Assert.IsType<MultipartFormDataContent>(subject.GetContent(request, collection));
+        var result = Assert.IsType<MultipartFormDataContent>(subject.GetContent(request, variableSnapshot));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await Assert.IsType<StringContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Description")).ReadAsStringAsync(TestContext.Current.CancellationToken));
