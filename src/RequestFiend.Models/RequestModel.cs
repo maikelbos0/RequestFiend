@@ -78,7 +78,8 @@ public string Id { get; } = Guid.NewGuid().ToString();
                 ScriptEvaluationMode.CollectionScoped => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath),
                 _ => throw new NotImplementedException($"Received unknown script evaluation mode '{scriptEvaluationMode}'.")
             },
-            preferencesService.GetRequestTimeoutInSeconds()
+            preferencesService.GetRequestTimeoutInSeconds(),
+            null
         );
 
         await Task.Run(() => requestHandler.Execute(request, collection, options, this, cancellationTokenSource.Token));

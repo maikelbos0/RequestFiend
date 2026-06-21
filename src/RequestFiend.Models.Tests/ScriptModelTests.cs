@@ -1,5 +1,4 @@
 ﻿using RequestFiend.Core;
-using System;
 using Xunit;
 using Xunit.Internal;
 
@@ -18,7 +17,7 @@ public class ScriptModelTests {
         var subject = new ScriptModel(script);
 
         Assert.Equal(expectedShowReferences, subject.ShowReferences);
-        Assert.Equal(string.Join(Environment.NewLine, script.References), subject.References.Value);
+        Assert.Equal(string.Join(System.Environment.NewLine, script.References), subject.References.Value);
         Assert.Equal(script.Code, subject.Code.Value);
 
         Assert.Equal([subject.References, subject.Code], subject.Validatables);
@@ -55,7 +54,7 @@ public class ScriptModelTests {
 
         subject.Reset();
 
-        Assert.Equal(string.Join(Environment.NewLine, script.References), subject.References.Value);
+        Assert.Equal(string.Join(System.Environment.NewLine, script.References), subject.References.Value);
         Assert.False(subject.References.IsModified);
         Assert.Equal(script.Code, subject.Code.Value);
         Assert.False(subject.Code.IsModified);

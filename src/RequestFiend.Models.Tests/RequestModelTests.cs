@@ -79,7 +79,7 @@ public class RequestModelTests {
 
         await subject.Execute();
 
-        _ = requestHandler.Received(1).Execute(request, collection, new RequestExchangeOptions(expectedAllowScriptEvaluation, requestTimeoutInSeconds), subject, Arg.Any<CancellationToken>());
+        _ = requestHandler.Received(1).Execute(request, collection, new RequestExchangeOptions(expectedAllowScriptEvaluation, requestTimeoutInSeconds, null), subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal([$"{request.Name} - Executing request...", $"{request.Name} - Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);

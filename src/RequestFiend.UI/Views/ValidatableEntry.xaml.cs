@@ -62,7 +62,7 @@ public partial class ValidatableEntry : AbsoluteLayout {
     private void UpdateOverlay() {
         if (Collection != null && Text != null) {
             try {
-                var variableSnapshot = Collection.GetVariableSnapshot();
+                var variableSnapshot = Collection.GetVariableSnapshot(null);
                 var hasVariables = false;
 
                 Overlay.IsVisible = true;

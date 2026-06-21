@@ -43,8 +43,8 @@ public class RequestTemplate {
         _ => throw new NotImplementedException($"Received unknown content type '{ContentType}'.")
     };
 
-    public HttpRequestMessage CreateMessage(RequestTemplateCollection collection) {
-        var variableSnapshot = collection.GetVariableSnapshot();
+    public HttpRequestMessage CreateMessage(RequestTemplateCollection collection, Environment? environment) {
+        var variableSnapshot = collection.GetVariableSnapshot(environment);
         var message = new HttpRequestMessage(HttpMethod.Parse(Method), new Uri(variableSnapshot.Apply(Url)));
 
         foreach (var header in Headers) {

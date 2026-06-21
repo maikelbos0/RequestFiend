@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
-using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -19,7 +18,7 @@ public partial class ScriptModel : BoundModelBase, IValidatable {
 
     public ScriptModel(Script script) {
         ShowReferences = script.References.Count > 0;
-        References = new(() => string.Join(Environment.NewLine, script.References));
+        References = new(() => string.Join(System.Environment.NewLine, script.References));
         Code = new(() => script.Code);
 
         ConfigureState([References, Code]);

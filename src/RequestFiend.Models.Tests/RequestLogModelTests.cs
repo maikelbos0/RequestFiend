@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Maui.Storage;
 using NSubstitute;
-using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -30,15 +28,15 @@ public class RequestLogModelTests {
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
-        subject.Add($"Test 1{Environment.NewLine}");
-        subject.Add($"Test 2{Environment.NewLine}");
+        subject.Add($"Test 1{System.Environment.NewLine}");
+        subject.Add($"Test 2{System.Environment.NewLine}");
 
         await Task.Delay(10, TestContext.Current.CancellationToken);
 
         cancellationTokenSource.Cancel();
         await updatingTask;
 
-        Assert.Equal($"Test 1{Environment.NewLine}Test 2{Environment.NewLine}", subject.LogEvents);
+        Assert.Equal($"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}", subject.LogEvents);
     }
 
     [Fact]
@@ -47,8 +45,8 @@ public class RequestLogModelTests {
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
-        subject.Add($"Test 1{Environment.NewLine}");
-        subject.Add($"Test 2{Environment.NewLine}");
+        subject.Add($"Test 1{System.Environment.NewLine}");
+        subject.Add($"Test 2{System.Environment.NewLine}");
 
         subject.Clear();
 
@@ -67,7 +65,7 @@ public class RequestLogModelTests {
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, null));
 
         var subject = new RequestLogModel(messageService, popupService, 1) {
-            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
+            LogEvents = $"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}"
         };
 
         await subject.Save();
@@ -84,7 +82,7 @@ public class RequestLogModelTests {
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new Exception()));
 
         var subject = new RequestLogModel(messageService, popupService, 1) {
-            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
+            LogEvents = $"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}"
         };
 
         await subject.Save();
@@ -101,7 +99,7 @@ public class RequestLogModelTests {
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
 
         var subject = new RequestLogModel(messageService, popupService, 1) {
-            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
+            LogEvents = $"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}"
         };
 
         await subject.Save();
