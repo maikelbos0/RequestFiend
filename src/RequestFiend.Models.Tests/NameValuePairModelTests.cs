@@ -16,9 +16,9 @@ public class NameValuePairModelTests {
         var subject = new NameValuePairModel(() => name, () => value, nameValidator, valueValidator);
 
         Assert.Equal(name, subject.Name.Value);
-        Assert.Equal(nameValidator, subject.Name.Validator);
+        Assert.Same(nameValidator, subject.Name.Validator);
         Assert.Equal(value, subject.Value.Value);
-        Assert.Equal(valueValidator, subject.Value.Validator);
+        Assert.Same(valueValidator, subject.Value.Validator);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
 

@@ -25,9 +25,9 @@ public class NameValuePairModelCollectionTests {
 
         for (var i = 0; i < collection.Count; i++) {
             Assert.Equal(collection[i].Name, subject[i].Name.Value);
-            Assert.Equal(nameValidator, subject[i].Name.Validator);
+            Assert.Same(nameValidator, subject[i].Name.Validator);
             Assert.Equal(collection[i].Value, subject[i].Value.Value);
-            Assert.Equal(valueValidator, subject[i].Value.Validator);
+            Assert.Same(valueValidator, subject[i].Value.Validator);
         }
     }
 
@@ -94,9 +94,9 @@ public class NameValuePairModelCollectionTests {
 
         var pair = Assert.Single(subject);
         Assert.Equal("", pair.Name.Value);
-        Assert.Equal(nameValidator, pair.Name.Validator);
+        Assert.Same(nameValidator, pair.Name.Validator);
         Assert.Equal("", pair.Value.Value);
-        Assert.Equal(valueValidator, pair.Value.Validator);
+        Assert.Same(valueValidator, pair.Value.Validator);
     }
 
     [Fact]
@@ -116,9 +116,9 @@ public class NameValuePairModelCollectionTests {
 
         var pair = Assert.Single(subject);
         Assert.Equal(name, pair.Name.Value);
-        Assert.Equal(nameValidator, pair.Name.Validator);
+        Assert.Same(nameValidator, pair.Name.Validator);
         Assert.Equal(value, pair.Value.Value);
-        Assert.Equal(valueValidator, pair.Value.Validator);
+        Assert.Same(valueValidator, pair.Value.Validator);
     }
 
     [Fact]
