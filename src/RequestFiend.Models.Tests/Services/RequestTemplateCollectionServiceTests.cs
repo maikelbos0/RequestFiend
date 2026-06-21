@@ -19,10 +19,12 @@ public class RequestTemplateCollectionServiceTests {
         var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         var collection = new RequestTemplateCollection() {
-            Variables = { new() { Name = "DefaultHeader", Value = "Accept" } },
-            DefaultHeaders = [
+            Variables = {
+                new() { Name = "DefaultHeader", Value = "Accept" }
+            },
+            DefaultHeaders = {
                 new() { Name = "{{DefaultHeader}}", Value = "application/json" }
-            ]
+            }
         };
 
         var subject = new RequestTemplateCollectionService(messageService, fileSystem, preferencesService);

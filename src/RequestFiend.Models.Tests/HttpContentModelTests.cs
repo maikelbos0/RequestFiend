@@ -17,7 +17,9 @@ public class HttpContentModelTests {
 
     [Fact]
     public async Task Create_Null_ContentType() {
-        var content = new StringContent("Content") { Headers = { ContentType = null } };
+        var content = new StringContent("Content") {
+            Headers = { ContentType = null }
+        };
 
         var subject = await HttpContentModel.Create(content);
 

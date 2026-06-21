@@ -24,7 +24,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request);
@@ -54,7 +54,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
         var isExecutingValues = new List<bool>();
         var pageTitleBaseValues = new List<string>();
@@ -104,7 +104,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
@@ -131,7 +131,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
@@ -158,7 +158,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
@@ -184,7 +184,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
         var isExecutingValues = new List<bool>();
         var pageTitleBaseValues = new List<string>();
@@ -213,7 +213,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestModel(messageService, Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request);
@@ -235,9 +235,9 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
-        
+
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
         await subject.OnRequestCreated(new HttpRequestMessage());
@@ -257,7 +257,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
@@ -279,9 +279,9 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
-        
+
         var subject = new RequestModel(Substitute.For<IMessageService>(), Substitute.For<IRequestHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
         await subject.OnExceptionCaught(new Exception());
@@ -306,7 +306,7 @@ public class RequestModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
         var expectedException = new Exception();
 

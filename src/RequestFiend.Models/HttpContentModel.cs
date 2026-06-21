@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial record HttpContentModel(HttpContentType Type, string? MediaType, byte[]? BinaryContent,  string? TextContent) {
+public partial record HttpContentModel(HttpContentType Type, string? MediaType, byte[]? BinaryContent, string? TextContent) {
     private static readonly HashSet<string> imageMediaTypes = ["image/bmp", "image/gif", "image/jpeg", "image/png", "image/svg+xml"];
     private static readonly HashSet<HttpContentType> textContentTypes = [HttpContentType.Text];
 

@@ -11,9 +11,9 @@ public class RequestTemplateTests {
             Name = "Request",
             Method = "GET",
             Url = "https://localhost:7001/",
-            Headers = [
+            Headers = {
                 new() { Name = "Accept", Value = "application/json" }
-            ],
+            },
             ContentType = ContentType.Text,
             StringContent = "Just a piece of text",
             PreExchangeScript = { Code = "PreExchangeScript" },
@@ -64,7 +64,7 @@ public class RequestTemplateTests {
             Url = "https://localhost:7001/"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [subject]
+            Requests = { subject }
         };
 
         var message = subject.CreateMessage(collection, null);
@@ -82,11 +82,15 @@ public class RequestTemplateTests {
             Url = "{{baseurl}}{{path}}"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [subject],
-            Variables = { new() { Name = "BaseUrl", Value = "https://localhost:7001/" } }
+            Requests = { subject },
+            Variables = {
+                new() { Name = "BaseUrl", Value = "https://localhost:7001/" }
+            }
         };
         var environment = new Environment() {
-            Variables = { new() { Name = "Path", Value = "values" } }
+            Variables = {
+                new() { Name = "Path", Value = "values" }
+            }
         };
 
         var message = subject.CreateMessage(collection, environment);
@@ -101,16 +105,20 @@ public class RequestTemplateTests {
             Name = "Request",
             Method = "GET",
             Url = "https://localhost:7001/",
-            Headers = [
+            Headers = {
                 new() { Name = "{{HeaderName}}", Value = "{{HeaderValue}}" }
-            ]
+            }
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [subject],
-            Variables = { new() { Name = "HeaderName", Value = "Accept" } }
+            Requests = { subject },
+            Variables = {
+                new() { Name = "HeaderName", Value = "Accept" }
+            }
         };
         var environment = new Environment() {
-            Variables = { new() { Name = "HeaderValue", Value = "application/json" } }
+            Variables = {
+                new() { Name = "HeaderValue", Value = "application/json" }
+            }
         };
 
         var message = subject.CreateMessage(collection, environment);
@@ -129,14 +137,16 @@ public class RequestTemplateTests {
         };
         var collection = new RequestTemplateCollection() {
             Requests = [subject],
-            DefaultHeaders = [
+            DefaultHeaders = {
                 new() { Name = "{{HeaderName}}", Value = "{{HeaderValue}}" }
-            ],
+            },
             Variables = {
                 new() { Name = "HeaderName", Value = "Accept" } }
         };
         var environment = new Environment() {
-            Variables = { new() { Name = "HeaderValue", Value = "application/json" } }
+            Variables = {
+                new() { Name = "HeaderValue", Value = "application/json" }
+            }
         };
 
         var message = subject.CreateMessage(collection, environment);
@@ -156,7 +166,7 @@ public class RequestTemplateTests {
             StringContent = "Just a piece of text"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [subject]
+            Requests = { subject }
         };
 
         var message = subject.CreateMessage(collection, null);

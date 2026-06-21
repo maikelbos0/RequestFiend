@@ -36,7 +36,7 @@ public class RequestTemplateModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
@@ -94,7 +94,7 @@ public class RequestTemplateModelTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request);
@@ -188,7 +188,7 @@ public class RequestTemplateModelTests {
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
@@ -381,7 +381,7 @@ public class RequestTemplateModelTests {
             OnExceptionScript = { Code = "PreviousOnExceptionScript" }
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
@@ -797,7 +797,7 @@ public class RequestTemplateModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, new(filePath), collection, request);
@@ -820,7 +820,7 @@ public class RequestTemplateModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
@@ -846,7 +846,7 @@ public class RequestTemplateModelTests {
             Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = [request]
+            Requests = { request }
         };
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);

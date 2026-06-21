@@ -52,9 +52,7 @@ public class UrlModelTests {
     [Fact]
     public void ParseQueryStringFromBaseUrl_With_Parameters() {
         var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), new(), "https://localhost/api?Foo") {
-            BaseUrl = {
-                Value = "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz"
-            }
+            BaseUrl = { Value = "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz" }
         };
 
         subject.ParseQueryStringFromBaseUrl();

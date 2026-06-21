@@ -12,9 +12,9 @@ public class RequestTemplateCollectionModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var collection = new RequestTemplateCollection() {
-            Requests = [
+            Requests = {
                 new() { Name = "Request", Method = "GET", Url = "https://localhost" },
-            ]
+            }
         };
 
         var subject = new RequestTemplateCollectionModel(

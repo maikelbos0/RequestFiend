@@ -17,12 +17,12 @@ public class FormDataContentManagerTests {
             Method = "POST",
             Url = "https://localhost",
             HasManualContentTypeHeader = hasManualContentTypeHeader,
-            FormFieldContent = [
+            FormFieldContent = {
                 new() { Name = "Description", Value = "The {{first}} and {{second}} get replaced" }
-            ],
-            FormFileContent = [
+            },
+            FormFileContent = {
                 new() { Name = "Data", Value = "./{{FileName}}" }
-            ]
+            }
         };
         var variableSnapshot = new VariableSnapshot([
             new NameValuePair() { Name = "FileName", Value = "Data.json" },

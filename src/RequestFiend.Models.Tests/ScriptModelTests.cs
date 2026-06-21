@@ -43,7 +43,7 @@ public class ScriptModelTests {
     [Fact]
     public void Reset() {
         var script = new Script() {
-            References = ["Foo", "Bar"],
+            References = { "Foo", "Bar" },
             Code = "PreviousScript"
         };
 
