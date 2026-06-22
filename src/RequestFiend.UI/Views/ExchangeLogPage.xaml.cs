@@ -3,10 +3,10 @@ using System.Threading;
 
 namespace RequestFiend.UI.Views;
 
-public partial class RequestLogPage : ContentPage {
+public partial class ExchangeLogPage : ContentPage {
     private CancellationTokenSource? updatingCancellationTokenSource;
 
-    public RequestLogPage(RequestLogModel model) : base(model) {
+    public ExchangeLogPage(ExchangeLogModel model) : base(model) {
         InitializeComponent();
     }
 
@@ -19,7 +19,7 @@ public partial class RequestLogPage : ContentPage {
             cancellationTokenSource.Dispose();
         }
 
-        _ = ((RequestLogModel)BindingContext).StartUpdating(cancellationTokenSource.Token);
+        _ = ((ExchangeLogModel)BindingContext).StartUpdating(cancellationTokenSource.Token);
     }
 
     protected override void OnNavigatingFrom(Microsoft.Maui.Controls.NavigatingFromEventArgs args) {

@@ -35,7 +35,7 @@ public static class MauiProgram {
 
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
-        mauiAppBuilder.Services.AddHttpClient<IRequestHandler, RequestHandler>()
+        mauiAppBuilder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
             .ConfigurePrimaryHttpMessageHandler(static serviceProvider => new SocketsHttpHandler() {
                 PooledConnectionLifetime = TimeSpan.Zero,
                 SslOptions = {
@@ -60,23 +60,23 @@ public static class MauiProgram {
 
         mauiAppBuilder.Services.AddSingleton<MainPageModel>();
         mauiAppBuilder.Services.AddSingleton<PreferencesModel>();
-        mauiAppBuilder.Services.AddSingleton(serviceProvider => new RequestLogModel(
+        mauiAppBuilder.Services.AddSingleton(serviceProvider => new ExchangeLogModel(
             serviceProvider.GetRequiredService<Models.Services.IMessageService>(),
             serviceProvider.GetRequiredService<Models.Services.IPopupService>(),
             1000
         ));
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
-        mauiAppBuilder.Services.AddTransient<RequestModel>();
+        mauiAppBuilder.Services.AddTransient<ExchangeModel>();
 
         mauiAppBuilder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
             var preferencesService = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>();
-            var requestLoggingPath = preferencesService.GetRequestLoggingPath();
-            var requestLoggingOutputTemplate = preferencesService.GetRequestLoggingOutputTemplate();
+            var exchangeLoggingPath = preferencesService.GetExchangeLoggingPath();
+            var exchangeLoggingOutputTemplate = preferencesService.GetExchangeLoggingOutputTemplate();
 
-            loggerConfiguration.WriteTo.Sink(new Models.Services.RequestLogSink(serviceProvider.GetRequiredService<RequestLogModel>(), requestLoggingOutputTemplate));
+            loggerConfiguration.WriteTo.Sink(new Models.Services.ExchangeLogSink(serviceProvider.GetRequiredService<ExchangeLogModel>(), exchangeLoggingOutputTemplate));
 
-            if (!string.IsNullOrWhiteSpace(requestLoggingPath)) {
-                loggerConfiguration.WriteTo.File(requestLoggingPath, outputTemplate: requestLoggingOutputTemplate, rollingInterval: RollingInterval.Day);
+            if (!string.IsNullOrWhiteSpace(exchangeLoggingPath)) {
+                loggerConfiguration.WriteTo.File(exchangeLoggingPath, outputTemplate: exchangeLoggingOutputTemplate, rollingInterval: RollingInterval.Day);
             }
         });
 

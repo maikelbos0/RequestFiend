@@ -126,11 +126,11 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
             .Where(x => x.StyleId == message.Id)
             .Select(x => (x.Item, x.Index + 1))
             .Single();
-        var request = GetRequiredService<RequestModel>();
+        var request = GetRequiredService<ExchangeModel>();
         var item = new Tab() {
             Icon = "arrow_right_arrow_left_solid_full.png",
             Items = {
-                new RequestPage(request)
+                new ExchangePage(request)
             },
             Route = $"Request_{request.Id}",
             StyleId = request.Id

@@ -6,18 +6,18 @@ using System.Net.Http;
 
 namespace RequestFiend.Core;
 
-public class RequestContext {
-    public Dictionary<string, object> RequestData { get; } = [];
+public class ExchangeContext {
+    public Dictionary<string, object> ExchangeData { get; } = [];
     public Dictionary<string, object> SessionData { get; }
     public Dictionary<string, string> SessionVariables { get; }
     public ImmutableDictionary<string, string> Variables { get; }
-    public ILogger<RequestContext> Logger { get; }
+    public ILogger<ExchangeContext> Logger { get; }
 
     public HttpRequestMessage? Request { get; internal set; }
     public Exception? Exception { get; internal set; }
     public HttpResponseMessage? Response { get; internal set; }
 
-    internal RequestContext(Dictionary<string, object> sessionData, Dictionary<string, string> sessionVariables, ImmutableDictionary<string, string> variables, ILogger<RequestContext> logger) {
+    internal ExchangeContext(Dictionary<string, object> sessionData, Dictionary<string, string> sessionVariables, ImmutableDictionary<string, string> variables, ILogger<ExchangeContext> logger) {
         SessionData = sessionData;
         SessionVariables = sessionVariables;
         Variables = variables;

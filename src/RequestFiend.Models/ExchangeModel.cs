@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestModel : PageBoundModelBase, IRequestExchangeListener, IDisposable {
+public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDisposable {
     private readonly IMessageService messageService;
-    private readonly IRequestHandler requestHandler;
+    private readonly IExchangeHandler exchangeHandler;
     private readonly IPopupService popupService;
     private readonly IPreferencesService preferencesService;
     private readonly IUserInterface userInterface;
@@ -31,9 +31,9 @@ public string Id { get; } = Guid.NewGuid().ToString();
     [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
     [ObservableProperty] public partial string? RequestElapsed { get; set; }
 
-    public RequestModel(
+    public ExchangeModel(
         IMessageService messageService,
-        IRequestHandler requestHandler,
+        IExchangeHandler exchangeHandler,
         IPopupService popupService,
         IPreferencesService preferencesService,
         IUserInterface userInterface,
@@ -42,7 +42,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
         RequestTemplate request
     ) : base($"{file.Name} - {request.Name} - Exchange", $"{request.Name} - Exchange") {
         this.messageService = messageService;
-        this.requestHandler = requestHandler;
+        this.exchangeHandler = exchangeHandler;
         this.popupService = popupService;
         this.preferencesService = preferencesService;
         this.userInterface = userInterface;
@@ -72,7 +72,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
         RequestElapsed = null;
 
         var scriptEvaluationMode = preferencesService.GetScriptEvaluationMode();
-        var options = new RequestExchangeOptions(
+        var options = new ExchangeOptions(
             preferencesService.GetScriptEvaluationMode() switch {
                 ScriptEvaluationMode.Disabled => false,
                 ScriptEvaluationMode.Enabled => true,
@@ -83,7 +83,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
             null
         );
 
-        await Task.Run(() => requestHandler.Execute(request, collection, options, this, cancellationTokenSource.Token));
+        await Task.Run(() => exchangeHandler.Execute(request, collection, options, this, cancellationTokenSource.Token));
 
         PageTitleBase = $"{file.Name} - {request.Name} - Exchange";
         ShellItemTitleBase = $"{request.Name} - Exchange";

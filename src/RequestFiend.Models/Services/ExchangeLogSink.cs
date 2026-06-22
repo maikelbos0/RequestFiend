@@ -5,18 +5,18 @@ using System.IO;
 
 namespace RequestFiend.Models.Services;
 
-public class RequestLogSink : ILogEventSink {
-    private readonly RequestLogModel requestLogModel;
+public class ExchangeLogSink : ILogEventSink {
+    private readonly ExchangeLogModel exchangeLogModel;
     private readonly MessageTemplateTextFormatter textFormatter;
 
-    public RequestLogSink(RequestLogModel requestLogModel, string outputTemplate) {
-        this.requestLogModel = requestLogModel;
+    public ExchangeLogSink(ExchangeLogModel exchangeLogModel, string outputTemplate) {
+        this.exchangeLogModel = exchangeLogModel;
         textFormatter = new MessageTemplateTextFormatter(outputTemplate);
     }
 
     public void Emit(LogEvent logEvent) {
         using var stringWriter = new StringWriter();
         textFormatter.Format(logEvent, stringWriter);
-        requestLogModel.Add(stringWriter.ToString());
+        exchangeLogModel.Add(stringWriter.ToString());
     }
 }

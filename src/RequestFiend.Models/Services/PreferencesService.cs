@@ -13,15 +13,15 @@ public class PreferencesService : IPreferencesService {
     private const bool DefaultCollectionAllowScriptEvaluation = false;
     private const int InfiniteRequestTimeoutInSeconds = -1;
     private const int DefaultRequestTimeoutInSeconds = InfiniteRequestTimeoutInSeconds;
-    private const string DefaultRequestLoggingPath = "";
-    private const string DefaultRequestLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+    private const string DefaultExchangeLoggingPath = "";
+    private const string DefaultExchangeLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
     private const string CollectionAllowScriptEvaluation = nameof(CollectionAllowScriptEvaluation);
     private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
-    private const string RequestLoggingPath = nameof(RequestLoggingPath);
-    private const string RequestLoggingOutputTemplate = nameof(RequestLoggingOutputTemplate);
+    private const string ExchangeLoggingPath = nameof(ExchangeLoggingPath);
+    private const string ExchangeLoggingOutputTemplate = nameof(ExchangeLoggingOutputTemplate);
 
     private readonly IMessageService messageService;
 
@@ -98,17 +98,17 @@ public class PreferencesService : IPreferencesService {
     public void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds)
         => Preferences.Set(RequestTimeoutInSeconds, requestTimeoutInSeconds ?? InfiniteRequestTimeoutInSeconds);
 
-    public string GetRequestLoggingPath()
-        => Preferences.Get(RequestLoggingPath, DefaultRequestLoggingPath);
+    public string GetExchangeLoggingPath()
+        => Preferences.Get(ExchangeLoggingPath, DefaultExchangeLoggingPath);
 
-    public void SetRequestLoggingPath(string? requestLoggingPath)
-        => Preferences.Set(RequestLoggingPath, requestLoggingPath);
+    public void SetExchangeLoggingPath(string? exchangeLoggingPath)
+        => Preferences.Set(ExchangeLoggingPath, exchangeLoggingPath);
 
-    public string GetRequestLoggingOutputTemplate()
-        => Preferences.Get(RequestLoggingOutputTemplate, DefaultRequestLoggingOutputTemplate);
+    public string GetExchangeLoggingOutputTemplate()
+        => Preferences.Get(ExchangeLoggingOutputTemplate, DefaultExchangeLoggingOutputTemplate);
 
-    public void SetRequestLoggingOutputTemplate(string? requestLoggingOutputTemplate)
-        => Preferences.Set(RequestLoggingOutputTemplate, requestLoggingOutputTemplate);
+    public void SetExchangeLoggingOutputTemplate(string? exchangeLoggingOutputTemplate)
+        => Preferences.Set(ExchangeLoggingOutputTemplate, exchangeLoggingOutputTemplate);
 
     public void Reset() {
         Preferences.Clear();

@@ -32,15 +32,15 @@
 
                     <views:ValidatableEntry Text="{Binding RequestTimeoutInSeconds}"/>
 
-                    <Label Text="Request logging path (leave blank to disable)" Style="{StaticResource EntryLabel}"/>
+                    <Label Text="Exchange logging path (leave blank to disable)" Style="{StaticResource EntryLabel}"/>
 
-                    <views:ValidatableEntry Text="{Binding RequestLoggingPath}"/>
+                    <views:ValidatableEntry Text="{Binding ExchangeLoggingPath}"/>
                     
                     <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
 
-                    <Label Text="Request logging output template (Serilog style)" Style="{StaticResource EntryLabel}"/>
+                    <Label Text="Exchange logging output template (Serilog style)" Style="{StaticResource EntryLabel}"/>
 
-                    <views:ValidatableEntry Text="{Binding RequestLoggingOutputTemplate}"/>
+                    <views:ValidatableEntry Text="{Binding ExchangeLoggingOutputTemplate}"/>
                     
                     <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
                 </VerticalStackLayout>

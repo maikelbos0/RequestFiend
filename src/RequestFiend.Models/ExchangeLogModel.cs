@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestLogModel : PageBoundModelBase {
+public partial class ExchangeLogModel : PageBoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
     private readonly int updateDelayInMilliseconds;
@@ -20,7 +20,7 @@ public partial class RequestLogModel : PageBoundModelBase {
 
     [ObservableProperty] public partial string LogEvents { get; set; } = "";
 
-    public RequestLogModel(IMessageService messageService, IPopupService popupService, int updateDelayInMilliseconds) : base("Request log", "Request log") {
+    public ExchangeLogModel(IMessageService messageService, IPopupService popupService, int updateDelayInMilliseconds) : base("Exchange log", "Exchange log") {
         this.messageService = messageService;
         this.popupService = popupService;
         this.updateDelayInMilliseconds = updateDelayInMilliseconds;

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class RequestHandlerTests {
+public class ExchangetHandlerTests {
     [Fact]
     public async Task Execute() {
         var expectedResponse = new HttpResponseMessage();
@@ -19,7 +19,7 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var serverCertificateValidationHandler = Substitute.For<IServerCertificateValidationHandler>();
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), serverCertificateValidationHandler, Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, Substitute.For<IScriptEvaluator>(), serverCertificateValidationHandler, Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -51,7 +51,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -74,7 +74,7 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(expectedException);
         var httpClient = new HttpClient(httpMessageHandler);
 
-        var subject = new RequestHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -96,9 +96,9 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Returns(new HttpResponseMessage());
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
-        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+        var exchangeListener = Substitute.For<IExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -109,20 +109,20 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        var result = await subject.Execute(request, new(), new(true, null, null), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
 
         Received.InOrder(async () => {
-            await requestPipelineListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
+            await exchangeListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
-            await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
+            await exchangeListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
-            await requestPipelineListener.Received().OnRequestElapsed(Arg.Any<TimeSpan>());
+            await exchangeListener.Received().OnRequestElapsed(Arg.Any<TimeSpan>());
             await scriptEvaluator.Evaluate(request.PostExchangeScript, result, CancellationToken.None);
-            await requestPipelineListener.OnResponseReceived(Arg.Is<HttpResponseMessage>(response => response == result.Response));
+            await exchangeListener.OnResponseReceived(Arg.Is<HttpResponseMessage>(response => response == result.Response));
         });
 
-        await scriptEvaluator.DidNotReceive().Evaluate(request.OnExceptionScript, Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
-        await requestPipelineListener.DidNotReceive().OnExceptionCaught(Arg.Any<Exception>());
+        await scriptEvaluator.DidNotReceive().Evaluate(request.OnExceptionScript, Arg.Any<ExchangeContext>(), Arg.Any<CancellationToken>());
+        await exchangeListener.DidNotReceive().OnExceptionCaught(Arg.Any<Exception>());
     }
 
     [Fact]
@@ -131,9 +131,9 @@ public class RequestHandlerTests {
         httpMessageHandler.SendAsyncCore(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>()).Throws(new InvalidOperationException());
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
-        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+        var exchangeListener = Substitute.For<IExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -144,20 +144,20 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        var result = await subject.Execute(request, new(), new(true, null, null), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
 
         Received.InOrder(async () => {
-            await requestPipelineListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
+            await exchangeListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
-            await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
+            await exchangeListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
-            await requestPipelineListener.Received().OnRequestElapsed(Arg.Any<TimeSpan>());
+            await exchangeListener.Received().OnRequestElapsed(Arg.Any<TimeSpan>());
             await scriptEvaluator.Evaluate(request.OnExceptionScript, result, CancellationToken.None);
-            await requestPipelineListener.OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+            await exchangeListener.OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
         });
 
-        await scriptEvaluator.DidNotReceive().Evaluate(request.PostExchangeScript, Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
-        await requestPipelineListener.DidNotReceive().OnResponseReceived(Arg.Any<HttpResponseMessage>());
+        await scriptEvaluator.DidNotReceive().Evaluate(request.PostExchangeScript, Arg.Any<ExchangeContext>(), Arg.Any<CancellationToken>());
+        await exchangeListener.DidNotReceive().OnResponseReceived(Arg.Any<HttpResponseMessage>());
     }
 
     [Fact]
@@ -167,10 +167,10 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
         var expectedException = new InvalidOperationException();
-        scriptEvaluator.Evaluate(Arg.Is<Script>(script => script.Code == "OnExceptionScript"), Arg.Any<RequestContext>(), CancellationToken.None).Throws(expectedException);
-        var requestPipelineListener = Substitute.For<IRequestExchangeListener>();
+        scriptEvaluator.Evaluate(Arg.Is<Script>(script => script.Code == "OnExceptionScript"), Arg.Any<ExchangeContext>(), CancellationToken.None).Throws(expectedException);
+        var exchangeListener = Substitute.For<IExchangeListener>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -181,9 +181,9 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        var result = await subject.Execute(request, new(), new(true, null, null), requestPipelineListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
 
-        await requestPipelineListener.Received(1).OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
+        await exchangeListener.Received(1).OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -206,7 +206,7 @@ public class RequestHandlerTests {
 
         await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
-        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
+        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<ExchangeContext>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class RequestHandlerTests {
         var httpClient = new HttpClient(httpMessageHandler);
         var scriptEvaluator = Substitute.For<IScriptEvaluator>();
 
-        var subject = new RequestHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
+        var subject = new ExchangeHandler(httpClient, scriptEvaluator, Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
         var request = new RequestTemplate() {
             Name = "Name",
@@ -229,6 +229,6 @@ public class RequestHandlerTests {
 
         await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
-        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
+        await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<ExchangeContext>(), Arg.Any<CancellationToken>());
     }
 }

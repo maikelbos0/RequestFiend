@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Core;
 
-public interface IRequestExchangeListener {
+public interface IExchangeListener {
     Task OnVariablesCompiled(ImmutableDictionary<string, string> variables);
     Task OnRequestCreated(HttpRequestMessage request);
     Task OnResponseReceived(HttpResponseMessage response);

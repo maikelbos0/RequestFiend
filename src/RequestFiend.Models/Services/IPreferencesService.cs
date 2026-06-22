@@ -16,9 +16,9 @@ public interface IPreferencesService {
     void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation);
     int? GetRequestTimeoutInSeconds();
     void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds);
-    string GetRequestLoggingPath();
-    void SetRequestLoggingPath(string requestLoggingPath);
-    string GetRequestLoggingOutputTemplate();
-    void SetRequestLoggingOutputTemplate(string requestLoggingOutputTemplate);
+    string GetExchangeLoggingPath();
+    void SetExchangeLoggingPath(string exchangeLoggingPath);
+    string GetExchangeLoggingOutputTemplate();
+    void SetExchangeLoggingOutputTemplate(string exchangeLoggingOutputTemplate);
     void Reset();
 }

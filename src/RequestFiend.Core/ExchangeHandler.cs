@@ -8,35 +8,35 @@ using Timer = System.Timers.Timer;
 
 namespace RequestFiend.Core;
 
-public class RequestHandler : IRequestHandler {
+public class ExchangeHandler : IExchangeHandler {
     private readonly HttpClient httpClient;
     private readonly IScriptEvaluator scriptEvaluator;
     private readonly IServerCertificateValidationHandler serverCertificateValidationHandler;
     private readonly ILoggerFactory loggerFactory;
 
-    public RequestHandler(HttpClient httpClient, IScriptEvaluator scriptEvaluator, IServerCertificateValidationHandler serverCertificateValidationHandler, ILoggerFactory loggerFactory) {
+    public ExchangeHandler(HttpClient httpClient, IScriptEvaluator scriptEvaluator, IServerCertificateValidationHandler serverCertificateValidationHandler, ILoggerFactory loggerFactory) {
         this.httpClient = httpClient;
         this.scriptEvaluator = scriptEvaluator;
         this.serverCertificateValidationHandler = serverCertificateValidationHandler;
         this.loggerFactory = loggerFactory;
     }
 
-    public Task<RequestContext> Execute(RequestTemplate request, RequestTemplateCollection collection, RequestExchangeOptions requestExchangeOptions, CancellationToken cancellationToken)
-        => Execute(request, collection, requestExchangeOptions, null, cancellationToken);
+    public Task<ExchangeContext> Execute(RequestTemplate request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, CancellationToken cancellationToken)
+        => Execute(request, collection, exchangeOptions, null, cancellationToken);
 
-    public async Task<RequestContext> Execute(
+    public async Task<ExchangeContext> Execute(
         RequestTemplate request,
         RequestTemplateCollection collection,
-        RequestExchangeOptions requestExchangeOptions,
-        IRequestExchangeListener? requestExchangeListener,
+        ExchangeOptions exchangeOptions,
+        IExchangeListener? exchangeListener,
         CancellationToken cancellationToken
     ) {
-        var variableSnapshot = collection.GetVariableSnapshot(requestExchangeOptions.Environment);
-        var context = new RequestContext(
+        var variableSnapshot = collection.GetVariableSnapshot(exchangeOptions.Environment);
+        var context = new ExchangeContext(
             collection.GetSessionData(),
             collection.GetSessionVariables(),
             variableSnapshot.Variables,
-            loggerFactory.CreateLogger<RequestContext>()
+            loggerFactory.CreateLogger<ExchangeContext>()
         );
         Timer? timer = null;
         Stopwatch? stopwatch = null;
@@ -46,30 +46,30 @@ public class RequestHandler : IRequestHandler {
         try {
             context.Logger.LogInformation("Starting execution of request {RequestName}", request.Name);
 
-            if (requestExchangeListener != null) {
-                await requestExchangeListener.OnVariablesCompiled(variableSnapshot.Variables);
+            if (exchangeListener != null) {
+                await exchangeListener.OnVariablesCompiled(variableSnapshot.Variables);
             }
 
             context.Request = request.CreateMessage(collection, variableSnapshot);
 
-            if (requestExchangeOptions.AllowScriptEvaluation) {
+            if (exchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PreExchangeScript, context, cancellationToken);
             }
 
-            if (requestExchangeListener != null) {
-                await requestExchangeListener.OnRequestCreated(context.Request);
+            if (exchangeListener != null) {
+                await exchangeListener.OnRequestCreated(context.Request);
             }
 
             using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
-            if (requestExchangeOptions.RequestTimeoutInSeconds.HasValue) {
-                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(requestExchangeOptions.RequestTimeoutInSeconds.Value));
+            if (exchangeOptions.RequestTimeoutInSeconds.HasValue) {
+                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(exchangeOptions.RequestTimeoutInSeconds.Value));
             }
 
-            if (requestExchangeListener != null) {
+            if (exchangeListener != null) {
                 stopwatch = new Stopwatch();
                 timer = new Timer(42);
-                timer.Elapsed += (_, _) => requestExchangeListener.OnRequestElapsed(stopwatch.Elapsed);
+                timer.Elapsed += (_, _) => exchangeListener.OnRequestElapsed(stopwatch.Elapsed);
                 timer.Start();
                 stopwatch.Start();
             }
@@ -78,12 +78,12 @@ public class RequestHandler : IRequestHandler {
 
             await CompleteRequestElapsed();
 
-            if (requestExchangeOptions.AllowScriptEvaluation) {
+            if (exchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PostExchangeScript, context, cancellationToken);
             }
 
-            if (requestExchangeListener != null) {
-                await requestExchangeListener.OnResponseReceived(context.Response);
+            if (exchangeListener != null) {
+                await exchangeListener.OnResponseReceived(context.Response);
             }
             context.Logger.LogInformation("Finished execution of request {RequestName}", request.Name);
         }
@@ -93,7 +93,7 @@ public class RequestHandler : IRequestHandler {
 
             context.Exception = exception;
 
-            if (requestExchangeOptions.AllowScriptEvaluation) {
+            if (exchangeOptions.AllowScriptEvaluation) {
                 try {
                     await scriptEvaluator.Evaluate(request.OnExceptionScript, context, cancellationToken);
                 }
@@ -102,8 +102,8 @@ public class RequestHandler : IRequestHandler {
                 }
             }
 
-            if (requestExchangeListener != null) {
-                await requestExchangeListener.OnExceptionCaught(context.Exception);
+            if (exchangeListener != null) {
+                await exchangeListener.OnExceptionCaught(context.Exception);
             }
         }
 
@@ -114,8 +114,8 @@ public class RequestHandler : IRequestHandler {
             timer?.Stop();
             timer?.Dispose();
 
-            if (requestExchangeListener != null && stopwatch != null) {
-                await requestExchangeListener.OnRequestElapsed(stopwatch.Elapsed);
+            if (exchangeListener != null && stopwatch != null) {
+                await exchangeListener.OnRequestElapsed(stopwatch.Elapsed);
             }
         }
     }
