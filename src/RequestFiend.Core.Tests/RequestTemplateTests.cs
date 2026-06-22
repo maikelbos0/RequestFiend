@@ -67,7 +67,7 @@ public class RequestTemplateTests {
             Requests = { subject }
         };
 
-        var message = subject.CreateMessage(collection, null);
+        var message = subject.CreateMessage(collection, new());
 
         Assert.Equal(subject.Method, message.Method.Method);
         Assert.NotNull(message.RequestUri);
@@ -79,21 +79,16 @@ public class RequestTemplateTests {
         var subject = new RequestTemplate() {
             Name = "Request",
             Method = "GET",
-            Url = "{{baseurl}}{{path}}"
+            Url = "{{baseurl}}values"
         };
         var collection = new RequestTemplateCollection() {
-            Requests = { subject },
-            Variables = {
-                new() { Name = "BaseUrl", Value = "https://localhost:7001/" }
-            }
+            Requests = { subject }
         };
-        var environment = new Environment() {
-            Variables = {
-                new() { Name = "Path", Value = "values" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "BaseUrl", Value = "https://localhost:7001/" }
+        ]);
 
-        var message = subject.CreateMessage(collection, environment);
+        var message = subject.CreateMessage(collection, variableSnapshot);
 
         Assert.NotNull(message.RequestUri);
         Assert.Equal("https://localhost:7001/values", message.RequestUri.ToString());
@@ -110,18 +105,14 @@ public class RequestTemplateTests {
             }
         };
         var collection = new RequestTemplateCollection() {
-            Requests = { subject },
-            Variables = {
-                new() { Name = "HeaderName", Value = "Accept" }
-            }
+            Requests = { subject }
         };
-        var environment = new Environment() {
-            Variables = {
-                new() { Name = "HeaderValue", Value = "application/json" }
-            }
-        };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "HeaderName", Value = "Accept" },
+            new NameValuePair() { Name = "HeaderValue", Value = "application/json" }
+        ]);
 
-        var message = subject.CreateMessage(collection, environment);
+        var message = subject.CreateMessage(collection, variableSnapshot);
 
         var header = Assert.Single(message.Headers);
         Assert.Equal("Accept", header.Key);
@@ -139,17 +130,14 @@ public class RequestTemplateTests {
             Requests = [subject],
             DefaultHeaders = {
                 new() { Name = "{{HeaderName}}", Value = "{{HeaderValue}}" }
-            },
-            Variables = {
-                new() { Name = "HeaderName", Value = "Accept" } }
-        };
-        var environment = new Environment() {
-            Variables = {
-                new() { Name = "HeaderValue", Value = "application/json" }
             }
         };
+        var variableSnapshot = new VariableSnapshot([
+            new NameValuePair() { Name = "HeaderName", Value = "Accept" },
+            new NameValuePair() { Name = "HeaderValue", Value = "application/json" }
+        ]);
 
-        var message = subject.CreateMessage(collection, environment);
+        var message = subject.CreateMessage(collection, variableSnapshot);
 
         var defaultHeader = Assert.Single(message.Headers);
         Assert.Equal("Accept", defaultHeader.Key);
@@ -169,7 +157,7 @@ public class RequestTemplateTests {
             Requests = { subject }
         };
 
-        var message = subject.CreateMessage(collection, null);
+        var message = subject.CreateMessage(collection, new());
 
         Assert.IsType<StringContent>(message.Content);
     }

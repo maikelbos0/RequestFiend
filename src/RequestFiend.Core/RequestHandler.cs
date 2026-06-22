@@ -39,7 +39,10 @@ public class RequestHandler : IRequestHandler {
 
         try {
             context.Logger.LogInformation("Starting execution of request {RequestName}", request.Name);
-            context.Request = request.CreateMessage(collection, requestExchangeOptions.Environment);
+
+            var variableSnapshot = collection.GetVariableSnapshot(requestExchangeOptions.Environment);
+
+            context.Request = request.CreateMessage(collection, variableSnapshot);
 
             if (requestExchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PreExchangeScript, context, cancellationToken);
