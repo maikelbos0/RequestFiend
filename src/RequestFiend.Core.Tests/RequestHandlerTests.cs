@@ -2,6 +2,7 @@
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System;
+using System.Collections.Immutable;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ public class RequestHandlerTests {
 
         Assert.Same(result.SessionData, collection.GetSessionData());
         Assert.Same(result.SessionVariables, collection.GetSessionVariables());
+        Assert.NotNull(result.Variables);
         Assert.NotNull(result.Request);
         Assert.NotNull(result.Request.RequestUri);
         Assert.Equal(request.Url, result.Request.RequestUri.ToString());
@@ -59,6 +61,7 @@ public class RequestHandlerTests {
 
         var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
+        Assert.NotNull(result.Variables);
         Assert.Null(result.Request);
         Assert.Null(result.Response);
         Assert.NotNull(result.Exception);
@@ -81,6 +84,7 @@ public class RequestHandlerTests {
 
         var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
+        Assert.NotNull(result.Variables);
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
         Assert.Same(expectedException, result.Exception);
@@ -108,6 +112,7 @@ public class RequestHandlerTests {
         var result = await subject.Execute(request, new(), new(true, null, null), requestPipelineListener, CancellationToken.None);
 
         Received.InOrder(async () => {
+            await requestPipelineListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
@@ -142,6 +147,7 @@ public class RequestHandlerTests {
         var result = await subject.Execute(request, new(), new(true, null, null), requestPipelineListener, CancellationToken.None);
 
         Received.InOrder(async () => {
+            await requestPipelineListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await requestPipelineListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
@@ -176,10 +182,6 @@ public class RequestHandlerTests {
         };
 
         var result = await subject.Execute(request, new(), new(true, null, null), requestPipelineListener, CancellationToken.None);
-
-        Assert.NotNull(result.Request);
-        Assert.Null(result.Response);
-        Assert.Same(expectedException, result.Exception);
 
         await requestPipelineListener.Received(1).OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
     }
@@ -225,7 +227,7 @@ public class RequestHandlerTests {
             OnExceptionScript = { Code = "OnExceptionScript" }
         };
 
-        _ = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
+        await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
         await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<Script>(), Arg.Any<RequestContext>(), Arg.Any<CancellationToken>());
     }

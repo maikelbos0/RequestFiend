@@ -31,7 +31,13 @@ public class RequestHandler : IRequestHandler {
         IRequestExchangeListener? requestExchangeListener,
         CancellationToken cancellationToken
     ) {
-        var context = new RequestContext(collection.GetSessionData(), collection.GetSessionVariables(), loggerFactory.CreateLogger<RequestContext>());
+        var variableSnapshot = collection.GetVariableSnapshot(requestExchangeOptions.Environment);
+        var context = new RequestContext(
+            collection.GetSessionData(),
+            collection.GetSessionVariables(),
+            variableSnapshot.Variables,
+            loggerFactory.CreateLogger<RequestContext>()
+        );
         Timer? timer = null;
         Stopwatch? stopwatch = null;
 
@@ -40,7 +46,9 @@ public class RequestHandler : IRequestHandler {
         try {
             context.Logger.LogInformation("Starting execution of request {RequestName}", request.Name);
 
-            var variableSnapshot = collection.GetVariableSnapshot(requestExchangeOptions.Environment);
+            if (requestExchangeListener != null) {
+                await requestExchangeListener.OnVariablesCompiled(variableSnapshot.Variables);
+            }
 
             context.Request = request.CreateMessage(collection, variableSnapshot);
 

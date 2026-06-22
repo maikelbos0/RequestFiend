@@ -5,6 +5,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -131,6 +132,11 @@ public string Id { get; } = Guid.NewGuid().ToString();
     public void Close() {
         executingCancellationTokenSource?.Cancel();
         messageService.Send(new CloseRequestMessage(), Id);
+    }
+
+    public Task OnVariablesCompiled(ImmutableDictionary<string, string> variables) {
+
+        return Task.CompletedTask;
     }
 
     public Task OnRequestCreated(HttpRequestMessage request) {
