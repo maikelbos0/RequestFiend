@@ -145,23 +145,6 @@ public class NameValuePairModelCollectionTests {
         }
     }
 
-    [Fact]
-    public void GetNameValuePairs() {
-        var subject = new NameValuePairModelCollection([
-            new() { Name = "FirstName", Value = "FirstValue" },
-            new() { Name = "SecondName", Value = "SecondValue" }
-        ], Validator.Required);
-
-        var result = subject.GetNameValuePairs();
-
-        Assert.Equal(subject.Count, result.Count);
-
-        for (var i = 0; i < subject.Count; i++) {
-            Assert.Equal(subject[i].Name.Value, result[i].Name);
-            Assert.Equal(subject[i].Value.Value, result[i].Value);
-        }
-    }
-
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -177,5 +160,22 @@ public class NameValuePairModelCollectionTests {
             .ToList();
 
         Assert.Throws<ArgumentException>(() => subject.Reset(collection));
+    }
+
+    [Fact]
+    public void GetNameValuePairs() {
+        var subject = new NameValuePairModelCollection([
+            new() { Name = "FirstName", Value = "FirstValue" },
+            new() { Name = "SecondName", Value = "SecondValue" }
+        ], Validator.Required);
+
+        var result = subject.GetNameValuePairs();
+
+        Assert.Equal(subject.Count, result.Count);
+
+        for (var i = 0; i < subject.Count; i++) {
+            Assert.Equal(subject[i].Name.Value, result[i].Name);
+            Assert.Equal(subject[i].Value.Value, result[i].Value);
+        }
     }
 }

@@ -45,7 +45,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         }
     }
 
-    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, params IValidatable[] dependencies) 
+    public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, params IValidatable[] dependencies)
         : this(collection, nameValidator, _ => true, dependencies) { }
 
     public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, Func<string, bool> valueValidator, params IValidatable[] dependencies) {
