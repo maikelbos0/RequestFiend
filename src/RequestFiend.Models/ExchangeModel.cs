@@ -26,6 +26,7 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
 
 public string Id { get; } = Guid.NewGuid().ToString();
     [ObservableProperty] public partial bool IsExecuting { get; set; }
+    [ObservableProperty] public partial VariableModel[]? Variables { get; set; }
     [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
     [ObservableProperty] public partial HttpResponseModel? Response { get; set; }
     [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
@@ -66,6 +67,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
         ShellItemTitleBase = $"{request.Name} - Executing request...";
         IsExecuting = true;
+        Variables = null;
         Request = null;
         Response = null;
         Exception = null;
@@ -135,7 +137,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
     }
 
     public Task OnVariablesCompiled(ImmutableDictionary<string, string> variables) {
-
+        Variables = VariableModel.CreateRange(variables);
         return Task.CompletedTask;
     }
 

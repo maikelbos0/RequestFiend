@@ -224,6 +224,28 @@ public class ExchangeModelTests {
     }
 
     [Fact]
+    public async Task OnVariablesCompiled() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var userInterface = Substitute.For<IUserInterface>();
+        userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new ExchangeModel(Substitute.For<IMessageService>(), Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
+
+        await subject.OnVariablesCompiled([]);
+
+        Assert.NotNull(subject.Variables);
+    }
+
+    [Fact]
     public async Task OnRequestCreated() {
         const string filePath = @"C:\Documents\External data requests.json";
 
