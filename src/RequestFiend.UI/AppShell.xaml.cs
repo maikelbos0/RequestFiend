@@ -57,7 +57,7 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
         var collectionItem = Items.SingleOrDefault(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
 
         if (collectionItem == null) {
-            using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection);
+            using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection);
             var collectionModel = GetRequiredService<RequestTemplateCollectionModel>();
 
             collectionItem = new FlyoutItem() {
@@ -119,7 +119,7 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
     }
 
     public async void Receive(CreateRequestMessage message) {
-        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new RequestTemplateCollectionFileModel(message.FilePath), message.Collection, message.Request);
+        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
         var (requestItem, index) = collectionItem.Items
             .Select((item, index) => new { Index = index, Item = item, item.StyleId })

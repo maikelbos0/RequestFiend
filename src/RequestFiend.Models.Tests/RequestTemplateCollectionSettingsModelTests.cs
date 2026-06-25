@@ -49,7 +49,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - Collection settings", subject.PageTitleBase);
         Assert.Equal("Collection settings", subject.ShellItemTitleBase);
 
-        Assert.Equal(new RequestTemplateCollectionFileModel(filePath), subject.File);
+        Assert.Equal(new FileModel(filePath), subject.File);
         Assert.Equal(collection, subject.Collection);
 
         Assert.Equal(expectedShowAllowScriptEvaluation, subject.ShowAllowScriptEvaluation);

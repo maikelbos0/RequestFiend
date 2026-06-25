@@ -9,7 +9,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    private readonly RequestTemplateCollectionFileModel file;
+    private readonly FileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly List<RequestTemplateModel> requests = [];
 
@@ -22,7 +22,7 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         IPopupService popupService,
         IMessageService messageService,
         IPreferencesService preferencesService,
-        RequestTemplateCollectionFileModel file,
+        FileModel file,
         RequestTemplateCollection collection
     ) : base(file.Name, file.Name) {
         this.requestTemplateCollectionService = requestTemplateCollectionService;

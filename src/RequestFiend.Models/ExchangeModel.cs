@@ -19,7 +19,7 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
     private readonly IPopupService popupService;
     private readonly IPreferencesService preferencesService;
     private readonly IUserInterface userInterface;
-    private readonly RequestTemplateCollectionFileModel file;
+    private readonly FileModel file;
     private readonly RequestTemplateCollection collection;
     private readonly RequestTemplate request;
     private CancellationTokenSource? executingCancellationTokenSource;
@@ -38,7 +38,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
         IPopupService popupService,
         IPreferencesService preferencesService,
         IUserInterface userInterface,
-        RequestTemplateCollectionFileModel file,
+        FileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
     ) : base($"{file.Name} - {request.Name} - Exchange", $"{request.Name} - Exchange") {

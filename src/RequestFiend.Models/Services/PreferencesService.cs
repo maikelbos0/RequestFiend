@@ -35,13 +35,13 @@ public class PreferencesService : IPreferencesService {
     public void SetMaximumRecentCollectionCount(int maximumRecentCollectionCount)
         => Preferences.Set(MaximumRecentCollectionCount, maximumRecentCollectionCount);
 
-    public List<RequestTemplateCollectionFileModel> GetRecentCollections()
-        => JsonSerializer.Deserialize<List<RequestTemplateCollectionFileModel>>(Preferences.Get(RecentCollections, "[]")) ?? [];
+    public List<FileModel> GetRecentCollections()
+        => JsonSerializer.Deserialize<List<FileModel>>(Preferences.Get(RecentCollections, "[]")) ?? [];
 
     public void TrimRecentCollections()
         => SetRecentCollections([.. GetRecentCollections().Take(GetMaximumRecentCollectionCount())]);
 
-    private void SetRecentCollections(List<RequestTemplateCollectionFileModel> recentCollections) {
+    private void SetRecentCollections(List<FileModel> recentCollections) {
         Preferences.Set(RecentCollections, JsonSerializer.Serialize(recentCollections));
         messageService.Send(new RecentCollectionsChangedMessage());
     }

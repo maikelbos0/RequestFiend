@@ -102,7 +102,7 @@ public class RequestTemplateModelTests {
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
         Assert.Equal(request.Name, subject.ShellItemTitleBase);
 
-        Assert.Equal(new RequestTemplateCollectionFileModel(filePath), subject.File);
+        Assert.Equal(new FileModel(filePath), subject.File);
         Assert.Equal(collection, subject.Collection);
         Assert.Equal(request, subject.Request);
 

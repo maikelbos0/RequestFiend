@@ -19,7 +19,7 @@ public partial class MainPageModel : PageBoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IFileSystem fileSystem;
 
-    [ObservableProperty] public partial List<RequestTemplateCollectionFileModel> RecentCollections { get; set; }
+    [ObservableProperty] public partial List<FileModel> RecentCollections { get; set; }
 
     public MainPageModel(IPopupService popupService, IMessageService messageService, IPreferencesService preferencesService, IFileSystem fileSystem) : base("Home", "Home") {
         this.popupService = popupService;

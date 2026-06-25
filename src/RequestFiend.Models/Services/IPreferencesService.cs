@@ -5,7 +5,7 @@ namespace RequestFiend.Models.Services;
 public interface IPreferencesService {
     int GetMaximumRecentCollectionCount();
     void SetMaximumRecentCollectionCount(int maximumRecentCollectionCount);
-    List<RequestTemplateCollectionFileModel> GetRecentCollections();
+    List<FileModel> GetRecentCollections();
     void TrimRecentCollections();
     void ClearRecentCollections();
     void PushRecentCollection(string filePath);

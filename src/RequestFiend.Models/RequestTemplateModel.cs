@@ -19,7 +19,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
 
-    public RequestTemplateCollectionFileModel File { get; }
+    public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public RequestTemplate Request { get; }
 
@@ -48,7 +48,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
-        RequestTemplateCollectionFileModel file,
+        FileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
     ) : base($"{file.Name} - {request.Name}", request.Name) {

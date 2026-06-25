@@ -16,7 +16,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IPreferencesService preferencesService;
 
     [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
-    public RequestTemplateCollectionFileModel File { get; }
+    public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<bool> AllowScriptEvaluation { get; set; }
     public ValidatableProperty<string> DefaultUrl { get; }
@@ -31,7 +31,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IPopupService popupService,
         IMessageService messageService,
         IPreferencesService preferencesService,
-        RequestTemplateCollectionFileModel file,
+        FileModel file,
         RequestTemplateCollection collection
     ) : base($"{file.Name} - Collection settings", "Collection settings") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;

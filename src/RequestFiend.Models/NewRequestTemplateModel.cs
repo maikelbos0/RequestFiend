@@ -12,7 +12,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
 
-    public RequestTemplateCollectionFileModel File { get; }
+    public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> Name { get; } = new(() => "", Validator.Required);
     public ValidatableProperty<string> Method { get; } = new(() => "GET", Validator.Required);
@@ -22,7 +22,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
-        RequestTemplateCollectionFileModel file,
+        FileModel file,
         RequestTemplateCollection collection
     ) : base($"{file.Name} - New request", "New request") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;

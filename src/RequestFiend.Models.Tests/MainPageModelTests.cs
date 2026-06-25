@@ -20,7 +20,7 @@ namespace RequestFiend.Models.Tests;
 public class MainPageModelTests {
     [Fact]
     public void Constructor() {
-        var recentCollection = new List<RequestTemplateCollectionFileModel>();
+        var recentCollection = new List<FileModel>();
 
         var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
