@@ -16,6 +16,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableProperty<string> RequestTimeoutInSeconds { get; }
     public ValidatableProperty<string> ExchangeLoggingPath { get; }
     public ValidatableProperty<string> ExchangeLoggingOutputTemplate { get; }
+    public FileModelCollection Environments { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
@@ -27,8 +28,9 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
         ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath);
         ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate);
+        Environments = new(preferencesService.GetEnvironments());
 
-        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate]);
+        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments]);
     }
 
     [RelayCommand]
@@ -42,12 +44,14 @@ public partial class PreferencesModel : PageBoundModelBase {
         preferencesService.SetRequestTimeoutInSeconds(RequestTimeoutInSeconds.Value.Length == 0 ? null : int.Parse(RequestTimeoutInSeconds.Value));
         preferencesService.SetExchangeLoggingPath(ExchangeLoggingPath.Value);
         preferencesService.SetExchangeLoggingOutputTemplate(ExchangeLoggingOutputTemplate.Value);
+        preferencesService.SetEnvironments(Environments);
 
         MaximumRecentCollectionCount.Reset();
         ScriptEvaluationMode.Reset();
         RequestTimeoutInSeconds.Reset();
         ExchangeLoggingPath.Reset();
         ExchangeLoggingOutputTemplate.Reset();
+        Environments.Reset();
 
         preferencesService.TrimRecentCollections();
 
@@ -62,6 +66,27 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         return Models.ScriptEvaluationMode.Disabled;
     }
+
+
+    /*public List<FileModel> AddEnvironment(string filePath) {
+        var environments = GetEnvironments();
+
+        environments.Add(new(filePath));
+        environments.Sort((x, y) => StringComparer.InvariantCultureIgnoreCase.Compare(x.Name, y.Name));
+
+        Preferences.Set(Environments, JsonSerializer.Serialize(environments));
+        return environments;
+    }
+
+    public List<FileModel> RemoveEnvironment(FileModel file) {
+        var environments = GetEnvironments();
+
+        environments.Remove(file);
+
+        Preferences.Set(Environments, JsonSerializer.Serialize(environments));
+        return environments;
+    }
+*/
 
     [RelayCommand]
     public async Task Reset() {

@@ -22,6 +22,7 @@ public class PreferencesService : IPreferencesService {
     private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
     private const string ExchangeLoggingPath = nameof(ExchangeLoggingPath);
     private const string ExchangeLoggingOutputTemplate = nameof(ExchangeLoggingOutputTemplate);
+    private const string Environments = nameof(Environments);
 
     private readonly IMessageService messageService;
 
@@ -109,6 +110,12 @@ public class PreferencesService : IPreferencesService {
 
     public void SetExchangeLoggingOutputTemplate(string? exchangeLoggingOutputTemplate)
         => Preferences.Set(ExchangeLoggingOutputTemplate, exchangeLoggingOutputTemplate);
+
+    public List<FileModel> GetEnvironments()
+        => JsonSerializer.Deserialize<List<FileModel>>(Preferences.Get(Environments, "[]")) ?? [];
+
+    public void SetEnvironments(IEnumerable<FileModel> environments)
+        => Preferences.Set(Environments, JsonSerializer.Serialize(environments));
 
     public void Reset() {
         Preferences.Clear();

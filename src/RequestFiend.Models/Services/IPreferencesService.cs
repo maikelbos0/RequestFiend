@@ -21,4 +21,6 @@ public interface IPreferencesService {
     string GetExchangeLoggingOutputTemplate();
     void SetExchangeLoggingOutputTemplate(string exchangeLoggingOutputTemplate);
     void Reset();
+    List<FileModel> GetEnvironments();
+    void SetEnvironments(IEnumerable<FileModel> environments);
 }
