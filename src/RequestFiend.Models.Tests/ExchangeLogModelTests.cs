@@ -28,15 +28,15 @@ public class ExchangeLogModelTests {
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
-        subject.Add($"Test 1{System.Environment.NewLine}");
-        subject.Add($"Test 2{System.Environment.NewLine}");
+        subject.Add($"Test 1{Environment.NewLine}");
+        subject.Add($"Test 2{Environment.NewLine}");
 
         await Task.Delay(10, TestContext.Current.CancellationToken);
 
         cancellationTokenSource.Cancel();
         await updatingTask;
 
-        Assert.Equal($"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}", subject.LogEvents);
+        Assert.Equal($"Test 1{Environment.NewLine}Test 2{Environment.NewLine}", subject.LogEvents);
     }
 
     [Fact]
@@ -45,8 +45,8 @@ public class ExchangeLogModelTests {
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
-        subject.Add($"Test 1{System.Environment.NewLine}");
-        subject.Add($"Test 2{System.Environment.NewLine}");
+        subject.Add($"Test 1{Environment.NewLine}");
+        subject.Add($"Test 2{Environment.NewLine}");
 
         subject.Clear();
 
@@ -65,7 +65,7 @@ public class ExchangeLogModelTests {
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, null));
 
         var subject = new ExchangeLogModel(messageService, popupService, 1) {
-            LogEvents = $"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}"
+            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
         };
 
         await subject.Save();
@@ -82,7 +82,7 @@ public class ExchangeLogModelTests {
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new Exception()));
 
         var subject = new ExchangeLogModel(messageService, popupService, 1) {
-            LogEvents = $"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}"
+            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
         };
 
         await subject.Save();
@@ -99,7 +99,7 @@ public class ExchangeLogModelTests {
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
 
         var subject = new ExchangeLogModel(messageService, popupService, 1) {
-            LogEvents = $"Test 1{System.Environment.NewLine}Test 2{System.Environment.NewLine}"
+            LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
         };
 
         await subject.Save();
