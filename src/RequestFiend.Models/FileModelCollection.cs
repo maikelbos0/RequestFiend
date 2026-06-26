@@ -36,12 +36,6 @@ public class FileModelCollection : ObservableCollection<FileModel>, IValidatable
         IsModified = false;
     }
 
-    // TODO while it'll work in the current use case, this is semantically weird and it should actually reset; unfortunately ObservableCollection doesn't have an efficient clear/add range option
-    // If changed, PreferencesModel.Reset tests should be updated also
-    public void Reset() {
-        IsModified = false;
-    }
-
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         HasItems = Count > 0;
         IsModified = true;

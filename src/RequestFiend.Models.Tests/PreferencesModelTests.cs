@@ -163,7 +163,7 @@ public class PreferencesModelTests {
         Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingPath(), subject.ExchangeLoggingPath.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingOutputTemplate(), subject.ExchangeLoggingOutputTemplate.Value);
-        //Assert.Equal(preferencesService.GetEnvironments(), subject.Environments);
+        Assert.Equal(preferencesService.GetEnvironments(), subject.Environments);
         Assert.Equal(preferencesService.GetActiveEnvironment(), subject.ActiveEnvironment.Value);
 
         preferencesService.Received(1).Reset();

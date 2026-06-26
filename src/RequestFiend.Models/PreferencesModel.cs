@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
@@ -16,7 +17,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableProperty<string> RequestTimeoutInSeconds { get; }
     public ValidatableProperty<string> ExchangeLoggingPath { get; }
     public ValidatableProperty<string> ExchangeLoggingOutputTemplate { get; }
-    public FileModelCollection Environments { get; }
+    [ObservableProperty] public partial FileModelCollection Environments { get; private set; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
@@ -54,7 +55,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds.Reset();
         ExchangeLoggingPath.Reset();
         ExchangeLoggingOutputTemplate.Reset();
-        Environments.Reset();
+        Environments = new(preferencesService.GetEnvironments());
         ActiveEnvironment.Reset();
 
         preferencesService.TrimRecentCollections();
@@ -101,7 +102,7 @@ public partial class PreferencesModel : PageBoundModelBase {
             RequestTimeoutInSeconds.Reset();
             ExchangeLoggingPath.Reset();
             ExchangeLoggingOutputTemplate.Reset();
-            // TODO Environments
+            Environments = new(preferencesService.GetEnvironments());
             ActiveEnvironment.Reset();
 
             messageService.Send(new PreferencesUpdatedMessage());
