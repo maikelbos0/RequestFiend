@@ -1,9 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Devices;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -73,26 +77,38 @@ public partial class PreferencesModel : PageBoundModelBase {
         return Models.ScriptEvaluationMode.Disabled;
     }
 
+    [RelayCommand]
+    public async Task SelectNewActiveEnvironment() {
+        var file = await popupService.ShowPickFileDialog(new() {
+            FileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>() {
+                { DevicePlatform.Android, ["application/json"] },
+                { DevicePlatform.iOS, ["public.json"] },
+                { DevicePlatform.MacCatalyst, ["public.json"] },
+                { DevicePlatform.WinUI, ["*.json"] },
+            })
+        });
 
-    /*public List<FileModel> AddEnvironment(string filePath) {
-        var environments = GetEnvironments();
+        if (file != null) {
+            var newEnvironment = new FileModel(file.FullPath);
+            var index = Environments
+                .Select((environment, index) => new { Index = index, Comparison = StringComparer.InvariantCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
+                .Where(item => item.Comparison < 0)
+                .Select(item => item.Index + 1)
+                .DefaultIfEmpty(0)
+                .Max();
 
-        environments.Add(new(filePath));
-        environments.Sort((x, y) => StringComparer.InvariantCultureIgnoreCase.Compare(x.Name, y.Name));
-
-        Preferences.Set(Environments, JsonSerializer.Serialize(environments));
-        return environments;
+            ActiveEnvironment.Value = newEnvironment;
+            Environments.Insert(index, newEnvironment);
+        }
     }
 
-    public List<FileModel> RemoveEnvironment(FileModel file) {
-        var environments = GetEnvironments();
-
-        environments.Remove(file);
-
-        Preferences.Set(Environments, JsonSerializer.Serialize(environments));
-        return environments;
+    [RelayCommand]
+    public void RemoveEnvironment(FileModel environment) {
+        if (environment == ActiveEnvironment.Value) {
+            ActiveEnvironment.Value = null;
+        }
+        Environments.Remove(environment);
     }
-*/
 
     [RelayCommand]
     public async Task Reset() {

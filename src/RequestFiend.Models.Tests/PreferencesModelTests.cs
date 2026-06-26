@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Storage = Microsoft.Maui.Storage;
 
 namespace RequestFiend.Models.Tests;
 
@@ -131,6 +133,96 @@ public class PreferencesModelTests {
 
         messageService.DidNotReceive().Send(Arg.Any<PreferencesUpdatedMessage>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+    }
+
+    [Fact]
+    public async Task SelectNewActiveEnvironment() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+        const string newEnvironment = @"C:\Documents\Baz.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(newEnvironment));
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
+
+        await subject.SelectNewActiveEnvironment();
+
+        Assert.Equal([new(otherEnvironment), new(newEnvironment), new(activeEnvironment)], subject.Environments);
+        Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public async Task SelectNewActiveEnvironment_Does_Nothing_Without_Selected_File() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).ReturnsNull();
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
+
+        await subject.SelectNewActiveEnvironment();
+
+        Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
+        Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+        [Fact]
+    public async Task SelectNewActiveEnvironment_When_Empty() {
+        const string newEnvironment = @"C:\Documents\Baz.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(newEnvironment));
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
+
+        await subject.SelectNewActiveEnvironment();
+
+        Assert.Equal([new(newEnvironment)], subject.Environments);
+        Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public void RemoveEnvironment() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
+
+        subject.RemoveEnvironment(new(otherEnvironment));
+
+        Assert.Equal([new(activeEnvironment)], subject.Environments);
+        Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public void RemoveEnvironment_Clears_ActiveEnvironment_If_Removed() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
+
+        subject.RemoveEnvironment(new(activeEnvironment));
+
+        Assert.Equal([new(otherEnvironment)], subject.Environments);
+        Assert.Null(subject.ActiveEnvironment.Value);
     }
 
     [Fact]
