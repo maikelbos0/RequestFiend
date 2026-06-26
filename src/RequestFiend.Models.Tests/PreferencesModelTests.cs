@@ -2,6 +2,7 @@
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,6 +18,7 @@ public class PreferencesModelTests {
         const int requestTimeoutInSeconds = 90;
         const string exchangeLoggingPath = "./Path";
         const string exchangeLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+        const string environment = @"C:\Documents\Environment.json";
 
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
@@ -24,7 +26,8 @@ public class PreferencesModelTests {
         preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
         preferencesService.GetExchangeLoggingPath().Returns(exchangeLoggingPath);
         preferencesService.GetExchangeLoggingOutputTemplate().Returns(exchangeLoggingOutputTemplate);
-        preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Environment.json")]);
+        preferencesService.GetEnvironments().Returns([new(environment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(environment));
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>());
 
@@ -36,9 +39,18 @@ public class PreferencesModelTests {
         Assert.Equal(requestTimeoutInSeconds.ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(exchangeLoggingPath, subject.ExchangeLoggingPath.Value);
         Assert.Equal(exchangeLoggingOutputTemplate, subject.ExchangeLoggingOutputTemplate.Value);
-        Assert.Single(subject.Environments);
+        Assert.Equal(new(environment), Assert.Single(subject.Environments));
+        Assert.Equal(new(environment), subject.ActiveEnvironment.Value);
 
-        Assert.Equal([subject.RequestTimeoutInSeconds, subject.MaximumRecentCollectionCount, subject.ScriptEvaluationMode, subject.ExchangeLoggingPath, subject.ExchangeLoggingOutputTemplate, subject.Environments], subject.Validatables);
+        Assert.Equal([
+            subject.RequestTimeoutInSeconds,
+            subject.MaximumRecentCollectionCount,
+            subject.ScriptEvaluationMode,
+            subject.ExchangeLoggingPath,
+            subject.ExchangeLoggingOutputTemplate,
+            subject.Environments,
+            subject.ActiveEnvironment
+        ], subject.Validatables);
     }
 
     [Theory]
@@ -50,9 +62,11 @@ public class PreferencesModelTests {
         const ScriptEvaluationMode scriptEvaluationMode = ScriptEvaluationMode.Enabled;
         const string exchangeLoggingPath = "./Path";
         const string exchangeLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+        const string existingEnvironment = @"C:\Documents\Environment.json";
+        const string newEnvironment = @"C:\Documents\New.json";
 
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Environment.json")]);
+        preferencesService.GetEnvironments().Returns([new(existingEnvironment)]);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>()) {
@@ -61,7 +75,8 @@ public class PreferencesModelTests {
             RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds },
             ExchangeLoggingPath = { Value = exchangeLoggingPath },
             ExchangeLoggingOutputTemplate = { Value = exchangeLoggingOutputTemplate },
-            Environments = { new(@"C:\Documents\New.json") }
+            Environments = { new(newEnvironment) },
+            ActiveEnvironment = { Value = new(existingEnvironment) }
         };
 
         subject.Update();
@@ -71,7 +86,8 @@ public class PreferencesModelTests {
         preferencesService.Received(1).SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
         preferencesService.Received(1).SetExchangeLoggingPath(exchangeLoggingPath);
         preferencesService.Received(1).SetExchangeLoggingOutputTemplate(exchangeLoggingOutputTemplate);
-        preferencesService.Received(1).SetEnvironments(subject.Environments);
+        preferencesService.Received(1).SetEnvironments(Arg.Is<FileModelCollection>(collection => collection.SequenceEqual(new FileModel[] { new(existingEnvironment), new(newEnvironment) })));
+        preferencesService.Received(1).SetActiveEnvironment(new(existingEnvironment));
 
         Assert.False(subject.MaximumRecentCollectionCount.IsModified);
         Assert.False(subject.ScriptEvaluationMode.IsModified);
@@ -79,6 +95,7 @@ public class PreferencesModelTests {
         Assert.False(subject.ExchangeLoggingPath.IsModified);
         Assert.False(subject.ExchangeLoggingOutputTemplate.IsModified);
         Assert.False(subject.Environments.IsModified);
+        Assert.False(subject.ActiveEnvironment.IsModified);
 
         preferencesService.Received(1).TrimRecentCollections();
 
@@ -107,6 +124,7 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().SetExchangeLoggingPath(Arg.Any<string>());
         preferencesService.DidNotReceive().SetExchangeLoggingOutputTemplate(Arg.Any<string>());
         preferencesService.DidNotReceive().SetEnvironments(Arg.Any<IEnumerable<FileModel>>());
+        preferencesService.DidNotReceive().SetActiveEnvironment(Arg.Any<FileModel?>());
 
         preferencesService.DidNotReceive().TrimRecentCollections();
 
@@ -123,6 +141,7 @@ public class PreferencesModelTests {
         preferencesService.GetExchangeLoggingPath().Returns("./Path");
         preferencesService.GetExchangeLoggingOutputTemplate().Returns("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
         preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Environment.json")]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(@"C:\Documents\Environment.json"));
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
@@ -133,7 +152,8 @@ public class PreferencesModelTests {
             RequestTimeoutInSeconds = { Value = "300" },
             ExchangeLoggingPath = { Value = "./Location" },
             ExchangeLoggingOutputTemplate = { Value = "{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}" },
-            Environments = { new(@"C:\Documents\New.json") }
+            Environments = { new(@"C:\Documents\New.json") },
+            ActiveEnvironment = { Value = new(@"C:\Documents\New.json") }
         };
 
         await subject.Reset();
@@ -143,6 +163,8 @@ public class PreferencesModelTests {
         Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingPath(), subject.ExchangeLoggingPath.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingOutputTemplate(), subject.ExchangeLoggingOutputTemplate.Value);
+        //Assert.Equal(preferencesService.GetEnvironments(), subject.Environments);
+        Assert.Equal(preferencesService.GetActiveEnvironment(), subject.ActiveEnvironment.Value);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
@@ -158,6 +180,7 @@ public class PreferencesModelTests {
         preferencesService.GetExchangeLoggingPath().Returns("./Path");
         preferencesService.GetExchangeLoggingOutputTemplate().Returns("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
         preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Environment.json")]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(@"C:\Documents\Environment.json"));
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
@@ -168,7 +191,8 @@ public class PreferencesModelTests {
             RequestTimeoutInSeconds = { Value = "300" },
             ExchangeLoggingPath = { Value = "./Location" },
             ExchangeLoggingOutputTemplate = { Value = "{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}" },
-            Environments = { new(@"C:\Documents\New.json") }
+            Environments = { new(@"C:\Documents\New.json") },
+            ActiveEnvironment = { Value = new(@"C:\Documents\New.json") }
         };
 
         await subject.Reset();
@@ -179,6 +203,7 @@ public class PreferencesModelTests {
         Assert.Equal("./Location", subject.ExchangeLoggingPath.Value);
         Assert.Equal("{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}", subject.ExchangeLoggingOutputTemplate.Value);
         Assert.Equal([new(@"C:\Documents\Environment.json"), new(@"C:\Documents\New.json")], subject.Environments);
+        Assert.Equal(new(@"C:\Documents\New.json"), subject.ActiveEnvironment.Value);
 
         preferencesService.DidNotReceive().Reset();
         messageService.DidNotReceive().Send(Arg.Any<PreferencesUpdatedMessage>());

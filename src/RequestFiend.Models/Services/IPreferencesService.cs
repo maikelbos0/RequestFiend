@@ -20,7 +20,9 @@ public interface IPreferencesService {
     void SetExchangeLoggingPath(string exchangeLoggingPath);
     string GetExchangeLoggingOutputTemplate();
     void SetExchangeLoggingOutputTemplate(string exchangeLoggingOutputTemplate);
-    void Reset();
     List<FileModel> GetEnvironments();
     void SetEnvironments(IEnumerable<FileModel> environments);
+    FileModel? GetActiveEnvironment();
+    void SetActiveEnvironment(FileModel? activeEnvironment);
+    void Reset();
 }

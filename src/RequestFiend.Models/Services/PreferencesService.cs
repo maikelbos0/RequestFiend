@@ -23,6 +23,7 @@ public class PreferencesService : IPreferencesService {
     private const string ExchangeLoggingPath = nameof(ExchangeLoggingPath);
     private const string ExchangeLoggingOutputTemplate = nameof(ExchangeLoggingOutputTemplate);
     private const string Environments = nameof(Environments);
+    private const string ActiveEnvironment = nameof(ActiveEnvironment);
 
     private readonly IMessageService messageService;
 
@@ -116,6 +117,12 @@ public class PreferencesService : IPreferencesService {
 
     public void SetEnvironments(IEnumerable<FileModel> environments)
         => Preferences.Set(Environments, JsonSerializer.Serialize(environments));
+
+    public FileModel? GetActiveEnvironment()
+        => JsonSerializer.Deserialize<FileModel>(Preferences.Get(ActiveEnvironment, "null"));
+
+    public void SetActiveEnvironment(FileModel? activeEnvironment)
+        => Preferences.Set(ActiveEnvironment, JsonSerializer.Serialize(activeEnvironment));
 
     public void Reset() {
         Preferences.Clear();

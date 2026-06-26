@@ -17,6 +17,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableProperty<string> ExchangeLoggingPath { get; }
     public ValidatableProperty<string> ExchangeLoggingOutputTemplate { get; }
     public FileModelCollection Environments { get; }
+    public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
@@ -29,8 +30,9 @@ public partial class PreferencesModel : PageBoundModelBase {
         ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath);
         ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate);
         Environments = new(preferencesService.GetEnvironments());
+        ActiveEnvironment = new(preferencesService.GetActiveEnvironment);
 
-        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments]);
+        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
     }
 
     [RelayCommand]
@@ -45,6 +47,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         preferencesService.SetExchangeLoggingPath(ExchangeLoggingPath.Value);
         preferencesService.SetExchangeLoggingOutputTemplate(ExchangeLoggingOutputTemplate.Value);
         preferencesService.SetEnvironments(Environments);
+        preferencesService.SetActiveEnvironment(ActiveEnvironment.Value);
 
         MaximumRecentCollectionCount.Reset();
         ScriptEvaluationMode.Reset();
@@ -52,6 +55,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         ExchangeLoggingPath.Reset();
         ExchangeLoggingOutputTemplate.Reset();
         Environments.Reset();
+        ActiveEnvironment.Reset();
 
         preferencesService.TrimRecentCollections();
 
@@ -97,6 +101,8 @@ public partial class PreferencesModel : PageBoundModelBase {
             RequestTimeoutInSeconds.Reset();
             ExchangeLoggingPath.Reset();
             ExchangeLoggingOutputTemplate.Reset();
+            // TODO Environments
+            ActiveEnvironment.Reset();
 
             messageService.Send(new PreferencesUpdatedMessage());
             messageService.Send(new SuccessMessage("Preferences have been reset"));
