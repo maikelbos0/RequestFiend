@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Core;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -567,7 +568,7 @@ public class RequestTemplateModelTests {
             Method = "GET",
             Url = expectedUrl
         };
-        popupResult.Result.Returns((string?)null);
+        popupResult.Result.ReturnsNull();
         popupService.ShowUrlPopup(collection, request.Url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
@@ -718,7 +719,7 @@ public class RequestTemplateModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
-        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns((Storage.FileResult?)null);
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).ReturnsNull();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",
@@ -765,7 +766,7 @@ public class RequestTemplateModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
-        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns((Storage.FileResult?)null);
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).ReturnsNull();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Name",

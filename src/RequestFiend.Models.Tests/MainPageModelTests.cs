@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -116,7 +117,7 @@ public class MainPageModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var popupService = Substitute.For<IPopupService>();
-        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns((Storage.FileResult?)null);
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).ReturnsNull();
         var messageService = Substitute.For<IMessageService>();
         var recentCollectionService = Substitute.For<IPreferencesService>();
         var fileSystem = Substitute.For<IFileSystem>();

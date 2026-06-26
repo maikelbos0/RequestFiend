@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
@@ -131,7 +132,7 @@ public class NewRequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             DefaultUrl = expectedUrl
         };
-        popupResult.Result.Returns((string?)null);
+        popupResult.Result.ReturnsNull();
         popupService.ShowUrlPopup(collection, collection.DefaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
