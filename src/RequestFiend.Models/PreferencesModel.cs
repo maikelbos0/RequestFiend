@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -30,7 +31,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
         ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath);
         ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate);
-        Environments = new(preferencesService.GetEnvironments());
+        ResetEnvironments();
         ActiveEnvironment = new(preferencesService.GetActiveEnvironment);
 
         ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
@@ -55,7 +56,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds.Reset();
         ExchangeLoggingPath.Reset();
         ExchangeLoggingOutputTemplate.Reset();
-        Environments = new(preferencesService.GetEnvironments());
+        ResetEnvironments();
         ActiveEnvironment.Reset();
 
         preferencesService.TrimRecentCollections();
@@ -102,7 +103,7 @@ public partial class PreferencesModel : PageBoundModelBase {
             RequestTimeoutInSeconds.Reset();
             ExchangeLoggingPath.Reset();
             ExchangeLoggingOutputTemplate.Reset();
-            Environments = new(preferencesService.GetEnvironments());
+            ResetEnvironments();
             ActiveEnvironment.Reset();
 
             messageService.Send(new PreferencesUpdatedMessage());
@@ -117,5 +118,10 @@ public partial class PreferencesModel : PageBoundModelBase {
 
             messageService.Send(new SuccessMessage("Recent collections have been cleared"));
         }
+    }
+
+    [MemberNotNull(nameof(Environments))]
+    private void ResetEnvironments() {
+        Environments = new(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, StringComparer.CurrentCultureIgnoreCase));
     }
 }

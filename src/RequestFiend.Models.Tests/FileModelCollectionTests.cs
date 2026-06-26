@@ -12,13 +12,9 @@ public class FileModelCollectionTests {
         };
         var subject = new FileModelCollection(collection);
 
-        Assert.Equal(collection.Count, subject.Count);
+        Assert.Equal(collection, subject);
         Assert.False(subject.IsModified);
         Assert.True(subject.HasItems);
-
-        for (var i = 0; i < collection.Count; i++) {
-            Assert.Equal(collection[i], subject[i]);
-        }
     }
 
     [Theory]

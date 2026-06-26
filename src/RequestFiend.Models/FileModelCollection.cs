@@ -29,7 +29,7 @@ public class FileModelCollection : ObservableCollection<FileModel>, IValidatable
         }
     }
 
-    public FileModelCollection(List<FileModel> collection) : base(collection) {
+    public FileModelCollection(IEnumerable<FileModel> collection) : base(collection) {
         CollectionChanged += OnCollectionChanged;
 
         HasItems = Count > 0;
