@@ -38,7 +38,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath);
         ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate);
         ResetEnvironments();
-        ActiveEnvironment = new(preferencesService.GetActiveEnvironment);
+        ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()));
 
         ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
     }
@@ -90,7 +90,7 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         if (saveResult.IsSuccessful) {
             messageService.Send(new SuccessMessage("Environment has been created"));
-            AddNewActiveEnvironment(new(saveResult.FilePath));
+            AddEnvironment(new(saveResult.FilePath));
         }
         else if (saveResult.Exception != null && saveResult.Exception is not System.OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -109,20 +109,22 @@ public partial class PreferencesModel : PageBoundModelBase {
         });
 
         if (file != null) {
-            AddNewActiveEnvironment(new(file.FullPath));
+            AddEnvironment(new(file.FullPath));
         }
     }
 
-    private void AddNewActiveEnvironment(FileModel newEnvironment) {
-        var index = Environments
-            .Select((environment, index) => new { Index = index, Comparison = System.StringComparer.InvariantCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
-            .Where(item => item.Comparison < 0)
-            .Select(item => item.Index + 1)
-            .DefaultIfEmpty(0)
-            .Max();
+    private void AddEnvironment(FileModel newEnvironment) {
+        if (!Environments.Contains(newEnvironment)) {
+            var index = Environments
+                .Select((environment, index) => new { Index = index, Comparison = System.StringComparer.InvariantCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
+                .Where(item => item.Comparison < 0)
+                .Select(item => item.Index + 1)
+                .DefaultIfEmpty(0)
+                .Max();
 
-        ActiveEnvironment.Value = newEnvironment;
-        Environments.Insert(index, newEnvironment);
+            Environments.Insert(index, newEnvironment);
+            ActiveEnvironment.Value = newEnvironment;
+        }
     }
 
     [RelayCommand]
@@ -161,6 +163,6 @@ public partial class PreferencesModel : PageBoundModelBase {
 
     [MemberNotNull(nameof(Environments))]
     private void ResetEnvironments() {
-        Environments = new(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
+        Environments = new(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
     }
 }
