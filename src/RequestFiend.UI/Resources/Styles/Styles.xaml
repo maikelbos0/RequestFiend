@@ -69,7 +69,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
+
     <Style TargetType="Button" x:Key="DangerButton">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -485,16 +485,16 @@
         <Setter Property="Spacing" Value="15"/>
     </Style>
 
+    <Style TargetType="VerticalStackLayout" x:Key="ElementGroup">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}"/>
+    </Style>
+
     <Style TargetType="HorizontalStackLayout">
         <Setter Property="Spacing" Value="15"/>
     </Style>
 
     <Style TargetType="StackLayout">
         <Setter Property="Spacing" Value="15"/>
-    </Style>
-
-    <Style TargetType="VerticalStackLayout" x:Key="ElementGroup">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}"/>
     </Style>
 
     <Style TargetType="Grid">
