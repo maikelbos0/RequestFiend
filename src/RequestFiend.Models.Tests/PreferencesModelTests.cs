@@ -1,10 +1,14 @@
-﻿using NSubstitute;
+﻿using CommunityToolkit.Maui.Storage;
+using NSubstitute;
 using NSubstitute.ReturnsExtensions;
+using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Storage = Microsoft.Maui.Storage;
@@ -42,7 +46,7 @@ public class PreferencesModelTests {
         Assert.Equal(requestTimeoutInSeconds.ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(exchangeLoggingPath, subject.ExchangeLoggingPath.Value);
         Assert.Equal(exchangeLoggingOutputTemplate, subject.ExchangeLoggingOutputTemplate.Value);
-        Assert.Equal(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, StringComparer.CurrentCultureIgnoreCase), subject.Environments);
+        Assert.Equal(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase), subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
 
         Assert.Equal([
@@ -136,7 +140,98 @@ public class PreferencesModelTests {
     }
 
     [Fact]
-    public async Task SelectNewActiveEnvironment() {
+    public async Task CreateNewEnvironment() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+        const string newEnvironment = @"C:\Documents\Baz.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(newEnvironment, null));
+
+        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+
+        await subject.CreateNewEnvironment();
+
+        await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+        Assert.Equal([new(otherEnvironment), new(newEnvironment), new(activeEnvironment)], subject.Environments);
+        Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public async Task CreateNewEnvironment_Works_When_Empty() {
+        const string newEnvironment = @"C:\Documents\Baz.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(newEnvironment, null));
+
+        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+
+        await subject.CreateNewEnvironment();
+
+        await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
+        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+        Assert.Equal([new(newEnvironment)], subject.Environments);
+        Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public async Task CreateNewEnvironment_Fails_For_Invalid_FileSaverResult() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new System.Exception()));
+
+        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+
+        await subject.CreateNewEnvironment();
+
+        await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
+        Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
+        Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public async Task CreateNewEnvironment_Does_Nothing_When_Canceled() {
+        const string activeEnvironment = @"C:\Documents\Foo.json";
+        const string otherEnvironment = @"C:\Documents\Bar.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
+        var messageService = Substitute.For<IMessageService>();
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new System.OperationCanceledException()));
+
+        var subject = new PreferencesModel(preferencesService, messageService, popupService);
+
+        await subject.CreateNewEnvironment();
+
+        await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
+        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
+        Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
+        Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public async Task OpenExistingEnvironment() {
         const string activeEnvironment = @"C:\Documents\Foo.json";
         const string otherEnvironment = @"C:\Documents\Bar.json";
         const string newEnvironment = @"C:\Documents\Baz.json";
@@ -149,14 +244,31 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
 
-        await subject.SelectNewActiveEnvironment();
+        await subject.OpenExistingEnvironment();
 
         Assert.Equal([new(otherEnvironment), new(newEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
     }
 
     [Fact]
-    public async Task SelectNewActiveEnvironment_Does_Nothing_Without_Selected_File() {
+    public async Task OpenExistingEnvironment_Works_When_Empty() {
+        const string newEnvironment = @"C:\Documents\Baz.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+        var popupService = Substitute.For<IPopupService>();
+        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(newEnvironment));
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
+
+        await subject.OpenExistingEnvironment();
+
+        Assert.Equal([new(newEnvironment)], subject.Environments);
+        Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
+    }
+
+    [Fact]
+    public async Task OpenExistingEnvironment_Does_Nothing_Without_Selected_File() {
         const string activeEnvironment = @"C:\Documents\Foo.json";
         const string otherEnvironment = @"C:\Documents\Bar.json";
 
@@ -168,27 +280,10 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
 
-        await subject.SelectNewActiveEnvironment();
+        await subject.OpenExistingEnvironment();
 
         Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
-    }
-
-        [Fact]
-    public async Task SelectNewActiveEnvironment_When_Empty() {
-        const string newEnvironment = @"C:\Documents\Baz.json";
-
-        var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetEnvironments().Returns([]);
-        var popupService = Substitute.For<IPopupService>();
-        popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(newEnvironment));
-
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService);
-
-        await subject.SelectNewActiveEnvironment();
-
-        Assert.Equal([new(newEnvironment)], subject.Environments);
-        Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
     }
 
     [Fact]
@@ -256,7 +351,7 @@ public class PreferencesModelTests {
         Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingPath(), subject.ExchangeLoggingPath.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingOutputTemplate(), subject.ExchangeLoggingOutputTemplate.Value);
-        Assert.Equal(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, StringComparer.CurrentCultureIgnoreCase), subject.Environments);
+        Assert.Equal(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase), subject.Environments);
         Assert.Equal(preferencesService.GetActiveEnvironment(), subject.ActiveEnvironment.Value);
 
         preferencesService.Received(1).Reset();

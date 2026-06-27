@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Devices;
+using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -78,7 +80,25 @@ public partial class PreferencesModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public async Task SelectNewActiveEnvironment() {
+    public async Task CreateNewEnvironment() {
+        var environment = new Environment();
+        var stream = new MemoryStream();
+
+        JsonSerializer.Serialize(stream, environment);
+
+        var saveResult = await popupService.ShowSaveDialog(".json", stream);
+
+        if (saveResult.IsSuccessful) {
+            messageService.Send(new SuccessMessage("Environment has been created"));
+            AddNewActiveEnvironment(new(saveResult.FilePath));
+        }
+        else if (saveResult.Exception != null && saveResult.Exception is not System.OperationCanceledException) {
+            await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
+        }
+    }
+
+    [RelayCommand]
+    public async Task OpenExistingEnvironment() {
         var file = await popupService.ShowPickFileDialog(new() {
             FileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>() {
                 { DevicePlatform.Android, ["application/json"] },
@@ -89,17 +109,20 @@ public partial class PreferencesModel : PageBoundModelBase {
         });
 
         if (file != null) {
-            var newEnvironment = new FileModel(file.FullPath);
-            var index = Environments
-                .Select((environment, index) => new { Index = index, Comparison = StringComparer.InvariantCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
-                .Where(item => item.Comparison < 0)
-                .Select(item => item.Index + 1)
-                .DefaultIfEmpty(0)
-                .Max();
-
-            ActiveEnvironment.Value = newEnvironment;
-            Environments.Insert(index, newEnvironment);
+            AddNewActiveEnvironment(new(file.FullPath));
         }
+    }
+
+    private void AddNewActiveEnvironment(FileModel newEnvironment) {
+        var index = Environments
+            .Select((environment, index) => new { Index = index, Comparison = System.StringComparer.InvariantCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
+            .Where(item => item.Comparison < 0)
+            .Select(item => item.Index + 1)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        ActiveEnvironment.Value = newEnvironment;
+        Environments.Insert(index, newEnvironment);
     }
 
     [RelayCommand]
@@ -138,6 +161,6 @@ public partial class PreferencesModel : PageBoundModelBase {
 
     [MemberNotNull(nameof(Environments))]
     private void ResetEnvironments() {
-        Environments = new(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, StringComparer.CurrentCultureIgnoreCase));
+        Environments = new(preferencesService.GetEnvironments().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
     }
 }
