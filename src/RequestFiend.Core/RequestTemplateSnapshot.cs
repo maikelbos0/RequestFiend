@@ -6,6 +6,7 @@ namespace RequestFiend.Core;
 
 public record RequestTemplateSnapshot(
     VariableSnapshot Variables,
+    string Name,
     string Method,
     string Url,
     ImmutableArray<NameValuePairSnapshot> Headers,

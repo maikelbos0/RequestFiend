@@ -14,6 +14,7 @@ public class JsonContentManagerTests {
             new([
                 new("{{Node}}", "{\"Meaning\": 42}")
             ]),
+            "Request",
             "POST",
             "https://localhost/",
             [],

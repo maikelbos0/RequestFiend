@@ -22,20 +22,30 @@ public class ExchangeHandler : IExchangeHandler {
     }
 
     public Task<ExchangeContext> Execute(RequestTemplate request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, CancellationToken cancellationToken)
-        => Execute(request, collection, exchangeOptions, null, cancellationToken);
+        => Execute(request.CreateSnapshot(collection, exchangeOptions.Environment), collection, exchangeOptions, null, cancellationToken);
 
-    public async Task<ExchangeContext> Execute(
+    public Task<ExchangeContext> Execute(
         RequestTemplate request,
         RequestTemplateCollection collection,
         ExchangeOptions exchangeOptions,
         IExchangeListener? exchangeListener,
         CancellationToken cancellationToken
+    ) => Execute(request.CreateSnapshot(collection, exchangeOptions.Environment), collection, exchangeOptions, exchangeListener, cancellationToken);
+
+    public Task<ExchangeContext> Execute(RequestTemplateSnapshot request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, CancellationToken cancellationToken)
+        => Execute(request, collection, exchangeOptions, null, cancellationToken);
+
+    public async Task<ExchangeContext> Execute(
+        RequestTemplateSnapshot request,
+        RequestTemplateCollection collection,
+        ExchangeOptions exchangeOptions,
+        IExchangeListener? exchangeListener,
+        CancellationToken cancellationToken
     ) {
-        var variableSnapshot = collection.CreateVariableSnapshot(exchangeOptions.Environment);
         var context = new ExchangeContext(
             collection.GetSessionData(),
             collection.GetSessionVariables(),
-            variableSnapshot.Variables,
+            request.Variables.Variables,
             loggerFactory.CreateLogger<ExchangeContext>()
         );
         Timer? timer = null;
@@ -44,13 +54,13 @@ public class ExchangeHandler : IExchangeHandler {
         serverCertificateValidationHandler.Initialize(collection);
 
         try {
-            context.Logger.LogInformation("Starting execution of request {RequestName}", request.Name);
+            context.Logger.LogInformation("Starting execution of request '{RequestName}'", request.Name);
 
             if (exchangeListener != null) {
-                await exchangeListener.OnVariablesCompiled(variableSnapshot.Variables);
+                await exchangeListener.OnVariablesCompiled(request.Variables.Variables);
             }
 
-            context.Request = request.CreateMessage(collection, variableSnapshot);
+            context.Request = request.CreateMessage();
 
             if (exchangeOptions.AllowScriptEvaluation) {
                 await scriptEvaluator.Evaluate(request.PreExchangeScript, context, cancellationToken);
@@ -85,11 +95,11 @@ public class ExchangeHandler : IExchangeHandler {
             if (exchangeListener != null) {
                 await exchangeListener.OnResponseReceived(context.Response);
             }
-            context.Logger.LogInformation("Finished execution of request {RequestName}", request.Name);
+            context.Logger.LogInformation("Finished execution of request '{RequestName}'", request.Name);
         }
         catch (Exception exception) {
             await CompleteRequestElapsed();
-            context.Logger.LogError(exception, "Exception occurred during execution of request {RequestName}", request.Name);
+            context.Logger.LogError(exception, "Exception occurred during execution of request '{RequestName}'", request.Name);
 
             context.Exception = exception;
 

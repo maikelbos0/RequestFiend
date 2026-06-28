@@ -15,6 +15,7 @@ public class XmlContentManagerTests {
                 new("{{TagName}}", "Data"),
                 new("{{Value}}", "42")
             ]),
+            "Request",
             "POST",
             "https://localhost/",
             [],

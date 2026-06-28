@@ -17,6 +17,7 @@ public class FormDataContentManagerTests {
                 new("{{First}}", "Replacement"),
                 new("{{Second}}", "Another")
             ]),
+            "Request",
             "POST",
             "https://localhost/",
             [],

@@ -15,6 +15,7 @@ public class RequestTemplateSnapshotTests {
     public void GetContentManager(ContentType contentType, Type expectedManagerType) {
         var subject = new RequestTemplateSnapshot(
             new([]),
+            "Request",
             "GET",
             "https://localhost/",
             [],
@@ -36,6 +37,7 @@ public class RequestTemplateSnapshotTests {
     public void CreateMessage_Creates_Message() {
         var subject = new RequestTemplateSnapshot(
             new([]),
+            "Request",
             "GET",
             "https://localhost/",
             [],
@@ -63,6 +65,7 @@ public class RequestTemplateSnapshotTests {
             new([
                 new("{{BaseUrl}}", "https://localhost:7001/")
             ]),
+            "Request",
             "GET",
             "{{baseurl}}values",
             [],
@@ -90,6 +93,7 @@ public class RequestTemplateSnapshotTests {
                 new("{{HeaderName}}", "Accept"),
                 new("{{HeaderValue}}", "application/json")
             ]),
+            "Request",
             "GET",
             "https://localhost:7001/",
             [
@@ -119,6 +123,7 @@ public class RequestTemplateSnapshotTests {
             new([
                 new("{{BaseUrl}}", "https://localhost:7001/")
             ]),
+            "Request",
             "GET",
             "https://localhost:7001/",
             [],

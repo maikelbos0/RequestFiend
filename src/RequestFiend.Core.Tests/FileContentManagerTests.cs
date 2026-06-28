@@ -15,6 +15,7 @@ public class FileContentManagerTests {
             new([
                 new("{{FileName}}", "Data.json")
             ]),
+            "Request",
             "POST",
             "https://localhost/",
             [],

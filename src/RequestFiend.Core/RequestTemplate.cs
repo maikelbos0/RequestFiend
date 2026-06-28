@@ -20,6 +20,7 @@ public class RequestTemplate {
     public Script PostExchangeScript { get; set; } = new();
     public Script OnExceptionScript { get; set; } = new();
 
+    [Obsolete]
     public RequestTemplate Clone()
         => new() {
             Name = Name,
@@ -36,6 +37,7 @@ public class RequestTemplate {
     public RequestTemplateSnapshot CreateSnapshot(RequestTemplateCollection collection, Environment? environment)
         => new(
             collection.CreateVariableSnapshot(environment),
+            Name,
             Method,
             Url,
             [.. collection.DefaultHeaders.Select(defaultHeader => defaultHeader.CreateSnapshot()), .. Headers.Select(header => header.CreateSnapshot())],
@@ -50,6 +52,7 @@ public class RequestTemplate {
             OnExceptionScript.CreateSnapshot()
         );
 
+    [Obsolete]
     public IContentManager GetContentManager() => ContentType switch {
         ContentType.None => new NoneContentManager(),
         ContentType.Text => new TextContentManager(),
@@ -60,6 +63,7 @@ public class RequestTemplate {
         _ => throw new NotImplementedException($"Received unknown content type '{ContentType}'.")
     };
 
+    [Obsolete]
     public HttpRequestMessage CreateMessage(RequestTemplateCollection collection, VariableSnapshot variableSnapshot) {
         var message = new HttpRequestMessage(HttpMethod.Parse(Method), new Uri(variableSnapshot.Apply(Url)));
 

@@ -8,6 +8,7 @@ public class NoneContentManagerTests {
         var subject = new NoneContentManager();
         var request = new RequestTemplateSnapshot(
             new([]),
+            "Request",
             "GET",
             "https://localhost/",
             [],

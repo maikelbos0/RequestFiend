@@ -78,6 +78,8 @@ public class RequestTemplateTests {
 
         var result = subject.CreateSnapshot(collection, environment);
 
+        Assert.Equal(collection.Variables.Count + environment.Variables.Count, result.Variables.Variables.Count);
+        Assert.Equal(subject.Name, result.Name);
         Assert.Equal(subject.Method, result.Method);
         Assert.Equal(subject.Url, result.Url);
         Assert.Equal(collection.DefaultHeaders.Count + subject.Headers.Count, result.Headers.Length);
