@@ -12,4 +12,6 @@ public interface IExchangeHandler {
         IExchangeListener? exchangeListener,
         CancellationToken cancellationToken
     );
+    Task<ExchangeContext> Execute(RequestTemplateSnapshot request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, CancellationToken cancellationToken);
+    Task<ExchangeContext> Execute(RequestTemplateSnapshot request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, IExchangeListener? exchangeListener, CancellationToken cancellationToken);
 }

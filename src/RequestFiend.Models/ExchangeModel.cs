@@ -21,10 +21,10 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
     private readonly IUserInterface userInterface;
     private readonly FileModel file;
     private readonly RequestTemplateCollection collection;
-    private readonly RequestTemplate request;
+    private readonly RequestTemplateSnapshot request;
     private CancellationTokenSource? executingCancellationTokenSource;
 
-public string Id { get; } = Guid.NewGuid().ToString();
+    public string Id { get; } = Guid.NewGuid().ToString();
     [ObservableProperty] public partial bool IsExecuting { get; set; }
     [ObservableProperty] public partial VariableModel[]? Variables { get; set; }
     [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
@@ -50,7 +50,7 @@ public string Id { get; } = Guid.NewGuid().ToString();
 
         this.file = file;
         this.collection = collection;
-        this.request = request;
+        this.request = request.CreateSnapshot(collection, null);
 
         ConfigureState([]);
     }
