@@ -56,10 +56,6 @@ public class ExchangeHandler : IExchangeHandler {
         try {
             context.Logger.LogInformation("Starting execution of request '{RequestName}'", request.Name);
 
-            if (exchangeListener != null) {
-                await exchangeListener.OnVariablesCompiled(request.Variables.Variables);
-            }
-
             context.Request = request.CreateMessage();
 
             if (exchangeOptions.AllowScriptEvaluation) {

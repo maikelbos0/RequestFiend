@@ -5,7 +5,6 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System;
-using System.Collections.Immutable;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -25,8 +24,8 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
     private CancellationTokenSource? executingCancellationTokenSource;
 
     public string Id { get; } = Guid.NewGuid().ToString();
+    public VariableModel[] Variables { get; }
     [ObservableProperty] public partial bool IsExecuting { get; set; }
-    [ObservableProperty] public partial VariableModel[]? Variables { get; set; }
     [ObservableProperty] public partial HttpRequestModel? Request { get; set; }
     [ObservableProperty] public partial HttpResponseModel? Response { get; set; }
     [ObservableProperty] public partial ExceptionModel? Exception { get; set; }
@@ -52,6 +51,8 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
         this.collection = collection;
         this.request = request.CreateSnapshot(collection, null);
 
+        Variables = VariableModel.CreateRange(this.request.Variables.Variables);
+
         ConfigureState([]);
     }
 
@@ -67,7 +68,6 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
         PageTitleBase = $"{file.Name} - {request.Name} - Executing request...";
         ShellItemTitleBase = $"{request.Name} - Executing request...";
         IsExecuting = true;
-        Variables = null;
         Request = null;
         Response = null;
         Exception = null;
@@ -134,11 +134,6 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
     public void Close() {
         executingCancellationTokenSource?.Cancel();
         messageService.Send(new CloseRequestMessage(), Id);
-    }
-
-    public Task OnVariablesCompiled(ImmutableDictionary<string, string> variables) {
-        Variables = VariableModel.CreateRange(variables);
-        return Task.CompletedTask;
     }
 
     public Task OnRequestCreated(HttpRequestMessage request) {

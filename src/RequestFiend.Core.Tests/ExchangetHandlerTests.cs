@@ -142,7 +142,6 @@ public class ExchangetHandlerTests {
         var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
 
         Received.InOrder(async () => {
-            await exchangeListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await exchangeListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
@@ -185,7 +184,6 @@ public class ExchangetHandlerTests {
         var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
 
         Received.InOrder(async () => {
-            await exchangeListener.OnVariablesCompiled(Arg.Is<ImmutableDictionary<string, string>>(variables => variables == result.Variables));
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
             await exchangeListener.OnRequestCreated(Arg.Is<HttpRequestMessage>(request => request == result.Request));
             await httpMessageHandler.Received().SendAsyncCore(Arg.Is<HttpRequestMessage>(request => request == result.Request), Arg.Any<CancellationToken>());
