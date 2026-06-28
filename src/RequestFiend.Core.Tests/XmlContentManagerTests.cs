@@ -18,8 +18,8 @@ public class XmlContentManagerTests {
             StringContent = "<{{TagName}}>{{Value}}</{{TagName}}>"
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "TagName", Value = "Data" },
-            new NameValuePair() { Name = "Value", Value = "42" }
+            new("{{TagName}}", "Data"),
+            new("{{Value}}", "42")
         ]);
 
         var result = Assert.IsType<StringContent>(subject.GetContent(request, variableSnapshot));

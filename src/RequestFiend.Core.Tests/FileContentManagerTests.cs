@@ -19,7 +19,7 @@ public class FileContentManagerTests {
             FileContent = "./{{FileName}}"
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "FileName", Value = "Data.json" }
+            new("{{FileName}}", "Data.json")
         ]);
 
         var result = Assert.IsType<ByteArrayContent>(subject.GetContent(request, variableSnapshot));

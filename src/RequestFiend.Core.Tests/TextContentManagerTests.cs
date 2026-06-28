@@ -18,8 +18,8 @@ public class TextContentManagerTests {
             StringContent = "The {{first}} and {{second}} get replaced"
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "First", Value = "Replacement" },
-            new NameValuePair() { Name =  "Second", Value = "Another" }
+            new("{{First}}", "Replacement"),
+            new("{{Second}}", "Another")
         ]);
 
         var result = Assert.IsType<StringContent>(subject.GetContent(request, variableSnapshot));

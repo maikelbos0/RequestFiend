@@ -18,7 +18,7 @@ public class JsonContentManagerTests {
             StringContent = "[{{Node}}, {{Node}}]"
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "Node", Value = "{\"Meaning\": 42}" }
+            new("{{Node}}", "{\"Meaning\": 42}")
         ]);
 
         var result = Assert.IsType<StringContent>(subject.GetContent(request, variableSnapshot));

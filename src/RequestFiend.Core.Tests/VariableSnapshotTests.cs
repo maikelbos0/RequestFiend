@@ -4,8 +4,8 @@ namespace RequestFiend.Core.Tests;
 
 public class VariableSnapshotTests {
     [Fact]
-    public void Constructor() {
-        var subject = new VariableSnapshot([
+    public void Create() {
+        var subject = VariableSnapshot.Create([
             [
                 new() { Name = "Foo", Value = "FooValue" },
                 new() { Name = "Bar", Value = "BarValue" },
@@ -48,23 +48,13 @@ public class VariableSnapshotTests {
     [InlineData("A {{{Foo}}, {{٢٣٤٥٦٧٨٩}} or {{１２３}}} everywhere", "A {FooValue, ٢٣٤٥٦٧٨٩Value or １２３Value} everywhere")]
     public void Apply(string value, string expectedResult) {
         var subject = new VariableSnapshot([
-            [
-                new() { Name = "Foo", Value = "FooValue" },
-                new() { Name = "Bar", Value = "BarValue" },
-                new() { Name = "Foo", Value = "Duplicate" },
-                new() { Name = "123", Value = "123Value" },
-                new() { Name = "Да", Value = "ДаValue" },
-                new() { Name = "٢٣٤٥٦٧٨٩", Value = "٢٣٤٥٦٧٨٩Value" },
-                new() { Name = "Foo+123", Value = "Invalid" },
-                new() { Name = "Foo 123", Value = "Invalid" }
-            ],
-            [
-                new() { Name = "Bar", Value = "Duplicate" },
-                new() { Name = "１２３", Value = "１２３Value" },
-                new() { Name = "Qux_123", Value = "Qux_123Value" },
-                new() { Name = "Foo/123", Value = "Invalid" },
-                new() { Name = "{Foo}", Value = "Invalid" }
-            ]
+            new("{{Foo}}", "FooValue"),
+            new("{{Bar}}", "BarValue"),
+            new("{{123}}", "123Value"),
+            new("{{Да}}", "ДаValue"),
+            new("{{٢٣٤٥٦٧٨٩}}", "٢٣٤٥٦٧٨٩Value"),
+            new("{{１２３}}", "１２３Value"),
+            new("{{Qux_123}}", "Qux_123Value"),
         ]);
 
         Assert.Equal(expectedResult, subject.Apply(value));

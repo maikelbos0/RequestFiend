@@ -121,7 +121,7 @@ public class RequestTemplateTests {
             Requests = { subject }
         };
 
-        var message = subject.CreateMessage(collection, new());
+        var message = subject.CreateMessage(collection, new([]));
 
         Assert.Equal(subject.Method, message.Method.Method);
         Assert.NotNull(message.RequestUri);
@@ -139,7 +139,7 @@ public class RequestTemplateTests {
             Requests = { subject }
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "BaseUrl", Value = "https://localhost:7001/" }
+            new("{{BaseUrl}}", "https://localhost:7001/")
         ]);
 
         var message = subject.CreateMessage(collection, variableSnapshot);
@@ -162,8 +162,8 @@ public class RequestTemplateTests {
             Requests = { subject }
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "HeaderName", Value = "Accept" },
-            new NameValuePair() { Name = "HeaderValue", Value = "application/json" }
+            new("{{HeaderName}}", "Accept"),
+            new("{{HeaderValue}}", "application/json")
         ]);
 
         var message = subject.CreateMessage(collection, variableSnapshot);
@@ -187,8 +187,8 @@ public class RequestTemplateTests {
             }
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "HeaderName", Value = "Accept" },
-            new NameValuePair() { Name = "HeaderValue", Value = "application/json" }
+            new("{{HeaderName}}", "Accept"),
+            new("{{HeaderValue}}", "application/json")
         ]);
 
         var message = subject.CreateMessage(collection, variableSnapshot);
@@ -211,7 +211,7 @@ public class RequestTemplateTests {
             Requests = { subject }
         };
 
-        var message = subject.CreateMessage(collection, new());
+        var message = subject.CreateMessage(collection, new([]));
 
         Assert.IsType<StringContent>(message.Content);
     }

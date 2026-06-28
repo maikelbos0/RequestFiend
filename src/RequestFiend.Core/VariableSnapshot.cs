@@ -5,19 +5,16 @@ using System.Linq;
 
 namespace RequestFiend.Core;
 
-public class VariableSnapshot {
+public record VariableSnapshot(ImmutableDictionary<string, string> Variables) {
     public static bool IsValidVariableCharacter(char c) => char.IsLetterOrDigit(c) || c == '_';
     public static bool IsValidVariableName(string name) => !string.IsNullOrEmpty(name) && name.All(IsValidVariableCharacter);
 
-    public ImmutableDictionary<string, string> Variables { get; }
-
-    public VariableSnapshot(params IEnumerable<NameValuePair>[] variableLists) {
-        Variables = variableLists
+    public static VariableSnapshot Create(params IEnumerable<NameValuePair>[] variableLists)
+        => new(variableLists
             .SelectMany(variableList => variableList)
             .Where(variable => IsValidVariableName(variable.Name))
             .DistinctBy(variable => variable.Name)
-            .ToImmutableDictionary(variable => $"{{{{{variable.Name}}}}}", variable => variable.Value);
-    }
+            .ToImmutableDictionary(variable => $"{{{{{variable.Name}}}}}", variable => variable.Value));
 
     public string Apply(string value) {
         foreach (var (variableName, variableValue) in Variables) {

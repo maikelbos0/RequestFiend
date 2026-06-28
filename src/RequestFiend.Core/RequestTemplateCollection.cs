@@ -20,5 +20,5 @@ public class RequestTemplateCollection {
     public Dictionary<string, string> GetSessionVariables() => sessionVariables;
 
     public VariableSnapshot CreateVariableSnapshot(Environment? environment)
-        => new(sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }), Variables, environment?.Variables ?? []);
+        => VariableSnapshot.Create(sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }), Variables, environment?.Variables ?? []);
 }

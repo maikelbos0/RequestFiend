@@ -25,9 +25,9 @@ public class FormDataContentManagerTests {
             }
         };
         var variableSnapshot = new VariableSnapshot([
-            new NameValuePair() { Name = "FileName", Value = "Data.json" },
-            new NameValuePair() { Name = "First", Value = "Replacement" },
-            new NameValuePair() { Name =  "Second", Value = "Another" }
+            new("{{FileName}}", "Data.json"),
+            new("{{First}}", "Replacement"),
+            new("{{Second}}", "Another")
         ]);
 
         var result = Assert.IsType<MultipartFormDataContent>(subject.GetContent(request, variableSnapshot));
