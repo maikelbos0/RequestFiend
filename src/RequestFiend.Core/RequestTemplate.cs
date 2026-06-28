@@ -33,6 +33,23 @@ public class RequestTemplate {
             OnExceptionScript = OnExceptionScript.Clone()
         };
 
+    public RequestTemplateSnapshot CreateSnapshot(RequestTemplateCollection collection, Environment? environment)
+        => new(
+            collection.GetVariableSnapshot(environment),
+            Method,
+            Url,
+            [.. collection.DefaultHeaders.Select(defaultHeader => defaultHeader.CreateSnapshot()), .. Headers.Select(header => header.CreateSnapshot())],
+            ContentType,
+            HasManualContentTypeHeader,
+            StringContent,
+            FileContent,
+            [.. FormFieldContent.Select(formFieldContent => formFieldContent.CreateSnapshot())],
+            [.. FormFileContent.Select(formFileContent => formFileContent.CreateSnapshot())],
+            PreExchangeScript.CreateSnapshot(),
+            PostExchangeScript.CreateSnapshot(),
+            OnExceptionScript.CreateSnapshot()
+        );
+
     public IContentManager GetContentManager() => ContentType switch {
         ContentType.None => new NoneContentManager(),
         ContentType.Text => new TextContentManager(),

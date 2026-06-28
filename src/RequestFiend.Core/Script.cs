@@ -10,4 +10,7 @@ public class Script {
         => new() {
             Code = Code
         };
+
+    public ScriptSnapshot CreateSnapshot()
+        => new([.. References], Code);
 }

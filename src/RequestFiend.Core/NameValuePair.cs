@@ -9,4 +9,7 @@ public class NameValuePair {
             Name = Name, 
             Value = Value 
         };
+
+    public NameValuePairSnapshot CreateSnapshot()
+        => new(Name, Value);
 }
