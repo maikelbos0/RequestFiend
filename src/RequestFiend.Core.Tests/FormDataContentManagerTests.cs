@@ -11,26 +11,31 @@ public class FormDataContentManagerTests {
     [InlineData(true, null)]
     public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
         var subject = new FormDataContentManager();
-        var request = new RequestTemplate() {
+        var request = new RequestTemplateSnapshot(
+            new([
+                new("{{FileName}}", "Data.json"),
+                new("{{First}}", "Replacement"),
+                new("{{Second}}", "Another")
+            ]),
+            "POST",
+            "https://localhost/",
+            [],
+            ContentType.FormData,
+            hasManualContentTypeHeader,
+            "StringContent",
+            "FileContent",
+            [
+                new("Description", "The {{first}} and {{second}} get replaced")
+            ],
+            [
+                new("Data", "./{{FileName}}")
+            ],
+            new([], "Code"),
+            new([], "Code"),
+            new([], "Code")
+        );
 
-            Name = "Request",
-            Method = "POST",
-            Url = "https://localhost",
-            HasManualContentTypeHeader = hasManualContentTypeHeader,
-            FormFieldContent = {
-                new() { Name = "Description", Value = "The {{first}} and {{second}} get replaced" }
-            },
-            FormFileContent = {
-                new() { Name = "Data", Value = "./{{FileName}}" }
-            }
-        };
-        var variableSnapshot = new VariableSnapshot([
-            new("{{FileName}}", "Data.json"),
-            new("{{First}}", "Replacement"),
-            new("{{Second}}", "Another")
-        ]);
-
-        var result = Assert.IsType<MultipartFormDataContent>(subject.GetContent(request, variableSnapshot));
+        var result = Assert.IsType<MultipartFormDataContent>(subject.GetContent(request));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await Assert.IsType<StringContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Description")).ReadAsStringAsync(TestContext.Current.CancellationToken));

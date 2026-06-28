@@ -6,13 +6,22 @@ public class NoneContentManagerTests {
     [Fact]
     public void GetContent() {
         var subject = new NoneContentManager();
-        var request = new RequestTemplate() {
-            Name = "Request",
-            Method = "GET",
-            Url = "https://localhost",
-            StringContent = "Just a piece of text"
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "GET",
+            "https://localhost/",
+            [],
+            ContentType.None,
+            false,
+            "StringContent",
+            "FileContent",
+            [],
+            [],
+            new([], "Code"),
+            new([], "Code"),
+            new([], "Code")
+        );
 
-        Assert.Null(subject.GetContent(request, new()));
+        Assert.Null(subject.GetContent(request));
     }
 }

@@ -14,4 +14,14 @@ public class JsonContentManager : IContentManager {
 
         return content;
     }
+
+    public HttpContent? GetContent(RequestTemplateSnapshot request) {
+        var content = new StringContent(request.Variables.Apply(request.StringContent), null, DefaultMediaType);
+
+        if (request.HasManualContentTypeHeader) {
+            content.Headers.ContentType = null;
+        }
+
+        return content;
+    }
 }

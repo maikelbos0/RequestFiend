@@ -12,4 +12,14 @@ public class TextContentManager : IContentManager {
 
         return content;
     }
+
+    public HttpContent? GetContent(RequestTemplateSnapshot request) {
+        var content = new StringContent(request.Variables.Apply(request.StringContent));
+
+        if (request.HasManualContentTypeHeader) {
+            content.Headers.ContentType = null;
+        }
+
+        return content;
+    }
 }

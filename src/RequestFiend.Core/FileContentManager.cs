@@ -15,4 +15,15 @@ public class FileContentManager : IContentManager {
 
         return content;
     }
+
+    public HttpContent? GetContent(RequestTemplateSnapshot request) {
+        var filePath = request.Variables.Apply(request.FileContent);
+        var content = new ByteArrayContent(File.ReadAllBytes(filePath));
+
+        if (!request.HasManualContentTypeHeader) {
+            content.Headers.ContentType = new(MimeUtility.GetMimeMapping(filePath));
+        }
+
+        return content;
+    }
 }
