@@ -31,7 +31,7 @@ public class ExchangeHandler : IExchangeHandler {
         IExchangeListener? exchangeListener,
         CancellationToken cancellationToken
     ) {
-        var variableSnapshot = collection.GetVariableSnapshot(exchangeOptions.Environment);
+        var variableSnapshot = collection.CreateVariableSnapshot(exchangeOptions.Environment);
         var context = new ExchangeContext(
             collection.GetSessionData(),
             collection.GetSessionVariables(),

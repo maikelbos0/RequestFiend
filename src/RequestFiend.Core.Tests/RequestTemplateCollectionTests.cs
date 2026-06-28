@@ -4,7 +4,7 @@ namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateCollectionTests {
     [Fact]
-    public void GetVariableSnapshot() {
+    public void CreateVariableSnapshot() {
         var subject = new RequestTemplateCollection() {
             Variables = {
                 new() { Name = "Foo", Value = "FooValue" }
@@ -13,13 +13,13 @@ public class RequestTemplateCollectionTests {
 
         subject.GetSessionVariables().Add("Bar", "BarValue");
 
-        var result = subject.GetVariableSnapshot(null);
+        var result = subject.CreateVariableSnapshot(null);
 
         Assert.Equal(2, result.Variables.Count);
     }
 
     [Fact]
-    public void GetVariableSnapshot_With_Environment() {
+    public void CreateVariableSnapshot_With_Environment() {
         var subject = new RequestTemplateCollection() {
             Variables = {
                 new() { Name = "Foo", Value = "FooValue" }
@@ -34,7 +34,7 @@ public class RequestTemplateCollectionTests {
             }
         };
 
-        var result = subject.GetVariableSnapshot(environment);
+        var result = subject.CreateVariableSnapshot(environment);
 
         Assert.Equal(3, result.Variables.Count);
     }

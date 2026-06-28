@@ -35,7 +35,7 @@ public class RequestTemplate {
 
     public RequestTemplateSnapshot CreateSnapshot(RequestTemplateCollection collection, Environment? environment)
         => new(
-            collection.GetVariableSnapshot(environment),
+            collection.CreateVariableSnapshot(environment),
             Method,
             Url,
             [.. collection.DefaultHeaders.Select(defaultHeader => defaultHeader.CreateSnapshot()), .. Headers.Select(header => header.CreateSnapshot())],
