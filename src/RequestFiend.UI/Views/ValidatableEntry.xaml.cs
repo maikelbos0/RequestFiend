@@ -7,7 +7,7 @@ using RequestFiend.Models.Services;
 
 namespace RequestFiend.UI.Views;
 
-public partial class ValidatableEntry : AbsoluteLayout {
+public partial class ValidatableEntry : Grid {
     public static readonly BindableProperty TextProperty = BindableProperty.Create(
         nameof(Text),
         typeof(ValidatableProperty<string>),

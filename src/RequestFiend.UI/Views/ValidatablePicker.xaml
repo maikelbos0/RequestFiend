@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<AbsoluteLayout
+<Grid
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.ValidatablePicker"
-    HorizontalOptions="Fill"
-    x:Name="Root">
+    x:Name="Root"
+    ColumnDefinitions="*,44">
 
     <Picker
         x:Name="Picker"
         SelectedItem="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.Value, Source={x:Reference Root}}"
         ItemsSource="{Binding x:DataType='views:ValidatablePicker', Path=ItemsSource, Source={x:Reference Root}}"
-        AbsoluteLayout.LayoutFlags="WidthProportional"
-        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+        Grid.ColumnSpan="2">
 
         <Picker.Triggers>
             <DataTrigger TargetType="Picker" Binding="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.HasError, Source={x:Reference Root}}" Value="True">
@@ -30,8 +29,8 @@
         IsVisible="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.HasError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="20"
-        AbsoluteLayout.LayoutFlags="XProportional"
-        AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
+        Margin="0,5,0,0"
+        Grid.Column="1">
 
         <Label.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
@@ -44,11 +43,10 @@
         IsVisible="{Binding x:DataType='views:ValidatablePicker', Path=SelectedItem.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
-        AbsoluteLayout.LayoutFlags="XProportional"
-        AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
+        Grid.Column="1">
 
         <Label.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
-</AbsoluteLayout>
+</Grid>

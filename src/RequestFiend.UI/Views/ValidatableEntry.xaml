@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<AbsoluteLayout
+<Grid
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:RequestFiend.Models.Converters;assembly=RequestFiend.Models"
     xmlns:views="clr-namespace:RequestFiend.UI.Views"
     x:Class="RequestFiend.UI.Views.ValidatableEntry"
-    HorizontalOptions="Fill"
-    x:Name="Root">
+    x:Name="Root"
+    ColumnDefinitions="*,44">
 
     <Entry
         x:Name="Entry"
         Text="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}}"
-        AbsoluteLayout.LayoutFlags="WidthProportional"
-        AbsoluteLayout.LayoutBounds="0,0,1,AutoSize"
         Focused="OnEntryFocused"
-        Unfocused="OnEntryUnfocused">
+        Unfocused="OnEntryUnfocused"
+        Grid.ColumnSpan="2">
 
         <Entry.Triggers>
             <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">
@@ -26,7 +25,7 @@
         </Entry.Triggers>
     </Entry>
 
-    <Label x:Name="Overlay" Style="{StaticResource EntryOverlay}" IsVisible="False" AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,AutoSize">
+    <Label x:Name="Overlay" Style="{StaticResource EntryOverlay}" IsVisible="False" Grid.ColumnSpan="2">
         <Label.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
@@ -47,8 +46,8 @@
         IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="20"
-        AbsoluteLayout.LayoutFlags="XProportional"
-        AbsoluteLayout.LayoutBounds="1,5,44,AutoSize">
+        Margin="0,5,0,0"
+        Grid.Column="1">
         
         <Label.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
@@ -61,11 +60,10 @@
         IsVisible="{Binding x:DataType='views:ValidatableEntry', Path=Text.IsModifiedWithoutError, Source={x:Reference Root}}"
         HorizontalTextAlignment="Center"
         FontSize="28"
-        AbsoluteLayout.LayoutFlags="XProportional"
-        AbsoluteLayout.LayoutBounds="1,0,44,AutoSize">
+        Grid.Column="1">
 
         <Label.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnOverlayTapped"/>
         </Label.GestureRecognizers>
     </Label>
-</AbsoluteLayout>
+</Grid>
