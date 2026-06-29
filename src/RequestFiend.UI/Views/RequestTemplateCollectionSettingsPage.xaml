@@ -16,7 +16,7 @@
 
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding ShowAllowScriptEvaluation}">
+                    <Grid ColumnDefinitions="Auto, *" IsVisible="{Binding ShowAllowScriptEvaluation}">
                         <Switch IsToggled="{Binding AllowScriptEvaluation.Value}"/>
 
                         <Label Text="Allow script evaluation" Grid.Column="1" VerticalOptions="Center">
@@ -42,7 +42,7 @@
 
                     <views:ValidatableEntry Text="{Binding DefaultUrl}" Collection="{Binding Collection}" />
 
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                    <Grid ColumnDefinitions="Auto, *">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateNotAvailable.Value}"/>
 
                         <Label Text="Ignore certificate not available errors" Grid.Column="1" VerticalOptions="Center">
@@ -52,7 +52,7 @@
                         </Label>
                     </Grid>
 
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                    <Grid ColumnDefinitions="Auto, *">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateNameMismatch.Value}"/>
 
                         <Label Text="Ignore certificate name mismatch errors" Grid.Column="1" VerticalOptions="Center">
@@ -62,7 +62,7 @@
                         </Label>
                     </Grid>
 
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0">
+                    <Grid ColumnDefinitions="Auto, *">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateChainErrors.Value}"/>
 
                         <Label Text="Ignore certificate chain errors" Grid.Column="1" VerticalOptions="Center">

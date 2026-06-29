@@ -111,7 +111,7 @@
 
                     <CollectionView SelectionMode="None" ItemsSource="{Binding FormFileContent}" IsVisible="{Binding UsesFormDataContent}">
                         <CollectionView.Header>
-                            <Grid ColumnDefinitions="*,*,44,44" ColumnSpacing="10" IsVisible="{Binding FormFileContent.HasItems}">
+                            <Grid ColumnDefinitions="*,*,44,44" IsVisible="{Binding FormFileContent.HasItems}">
                                 <Label Text="Form file name" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, -5"/>
 
                                 <Label Text="Value" Style="{StaticResource EntryLabel}" Margin="10, 0, 0, -5" Grid.Column="1"/>
@@ -119,7 +119,7 @@
                         </CollectionView.Header>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:NameValuePairModel">
-                                <Grid ColumnDefinitions="*,*,44,44" Style="{StaticResource Table}" ColumnSpacing="10">
+                                <Grid ColumnDefinitions="*,*,44,44" Style="{StaticResource Table}">
                                     <views:ValidatableEntry
                                         Text="{Binding Name}"
                                         Margin="0, 10, 0, 0"
@@ -165,7 +165,7 @@
                         </CollectionView.Footer>
                     </CollectionView>
 
-                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="0" IsVisible="{Binding UsesContent}">
+                    <Grid ColumnDefinitions="Auto, *" IsVisible="{Binding UsesContent}">
                         <Switch IsToggled="{Binding HasManualContentTypeHeader.Value}"/>
 
                         <Label Text="Has manually added content type header" Grid.Column="1" VerticalOptions="Center">
