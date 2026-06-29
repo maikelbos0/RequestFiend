@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
 using RequestFiend.Core;
@@ -14,9 +13,8 @@ using System.Threading;
 namespace RequestFiend.UI;
 
 public static class MauiProgram {
-    public static MauiApp CreateMauiApp() {
-        var builder = MauiApp.CreateBuilder();
-        builder
+    public static MauiApp CreateMauiApp()
+        => MauiApp.CreateBuilder()
             .UseMauiApp<App>()
             .ConfigureServices()
             .UseMauiCommunityToolkit()
@@ -24,14 +22,8 @@ public static class MauiProgram {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("FiraCode-Regular.ttf", "FiraCodeRegular");
-            });
-
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
-
-        return builder.Build();
-    }
+            })
+            .Build();
 
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
