@@ -96,11 +96,22 @@ public class ExchangetHandlerTests {
 
         var subject = new ExchangeHandler(httpClient, Substitute.For<IScriptEvaluator>(), Substitute.For<IServerCertificateValidationHandler>(), Substitute.For<ILoggerFactory>());
 
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost/"
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost/",
+            [],
+            ContentType.None,
+            false,
+            "StringContent",
+            "FileContent",
+            [],
+            [],
+            new([], "PreExchangeScript"),
+            new([], "PostExchangeScript"),
+            new([], "OnExceptionScript")
+        );
 
         var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 

@@ -21,17 +21,6 @@ public class ExchangeHandler : IExchangeHandler {
         this.loggerFactory = loggerFactory;
     }
 
-    public Task<ExchangeContext> Execute(RequestTemplate request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, CancellationToken cancellationToken)
-        => Execute(request.CreateSnapshot(collection, exchangeOptions.Environment), collection, exchangeOptions, null, cancellationToken);
-
-    public Task<ExchangeContext> Execute(
-        RequestTemplate request,
-        RequestTemplateCollection collection,
-        ExchangeOptions exchangeOptions,
-        IExchangeListener? exchangeListener,
-        CancellationToken cancellationToken
-    ) => Execute(request.CreateSnapshot(collection, exchangeOptions.Environment), collection, exchangeOptions, exchangeListener, cancellationToken);
-
     public Task<ExchangeContext> Execute(RequestTemplateSnapshot request, RequestTemplateCollection collection, ExchangeOptions exchangeOptions, CancellationToken cancellationToken)
         => Execute(request, collection, exchangeOptions, null, cancellationToken);
 
