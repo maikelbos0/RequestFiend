@@ -48,7 +48,6 @@ public class ExchangetHandlerTests {
 
         Assert.Same(result.SessionData, collection.GetSessionData());
         Assert.Same(result.SessionVariables, collection.GetSessionVariables());
-        Assert.NotNull(result.Variables);
         Assert.NotNull(result.Request);
         Assert.NotNull(result.Request.RequestUri);
         Assert.Equal(request.Url, result.Request.RequestUri.ToString());
@@ -83,7 +82,6 @@ public class ExchangetHandlerTests {
 
         var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
-        Assert.NotNull(result.Variables);
         Assert.Null(result.Request);
         Assert.Null(result.Response);
         Assert.NotNull(result.Exception);
@@ -106,7 +104,6 @@ public class ExchangetHandlerTests {
 
         var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
 
-        Assert.NotNull(result.Variables);
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
         Assert.Same(expectedException, result.Exception);

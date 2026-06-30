@@ -45,7 +45,6 @@ public class ExchangeHandler : IExchangeHandler {
         var context = new ExchangeContext(
             collection.GetSessionData(),
             collection.GetSessionVariables(),
-            request.Variables.Variables,
             loggerFactory.CreateLogger<ExchangeContext>()
         );
         Timer? timer = null;
