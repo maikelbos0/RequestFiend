@@ -12,37 +12,47 @@ public abstract partial class ValidatableProperty : ObservableObject, IValidatab
 }
 
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
-    public Func<TProperty> DefaultValueProvider { get; private set; }
+    private Func<TProperty> defaultValueProvider;
+    private TProperty value;
+    private readonly Action<TProperty>? updater;
+
     public Func<TProperty, bool> Validator { get; }
     public TProperty Value {
-        get;
+        get => value;
         set {
-            if (SetProperty(ref field, value)) {
+            if (SetProperty(ref this.value, value)) {
                 UpdateState();
             }
         }
     }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, params IValidatable[] dependencies) : this(defaultValueProvider, _ => true, dependencies) { }
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, params IValidatable[] dependencies) : this(defaultValueProvider, null, _ => true, dependencies) { }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
-        DefaultValueProvider = defaultValueProvider;
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator, params IValidatable[] dependencies) : this(defaultValueProvider, null, validator, dependencies) { }
+
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, Action<TProperty>? updater, params IValidatable[] dependencies) : this(defaultValueProvider, updater, _ => true, dependencies) { }
+
+    public ValidatableProperty(Func<TProperty> defaultValueProvider, Action<TProperty>? updater, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
+        this.defaultValueProvider = defaultValueProvider;
         Validator = validator;
-        Value = DefaultValueProvider();
+        value = defaultValueProvider();
         UpdateState();
+        
+        this.updater = updater;
 
         foreach (var dependency in dependencies) {
             dependency.PropertyChanged += OnDependencyChanged;
         }
     }
 
+    // TODO refactor to get rid of?
     public void Reset(Func<TProperty> defaultValueProvider) {
-        DefaultValueProvider = defaultValueProvider;
+        this.defaultValueProvider = defaultValueProvider;
         Reset();
     }
 
     public void Reset() {
-        Value = DefaultValueProvider();
+        value = defaultValueProvider();
         UpdateState();
     }
 
@@ -54,7 +64,8 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
 
     private void UpdateState() {
         HasError = !Validator(Value);
-        IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, DefaultValueProvider());
+        IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, defaultValueProvider());
         IsModifiedWithoutError = IsModified && !HasError;
+        updater?.Invoke(Value);
     }
 }

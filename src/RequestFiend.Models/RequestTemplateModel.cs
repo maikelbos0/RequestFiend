@@ -98,9 +98,6 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.FileContent = FileContent.Value;
         request.FormFieldContent = FormFieldContent.GetNameValuePairs();
         request.FormFileContent = FormFileContent.GetNameValuePairs();
-        PreExchangeScript.Update(request.PreExchangeScript);
-        PostExchangeScript.Update(request.PostExchangeScript);
-        OnExceptionScript.Update(request.OnExceptionScript);
 
         messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, request));
     }
@@ -121,9 +118,6 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.FileContent = FileContent.Value;
         Request.FormFieldContent = FormFieldContent.GetNameValuePairs();
         Request.FormFileContent = FormFileContent.GetNameValuePairs();
-        PreExchangeScript.Update(Request.PreExchangeScript);
-        PostExchangeScript.Update(Request.PostExchangeScript);
-        OnExceptionScript.Update(Request.OnExceptionScript);
 
         Name.Reset();
         Method.Reset();

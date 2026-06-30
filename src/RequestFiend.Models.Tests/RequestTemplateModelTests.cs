@@ -226,9 +226,6 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
         Assert.Equal("PreviousName", request.FormFileContent[0].Name);
         Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
-        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
-        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
-        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
 
         messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
             => message.FilePath == filePath
@@ -331,9 +328,6 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
         Assert.Equal("PreviousName", request.FormFileContent[0].Name);
         Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
-        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
-        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
-        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
 
         messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
@@ -419,9 +413,6 @@ public class RequestTemplateModelTests {
         Assert.Equal(formFieldValue, request.FormFieldContent[0].Value);
         Assert.Equal(formFileName, request.FormFileContent[0].Name);
         Assert.Equal(formFileValue, request.FormFileContent[0].Value);
-        Assert.Equal(preExchangeScript, request.PreExchangeScript.Code);
-        Assert.Equal(postExchangeScript, request.PostExchangeScript.Code);
-        Assert.Equal(onExceptionScript, request.OnExceptionScript.Code);
 
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
@@ -521,9 +512,6 @@ public class RequestTemplateModelTests {
         Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
         Assert.Equal("PreviousName", request.FormFileContent[0].Name);
         Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
-        Assert.Equal("PreviousPreExchangeScript", request.PreExchangeScript.Code);
-        Assert.Equal("PreviousPostExchangeScript", request.PostExchangeScript.Code);
-        Assert.Equal("PreviousOnExceptionScript", request.OnExceptionScript.Code);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());

@@ -1,4 +1,6 @@
-﻿using RequestFiend.Models.PropertyTypes;
+﻿using NSubstitute;
+using RequestFiend.Models.PropertyTypes;
+using System;
 using Xunit;
 
 namespace RequestFiend.Models.Tests.PropertyTypes;
@@ -17,13 +19,14 @@ public class ValidatablePropertyTests {
     }
 
     [Theory]
-    [InlineData("", "", true, false, false)]
-    [InlineData("", "Changed", false, true, true)]
-    [InlineData("Initial", "Initial", false, false, false)]
-    [InlineData("Initial", "Changed", false, true, true)]
-    [InlineData("Initial", "", true, true, false)]
-    public void Value(string initialValue, string newValue, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError) {
-        var subject = new ValidatableProperty<string>(() => initialValue, value => !string.IsNullOrEmpty(value)) {
+    [InlineData("", "", true, false, false, 0)]
+    [InlineData("", "Changed", false, true, true, 1)]
+    [InlineData("Initial", "Initial", false, false, false, 0)]
+    [InlineData("Initial", "Changed", false, true, true, 1)]
+    [InlineData("Initial", "", true, true, false, 1)]
+    public void Value(string initialValue, string newValue, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, int expectedUpdaterCalls) {
+        var updater = Substitute.For<Action<string>>();
+        var subject = new ValidatableProperty<string>(() => initialValue, updater, value => !string.IsNullOrEmpty(value)) {
             Value = newValue
         };
 
@@ -31,13 +34,16 @@ public class ValidatablePropertyTests {
         Assert.Equal(expectedHasError, subject.HasError);
         Assert.Equal(expectedIsModified, subject.IsModified);
         Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
+
+        updater.Received(expectedUpdaterCalls).Invoke(newValue);
     }
 
     [Fact]
     public void Reset() {
         const string initialValue = "Initial";
+        var updater = Substitute.For<Action<string>>();
 
-        var subject = new ValidatableProperty<string>(() => initialValue, value => !string.IsNullOrEmpty(value));
+        var subject = new ValidatableProperty<string>(() => initialValue, updater, value => !string.IsNullOrEmpty(value));
 
         subject.Reset(() => "");
 
@@ -45,5 +51,6 @@ public class ValidatablePropertyTests {
         Assert.True(subject.HasError);
         Assert.False(subject.IsModified);
         Assert.False(subject.IsModifiedWithoutError);
+        updater.Received(1).Invoke("");
     }
 }

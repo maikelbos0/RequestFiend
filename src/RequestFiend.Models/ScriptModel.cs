@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 namespace RequestFiend.Models;
 
 public partial class ScriptModel : BoundModelBase, IValidatable {
-
     [GeneratedRegex(@"[\r\n]+", RegexOptions.Compiled)]
     private static partial Regex GetNewLineFinder();
 
@@ -18,17 +17,15 @@ public partial class ScriptModel : BoundModelBase, IValidatable {
 
     public ScriptModel(Script script) {
         ShowReferences = script.References.Count > 0;
-        References = new(() => string.Join(System.Environment.NewLine, script.References));
-        Code = new(() => script.Code);
+        References = new(
+            () => string.Join(System.Environment.NewLine, script.References),
+            value => script.References = [.. GetNewLineFinder().Split(value)
+                .Where(reference => !string.IsNullOrWhiteSpace(reference))
+                .Select(reference => reference.Trim())]
+        );
+        Code = new(() => script.Code, value => script.Code = value);
 
         ConfigureState([References, Code]);
-    }
-
-    public void Update(Script script) {
-        script.References = [.. GetNewLineFinder().Split(References.Value)
-            .Where(reference => !string.IsNullOrWhiteSpace(reference))
-            .Select(reference => reference.Trim())];
-        script.Code = Code.Value;
     }
 
     public void Reset() {

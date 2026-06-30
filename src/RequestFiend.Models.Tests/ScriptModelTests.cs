@@ -5,6 +5,26 @@ using Xunit.Internal;
 namespace RequestFiend.Models.Tests;
 
 public class ScriptModelTests {
+    [Fact]
+    public void References() {
+        var script = new Script();
+        var subject = new ScriptModel(script) {
+            References = { Value = $" Foo {System.Environment.NewLine}{System.Environment.NewLine} Bar " }
+        };
+
+        Assert.Equal(["Foo", "Bar"], script.References);
+    }
+
+    [Fact]
+    public void Code() {
+        var script = new Script();
+        var subject = new ScriptModel(script) {
+            Code = { Value = "Code" }
+        };
+
+        Assert.Equal("Code", script.Code);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true, "Foo", "Bar")]
@@ -21,23 +41,6 @@ public class ScriptModelTests {
         Assert.Equal(script.Code, subject.Code.Value);
 
         Assert.Equal([subject.References, subject.Code], subject.Validatables);
-    }
-
-    [Fact]
-    public void Update() {
-        const string code = "Script";
-
-        var script = new Script();
-
-        var subject = new ScriptModel(script);
-
-        subject.References.Value = " \r\n Foo \r\n\r Bar \r\n \r\n";
-        subject.Code.Value = code;
-
-        subject.Update(script);
-
-        Assert.Equal(["Foo", "Bar"], script.References);
-        Assert.Equal(code, script.Code);
     }
 
     [Fact]
