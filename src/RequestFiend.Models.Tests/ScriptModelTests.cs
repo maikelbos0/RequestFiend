@@ -61,14 +61,16 @@ public class ScriptModelTests {
         Assert.False(subject.Code.IsModified);
     }
 
-    [Fact]
-    public void ToggleShowReferences() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void ToggleShowReferences(bool initialValue, bool expectedValue) {
         var subject = new ScriptModel(new()) {
-            ShowReferences = true
+            ShowReferences = initialValue
         };
 
         subject.ToggleShowReferences();
 
-        Assert.False(subject.ShowReferences);
+        Assert.Equal(expectedValue, subject.ShowReferences);
     }
 }

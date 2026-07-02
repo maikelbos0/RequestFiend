@@ -254,8 +254,10 @@ public class RequestTemplateCollectionSettingsModelTests {
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
     }
 
-    [Fact]
-    public void ToggleShowRecentCollections() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void ToggleShowRecentCollections(bool initialValue, bool expectedValue) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -266,16 +268,18 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             new()
         ) {
-            AllowScriptEvaluation = { Value = true },
+            AllowScriptEvaluation = { Value = initialValue },
         };
 
         subject.ToggleAllowScriptEvaluation();
 
-        Assert.False(subject.AllowScriptEvaluation.Value);
+        Assert.Equal(expectedValue, subject.AllowScriptEvaluation.Value);
     }
 
-    [Fact]
-    public void ToggleIgnoreRemoteCertificateNotAvailable() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void ToggleIgnoreRemoteCertificateNotAvailable(bool initialValue, bool expectedValue) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -286,16 +290,18 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             new()
         ) {
-            IgnoreRemoteCertificateNotAvailable = { Value = true },
+            IgnoreRemoteCertificateNotAvailable = { Value = initialValue },
         };
 
         subject.ToggleIgnoreRemoteCertificateNotAvailable();
 
-        Assert.False(subject.IgnoreRemoteCertificateNotAvailable.Value);
+        Assert.Equal(expectedValue, subject.IgnoreRemoteCertificateNotAvailable.Value);
     }
 
-    [Fact]
-    public void ToggleIgnoreRemoteCertificateNameMismatch() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void ToggleIgnoreRemoteCertificateNameMismatch(bool initialValue, bool expectedValue) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -306,16 +312,18 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             new()
         ) {
-            IgnoreRemoteCertificateNameMismatch = { Value = true },
+            IgnoreRemoteCertificateNameMismatch = { Value = initialValue },
         };
 
         subject.ToggleIgnoreRemoteCertificateNameMismatch();
 
-        Assert.False(subject.IgnoreRemoteCertificateNameMismatch.Value);
+        Assert.Equal(expectedValue, subject.IgnoreRemoteCertificateNameMismatch.Value);
     }
 
-    [Fact]
-    public void ToggleIgnoreRemoteCertificateChainErrors() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void ToggleIgnoreRemoteCertificateChainErrors(bool initialValue, bool expectedValue) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -326,12 +334,12 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             new()
         ) {
-            IgnoreRemoteCertificateChainErrors = { Value = true },
+            IgnoreRemoteCertificateChainErrors = { Value = initialValue },
         };
 
         subject.ToggleIgnoreRemoteCertificateChainErrors();
 
-        Assert.False(subject.IgnoreRemoteCertificateChainErrors.Value);
+        Assert.Equal(expectedValue, subject.IgnoreRemoteCertificateChainErrors.Value);
     }
 
     [Fact]

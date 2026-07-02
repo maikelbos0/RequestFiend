@@ -733,8 +733,10 @@ public class RequestTemplateModelTests {
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
-    [Fact]
-    public async Task ToggleHasManualContentTypeHeader() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public async Task ToggleHasManualContentTypeHeader(bool initialValue, bool expectedValue) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var request = new RequestTemplate() {
@@ -747,12 +749,12 @@ public class RequestTemplateModelTests {
         };
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
-            HasManualContentTypeHeader = { Value = true }
+            HasManualContentTypeHeader = { Value = initialValue }
         };
 
         subject.ToggleHasManualContentTypeHeader();
 
-        Assert.False(subject.HasManualContentTypeHeader.Value);
+        Assert.Equal(expectedValue, subject.HasManualContentTypeHeader.Value);
     }
 
     [Fact]
