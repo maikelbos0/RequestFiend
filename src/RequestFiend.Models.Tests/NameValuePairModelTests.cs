@@ -47,9 +47,7 @@ public class NameValuePairModelTests {
 
     [Fact]
     public void Reset() {
-        var subject = new NameValuePairModel(new NameValuePair() { Name = "PreviousName", Value = "PreviousValue" }, Validator.Required) {
-            IsModified = true
-        };
+        var subject = new NameValuePairModel(new NameValuePair() { Name = "PreviousName", Value = "PreviousValue" }, Validator.Required);
 
         subject.Name.Value = "Name";
         subject.Value.Value = "Name";

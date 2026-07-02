@@ -32,22 +32,21 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Theory]
-    [InlineData(false, false, 0, 0, false, false, true)]
-    [InlineData(true, false, 0, 0, true, false, true)]
-    [InlineData(false, true, 0, 0, false, true, true)]
-    [InlineData(false, false, 1, 0, true, true, true)]
-    [InlineData(false, false, 0, 1, false, true, true)]
-    [InlineData(false, false, 0, 2, false, true, false)]
-    [InlineData(false, false, 1, 2, true, true, true)]
-    public void State(bool pairHasEror, bool pairIsModified, int pairsToAdd, int pairsToRemove, bool expectedHasError, bool expectedIsModified, bool expectedHasItems) {
+    [InlineData("FirstName", 0, 0, false, false, true)]
+    [InlineData("", 0, 0, true, true, true)]
+    [InlineData("Name", 0, 0, false, true, true)]
+    [InlineData("FirstName", 1, 0, true, true, true)]
+    [InlineData("FirstName", 0, 1, false, true, true)]
+    [InlineData("FirstName", 0, 2, false, true, false)]
+    [InlineData("FirstName", 1, 2, true, true, true)]
+    public void State(string pairName, int pairsToAdd, int pairsToRemove, bool expectedHasError, bool expectedIsModified, bool expectedHasItems) {
         var collection = new List<NameValuePair>() {
             new() { Name = "FirstName", Value = "FirstValue" },
             new() { Name = "SecondName", Value = "SecondValue" }
         };
         var subject = new NameValuePairModelCollection(collection, Validator.Required);
 
-        subject[0].HasError = pairHasEror;
-        subject[0].IsModified = pairIsModified;
+        subject[0].Name.Value = pairName;
 
         for (var i = 0; i < pairsToRemove; i++) {
             subject.Remove(subject[^1]);

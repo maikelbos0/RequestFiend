@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
-using RequestFiend.Models.PropertyTypes;
+using NSubstitute;
+using System.ComponentModel;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -57,11 +58,11 @@ public class PageBoundModelBaseTests {
         string expectedPageTitle,
         string expectedShellItemTitle
     ) {
-        var validatable = new ValidatableProperty<string>(() => "Name");
+        var validatable = Substitute.For<IValidatable>();
         var subject = new PageBoundModelBase("Page title", "Shell item title");
 
-        validatable.HasError = validateblePropertyHasError;
-        validatable.IsModified = validatablePropertyIsModified;
+        validatable.HasError.Returns(validateblePropertyHasError);
+        validatable.IsModified.Returns(validatablePropertyIsModified);
 
         subject.ConfigureState([validatable]);
 
@@ -73,27 +74,33 @@ public class PageBoundModelBaseTests {
     }
 
     [Theory]
-    [InlineData(false, false, false, false, false, "Page title", "Shell item title")]
-    [InlineData(true, false, true, false, false, "Page title", "Shell item title")]
-    [InlineData(true, true, true, true, false, "Page title ●", "Shell item title ●")]
-    [InlineData(false, true, false, true, true, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, nameof(IValidatable.HasError), false, false, false, "Page title", "Shell item title")]
+    [InlineData(true, false, nameof(IValidatable.HasError), true, false, false, "Page title", "Shell item title")]
+    [InlineData(true, true, nameof(IValidatable.HasError), true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, true, nameof(IValidatable.HasError), false, true, true, "Page title ●", "Shell item title ●")]
+    [InlineData(false, false, nameof(IValidatable.IsModified), false, false, false, "Page title", "Shell item title")]
+    [InlineData(true, false, nameof(IValidatable.IsModified), true, false, false, "Page title", "Shell item title")]
+    [InlineData(true, true, nameof(IValidatable.IsModified), true, true, false, "Page title ●", "Shell item title ●")]
+    [InlineData(false, true, nameof(IValidatable.IsModified), false, true, true, "Page title ●", "Shell item title ●")]
     public void State(
         bool validateblePropertyHasError,
         bool validatablePropertyIsModified,
+        string propertyName,
         bool expectedHasError,
         bool expectedIsModified,
         bool expectedIsModifiedWithoutError,
         string expectedPageTitle,
         string expectedShellItemTitle
     ) {
-        var validatable = new ValidatableProperty<string>(() => "Name");
+        var validatable = Substitute.For<IValidatable>();
 
         var subject = new PageBoundModelBase("Page title", "Shell item title");
 
         subject.ConfigureState([validatable]);
 
-        validatable.HasError = validateblePropertyHasError;
-        validatable.IsModified = validatablePropertyIsModified;
+        validatable.HasError.Returns(validateblePropertyHasError);
+        validatable.IsModified.Returns(validatablePropertyIsModified);
+        validatable.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(new PropertyChangedEventArgs(propertyName));
 
         Assert.Equal(expectedHasError, subject.HasError);
         Assert.Equal(expectedIsModified, subject.IsModified);

@@ -18,7 +18,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     public bool HasError {
         get;
-        set {
+        private set {
             if (field != value) {
                 field = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasError)));
@@ -28,7 +28,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     public bool IsModified {
         get;
-        set {
+        private set {
             if (field != value) {
                 field = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsModified)));

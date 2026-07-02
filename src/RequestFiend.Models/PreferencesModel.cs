@@ -62,7 +62,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds.Reset();
         ExchangeLoggingPath.Reset();
         ExchangeLoggingOutputTemplate.Reset();
-        Environments.IsModified = false;
+        Environments.Reset();
         ActiveEnvironment.Reset();
 
         preferencesService.TrimRecentCollections();

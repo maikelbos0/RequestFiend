@@ -68,4 +68,15 @@ public class FileModelCollectionTests {
         Assert.True(subject.IsModified);
         Assert.True(subject.HasItems);
     }
+
+    [Fact]
+    public void Reset() {
+        var subject = new FileModelCollection([]) {
+            new(@"C:\Documents\Foo.json")
+        };
+
+        subject.Reset();
+
+        Assert.False(subject.IsModified);
+    }
 }

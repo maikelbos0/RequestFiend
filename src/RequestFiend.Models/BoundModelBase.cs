@@ -8,9 +8,9 @@ namespace RequestFiend.Models;
 public partial class BoundModelBase : ObservableObject, IValidatable {
     private readonly List<IValidatable> validatables = [];
 
-    [ObservableProperty] public partial bool HasError { get; set; }
-    [ObservableProperty] public partial bool IsModified { get; set; }
-    [ObservableProperty] public partial bool IsModifiedWithoutError { get; set; }
+    [ObservableProperty] public partial bool HasError { get; private set; }
+    [ObservableProperty] public partial bool IsModified { get; private set; }
+    [ObservableProperty] public partial bool IsModifiedWithoutError { get; private set; }
     public IEnumerable<IValidatable> Validatables => validatables;
 
     public virtual void ConfigureState(IEnumerable<IValidatable> validatables) {

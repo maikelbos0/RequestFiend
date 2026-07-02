@@ -6,13 +6,13 @@ using System.ComponentModel;
 namespace RequestFiend.Models.PropertyTypes;
 
 public abstract partial class ValidatableProperty : ObservableObject, IValidatable {
-    [ObservableProperty] public partial bool HasError { get; set; }
-    [ObservableProperty] public partial bool IsModified { get; set; }
-    [ObservableProperty] public partial bool IsModifiedWithoutError { get; set; }
+    [ObservableProperty] public partial bool HasError { get; protected set; }
+    [ObservableProperty] public partial bool IsModified { get; protected set; }
+    [ObservableProperty] public partial bool IsModifiedWithoutError { get; protected set; }
 }
 
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
-    private Func<TProperty> getter;
+    private readonly Func<TProperty> getter;
     private readonly Action<TProperty>? setter;
     private TProperty initialValue;
     private TProperty value;

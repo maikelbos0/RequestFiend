@@ -94,9 +94,7 @@ public class UrlModelTests {
     public async Task Confirm_Fails_When_Invalid() {
         var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, new(), "https://localhost/api?Foo") {
-            HasError = true
-        };
+        var subject = new UrlModel(closeMethod, new(), "");
 
         await subject.Confirm(CancellationToken.None);
 

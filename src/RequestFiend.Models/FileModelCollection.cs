@@ -10,7 +10,7 @@ public class FileModelCollection : ObservableCollection<FileModel>, IValidatable
 
     public bool IsModified {
         get;
-        set {
+        private set {
             if (field != value) {
                 field = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsModified)));
@@ -38,5 +38,9 @@ public class FileModelCollection : ObservableCollection<FileModel>, IValidatable
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         HasItems = Count > 0;
         IsModified = true;
+    }
+
+    public void Reset() {
+        IsModified = false;
     }
 }
