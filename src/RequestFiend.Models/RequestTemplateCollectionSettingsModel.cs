@@ -4,7 +4,6 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -18,7 +17,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
-    public ValidatableProperty<bool> AllowScriptEvaluation { get; set; }
+    public ValidatableProperty<bool> AllowScriptEvaluation { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection Variables { get; }
     public NameValuePairModelCollection DefaultHeaders { get; }
@@ -44,10 +43,10 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
         AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath));
-        DefaultUrl = new(() => collection.DefaultUrl);
-        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable);
-        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch);
-        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors);
+        DefaultUrl = new(() => collection.DefaultUrl, value => collection.DefaultUrl = value);
+        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable, updater: value => collection.IgnoreRemoteCertificateNotAvailable = value);
+        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, updater: value => collection.IgnoreRemoteCertificateNameMismatch = value);
+        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, updater: value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 
@@ -65,11 +64,6 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         }
 
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
-        Collection.DefaultUrl = DefaultUrl.Value;
-        Collection.IgnoreRemoteCertificateNotAvailable = IgnoreRemoteCertificateNotAvailable.Value;
-        Collection.IgnoreRemoteCertificateNameMismatch = IgnoreRemoteCertificateNameMismatch.Value;
-        Collection.IgnoreRemoteCertificateChainErrors = IgnoreRemoteCertificateChainErrors.Value;
-
         AllowScriptEvaluation.Reset();
         DefaultUrl.Reset();
         IgnoreRemoteCertificateNotAvailable.Reset();

@@ -12,6 +12,86 @@ using Xunit;
 namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateCollectionSettingsModelTests {
+    [Fact]
+    public void DefaultUrl() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        ) {
+            DefaultUrl = { Value = "https://default" }
+        };
+
+        Assert.Equal("https://default", collection.DefaultUrl);
+    }
+
+    [Fact]
+    public void IgnoreRemoteCertificateNotAvailable() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        ) {
+            IgnoreRemoteCertificateNameMismatch = { Value = true }
+        };
+
+        Assert.True(collection.IgnoreRemoteCertificateNameMismatch);
+    }
+
+    [Fact]
+    public void IgnoreRemoteCertificateNameMismatch() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        ) {
+            IgnoreRemoteCertificateNameMismatch = { Value = true }
+        };
+
+        Assert.True(collection.IgnoreRemoteCertificateNameMismatch);
+    }
+
+    [Fact]
+    public void IgnoreRemoteCertificateChainErrors() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        ) {
+            IgnoreRemoteCertificateChainErrors = { Value = true }
+        };
+
+        Assert.True(collection.IgnoreRemoteCertificateChainErrors);
+    }
+
     [Theory]
     [InlineData(ScriptEvaluationMode.Disabled, false)]
     [InlineData(ScriptEvaluationMode.Enabled, false)]
@@ -78,20 +158,11 @@ public class RequestTemplateCollectionSettingsModelTests {
     [Fact]
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string defaultUrl = "https://default";
-        const bool ignoreRemoteCertificateNotAvailable = true;
-        const bool ignoreRemoteCertificateNameMismatch = true;
-        const bool ignoreRemoteCertificateChainErrors = true;
-        const string headerName = "Name";
-        const string headerValue = "Value";
-        const string variableName = "Name";
-        const string variableValue = "Value";
-        const bool allowScriptEvaluation = true;
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(!allowScriptEvaluation);
+        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(false);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             IgnoreRemoteCertificateNotAvailable = false,
@@ -114,22 +185,18 @@ public class RequestTemplateCollectionSettingsModelTests {
             collection
         );
 
-        subject.AllowScriptEvaluation.Value = allowScriptEvaluation;
-        subject.DefaultUrl.Value = defaultUrl;
-        subject.IgnoreRemoteCertificateNotAvailable.Value = ignoreRemoteCertificateNotAvailable;
-        subject.IgnoreRemoteCertificateNameMismatch.Value = ignoreRemoteCertificateNameMismatch;
-        subject.IgnoreRemoteCertificateChainErrors.Value = ignoreRemoteCertificateChainErrors;
-        subject.Variables[0].Name.Value = variableName;
-        subject.Variables[0].Value.Value = variableValue;
-        subject.DefaultHeaders[0].Name.Value = headerName;
-        subject.DefaultHeaders[0].Value.Value = headerValue;
+        subject.AllowScriptEvaluation.Value = true;
+        subject.DefaultUrl.Value = "https://default";
+        subject.IgnoreRemoteCertificateNotAvailable.Value = true;
+        subject.IgnoreRemoteCertificateNameMismatch.Value = true;
+        subject.IgnoreRemoteCertificateChainErrors.Value = true;
+        subject.Variables[0].Name.Value = "Name";
+        subject.Variables[0].Value.Value = "Value";
+        subject.DefaultHeaders[0].Name.Value = "Name";
+        subject.DefaultHeaders[0].Value.Value = "Value";
 
         await subject.Update();
 
-        Assert.Equal(defaultUrl, collection.DefaultUrl);
-        Assert.Equal(ignoreRemoteCertificateNotAvailable, collection.IgnoreRemoteCertificateNotAvailable);
-        Assert.Equal(ignoreRemoteCertificateNameMismatch, collection.IgnoreRemoteCertificateNameMismatch);
-        Assert.Equal(ignoreRemoteCertificateChainErrors, collection.IgnoreRemoteCertificateChainErrors);
         Assert.False(subject.AllowScriptEvaluation.IsModified);
         Assert.False(subject.DefaultUrl.IsModified);
         Assert.False(subject.IgnoreRemoteCertificateNotAvailable.IsModified);
@@ -138,7 +205,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.False(subject.DefaultHeaders.IsModified);
         Assert.False(subject.Variables.IsModified);
 
-        preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, allowScriptEvaluation);
+        preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, true);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
         messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.Collection == collection));
@@ -270,15 +337,16 @@ public class RequestTemplateCollectionSettingsModelTests {
     [Fact]
     public async Task ShowDefaultUrlPopup() {
         const string filePath = @"C:\Documents\External data requests.json";
+        const string defaultUrl = "https://localhost";
         const string expectedUrl = "https://localhost/api";
 
         var popupService = Substitute.For<IPopupService>();
         var popupResult = Substitute.For<IPopupResult<string>>();
         var collection = new RequestTemplateCollection() {
-            DefaultUrl = "https://localhost"
+            DefaultUrl = defaultUrl
         };
         popupResult.Result.Returns(expectedUrl);
-        popupService.ShowUrlPopup(collection, collection.DefaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(collection, defaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -292,13 +360,13 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, collection.DefaultUrl);
+        await popupService.Received(1).ShowUrlPopup(collection, defaultUrl);
         Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.DefaultUrl));
     }
 
     [Fact]
-    public async Task ShowUrlPopup_Without_Result() {
+    public async Task ShowDefaultUrlPopup_Does_Nothing_Without_Result() {
         const string filePath = @"C:\Documents\External data requests.json";
         const string expectedUrl = "https://localhost";
 

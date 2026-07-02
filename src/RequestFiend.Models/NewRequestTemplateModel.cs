@@ -49,9 +49,9 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         }
 
         var request = new RequestTemplate() {
-            Name = Name.Value!,
-            Method = Method.Value!,
-            Url = Url.Value!
+            Name = Name.Value,
+            Method = Method.Value,
+            Url = Url.Value
         };
         Collection.Requests.Add(request);
 
