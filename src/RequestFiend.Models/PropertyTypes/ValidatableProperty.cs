@@ -12,9 +12,10 @@ public abstract partial class ValidatableProperty : ObservableObject, IValidatab
 }
 
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
-    private Func<TProperty> defaultValueProvider;
+    private Func<TProperty> getter;
+    private readonly Action<TProperty>? setter;
+    private TProperty initialValue;
     private TProperty value;
-    private readonly Action<TProperty>? updater;
 
     public Func<TProperty, bool> Validator { get; }
     public TProperty Value {
@@ -27,20 +28,20 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     }
 
     [Obsolete("See if updater can be made mandatory")]
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, params IValidatable[] dependencies) : this(defaultValueProvider, null, _ => true, dependencies) { }
+    public ValidatableProperty(Func<TProperty> getter, params IValidatable[] dependencies) : this(getter, null, _ => true, dependencies) { }
 
     [Obsolete("See if updater can be made mandatory")]
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator, params IValidatable[] dependencies) : this(defaultValueProvider, null, validator, dependencies) { }
+    public ValidatableProperty(Func<TProperty> getter, Func<TProperty, bool> validator, params IValidatable[] dependencies) : this(getter, null, validator, dependencies) { }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, Action<TProperty>? updater, params IValidatable[] dependencies) : this(defaultValueProvider, updater, _ => true, dependencies) { }
+    public ValidatableProperty(Func<TProperty> getter, Action<TProperty>? setter, params IValidatable[] dependencies) : this(getter, setter, _ => true, dependencies) { }
 
-    public ValidatableProperty(Func<TProperty> defaultValueProvider, Action<TProperty>? updater, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
-        this.defaultValueProvider = defaultValueProvider;
+    public ValidatableProperty(Func<TProperty> getter, Action<TProperty>? setter, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
+        this.getter = getter;
         Validator = validator;
-        value = defaultValueProvider();
+        initialValue = value = getter();
         UpdateState();
         
-        this.updater = updater;
+        this.setter = setter;
 
         foreach (var dependency in dependencies) {
             dependency.PropertyChanged += OnDependencyChanged;
@@ -48,7 +49,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     }
 
     public void Reset() {
-        value = defaultValueProvider();
+        initialValue = value = getter();
         UpdateState();
     }
 
@@ -60,8 +61,8 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
 
     private void UpdateState() {
         HasError = !Validator(Value);
-        IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, defaultValueProvider());
+        IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, initialValue);
         IsModifiedWithoutError = IsModified && !HasError;
-        updater?.Invoke(Value);
+        setter?.Invoke(Value);
     }
 }

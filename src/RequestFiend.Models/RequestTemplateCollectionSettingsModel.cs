@@ -44,9 +44,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
         AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath));
         DefaultUrl = new(() => collection.DefaultUrl, value => collection.DefaultUrl = value);
-        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable, updater: value => collection.IgnoreRemoteCertificateNotAvailable = value);
-        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, updater: value => collection.IgnoreRemoteCertificateNameMismatch = value);
-        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, updater: value => collection.IgnoreRemoteCertificateChainErrors = value);
+        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable, setter: value => collection.IgnoreRemoteCertificateNotAvailable = value);
+        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, setter: value => collection.IgnoreRemoteCertificateNameMismatch = value);
+        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, setter: value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
 

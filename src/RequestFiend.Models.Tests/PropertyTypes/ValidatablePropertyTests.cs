@@ -25,8 +25,8 @@ public class ValidatablePropertyTests {
     [InlineData("Initial", "Changed", false, true, true, 1)]
     [InlineData("Initial", "", true, true, false, 1)]
     public void Value(string initialValue, string newValue, bool expectedHasError, bool expectedIsModified, bool expectedIsModifiedWithoutError, int expectedUpdaterCalls) {
-        var updater = Substitute.For<Action<string>>();
-        var subject = new ValidatableProperty<string>(() => initialValue, updater, value => !string.IsNullOrEmpty(value)) {
+        var setter = Substitute.For<Action<string>>();
+        var subject = new ValidatableProperty<string>(() => initialValue, setter, value => !string.IsNullOrEmpty(value)) {
             Value = newValue
         };
 
@@ -35,24 +35,24 @@ public class ValidatablePropertyTests {
         Assert.Equal(expectedIsModified, subject.IsModified);
         Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
 
-        updater.Received(expectedUpdaterCalls).Invoke(newValue);
+        setter.Received(expectedUpdaterCalls).Invoke(newValue);
     }
 
     [Fact]
     public void Reset() {
         const string value = "Initial";
-        var updater = Substitute.For<Action<string>>();
+        var setter = Substitute.For<Action<string>>();
 
-        var subject = new ValidatableProperty<string>(() => value, updater, value => !string.IsNullOrEmpty(value)) {
+        var subject = new ValidatableProperty<string>(() => value, setter, value => !string.IsNullOrEmpty(value)) {
             Value = ""
         };
 
         subject.Reset();
 
         Assert.Equal(value, subject.Value);
-        Assert.True(subject.HasError);
+        Assert.False(subject.HasError);
         Assert.False(subject.IsModified);
         Assert.False(subject.IsModifiedWithoutError);
-        updater.Received(1).Invoke(value);
+        setter.Received(1).Invoke(value);
     }
 }
