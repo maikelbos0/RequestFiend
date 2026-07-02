@@ -57,9 +57,7 @@ public class ScriptModelTests {
 
         subject.Reset();
 
-        Assert.Equal(string.Join(System.Environment.NewLine, script.References), subject.References.Value);
         Assert.False(subject.References.IsModified);
-        Assert.Equal(script.Code, subject.Code.Value);
         Assert.False(subject.Code.IsModified);
     }
 

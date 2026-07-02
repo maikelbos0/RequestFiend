@@ -30,7 +30,9 @@ public class RequestTemplate {
             StringContent = StringContent,
             PreExchangeScript = PreExchangeScript.Clone(),
             PostExchangeScript = PostExchangeScript.Clone(),
-            OnExceptionScript = OnExceptionScript.Clone()
+            OnExceptionScript = OnExceptionScript.Clone(),
+            FormFieldContent = [.. FormFieldContent.Select(x => x.Clone())],
+            FormFileContent = [.. FormFileContent.Select(x => x.Clone())],
         };
 
     public RequestTemplateSnapshot CreateSnapshot(RequestTemplateCollection collection, Environment? environment)

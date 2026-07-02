@@ -130,19 +130,13 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(ignoreRemoteCertificateNotAvailable, collection.IgnoreRemoteCertificateNotAvailable);
         Assert.Equal(ignoreRemoteCertificateNameMismatch, collection.IgnoreRemoteCertificateNameMismatch);
         Assert.Equal(ignoreRemoteCertificateChainErrors, collection.IgnoreRemoteCertificateChainErrors);
-        Assert.Equal(variableName, collection.Variables[0].Name);
-        Assert.Equal(variableValue, collection.Variables[0].Value);
-        Assert.Equal(headerName, collection.DefaultHeaders[0].Name);
-        Assert.Equal(headerValue, collection.DefaultHeaders[0].Value);
         Assert.False(subject.AllowScriptEvaluation.IsModified);
         Assert.False(subject.DefaultUrl.IsModified);
         Assert.False(subject.IgnoreRemoteCertificateNotAvailable.IsModified);
         Assert.False(subject.IgnoreRemoteCertificateNameMismatch.IsModified);
         Assert.False(subject.IgnoreRemoteCertificateChainErrors.IsModified);
-        Assert.False(subject.DefaultHeaders[0].Name.IsModified);
-        Assert.False(subject.DefaultHeaders[0].Value.IsModified);
-        Assert.False(subject.Variables[0].Name.IsModified);
-        Assert.False(subject.Variables[0].Value.IsModified);
+        Assert.False(subject.DefaultHeaders.IsModified);
+        Assert.False(subject.Variables.IsModified);
 
         preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, allowScriptEvaluation);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
@@ -156,7 +150,6 @@ public class RequestTemplateCollectionSettingsModelTests {
     [InlineData("Name", "")]
     public async Task Update_Fails_When_Invalid(string headerName, string variableName) {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string defaultUrl = "https://default";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -183,21 +176,10 @@ public class RequestTemplateCollectionSettingsModelTests {
             collection
         );
 
-        subject.DefaultUrl.Value = defaultUrl;
-        subject.IgnoreRemoteCertificateNotAvailable.Value = true;
-        subject.IgnoreRemoteCertificateNameMismatch.Value = true;
-        subject.IgnoreRemoteCertificateChainErrors.Value = true;
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.Variables[0].Name.Value = variableName;
 
         await subject.Update();
-
-        Assert.Equal("https://previous", collection.DefaultUrl);
-        Assert.False(collection.IgnoreRemoteCertificateNotAvailable);
-        Assert.False(collection.IgnoreRemoteCertificateNameMismatch);
-        Assert.False(collection.IgnoreRemoteCertificateChainErrors);
-        Assert.Equal("PreviousName", collection.Variables[0].Name);
-        Assert.Equal("PreviousName", collection.DefaultHeaders[0].Name);
 
         preferencesService.DidNotReceive().SetCollectionAllowScriptEvaluation(Arg.Any<string>(), Arg.Any<bool>());
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());

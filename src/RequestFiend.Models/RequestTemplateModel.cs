@@ -91,13 +91,10 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         request.Name = Name.Value!;
         request.Method = Method.Value!;
         request.Url = Url.Value!;
-        request.Headers = Headers.GetNameValuePairs();
         request.ContentType = GetContentType();
         request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         request.StringContent = StringContent.Value;
         request.FileContent = FileContent.Value;
-        request.FormFieldContent = FormFieldContent.GetNameValuePairs();
-        request.FormFileContent = FormFileContent.GetNameValuePairs();
 
         messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, request));
     }
@@ -111,24 +108,21 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Request.Name = Name.Value!;
         Request.Method = Method.Value!;
         Request.Url = Url.Value!;
-        Request.Headers = Headers.GetNameValuePairs();
         Request.ContentType = GetContentType();
         Request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
         Request.StringContent = StringContent.Value;
         Request.FileContent = FileContent.Value;
-        Request.FormFieldContent = FormFieldContent.GetNameValuePairs();
-        Request.FormFileContent = FormFileContent.GetNameValuePairs();
 
         Name.Reset();
         Method.Reset();
         Url.Reset();
-        Headers.Reset(Request.Headers);
+        Headers.Reset();
         ContentType.Reset();
         HasManualContentTypeHeader.Reset();
         FileContent.Reset();
         StringContent.Reset();
-        FormFieldContent.Reset(Request.FormFieldContent);
-        FormFileContent.Reset(Request.FormFileContent);
+        FormFieldContent.Reset();
+        FormFileContent.Reset();
         PreExchangeScript.Reset();
         PostExchangeScript.Reset();
         OnExceptionScript.Reset();

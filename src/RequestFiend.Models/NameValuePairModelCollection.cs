@@ -10,6 +10,7 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public partial class NameValuePairModelCollection : ObservableCollection<NameValuePairModel>, IValidatable {
+    private readonly List<NameValuePair> collection;
     private readonly Func<string, bool> nameValidator;
     private readonly Func<string, bool> valueValidator;
     private readonly IValidatable[] dependencies;
@@ -49,46 +50,51 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         : this(collection, nameValidator, _ => true, dependencies) { }
 
     public NameValuePairModelCollection(List<NameValuePair> collection, Func<string, bool> nameValidator, Func<string, bool> valueValidator, params IValidatable[] dependencies) {
-        CollectionChanged += OnCollectionChanged;
-
-        foreach (var item in collection) {
-            Add(new(() => item.Name, () => item.Value, nameValidator, valueValidator, dependencies));
-        }
-
-        unmodifiedCount = Count;
-        IsModified = false;
+        this.collection = collection;
         this.nameValidator = nameValidator;
         this.valueValidator = valueValidator;
         this.dependencies = dependencies;
-    }
 
-    [RelayCommand]
-    public new void Remove(NameValuePairModel pair)
-        => base.Remove(pair);
+        CollectionChanged += OnCollectionChanged;
 
-    [RelayCommand]
-    public void Add()
-        => Add("", "");
-
-    public void Add(string name, string value) {
-        Add(new(() => name, () => value, nameValidator, valueValidator, dependencies));
-    }
-
-    public void Reset(List<NameValuePair> collection) {
-        if (collection.Count != Count) {
-            throw new ArgumentException("Collection must have identical length.", nameof(collection));
-        }
-
-        for (var i = 0; i < collection.Count; i++) {
-            this[i].Reset(collection[i]);
+        foreach (var pair in collection) {
+            base.Add(new(pair, nameValidator, valueValidator, dependencies));
         }
 
         unmodifiedCount = Count;
         IsModified = false;
     }
 
-    public List<NameValuePair> GetNameValuePairs()
-        => [.. this.Select(pair => pair.GetNameValuePair())];
+    [RelayCommand]
+    public new void Remove(NameValuePairModel pair) {
+        var index = IndexOf(pair);
+
+        if (index > -1) {
+            collection.RemoveAt(index);
+            base.Remove(pair);
+        }
+    }
+
+    [RelayCommand]
+    public void Add()
+        => Add(new NameValuePair() { Name = "", Value = "" });
+
+    public void Add(string name, string value)
+        => Add(new NameValuePair() { Name = name, Value = value });
+
+    public void Add(NameValuePair pair) {
+        base.Add(new(pair, nameValidator, valueValidator, dependencies));
+        collection.Add(pair);
+    }
+
+    public void Reset() {
+        foreach (var pair in this) {
+            pair.Reset();
+        }
+
+        unmodifiedCount = Count;
+        IsModified = false;
+    }
 
     private void OnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e) {
         if (e.OldItems != null) {

@@ -26,8 +26,10 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         }
     }
 
+    [Obsolete("See if updater can be made mandatory")]
     public ValidatableProperty(Func<TProperty> defaultValueProvider, params IValidatable[] dependencies) : this(defaultValueProvider, null, _ => true, dependencies) { }
 
+    [Obsolete("See if updater can be made mandatory")]
     public ValidatableProperty(Func<TProperty> defaultValueProvider, Func<TProperty, bool> validator, params IValidatable[] dependencies) : this(defaultValueProvider, null, validator, dependencies) { }
 
     public ValidatableProperty(Func<TProperty> defaultValueProvider, Action<TProperty>? updater, params IValidatable[] dependencies) : this(defaultValueProvider, updater, _ => true, dependencies) { }
@@ -43,12 +45,6 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         foreach (var dependency in dependencies) {
             dependency.PropertyChanged += OnDependencyChanged;
         }
-    }
-
-    // TODO refactor to get rid of?
-    public void Reset(Func<TProperty> defaultValueProvider) {
-        this.defaultValueProvider = defaultValueProvider;
-        Reset();
     }
 
     public void Reset() {

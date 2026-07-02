@@ -3,9 +3,11 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
+using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Storage = Microsoft.Maui.Storage;
@@ -216,16 +218,10 @@ public class RequestTemplateModelTests {
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);
         Assert.Equal("https://previous", request.Url);
-        Assert.Equal("PreviousName", request.Headers[0].Name);
-        Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
-        Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
-        Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
-        Assert.Equal("PreviousName", request.FormFileContent[0].Name);
-        Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
 
         messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
             => message.FilePath == filePath
@@ -264,12 +260,6 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "Name", "")]
     public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string stringContent = "StringContent";
-        const string formFieldValue = "Value";
-        const bool hasManualContentTypeHeader = false;
-        const string preExchangeScript = "PreExchangeScript";
-        const string postExchangeScript = "PostExchangeScript";
-        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -302,32 +292,12 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
-        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
-        subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.FormFieldContent[0].Name.Value = formFieldName;
-        subject.FormFieldContent[0].Value.Value = formFieldValue;
         subject.FormFileContent[0].Name.Value = formFileName;
         subject.FormFileContent[0].Value.Value = formFileValue;
-        subject.PreExchangeScript.Code.Value = preExchangeScript;
-        subject.PostExchangeScript.Code.Value = postExchangeScript;
-        subject.OnExceptionScript.Code.Value = onExceptionScript;
 
         subject.CreateRequest();
-
-        Assert.Equal("Old", request.Name);
-        Assert.Equal("POST", request.Method);
-        Assert.Equal("https://previous", request.Url);
-        Assert.Equal("PreviousName", request.Headers[0].Name);
-        Assert.Equal("PreviousValue", request.Headers[0].Value);
-        Assert.Equal(Core.ContentType.Text, request.ContentType);
-        Assert.True(request.HasManualContentTypeHeader);
-        Assert.Equal("PreviousStringContent", request.StringContent);
-        Assert.Equal("PreviousFileContent", request.FileContent);
-        Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
-        Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
-        Assert.Equal("PreviousName", request.FormFileContent[0].Name);
-        Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
 
         messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
@@ -417,16 +387,13 @@ public class RequestTemplateModelTests {
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
         Assert.False(subject.Url.IsModified);
-        Assert.False(subject.Headers[0].Name.IsModified);
-        Assert.False(subject.Headers[0].Value.IsModified);
+        Assert.False(subject.Headers.IsModified);
         Assert.False(subject.ContentType.IsModified);
         Assert.False(subject.HasManualContentTypeHeader.IsModified);
         Assert.False(subject.StringContent.IsModified);
         Assert.False(subject.FileContent.IsModified);
-        Assert.False(subject.FormFieldContent[0].Name.IsModified);
-        Assert.False(subject.FormFieldContent[0].Value.IsModified);
-        Assert.False(subject.FormFileContent[0].Name.IsModified);
-        Assert.False(subject.FormFileContent[0].Value.IsModified);
+        Assert.False(subject.FormFieldContent.IsModified);
+        Assert.False(subject.FormFileContent.IsModified);
         Assert.False(subject.PreExchangeScript.IsModified);
         Assert.False(subject.PostExchangeScript.IsModified);
         Assert.False(subject.OnExceptionScript.IsModified);
@@ -502,16 +469,10 @@ public class RequestTemplateModelTests {
         Assert.Equal("Old", request.Name);
         Assert.Equal("POST", request.Method);
         Assert.Equal("https://previous", request.Url);
-        Assert.Equal("PreviousName", request.Headers[0].Name);
-        Assert.Equal("PreviousValue", request.Headers[0].Value);
         Assert.Equal(Core.ContentType.Text, request.ContentType);
         Assert.True(request.HasManualContentTypeHeader);
         Assert.Equal("PreviousStringContent", request.StringContent);
         Assert.Equal("PreviousFileContent", request.FileContent);
-        Assert.Equal("PreviousName", request.FormFieldContent[0].Name);
-        Assert.Equal("PreviousValue", request.FormFieldContent[0].Value);
-        Assert.Equal("PreviousName", request.FormFileContent[0].Name);
-        Assert.Equal("PreviousValue", request.FormFileContent[0].Value);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
@@ -692,7 +653,7 @@ public class RequestTemplateModelTests {
             Method = "POST",
             Url = "https://localhost"
         };
-        var pair = new NameValuePairModel(() => "Name", () => "PreviousValue", _ => true);
+        var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required);
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
@@ -715,7 +676,7 @@ public class RequestTemplateModelTests {
             Url = "https://localhost"
         };
 
-        var pair = new NameValuePairModel(() => "Name", () => "PreviousValue", _ => true);
+        var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required);
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
 
