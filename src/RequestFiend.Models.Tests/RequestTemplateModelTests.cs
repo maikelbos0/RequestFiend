@@ -15,6 +15,66 @@ using Storage = Microsoft.Maui.Storage;
 namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateModelTests {
+    [Fact]
+    public void Name() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            Name = { Value = "NewName" }
+        };
+
+        Assert.Equal("NewName", request.Name);
+    }
+
+    [Fact]
+    public void Method() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            Name = { Value = "NewName" }
+        };
+
+        Assert.Equal("NewName", request.Name);
+    }
+
+    [Fact]
+    public void Url() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            Url = { Value = "https://url" }
+        };
+
+        Assert.Equal("https://url", request.Url);
+    }
+
     [Theory]
     [InlineData(Core.ContentType.None, false, false, false, false, false, false)]
     [InlineData(Core.ContentType.Text, true, false, true, true, false, false)]
@@ -46,12 +106,73 @@ public class RequestTemplateModelTests {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
+        Assert.Equal(contentType, request.ContentType);
         Assert.Equal(expectedUsesContent, subject.UsesContent);
         Assert.Equal(expectedUsesStructuredContent, subject.UsesStructuredContent);
         Assert.Equal(expectedUsesUnstructuredContent, subject.UsesUnstructuredContent);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
         Assert.Equal(expectedUsesFormDataContent, subject.UsesFormDataContent);
+    }
+
+    [Fact]
+    public void HasManualContentTypeHeader() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            HasManualContentTypeHeader = { Value = true }
+        };
+
+        Assert.True(request.HasManualContentTypeHeader);
+    }
+
+    [Fact]
+    public void StringContent() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            StringContent = { Value = "StringContent" }
+        };
+
+        Assert.Equal("StringContent", request.StringContent);
+    }
+
+    [Fact]
+    public void FileContent() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+            FileContent = { Value = "FileContent" }
+        };
+
+        Assert.Equal("FileContent", request.FileContent);
     }
 
     [Theory]
@@ -150,45 +271,13 @@ public class RequestTemplateModelTests {
     [Fact]
     public void CreateRequest() {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string name = "Name";
-        const string method = "GET";
-        const string url = "https://localhost";
-        const string headerName = "Name";
-        const string headerValue = "Value";
-        const string contentType = "File";
-        const bool hasManualContentTypeHeader = false;
-        const string stringContent = "StringContent";
-        const string fileContent = "FileContent";
-        const string formFieldName = "Name";
-        const string formFieldValue = "Value";
-        const string formFiledName = "Name";
-        const string formFileValue = "Value";
-        const string preExchangeScript = "PreExchangeScript";
-        const string postExchangeScript = "PostExchangeScript";
-        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
-            Name = "Old",
-            Method = "POST",
-            Url = "https://previous",
-            Headers = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            ContentType = Core.ContentType.Text,
-            HasManualContentTypeHeader = true,
-            StringContent = "PreviousStringContent",
-            FileContent = "PreviousFileContent",
-            FormFieldContent = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            FormFileContent = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
-            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
-            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = { request }
@@ -196,55 +285,9 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
 
-        subject.Name.Value = name;
-        subject.Method.Value = method;
-        subject.Url.Value = url;
-        subject.Headers[0].Name.Value = headerName;
-        subject.Headers[0].Value.Value = headerValue;
-        subject.ContentType.Value = contentType;
-        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
-        subject.StringContent.Value = stringContent;
-        subject.FileContent.Value = fileContent;
-        subject.FormFieldContent[0].Name.Value = formFieldName;
-        subject.FormFieldContent[0].Value.Value = formFieldValue;
-        subject.FormFileContent[0].Name.Value = formFiledName;
-        subject.FormFileContent[0].Value.Value = formFileValue;
-        subject.PreExchangeScript.Code.Value = preExchangeScript;
-        subject.PostExchangeScript.Code.Value = postExchangeScript;
-        subject.OnExceptionScript.Code.Value = onExceptionScript;
-
         subject.CreateRequest();
 
-        Assert.Equal("Old", request.Name);
-        Assert.Equal("POST", request.Method);
-        Assert.Equal("https://previous", request.Url);
-        Assert.Equal(Core.ContentType.Text, request.ContentType);
-        Assert.True(request.HasManualContentTypeHeader);
-        Assert.Equal("PreviousStringContent", request.StringContent);
-        Assert.Equal("PreviousFileContent", request.FileContent);
-
-        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message
-            => message.FilePath == filePath
-            && message.Id == subject.Id
-            && message.Collection == collection
-            && message.Request != request
-            && message.Request.Name == name
-            && message.Request.Method == method
-            && message.Request.Url == url
-            && message.Request.Headers.Count == 1
-            && message.Request.Headers[0].Name == headerName
-            && message.Request.Headers[0].Value == headerValue
-            && message.Request.ContentType == Options.ReverseContentTypeMap[contentType]
-            && message.Request.HasManualContentTypeHeader == hasManualContentTypeHeader
-            && message.Request.StringContent == stringContent
-            && message.Request.FileContent == fileContent
-            && message.Request.FormFieldContent[0].Name == formFieldName
-            && message.Request.FormFieldContent[0].Value == formFieldValue
-            && message.Request.FormFileContent[0].Name == formFiledName
-            && message.Request.FormFileContent[0].Value == formFileValue
-            && message.Request.PreExchangeScript.Code == preExchangeScript
-            && message.Request.PostExchangeScript.Code == postExchangeScript
-            && message.Request.OnExceptionScript.Code == onExceptionScript));
+        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection && message.Request == request));
     }
 
     [Theory]
@@ -264,25 +307,18 @@ public class RequestTemplateModelTests {
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
-            Name = "Old",
-            Method = "POST",
-            Url = "https://previous",
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost",
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            ContentType = Core.ContentType.Text,
-            HasManualContentTypeHeader = true,
-            StringContent = "PreviousStringContent",
-            FileContent = "PreviousFileContent",
             FormFieldContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             FormFileContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
-            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
-            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
+            }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
@@ -305,22 +341,6 @@ public class RequestTemplateModelTests {
     [Fact]
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string name = "Name";
-        const string method = "GET";
-        const string url = "https://localhost";
-        const string headerName = "Name";
-        const string headerValue = "Value";
-        const string contentType = "File";
-        const bool hasManualContentTypeHeader = false;
-        const string stringContent = "StringContent";
-        const string fileContent = "FileContent";
-        const string formFieldName = "Name";
-        const string formFieldValue = "Value";
-        const string formFileName = "Name";
-        const string formFileValue = "Value";
-        const string preExchangeScript = "PreExchangeScript";
-        const string postExchangeScript = "PostExchangeScript";
-        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -331,19 +351,12 @@ public class RequestTemplateModelTests {
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            ContentType = Core.ContentType.Text,
-            HasManualContentTypeHeader = true,
-            StringContent = "PreviousStringContent",
-            FileContent = "PreviousFileContent",
             FormFieldContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             FormFileContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
-            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
-            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
+            }
         };
         var collection = new RequestTemplateCollection() {
             Requests = { request }
@@ -351,38 +364,24 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
 
-        subject.Name.Value = name;
-        subject.Method.Value = method;
-        subject.Url.Value = url;
-        subject.Headers[0].Name.Value = headerName;
-        subject.Headers[0].Value.Value = headerValue;
-        subject.ContentType.Value = contentType;
-        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
-        subject.StringContent.Value = stringContent;
-        subject.FileContent.Value = fileContent;
-        subject.FormFieldContent[0].Name.Value = formFieldName;
-        subject.FormFieldContent[0].Value.Value = formFieldValue;
-        subject.FormFileContent[0].Name.Value = formFileName;
-        subject.FormFileContent[0].Value.Value = formFileValue;
-        subject.PreExchangeScript.Code.Value = preExchangeScript;
-        subject.PostExchangeScript.Code.Value = postExchangeScript;
-        subject.OnExceptionScript.Code.Value = onExceptionScript;
+        subject.Name.Value = "Name";
+        subject.Method.Value = "GET";
+        subject.Url.Value = "https://localhost";
+        subject.Headers[0].Name.Value = "Name";
+        subject.Headers[0].Value.Value = "Value";
+        subject.ContentType.Value = "File";
+        subject.HasManualContentTypeHeader.Value = true;
+        subject.StringContent.Value = "StringContent";
+        subject.FileContent.Value = "FileContent";
+        subject.FormFieldContent[0].Name.Value = "Name";
+        subject.FormFieldContent[0].Value.Value = "Value";
+        subject.FormFileContent[0].Name.Value = "Name";
+        subject.FormFileContent[0].Value.Value = "Value";
+        subject.PreExchangeScript.Code.Value = "PreExchangeScript";
+        subject.PostExchangeScript.Code.Value = "PostExchangeScript";
+        subject.OnExceptionScript.Code.Value = "OnExceptionScript";
 
         await subject.Update();
-
-        Assert.Equal(name, request.Name);
-        Assert.Equal(method, request.Method);
-        Assert.Equal(url, request.Url);
-        Assert.Equal(headerName, request.Headers[0].Name);
-        Assert.Equal(headerValue, request.Headers[0].Value);
-        Assert.Equal(Options.ReverseContentTypeMap[contentType], request.ContentType);
-        Assert.Equal(hasManualContentTypeHeader, request.HasManualContentTypeHeader);
-        Assert.Equal(stringContent, request.StringContent);
-        Assert.Equal(fileContent, request.FileContent);
-        Assert.Equal(formFieldName, request.FormFieldContent[0].Name);
-        Assert.Equal(formFieldValue, request.FormFieldContent[0].Value);
-        Assert.Equal(formFileName, request.FormFileContent[0].Name);
-        Assert.Equal(formFileValue, request.FormFileContent[0].Value);
 
         Assert.False(subject.Name.IsModified);
         Assert.False(subject.Method.IsModified);
@@ -415,12 +414,6 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "Name", "")]
     public async Task Update_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string stringContent = "Content";
-        const string formFieldValue = "Value";
-        const bool hasManualContentTypeHeader = false;
-        const string preExchangeScript = "PreExchangeScript";
-        const string postExchangeScript = "PostExchangeScript";
-        const string onExceptionScript = "OnExceptionScript";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
@@ -431,19 +424,12 @@ public class RequestTemplateModelTests {
             Headers = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
-            ContentType = Core.ContentType.Text,
-            HasManualContentTypeHeader = true,
-            StringContent = "PreviousStringContent",
-            FileContent = "PreviousFileContent",
             FormFieldContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             },
             FormFileContent = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            PreExchangeScript = { Code = "PreviousPreExchangeScript" },
-            PostExchangeScript = { Code = "PreviousPostExchangeScript" },
-            OnExceptionScript = { Code = "PreviousOnExceptionScript" }
+            }
         };
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
@@ -453,26 +439,12 @@ public class RequestTemplateModelTests {
         subject.Url.Value = url;
         subject.Headers[0].Name.Value = headerName;
         subject.ContentType.Value = contentType;
-        subject.HasManualContentTypeHeader.Value = hasManualContentTypeHeader;
-        subject.StringContent.Value = stringContent;
         subject.FileContent.Value = fileContent;
         subject.FormFieldContent[0].Name.Value = formFieldName;
-        subject.FormFieldContent[0].Value.Value = formFieldValue;
         subject.FormFileContent[0].Name.Value = formFileName;
         subject.FormFileContent[0].Value.Value = formFileValue;
-        subject.PreExchangeScript.Code.Value = preExchangeScript;
-        subject.PostExchangeScript.Code.Value = postExchangeScript;
-        subject.OnExceptionScript.Code.Value = onExceptionScript;
 
         await subject.Update();
-
-        Assert.Equal("Old", request.Name);
-        Assert.Equal("POST", request.Method);
-        Assert.Equal("https://previous", request.Url);
-        Assert.Equal(Core.ContentType.Text, request.ContentType);
-        Assert.True(request.HasManualContentTypeHeader);
-        Assert.Equal("PreviousStringContent", request.StringContent);
-        Assert.Equal("PreviousFileContent", request.FileContent);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
@@ -481,6 +453,7 @@ public class RequestTemplateModelTests {
     [Fact]
     public async Task ShowUrlPopup() {
         const string filePath = @"C:\Documents\External data requests.json";
+        const string url = "https://localhost";
         const string expectedUrl = "https://localhost/api";
 
         var popupService = Substitute.For<IPopupService>();
@@ -489,25 +462,25 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = "https://localhost"
+            Url = url
         };
         popupResult.Result.Returns(expectedUrl);
-        popupService.ShowUrlPopup(collection, request.Url).Returns(popupResult);
+        popupService.ShowUrlPopup(collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, request.Url);
+        await popupService.Received(1).ShowUrlPopup(collection, url);
         Assert.Equal(expectedUrl, subject.Url.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.Url));
     }
 
     [Fact]
-    public async Task ShowUrlPopup_Without_Result() {
+    public async Task ShowUrlPopup_Does_Nothing_Without_Result() {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string expectedUrl = "https://localhost";
+        const string url = "https://localhost";
 
         var popupService = Substitute.For<IPopupService>();
         var popupResult = Substitute.For<IPopupResult<string>>();
@@ -515,18 +488,18 @@ public class RequestTemplateModelTests {
         var request = new RequestTemplate() {
             Name = "Name",
             Method = "GET",
-            Url = expectedUrl
+            Url = url
         };
         popupResult.Result.ReturnsNull();
-        popupService.ShowUrlPopup(collection, request.Url).Returns(popupResult);
+        popupService.ShowUrlPopup(collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, request.Url);
-        Assert.Equal(expectedUrl, subject.Url.Value);
+        await popupService.Received(1).ShowUrlPopup(collection, url);
+        Assert.Equal(url, subject.Url.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }
 

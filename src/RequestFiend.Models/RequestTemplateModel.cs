@@ -60,14 +60,14 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         Collection = collection;
         Request = request;
 
-        Name = new(() => request.Name, Validator.Required);
-        Method = new(() => request.Method, Validator.Required);
-        Url = new(() => request.Url, Validator.Required);
+        Name = new(() => request.Name, value => request.Name = value, Validator.Required);
+        Method = new(() => request.Method, value => request.Method = value, Validator.Required);
+        Url = new(() => request.Url, value => request.Url = value, Validator.Required);
         Headers = new(request.Headers, Validator.Required);
-        ContentType = new(() => Options.ContentTypeMap[request.ContentType], Validator.Required);
-        HasManualContentTypeHeader = new(() => request.HasManualContentTypeHeader);
-        StringContent = new(() => request.StringContent);
-        FileContent = new(() => request.FileContent, Validator.Conditional(() => GetContentType() == Core.ContentType.File, Validator.Required), ContentType);
+        ContentType = new(() => Options.ContentTypeMap[request.ContentType], _ => request.ContentType = GetContentType(), Validator.Required);
+        HasManualContentTypeHeader = new(() => request.HasManualContentTypeHeader, setter: value => request.HasManualContentTypeHeader = value);
+        StringContent = new(() => request.StringContent, value => request.StringContent = value);
+        FileContent = new(() => request.FileContent, value => request.FileContent = value, Validator.Conditional(() => GetContentType() == Core.ContentType.File, Validator.Required), ContentType);
         FormFieldContent = new(request.FormFieldContent, Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.Required), ContentType);
         FormFileContent = new(request.FormFileContent, Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.Required), Validator.Conditional(() => GetContentType() == Core.ContentType.FormData, Validator.Required), ContentType);
         PreExchangeScript = new(request.PreExchangeScript);
@@ -86,17 +86,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             return;
         }
 
-        var request = Request.Clone();
-
-        request.Name = Name.Value!;
-        request.Method = Method.Value!;
-        request.Url = Url.Value!;
-        request.ContentType = GetContentType();
-        request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
-        request.StringContent = StringContent.Value;
-        request.FileContent = FileContent.Value;
-
-        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, request));
+        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, Request));
     }
 
     [RelayCommand]
@@ -104,14 +94,6 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         if (HasError) {
             return;
         }
-
-        Request.Name = Name.Value!;
-        Request.Method = Method.Value!;
-        Request.Url = Url.Value!;
-        Request.ContentType = GetContentType();
-        Request.HasManualContentTypeHeader = HasManualContentTypeHeader.Value;
-        Request.StringContent = StringContent.Value;
-        Request.FileContent = FileContent.Value;
 
         Name.Reset();
         Method.Reset();

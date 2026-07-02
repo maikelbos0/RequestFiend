@@ -368,15 +368,15 @@ public class RequestTemplateCollectionSettingsModelTests {
     [Fact]
     public async Task ShowDefaultUrlPopup_Does_Nothing_Without_Result() {
         const string filePath = @"C:\Documents\External data requests.json";
-        const string expectedUrl = "https://localhost";
+        const string defaultUrl = "https://localhost";
 
         var popupService = Substitute.For<IPopupService>();
         var popupResult = Substitute.For<IPopupResult<string>>();
         var collection = new RequestTemplateCollection() {
-            DefaultUrl = expectedUrl
+            DefaultUrl = defaultUrl
         };
         popupResult.Result.ReturnsNull();
-        popupService.ShowUrlPopup(collection, collection.DefaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(collection, defaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -390,8 +390,8 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, collection.DefaultUrl);
-        Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
+        await popupService.Received(1).ShowUrlPopup(collection, defaultUrl);
+        Assert.Equal(defaultUrl, subject.DefaultUrl.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }
 }
