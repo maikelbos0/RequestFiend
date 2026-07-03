@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace RequestFiend.Core;
@@ -18,22 +17,6 @@ public class RequestTemplate {
     public Script PreExchangeScript { get; set; } = new();
     public Script PostExchangeScript { get; set; } = new();
     public Script OnExceptionScript { get; set; } = new();
-
-    [Obsolete]
-    public RequestTemplate Clone()
-        => new() {
-            Name = Name,
-            Method = Method,
-            Url = Url,
-            Headers = [.. Headers.Select(header => header.Clone())],
-            ContentType = ContentType,
-            StringContent = StringContent,
-            PreExchangeScript = PreExchangeScript.Clone(),
-            PostExchangeScript = PostExchangeScript.Clone(),
-            OnExceptionScript = OnExceptionScript.Clone(),
-            FormFieldContent = [.. FormFieldContent.Select(x => x.Clone())],
-            FormFileContent = [.. FormFileContent.Select(x => x.Clone())],
-        };
 
     public RequestTemplateSnapshot CreateSnapshot(RequestTemplateCollection collection, Environment? environment)
         => new(
