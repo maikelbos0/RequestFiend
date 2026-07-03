@@ -1,6 +1,5 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
-using System.Security;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
@@ -28,20 +27,18 @@ public class NameValuePairModelTests {
         Assert.Equal("Value", pair.Value);
     }
 
-    [Fact]
-    public void Constructor() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void Constructor(bool isValid, bool expectedHasError) {
         var pair = new NameValuePair() { Name = "Name", Value = "Value" };
 
-        // TODO refactor to not use public property for validator and remove warning suppression from csproj
-        var nameValidator = (string value) => true;
-        var valueValidator = (string value) => true;
-
-        var subject = new NameValuePairModel(pair, nameValidator, valueValidator);
+        var subject = new NameValuePairModel(pair, _ => isValid, _ => isValid);
 
         Assert.Equal(pair.Name, subject.Name.Value);
-        Assert.Same(nameValidator, subject.Name.Validator);
+        Assert.Equal(expectedHasError, subject.Name.HasError);
         Assert.Equal(pair.Value, subject.Value.Value);
-        Assert.Same(valueValidator, subject.Value.Validator);
+        Assert.Equal(expectedHasError, subject.Value.HasError);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
 

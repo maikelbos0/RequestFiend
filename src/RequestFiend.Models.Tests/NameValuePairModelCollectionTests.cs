@@ -1,23 +1,20 @@
 ﻿using RequestFiend.Core;
 using RequestFiend.Models.PropertyTypes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
 public class NameValuePairModelCollectionTests {
-    [Fact]
-    public void Constructor() {
-        var nameValidator = (string value) => true;
-        var valueValidator = (string value) => true;
-
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void Constructor(bool isValid, bool expectedHasError) {
         var collection = new List<NameValuePair>() {
             new() { Name = "FirstName", Value = "FirstValue" },
             new() { Name = "SecondName", Value = "SecondValue" }
         };
-        var subject = new NameValuePairModelCollection(collection, nameValidator, valueValidator);
+        var subject = new NameValuePairModelCollection(collection, _ => isValid, _ => isValid);
 
         Assert.Equal(collection.Count, subject.Count);
         Assert.False(subject.IsModified);
@@ -25,9 +22,9 @@ public class NameValuePairModelCollectionTests {
 
         for (var i = 0; i < collection.Count; i++) {
             Assert.Equal(collection[i].Name, subject[i].Name.Value);
-            Assert.Same(nameValidator, subject[i].Name.Validator);
+            Assert.Equal(expectedHasError, subject[i].Name.HasError);
             Assert.Equal(collection[i].Value, subject[i].Value.Value);
-            Assert.Same(valueValidator, subject[i].Value.Validator);
+            Assert.Equal(expectedHasError, subject[i].Value.HasError);
         }
     }
 
@@ -82,14 +79,13 @@ public class NameValuePairModelCollectionTests {
         Assert.Equal(2, collection.Count);
     }
 
-    [Fact]
-    public void Add_Empty() {
-        var nameValidator = (string value) => true;
-        var valueValidator = (string value) => true;
-
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void Add_Empty(bool isValid, bool expectedHasError) {
         var collection = new List<NameValuePair>();
 
-        var subject = new NameValuePairModelCollection(collection, nameValidator, valueValidator);
+        var subject = new NameValuePairModelCollection(collection, _ => isValid, _ => isValid);
 
         subject.Add();
 
@@ -98,23 +94,22 @@ public class NameValuePairModelCollectionTests {
 
         var pair = Assert.Single(subject);
         Assert.Equal("", pair.Name.Value);
-        Assert.Same(nameValidator, pair.Name.Validator);
+        Assert.Equal(expectedHasError, pair.Name.HasError);
         Assert.Equal("", pair.Value.Value);
-        Assert.Same(valueValidator, pair.Value.Validator);
+        Assert.Equal(expectedHasError, pair.Value.HasError);
         Assert.Single(collection);
     }
 
-    [Fact]
-    public void Add_String_Values() {
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void Add_String_Values(bool isValid, bool expectedHasError) {
         const string name = "Name";
         const string value = "Value";
 
-        var nameValidator = (string value) => true;
-        var valueValidator = (string value) => true;
-
         var collection = new List<NameValuePair>();
 
-        var subject = new NameValuePairModelCollection(collection, nameValidator, valueValidator) {
+        var subject = new NameValuePairModelCollection(collection, _ => isValid, _ => isValid) {
             { name, value }
         };
 
@@ -123,9 +118,9 @@ public class NameValuePairModelCollectionTests {
 
         var pair = Assert.Single(subject);
         Assert.Equal(name, pair.Name.Value);
-        Assert.Same(nameValidator, pair.Name.Validator);
+        Assert.Equal(expectedHasError, pair.Name.HasError);
         Assert.Equal(value, pair.Value.Value);
-        Assert.Same(valueValidator, pair.Value.Validator);
+        Assert.Equal(expectedHasError, pair.Value.HasError);
         Assert.Single(collection);
     }
 
