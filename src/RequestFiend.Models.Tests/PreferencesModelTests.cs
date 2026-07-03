@@ -322,7 +322,7 @@ public class PreferencesModelTests {
     }
 
     [Fact]
-    public async Task Reset_And_Confirm() {
+    public async Task ResetPreferences_And_Confirm() {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
@@ -345,15 +345,15 @@ public class PreferencesModelTests {
             ActiveEnvironment = { Value = new(@"C:\Documents\New.json") }
         };
 
-        await subject.Reset();
+        await subject.ResetPreferences();
 
         Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
         Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingPath(), subject.ExchangeLoggingPath.Value);
         Assert.Equal(preferencesService.GetExchangeLoggingOutputTemplate(), subject.ExchangeLoggingOutputTemplate.Value);
-        Assert.Equal(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase), subject.Environments);
-        Assert.Equal(preferencesService.GetActiveEnvironment(), subject.ActiveEnvironment.Value);
+        Assert.Empty(subject.Environments);
+        Assert.Null(subject.ActiveEnvironment.Value);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
@@ -361,7 +361,7 @@ public class PreferencesModelTests {
     }
 
     [Fact]
-    public async Task Reset_Without_Confirming() {
+    public async Task ResetPreferences_Without_Confirming() {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(10);
         preferencesService.GetScriptEvaluationMode().Returns(ScriptEvaluationMode.Enabled);
@@ -384,7 +384,7 @@ public class PreferencesModelTests {
             ActiveEnvironment = { Value = new(@"C:\Documents\New.json") }
         };
 
-        await subject.Reset();
+        await subject.ResetPreferences();
 
         Assert.Equal("25", subject.MaximumRecentCollectionCount.Value);
         Assert.Equal(Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled], subject.ScriptEvaluationMode.Value);

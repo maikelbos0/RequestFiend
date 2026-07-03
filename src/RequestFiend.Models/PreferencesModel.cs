@@ -6,7 +6,6 @@ using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -37,7 +36,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
         ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath);
         ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate);
-        ResetEnvironments();
+        Environments = new(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
         ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()));
 
         ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
@@ -59,9 +58,7 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         preferencesService.TrimRecentCollections();
 
-        base.Reset();
-        ResetEnvironments();
-        ActiveEnvironment.Reset();
+        Reset();
 
         messageService.Send(new PreferencesUpdatedMessage());
         messageService.Send(new SuccessMessage("Preferences have been updated"));
@@ -132,13 +129,12 @@ public partial class PreferencesModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public async new Task Reset() {
+    public async Task ResetPreferences() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to reset your preferences?")) {
             preferencesService.Reset();
 
-            base.Reset();
-            ResetEnvironments();
-            ActiveEnvironment.Reset();
+            Environments.Clear();
+            Reset();
 
             messageService.Send(new PreferencesUpdatedMessage());
             messageService.Send(new SuccessMessage("Preferences have been reset"));
@@ -152,10 +148,5 @@ public partial class PreferencesModel : PageBoundModelBase {
 
             messageService.Send(new SuccessMessage("Recent collections have been cleared"));
         }
-    }
-
-    [MemberNotNull(nameof(Environments))]
-    private void ResetEnvironments() {
-        Environments = new(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
     }
 }

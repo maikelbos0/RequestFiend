@@ -13,7 +13,7 @@
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
                 <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
 
-                <Button Text="Reset" Command="{Binding ResetCommand}" Style="{StaticResource DangerButton}"/>
+                <Button Text="Reset" Command="{Binding ResetPreferencesCommand}" Style="{StaticResource DangerButton}"/>
 
                 <Button Text="Clear recent collections" Command="{Binding ClearRecentCollectionsCommand}" Style="{StaticResource DangerButton}"/>
             </StackLayout>
