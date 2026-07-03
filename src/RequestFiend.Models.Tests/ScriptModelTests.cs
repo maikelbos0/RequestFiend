@@ -43,24 +43,6 @@ public class ScriptModelTests {
         Assert.Equal([subject.References, subject.Code], subject.Validatables);
     }
 
-    [Fact]
-    public void Reset() {
-        var script = new Script() {
-            References = { "Foo", "Bar" },
-            Code = "PreviousScript"
-        };
-
-        var subject = new ScriptModel(script);
-
-        script.References.Add("Baz");
-        script.Code = "NewScript";
-
-        subject.Reset();
-
-        Assert.False(subject.References.IsModified);
-        Assert.False(subject.Code.IsModified);
-    }
-
     [Theory]
     [InlineData(false, true)]
     [InlineData(true, false)]

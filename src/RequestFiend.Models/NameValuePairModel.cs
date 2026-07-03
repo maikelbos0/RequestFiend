@@ -16,9 +16,4 @@ public partial class NameValuePairModel : BoundModelBase, IValidatable {
 
         ConfigureState([Name, Value]);
     }
-
-    public void Reset() {
-        Name.Reset();
-        Value.Reset();
-    }
 }

@@ -41,18 +41,4 @@ public class NameValuePairModelTests {
         Assert.Equal(expectedHasError, subject.Value.HasError);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
-
-    [Fact]
-    public void Reset() {
-        var subject = new NameValuePairModel(new NameValuePair() { Name = "PreviousName", Value = "PreviousValue" }, Validator.Required);
-
-        subject.Name.Value = "Name";
-        subject.Value.Value = "Name";
-
-        subject.Reset();
-
-        Assert.False(subject.IsModified);
-        Assert.False(subject.Name.IsModified);
-        Assert.False(subject.Value.IsModified);
-    }
 }

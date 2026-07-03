@@ -95,19 +95,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             return;
         }
 
-        Name.Reset();
-        Method.Reset();
-        Url.Reset();
-        Headers.Reset();
-        ContentType.Reset();
-        HasManualContentTypeHeader.Reset();
-        FileContent.Reset();
-        StringContent.Reset();
-        FormFieldContent.Reset();
-        FormFileContent.Reset();
-        PreExchangeScript.Reset();
-        PostExchangeScript.Reset();
-        OnExceptionScript.Reset();
+        Reset();
 
         PageTitleBase = $"{File.Name} - {Request.Name}";
         ShellItemTitleBase = Request.Name;

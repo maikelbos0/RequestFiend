@@ -28,11 +28,6 @@ public partial class ScriptModel : BoundModelBase, IValidatable {
         ConfigureState([References, Code]);
     }
 
-    public void Reset() {
-        References.Reset();
-        Code.Reset();
-    }
-
     [RelayCommand]
     public void ToggleShowReferences()
         => ShowReferences = !ShowReferences;

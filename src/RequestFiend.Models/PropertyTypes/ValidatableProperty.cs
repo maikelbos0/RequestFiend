@@ -9,6 +9,8 @@ public abstract partial class ValidatableProperty : ObservableObject, IValidatab
     [ObservableProperty] public partial bool HasError { get; protected set; }
     [ObservableProperty] public partial bool IsModified { get; protected set; }
     [ObservableProperty] public partial bool IsModifiedWithoutError { get; protected set; }
+
+    public abstract void Reset();
 }
 
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
@@ -46,7 +48,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         }
     }
 
-    public void Reset() {
+    public override void Reset() {
         initialValue = value = getter();
         UpdateState(true);
     }

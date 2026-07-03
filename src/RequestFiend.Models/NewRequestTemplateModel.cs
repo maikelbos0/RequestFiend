@@ -55,9 +55,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         };
         Collection.Requests.Add(request);
 
-        Name.Reset();
-        Method.Reset();
-        Url.Reset();
+        Reset();
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new OpenTemplateRequestMessage(File.FilePath, Collection, request));

@@ -57,15 +57,11 @@ public partial class PreferencesModel : PageBoundModelBase {
         preferencesService.SetEnvironments(Environments);
         preferencesService.SetActiveEnvironment(ActiveEnvironment.Value);
 
-        MaximumRecentCollectionCount.Reset();
-        ScriptEvaluationMode.Reset();
-        RequestTimeoutInSeconds.Reset();
-        ExchangeLoggingPath.Reset();
-        ExchangeLoggingOutputTemplate.Reset();
-        Environments.Reset();
-        ActiveEnvironment.Reset();
-
         preferencesService.TrimRecentCollections();
+
+        base.Reset();
+        ResetEnvironments();
+        ActiveEnvironment.Reset();
 
         messageService.Send(new PreferencesUpdatedMessage());
         messageService.Send(new SuccessMessage("Preferences have been updated"));
@@ -136,14 +132,11 @@ public partial class PreferencesModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public async Task Reset() {
+    public async new Task Reset() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to reset your preferences?")) {
             preferencesService.Reset();
-            MaximumRecentCollectionCount.Reset();
-            ScriptEvaluationMode.Reset();
-            RequestTimeoutInSeconds.Reset();
-            ExchangeLoggingPath.Reset();
-            ExchangeLoggingOutputTemplate.Reset();
+
+            base.Reset();
             ResetEnvironments();
             ActiveEnvironment.Reset();
 

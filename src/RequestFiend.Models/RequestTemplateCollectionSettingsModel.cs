@@ -64,13 +64,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         }
 
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
-        AllowScriptEvaluation.Reset();
-        DefaultUrl.Reset();
-        IgnoreRemoteCertificateNotAvailable.Reset();
-        IgnoreRemoteCertificateNameMismatch.Reset();
-        IgnoreRemoteCertificateChainErrors.Reset();
-        Variables.Reset();
-        DefaultHeaders.Reset();
+        Reset();
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));

@@ -34,4 +34,10 @@ public partial class BoundModelBase : ObservableObject, IValidatable {
         IsModified = validatables.Any(validatableProperty => validatableProperty.IsModified);
         IsModifiedWithoutError = IsModified && !HasError;
     }
+
+    public void Reset() {
+        foreach (var validatable in validatables) {
+            validatable.Reset();
+        }
+    }
 }
