@@ -87,6 +87,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         if (saveResult.IsSuccessful) {
             messageService.Send(new SuccessMessage("Environment has been created"));
             AddEnvironment(new(saveResult.FilePath));
+            messageService.Send(new OpenEnvironmentMessage(new(saveResult.FilePath), environment));
         }
         else if (saveResult.Exception != null && saveResult.Exception is not System.OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -133,7 +134,6 @@ public partial class PreferencesModel : PageBoundModelBase {
 
     [RelayCommand]
     public async Task OpenEnvironmentPopup(FileModel file) {
-
         if (fileSystem.File.Exists(file.FilePath)) {
             try {
                 var environment = JsonSerializer.Deserialize<Environment>(await fileSystem.File.ReadAllTextAsync(file.FilePath));

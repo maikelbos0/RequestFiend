@@ -161,6 +161,7 @@ public class PreferencesModelTests {
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        messageService.Received(1).Send(Arg.Is<OpenEnvironmentMessage>(message => message.File == new FileModel(newEnvironment)));
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(otherEnvironment), new(newEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
@@ -182,6 +183,7 @@ public class PreferencesModelTests {
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        messageService.Received(1).Send(Arg.Is<OpenEnvironmentMessage>(message => message.File == new FileModel(newEnvironment)));
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(newEnvironment)], subject.Environments);
         Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
@@ -205,6 +207,7 @@ public class PreferencesModelTests {
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
@@ -228,6 +231,7 @@ public class PreferencesModelTests {
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
