@@ -114,7 +114,7 @@ public partial class AppShell : Shell,
         using var _ = GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Environment);
         var environmentModel = GetRequiredService<EnvironmentModel>();
 
-        await Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentModel));
+        await this.ShowPopupAsync(new EnvironmentPopup(environmentModel));
     }
 
     private Tab CreateRequestTab(RequestTemplateModel request) {

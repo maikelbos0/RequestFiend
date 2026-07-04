@@ -12,9 +12,7 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
-            </StackLayout>
+            <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
 
             <views:NameValuePairCollectionView
                 ItemsSource="{Binding Variables}"
