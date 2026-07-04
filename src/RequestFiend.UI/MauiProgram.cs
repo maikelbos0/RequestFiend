@@ -5,7 +5,6 @@ using Microsoft.Maui.Hosting;
 using RequestFiend.Core;
 using RequestFiend.Models;
 using Serilog;
-using System;
 using System.IO.Abstractions;
 using System.Net.Http;
 using System.Threading;
@@ -29,7 +28,7 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
         mauiAppBuilder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
             .ConfigurePrimaryHttpMessageHandler(static serviceProvider => new SocketsHttpHandler() {
-                PooledConnectionLifetime = TimeSpan.Zero,
+                PooledConnectionLifetime = System.TimeSpan.Zero,
                 SslOptions = {
                     RemoteCertificateValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
                 }
@@ -50,6 +49,7 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<FileModel>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollection>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplate>());
+        mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<Environment>());
 
         mauiAppBuilder.Services.AddSingleton<MainPageModel>();
         mauiAppBuilder.Services.AddSingleton<PreferencesModel>();

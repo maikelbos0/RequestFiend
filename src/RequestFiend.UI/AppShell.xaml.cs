@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using RequestFiend.Models;
@@ -12,7 +13,14 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.UI;
 
-public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, IRecipient<OpenCollectionRequestMessage>, IRecipient<OpenTemplateRequestMessage>, IRecipient<CreateRequestMessage> {
+public partial class AppShell : Shell,
+    IDisposable,
+    IRecipient<SuccessMessage>,
+    IRecipient<OpenCollectionRequestMessage>,
+    IRecipient<OpenTemplateRequestMessage>,
+    IRecipient<CreateRequestMessage>,
+    IRecipient<OpenEnvironmentMessage> {
+
     private CancellationTokenSource? messageCancellationTokenSource;
 
     public AppShell() {
@@ -102,6 +110,13 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
     }
 
+    public async void Receive(OpenEnvironmentMessage message) {
+        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Environment);
+        var environmentModel = GetRequiredService<EnvironmentModel>();
+
+        await Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentModel));
+    }
+
     private Tab CreateRequestTab(RequestTemplateModel request) {
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
@@ -136,7 +151,7 @@ public partial class AppShell : Shell, IDisposable, IRecipient<SuccessMessage>, 
             StyleId = request.Id
         };
 
-        WeakReferenceMessenger.Default.Register<Tab, CloseRequestMessage, string>(item, request.Id, async (tab, _) 
+        WeakReferenceMessenger.Default.Register<Tab, CloseRequestMessage, string>(item, request.Id, async (tab, _)
             => await CloseCollectionTab(tab));
 
         collectionItem.Items.Insert(index, item);
