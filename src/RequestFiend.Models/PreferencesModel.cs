@@ -7,6 +7,7 @@ using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     private readonly IPreferencesService preferencesService;
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
+    private readonly IFileSystem fileSystem;
 
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
     public ValidatableProperty<string> ScriptEvaluationMode { get; }
@@ -26,10 +28,11 @@ public partial class PreferencesModel : PageBoundModelBase {
     [ObservableProperty] public partial FileModelCollection Environments { get; private set; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
-    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService) : base("Preferences", "Preferences") {
+    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService, IFileSystem fileSystem) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
         this.messageService = messageService;
         this.popupService = popupService;
+        this.fileSystem = fileSystem;
 
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()]);
@@ -126,6 +129,29 @@ public partial class PreferencesModel : PageBoundModelBase {
             ActiveEnvironment.Value = null;
         }
         Environments.Remove(environment);
+    }
+
+    [RelayCommand]
+    public async Task OpenEnvironmentPopup(FileModel file) {
+
+        if (fileSystem.File.Exists(file.FilePath)) {
+            try {
+                var environment = JsonSerializer.Deserialize<Environment>(await fileSystem.File.ReadAllTextAsync(file.FilePath));
+
+                if (environment != null) {
+                    messageService.Send(new OpenEnvironmentMessage(file, environment));
+                }
+                else {
+                    await popupService.ShowErrorPopup("Failed to load environment.");
+                }
+            }
+            catch (System.Exception exception) {
+                await popupService.ShowErrorPopup($"Failed to load environment: {exception.Message}");
+            }
+        }
+        else {
+            await popupService.ShowErrorPopup("Environment file does not exist.");
+        }
     }
 
     [RelayCommand]
