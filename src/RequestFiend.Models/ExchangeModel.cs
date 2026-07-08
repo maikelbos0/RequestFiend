@@ -39,7 +39,7 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
         IUserInterface userInterface,
         FileModel file,
         RequestTemplateCollection collection,
-        RequestTemplate request
+        RequestTemplateSnapshot request
     ) : base($"{file.Name} - {request.Name} - Exchange", $"{request.Name} - Exchange") {
         this.messageService = messageService;
         this.exchangeHandler = exchangeHandler;
@@ -49,9 +49,9 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
 
         this.file = file;
         this.collection = collection;
-        this.request = request.CreateSnapshot(collection, null);
+        this.request = request;
 
-        Variables = VariableModel.CreateRange(this.request.Variables.Variables);
+        Variables = VariableModel.CreateRange(request.Variables.Variables);
 
         ConfigureState([]);
     }

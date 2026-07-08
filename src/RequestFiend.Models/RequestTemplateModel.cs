@@ -86,7 +86,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             return;
         }
 
-        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, Request));
+        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, null)));
     }
 
     [RelayCommand]

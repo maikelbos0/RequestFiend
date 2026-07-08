@@ -45,10 +45,11 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddSingleton<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IEnvironmentService, Models.Services.EnvironmentService>();
 
+        mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<Environment>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<FileModel>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollection>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplate>());
-        mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<Environment>());
+        mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateSnapshot>());
 
         mauiAppBuilder.Services.AddSingleton<MainPageModel>();
         mauiAppBuilder.Services.AddSingleton<PreferencesModel>();

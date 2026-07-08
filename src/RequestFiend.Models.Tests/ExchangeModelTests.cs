@@ -18,14 +18,23 @@ public class ExchangeModelTests {
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";
 
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(Substitute.For<IMessageService>(), Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request);
 
@@ -48,14 +57,24 @@ public class ExchangeModelTests {
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
         preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(collectionAllowScriptEvaluation);
         preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
         var isExecutingValues = new List<bool>();
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
@@ -98,14 +117,23 @@ public class ExchangeModelTests {
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, null));
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(messageService, Substitute.For<IExchangeHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(contentType, mediaType, [0, 1, 2, 3], null))
@@ -125,14 +153,23 @@ public class ExchangeModelTests {
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new Exception()));
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(messageService, Substitute.For<IExchangeHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
@@ -152,14 +189,23 @@ public class ExchangeModelTests {
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(messageService, Substitute.For<IExchangeHandler>(), popupService, Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request) {
             Response = new("200 OK", [], new(HttpContentType.Text, "text/plain", [0, 1, 2, 3], null))
@@ -178,14 +224,23 @@ public class ExchangeModelTests {
 
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
         var isExecutingValues = new List<bool>();
         var pageTitleBaseValues = new List<string>();
         var shellItemTitleBaseValues = new List<string>();
@@ -207,14 +262,23 @@ public class ExchangeModelTests {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var messageService = Substitute.For<IMessageService>();
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(messageService, Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), Substitute.For<IUserInterface>(), new(filePath), collection, request);
 
@@ -229,14 +293,23 @@ public class ExchangeModelTests {
 
         var userInterface = Substitute.For<IUserInterface>();
         userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(Substitute.For<IMessageService>(), Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
@@ -251,14 +324,23 @@ public class ExchangeModelTests {
 
         var userInterface = Substitute.For<IUserInterface>();
         userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(Substitute.For<IMessageService>(), Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
@@ -273,14 +355,23 @@ public class ExchangeModelTests {
 
         var userInterface = Substitute.For<IUserInterface>();
         userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
 
         var subject = new ExchangeModel(Substitute.For<IMessageService>(), Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
 
@@ -300,14 +391,23 @@ public class ExchangeModelTests {
 
         var userInterface = Substitute.For<IUserInterface>();
         userInterface.When(x => x.BeginInvokeOnMainThread(Arg.Any<Action>())).Do(callInfo => callInfo.ArgAt<Action>(0)());
-        var request = new RequestTemplate() {
-            Name = "Name",
-            Method = "GET",
-            Url = "https://localhost"
-        };
-        var collection = new RequestTemplateCollection() {
-            Requests = { request }
-        };
+        var request = new RequestTemplateSnapshot(
+            new([]),
+            "Name",
+            "GET",
+            "https://localhost",
+            [],
+            ContentType.None,
+            false,
+            "",
+            "",
+            [],
+            [],
+            new([], ""),
+            new([], ""),
+            new([], "")
+        );
+        var collection = new RequestTemplateCollection();
         var expectedException = new Exception();
 
         var subject = new ExchangeModel(Substitute.For<IMessageService>(), Substitute.For<IExchangeHandler>(), Substitute.For<IPopupService>(), Substitute.For<IPreferencesService>(), userInterface, new(filePath), collection, request);
