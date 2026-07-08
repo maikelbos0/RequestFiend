@@ -22,6 +22,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -54,6 +55,7 @@ public class RequestTemplateCollectionModelTests {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );

@@ -18,6 +18,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
+    private readonly IEnvironmentService environmentService;
 
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
@@ -48,6 +49,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
+        IEnvironmentService environmentService,
         FileModel file,
         RequestTemplateCollection collection,
         RequestTemplate request
@@ -55,6 +57,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
+        this.environmentService = environmentService;
 
         File = file;
         Collection = collection;
@@ -81,12 +84,12 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public void CreateRequest() {
+    public async Task CreateRequest() {
         if (HasError) {
             return;
         }
 
-        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, null)));
+        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
     }
 
     [RelayCommand]

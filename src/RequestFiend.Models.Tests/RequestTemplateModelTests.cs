@@ -5,9 +5,7 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Storage = Microsoft.Maui.Storage;
@@ -28,7 +26,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             Name = { Value = "NewName" }
         };
 
@@ -48,7 +46,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             Name = { Value = "NewName" }
         };
 
@@ -68,7 +66,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             Url = { Value = "https://url" }
         };
 
@@ -102,7 +100,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
 
@@ -128,7 +126,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             HasManualContentTypeHeader = { Value = true }
         };
 
@@ -148,7 +146,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             StringContent = { Value = "StringContent" }
         };
 
@@ -168,7 +166,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             FileContent = { Value = "FileContent" }
         };
 
@@ -221,7 +219,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         Assert.Equal($"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name}", subject.PageTitleBase);
         Assert.Equal(request.Name, subject.ShellItemTitleBase);
@@ -269,7 +267,7 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
-    public void CreateRequest() {
+    public async Task CreateRequest() {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
@@ -282,12 +280,19 @@ public class RequestTemplateModelTests {
         var collection = new RequestTemplateCollection() {
             Requests = { request }
         };
+        var environmentService = Substitute.For<IEnvironmentService>();
+        var environment = new Environment() {
+            Variables = {
+                new() { Name = "Foo", Value = "Bar" }
+            }
+        };
+        environmentService.GetActiveEnvironment().Returns(environment);
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, environmentService, new(filePath), collection, request);
 
-        subject.CreateRequest();
+        await subject.CreateRequest();
 
-        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection && message.Request == request.CreateSnapshot(collection, null)));
+        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection && message.Request == request.CreateSnapshot(collection, environment)));
     }
 
     [Theory]
@@ -321,7 +326,7 @@ public class RequestTemplateModelTests {
             }
         };
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -333,7 +338,7 @@ public class RequestTemplateModelTests {
         subject.FormFileContent[0].Name.Value = formFileName;
         subject.FormFileContent[0].Value.Value = formFileValue;
 
-        subject.CreateRequest();
+        await subject.CreateRequest();
 
         messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
     }
@@ -362,7 +367,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         subject.Name.Value = "Name";
         subject.Method.Value = "GET";
@@ -432,7 +437,7 @@ public class RequestTemplateModelTests {
             }
         };
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         subject.Name.Value = name;
         subject.Method.Value = method;
@@ -468,7 +473,7 @@ public class RequestTemplateModelTests {
         popupService.ShowUrlPopup(collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
@@ -494,7 +499,7 @@ public class RequestTemplateModelTests {
         popupService.ShowUrlPopup(collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
@@ -520,7 +525,7 @@ public class RequestTemplateModelTests {
             StringContent = stringContent
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.ValidateStructuredText();
 
@@ -548,7 +553,7 @@ public class RequestTemplateModelTests {
             StringContent = stringContent
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.ValidateStructuredText();
 
@@ -573,7 +578,7 @@ public class RequestTemplateModelTests {
             StringContent = stringContent
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.FormatStructuredText();
 
@@ -603,7 +608,7 @@ public class RequestTemplateModelTests {
             StringContent = stringContent
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.FormatStructuredText();
 
@@ -628,7 +633,7 @@ public class RequestTemplateModelTests {
         };
         var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required);
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.PickFormFileContent(pair);
 
@@ -651,7 +656,7 @@ public class RequestTemplateModelTests {
 
         var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required);
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.PickFormFileContent(pair);
 
@@ -675,7 +680,7 @@ public class RequestTemplateModelTests {
             FileContent = "PreviousFileContent"
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.PickFileContent();
 
@@ -698,7 +703,7 @@ public class RequestTemplateModelTests {
             FileContent = "PreviousFileContent"
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), new(), request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
         await subject.PickFileContent();
 
@@ -723,7 +728,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         await subject.Delete();
 
@@ -748,7 +753,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             HasManualContentTypeHeader = { Value = initialValue }
         };
 
@@ -774,13 +779,13 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         await subject.Delete();
 
         Assert.Equal(request, Assert.Single(collection.Requests));
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
-        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<Guid>());
+        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<System.Guid>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 }
