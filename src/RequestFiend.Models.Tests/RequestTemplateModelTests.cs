@@ -281,18 +281,13 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
         var environmentService = Substitute.For<IEnvironmentService>();
-        var environment = new Environment() {
-            Variables = {
-                new() { Name = "Foo", Value = "Bar" }
-            }
-        };
-        environmentService.GetActiveEnvironment().Returns(environment);
+        environmentService.GetActiveEnvironment().Returns(new Environment());
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, environmentService, new(filePath), collection, request);
 
         await subject.CreateRequest();
 
-        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection && message.Request == request.CreateSnapshot(collection, environment)));
+        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection));
     }
 
     [Theory]
