@@ -121,8 +121,10 @@ public class PreferencesService : IPreferencesService {
     public FileModel? GetActiveEnvironment()
         => JsonSerializer.Deserialize<FileModel>(Preferences.Get(ActiveEnvironment, "null"));
 
-    public void SetActiveEnvironment(FileModel? activeEnvironment)
-        => Preferences.Set(ActiveEnvironment, JsonSerializer.Serialize(activeEnvironment));
+    public void SetActiveEnvironment(FileModel? activeEnvironment) {
+        Preferences.Set(ActiveEnvironment, JsonSerializer.Serialize(activeEnvironment));
+        messageService.Send(new ActiveEnvironmentChangedMessage());
+    }
 
     public void Reset() {
         Preferences.Clear();

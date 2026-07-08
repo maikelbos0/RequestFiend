@@ -1,11 +1,13 @@
-﻿using RequestFiend.Core;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using System.IO.Abstractions;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models.Services;
 
-public class EnvironmentService : IEnvironmentService {
+public class EnvironmentService : IEnvironmentService, IRecipient<ActiveEnvironmentChangedMessage> {
     private readonly IFileSystem fileSystem;
     private readonly IPreferencesService preferencesService;
     private readonly IPopupService popupService;
@@ -42,4 +44,7 @@ public class EnvironmentService : IEnvironmentService {
 
         return activeEnvironment ??= new();
     }
+
+    public void Receive(ActiveEnvironmentChangedMessage _)
+        => activeEnvironment = null;
 }

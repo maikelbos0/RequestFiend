@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using RequestFiend.Core;
+using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System.IO.Abstractions;
 using System.Text.Json;
@@ -76,6 +77,32 @@ public class EnvironmentServiceTests {
 
         preferencesService.Received(1).GetActiveEnvironment();
         await fileSystem.File.Received(1).ReadAllTextAsync(filePath, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetActiveEnvironment_Resets_After_Receiving_ActiveEnvironmentChangedMessage() {
+        const string filePath = @"C:\Documents\Local.json";
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var environment = new Environment() {
+            Variables = {
+                new() { Name = "DefaultHeader", Value = "Accept" }
+            }
+        };
+        fileSystem.File.Exists(filePath).Returns(true);
+        fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns(JsonSerializer.Serialize(environment));
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
+        var popupService = Substitute.For<IPopupService>();
+
+        var subject = new EnvironmentService(fileSystem, preferencesService, popupService);
+
+        _ = await subject.GetActiveEnvironment();
+        subject.Receive(new ActiveEnvironmentChangedMessage());
+        _ = await subject.GetActiveEnvironment();
+
+        preferencesService.Received(2).GetActiveEnvironment();
+        await fileSystem.File.Received(2).ReadAllTextAsync(filePath, Arg.Any<CancellationToken>());
     }
 
     [Fact]
