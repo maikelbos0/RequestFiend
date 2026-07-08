@@ -7,9 +7,11 @@ namespace RequestFiend.Models.Services;
 
 public class EnvironmentService : IEnvironmentService {
     private readonly IFileSystem fileSystem;
+    private readonly IPreferencesService preferencesService;
 
-    public EnvironmentService(IFileSystem fileSystem) {
+    public EnvironmentService(IFileSystem fileSystem, IPreferencesService preferencesService) {
         this.fileSystem = fileSystem;
+        this.preferencesService = preferencesService;
     }
 
     public Task Save(string filePath, Environment environment)
