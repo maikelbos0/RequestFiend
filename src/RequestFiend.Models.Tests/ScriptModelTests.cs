@@ -8,7 +8,7 @@ public class ScriptModelTests {
     [Fact]
     public void References() {
         var script = new Script();
-        var subject = new ScriptModel(script) {
+        _ = new ScriptModel(script) {
             References = { Value = $" Foo {System.Environment.NewLine}{System.Environment.NewLine} Bar " }
         };
 
@@ -18,7 +18,7 @@ public class ScriptModelTests {
     [Fact]
     public void Code() {
         var script = new Script();
-        var subject = new ScriptModel(script) {
+        _ = new ScriptModel(script) {
             Code = { Value = "Code" }
         };
 

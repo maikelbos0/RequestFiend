@@ -18,7 +18,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        var subject = new RequestTemplateCollectionSettingsModel(
+        _ = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -38,7 +38,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        var subject = new RequestTemplateCollectionSettingsModel(
+        _ = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -58,7 +58,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        var subject = new RequestTemplateCollectionSettingsModel(
+        _ = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -78,7 +78,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        var subject = new RequestTemplateCollectionSettingsModel(
+        _ = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
