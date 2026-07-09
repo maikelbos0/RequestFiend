@@ -4,10 +4,11 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Threading.Tasks;
 
 namespace RequestFiend.UI.Views;
 
-public partial class ValidatableEditor : Grid {
+public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChangedMessage>, IRecipient<RequestTemplateCollectionSettingsUpdatedMessage>, IRecipient<ValidatablePropertyUpdatedMessage> {
     public static readonly BindableProperty TextProperty = BindableProperty.Create(
         nameof(Text),
         typeof(ValidatableProperty<string>),
@@ -48,17 +49,7 @@ public partial class ValidatableEditor : Grid {
 
     public ValidatableEditor() {
         InitializeComponent();
-        WeakReferenceMessenger.Default.Register<ValidatableEditor, RequestTemplateCollectionSettingsUpdatedMessage>(this, (_, message) => {
-            if (message.Collection == Collection) {
-                UpdateOverlay();
-            }
-        });
-        WeakReferenceMessenger.Default.Register<ValidatableEditor, ValidatablePropertyUpdatedMessage>(this, (_, message) => {
-            if (message.Property == Text) {
-                UpdateOverlay();
-            }
-        });
-
+        WeakReferenceMessenger.Default.RegisterAll(this);
         environmentService = App.GetRequiredService<IEnvironmentService>();
     }
 
@@ -113,6 +104,23 @@ public partial class ValidatableEditor : Grid {
 
             }
             catch { }
+        }
+    }
+
+    public async void Receive(ActiveEnvironmentChangedMessage _) {
+        await Task.Yield();
+        UpdateOverlay();
+    }
+
+    public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
+        if (message.Collection == Collection) {
+            UpdateOverlay();
+        }
+    }
+
+    public void Receive(ValidatablePropertyUpdatedMessage message) {
+        if (message.Property == Text) {
+            UpdateOverlay();
         }
     }
 }

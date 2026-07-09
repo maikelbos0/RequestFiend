@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
