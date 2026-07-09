@@ -12,7 +12,13 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
+            <Label Text="{Binding PageTitle}" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1"/>
+            
+            <Grid ColumnDefinitions="*,*,44">
+                <Button Text="Save changes" Command="{Binding UpdateCommand}" MinimumWidthRequest="-1" IsEnabled="{Binding IsModifiedWithoutError}"/>
+
+                <Button Text="Close" Clicked="OnCloseClicked" MinimumWidthRequest="-1" Grid.Column="1" Grid.ColumnSpan="2"/>
+            </Grid>
 
             <views:NameValuePairCollectionView
                 ItemsSource="{Binding Variables}"
