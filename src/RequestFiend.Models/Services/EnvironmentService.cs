@@ -11,17 +11,25 @@ public class EnvironmentService : IEnvironmentService, IRecipient<ActiveEnvironm
     private readonly IFileSystem fileSystem;
     private readonly IPreferencesService preferencesService;
     private readonly IPopupService popupService;
+    private readonly IMessageService messageService;
     private Environment? activeEnvironment;
 
-    public EnvironmentService(IFileSystem fileSystem, IPreferencesService preferencesService, IPopupService popupService) {
+    public EnvironmentService(IFileSystem fileSystem, IPreferencesService preferencesService, IPopupService popupService, IMessageService messageService) {
         this.fileSystem = fileSystem;
         this.preferencesService = preferencesService;
         this.popupService = popupService;
+        this.messageService = messageService;
+
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
-    public Task Save(string filePath, Environment environment)
-        => fileSystem.File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment));
+    public async Task Save(string filePath, Environment environment) {
+        await fileSystem.File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment));
 
+        if (preferencesService.GetActiveEnvironment()?.FilePath == filePath) {
+            messageService.Send(new ActiveEnvironmentChangedMessage());
+        }
+    }
 
     public async Task<Environment> GetActiveEnvironment() {
         if (activeEnvironment == null) {

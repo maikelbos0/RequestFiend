@@ -17,17 +17,43 @@ public class EnvironmentServiceTests {
         const string filePath = @"C:\Documents\Local.json";
 
         var fileSystem = Substitute.For<IFileSystem>();
+        var messageService = Substitute.For<IMessageService>();
         var environment = new Environment() {
             Variables = {
                 new() { Name = "DefaultHeader", Value = "Accept" }
             }
         };
 
-        var subject = new EnvironmentService(fileSystem, Substitute.For<IPreferencesService>(), Substitute.For<IPopupService>());
+        var subject = new EnvironmentService(fileSystem, Substitute.For<IPreferencesService>(), Substitute.For<IPopupService>(), messageService);
 
         await subject.Save(filePath, environment);
 
         await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment), Arg.Any<CancellationToken>());
+
+        messageService.DidNotReceive().Send(Arg.Any<ActiveEnvironmentChangedMessage>());
+    }
+
+    [Fact]
+    public async Task Save_Active_Environment() {
+        const string filePath = @"C:\Documents\Local.json";
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        var messageService = Substitute.For<IMessageService>();
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
+        var environment = new Environment() {
+            Variables = {
+                new() { Name = "DefaultHeader", Value = "Accept" }
+            }
+        };
+
+        var subject = new EnvironmentService(fileSystem, preferencesService, Substitute.For<IPopupService>(), messageService);
+
+        await subject.Save(filePath, environment);
+
+        await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment), Arg.Any<CancellationToken>());
+
+        messageService.Received(1).Send(Arg.Any<ActiveEnvironmentChangedMessage>());
     }
 
     [Fact]
@@ -46,7 +72,7 @@ public class EnvironmentServiceTests {
         preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
         var popupService = Substitute.For<IPopupService>();
 
-        var subject = new EnvironmentService(fileSystem, preferencesService, popupService);
+        var subject = new EnvironmentService(fileSystem, preferencesService, popupService, Substitute.For<IMessageService>());
 
         var result = await subject.GetActiveEnvironment();
 
@@ -70,7 +96,7 @@ public class EnvironmentServiceTests {
         preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
         var popupService = Substitute.For<IPopupService>();
 
-        var subject = new EnvironmentService(fileSystem, preferencesService, popupService);
+        var subject = new EnvironmentService(fileSystem, preferencesService, popupService, Substitute.For<IMessageService>());
 
         _ = await subject.GetActiveEnvironment();
         _ = await subject.GetActiveEnvironment();
@@ -95,7 +121,7 @@ public class EnvironmentServiceTests {
         preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
         var popupService = Substitute.For<IPopupService>();
 
-        var subject = new EnvironmentService(fileSystem, preferencesService, popupService);
+        var subject = new EnvironmentService(fileSystem, preferencesService, popupService, Substitute.For<IMessageService>());
 
         _ = await subject.GetActiveEnvironment();
         subject.Receive(new ActiveEnvironmentChangedMessage());
@@ -111,7 +137,7 @@ public class EnvironmentServiceTests {
         preferencesService.GetActiveEnvironment().ReturnsNull();
         var popupService = Substitute.For<IPopupService>();
 
-        var subject = new EnvironmentService(Substitute.For<IFileSystem>(), preferencesService, popupService);
+        var subject = new EnvironmentService(Substitute.For<IFileSystem>(), preferencesService, popupService, Substitute.For<IMessageService>());
 
         var result = await subject.GetActiveEnvironment();
 
@@ -129,7 +155,7 @@ public class EnvironmentServiceTests {
         preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
         var popupService = Substitute.For<IPopupService>();
 
-        var subject = new EnvironmentService(fileSystem, preferencesService, popupService);
+        var subject = new EnvironmentService(fileSystem, preferencesService, popupService, Substitute.For<IMessageService>());
 
         var result = await subject.GetActiveEnvironment();
 
@@ -147,7 +173,7 @@ public class EnvironmentServiceTests {
         preferencesService.GetActiveEnvironment().Returns(new FileModel(filePath));
         var popupService = Substitute.For<IPopupService>();
 
-        var subject = new EnvironmentService(fileSystem, preferencesService, popupService);
+        var subject = new EnvironmentService(fileSystem, preferencesService, popupService, Substitute.For<IMessageService>());
 
         var result = await subject.GetActiveEnvironment();
 
