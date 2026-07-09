@@ -65,8 +65,8 @@ public partial class AppShell : Shell,
         var collectionItem = Items.SingleOrDefault(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
 
         if (collectionItem == null) {
-            using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection);
-            var collectionModel = GetRequiredService<RequestTemplateCollectionModel>();
+            using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection);
+            var collectionModel = App.GetRequiredService<RequestTemplateCollectionModel>();
 
             collectionItem = new FlyoutItem() {
                 Icon = "folder_open_solid_full.png",
@@ -111,8 +111,8 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(OpenEnvironmentMessage message) {
-        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Environment);
-        var environmentModel = GetRequiredService<EnvironmentModel>();
+        using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Environment);
+        var environmentModel = App.GetRequiredService<EnvironmentModel>();
 
         await this.ShowPopupAsync(new EnvironmentPopup(environmentModel));
     }
@@ -134,14 +134,14 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(CreateRequestMessage message) {
-        using var _ = GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection, message.Request);
+        using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
         var (requestItem, index) = collectionItem.Items
             .Select((item, index) => new { Index = index, Item = item, item.StyleId })
             .Where(x => x.StyleId == message.Id)
             .Select(x => (x.Item, x.Index + 1))
             .Single();
-        var request = GetRequiredService<ExchangeModel>();
+        var request = App.GetRequiredService<ExchangeModel>();
         var item = new Tab() {
             Icon = "arrow_right_arrow_left_solid_full.png",
             Items = {
@@ -157,9 +157,6 @@ public partial class AppShell : Shell,
         collectionItem.Items.Insert(index, item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
     }
-
-    private T GetRequiredService<T>() where T : notnull
-        => (Handler ?? throw new InvalidOperationException()).GetRequiredService<T>();
 
     private async Task CloseCollectionTab(Tab tab) {
         if (tab.Parent is ShellItem collectionItem) {

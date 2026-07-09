@@ -23,6 +23,8 @@ public partial class ValidatableEntry : Grid {
         propertyChanged: (bindable, _, _) => ((ValidatableEntry)bindable).UpdateOverlay()
     );
 
+    private readonly IEnvironmentService environmentService;
+
     public ValidatableProperty<string>? Text {
         get => GetValue(TextProperty) as ValidatableProperty<string>;
         set => SetValue(TextProperty, value);
@@ -45,6 +47,8 @@ public partial class ValidatableEntry : Grid {
                 UpdateOverlay();
             }
         });
+
+        environmentService = App.GetRequiredService<IEnvironmentService>();
     }
 
     private void OnOverlayTapped(object sender, TappedEventArgs e) {
@@ -59,10 +63,10 @@ public partial class ValidatableEntry : Grid {
         UpdateOverlay();
     }
 
-    private void UpdateOverlay() {
+    private async void UpdateOverlay() {
         if (Collection != null && Text != null) {
             try {
-                var variableSnapshot = Collection.CreateVariableSnapshot(null);
+                var variableSnapshot = Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
                 var hasVariables = false;
 
                 Overlay.IsVisible = true;
