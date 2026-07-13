@@ -10,4 +10,8 @@ public partial class EnvironmentPopup : Popup {
         BindingContext = new EnvironmentModel(CloseAsync, environmentService, file, environment);
         InitializeComponent();
     }
+
+    public async void OnCancelClicked(object sender, System.EventArgs e) {
+        await CloseAsync();
+    }
 }

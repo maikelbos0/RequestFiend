@@ -7,19 +7,20 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class EnvironmentModel : PageBoundModelBase {
+public partial class EnvironmentModel : BoundModelBase {
     private readonly System.Func<CancellationToken, Task> closeMethod;
     private readonly IEnvironmentService environmentService;
+    private readonly FileModel file;
     private readonly Environment environment;
 
-    public FileModel File { get; }
     public NameValuePairModelCollection Variables { get; }
 
-    public EnvironmentModel(System.Func<CancellationToken, Task> closeMethod, IEnvironmentService environmentService, FileModel file, Environment environment) : base(file.Name, file.Name) {
+    public EnvironmentModel(System.Func<CancellationToken, Task> closeMethod, IEnvironmentService environmentService, FileModel file, Environment environment) {
         this.closeMethod = closeMethod;
         this.environmentService = environmentService;
-        File = file;
+        this.file = file;
         this.environment = environment;
+
         Variables = new(environment.Variables, Validator.VariableName);
 
         ConfigureState([Variables]);
@@ -31,7 +32,7 @@ public partial class EnvironmentModel : PageBoundModelBase {
             return;
         }
 
-        await environmentService.Save(File.FilePath, environment);
+        await environmentService.Save(file.FilePath, environment);
         await closeMethod(cancellationToken);
     }
 }
