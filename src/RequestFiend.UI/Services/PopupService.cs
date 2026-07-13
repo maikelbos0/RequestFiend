@@ -8,11 +8,11 @@ using RequestFiend.Models.Services;
 using RequestFiend.UI.Views;
 using System.IO;
 using System.Threading.Tasks;
+using RequestFiend.Models;
 
 #if ANDROID
 using Android.Content;
 using Android.Provider;
-using System;
 #endif
 
 namespace RequestFiend.UI.Services;
@@ -45,7 +45,7 @@ public class PopupService : IPopupService {
 
     private static bool RequestFileAccess() {
 #if ANDROID
-        if (OperatingSystem.IsAndroidVersionAtLeast(30) && !Android.OS.Environment.IsExternalStorageManager) {
+        if (System.OperatingSystem.IsAndroidVersionAtLeast(30) && !Android.OS.Environment.IsExternalStorageManager) {
             Intent intent = new Intent(Settings.ActionManageAllFilesAccessPermission);
 
             intent.AddFlags(ActivityFlags.NewTask);
@@ -60,4 +60,7 @@ public class PopupService : IPopupService {
 
     public Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url)
         => Shell.Current.ShowPopupAsync<string>(new UrlPopup(collection, url));
+
+    public Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment)
+        => Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentService, file, environment));
 }

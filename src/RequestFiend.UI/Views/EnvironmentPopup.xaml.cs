@@ -1,16 +1,13 @@
 using CommunityToolkit.Maui.Views;
+using RequestFiend.Core;
 using RequestFiend.Models;
-using System;
+using RequestFiend.Models.Services;
 
 namespace RequestFiend.UI.Views;
 
 public partial class EnvironmentPopup : Popup {
-    public EnvironmentPopup(EnvironmentModel model) {
-        BindingContext = model;
+    public EnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment) {
+        BindingContext = new EnvironmentModel(CloseAsync, environmentService, file, environment);
         InitializeComponent();
-    }
-
-    public async void OnCloseClicked(object sender, EventArgs e) {
-        await CloseAsync();
     }
 }

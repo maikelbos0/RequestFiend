@@ -38,7 +38,7 @@ public class PreferencesModelTests {
         preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(@"C:\Documents\Bar.json"), new(@"C:\Documents\Bar.json")]);
         preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
 
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         Assert.Equal("Preferences", subject.PageTitleBase);
         Assert.Equal("Preferences", subject.ShellItemTitleBase);
@@ -79,7 +79,7 @@ public class PreferencesModelTests {
         preferencesService.GetEnvironments().Returns([new(existingEnvironment)]);
         var messageService = Substitute.For<IMessageService>();
 
-        var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>(), Substitute.For<IFileSystem>()) {
+        var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] },
             RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds },
@@ -121,7 +121,7 @@ public class PreferencesModelTests {
         preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Environment.json")]);
         var messageService = Substitute.For<IMessageService>();
 
-        var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>(), Substitute.For<IFileSystem>()) {
+        var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount },
             RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds }
         };
@@ -154,14 +154,15 @@ public class PreferencesModelTests {
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(newEnvironment, null));
+        var environmentService = Substitute.For<IEnvironmentService>();
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), environmentService);
 
         await subject.CreateNewEnvironment();
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
-        messageService.Received(1).Send(Arg.Is<OpenEnvironmentMessage>(message => message.File == new FileModel(newEnvironment)));
+        await popupService.Received(1).ShowEnvironmentPopup(environmentService, new(newEnvironment), Arg.Any<Environment>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(otherEnvironment), new(newEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
@@ -176,14 +177,15 @@ public class PreferencesModelTests {
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(newEnvironment, null));
+        var environmentService = Substitute.For<IEnvironmentService>();
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), environmentService);
 
         await subject.CreateNewEnvironment();
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
-        messageService.Received(1).Send(Arg.Is<OpenEnvironmentMessage>(message => message.File == new FileModel(newEnvironment)));
+        await popupService.Received(1).ShowEnvironmentPopup(environmentService, new(newEnvironment), Arg.Any<Environment>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(newEnvironment)], subject.Environments);
         Assert.Equal(new(newEnvironment), subject.ActiveEnvironment.Value);
@@ -201,13 +203,13 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new System.Exception()));
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.CreateNewEnvironment();
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
-        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
+        await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
@@ -225,13 +227,13 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new System.OperationCanceledException()));
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.CreateNewEnvironment();
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new Environment())));
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
-        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
+        await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
         Assert.Equal([new(otherEnvironment), new(activeEnvironment)], subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
@@ -249,7 +251,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(newEnvironment));
 
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.OpenExistingEnvironment();
 
@@ -266,7 +268,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).Returns(new Storage.FileResult(newEnvironment));
 
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.OpenExistingEnvironment();
 
@@ -285,7 +287,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowPickFileDialog(Arg.Any<Storage.PickOptions>()).ReturnsNull();
 
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.OpenExistingEnvironment();
 
@@ -302,7 +304,7 @@ public class PreferencesModelTests {
         preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
         preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
 
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         subject.RemoveEnvironment(new(otherEnvironment));
 
@@ -319,7 +321,7 @@ public class PreferencesModelTests {
         preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(otherEnvironment)]);
         preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
 
-        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         subject.RemoveEnvironment(new(activeEnvironment));
 
@@ -332,19 +334,18 @@ public class PreferencesModelTests {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
-        var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
         fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns(JsonSerializer.Serialize(new Environment()));
+        var environmentService = Substitute.For<IEnvironmentService>();
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, fileSystem);
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, environmentService);
 
         await subject.OpenEnvironmentPopup(new(filePath));
 
-        messageService.Received(1).Send(Arg.Is<OpenEnvironmentMessage>(message => message.File == new FileModel(filePath)));
-        messageService.Received(1).Send(Arg.Is<OpenEnvironmentMessage>(message => true));
+        await popupService.Received(1).ShowEnvironmentPopup(environmentService, new(filePath), Arg.Any<Environment>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -353,17 +354,16 @@ public class PreferencesModelTests {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
-        var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(false);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, fileSystem);
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, Substitute.For<IEnvironmentService>());
 
         await subject.OpenEnvironmentPopup(new(filePath));
 
-        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
+        await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -372,18 +372,17 @@ public class PreferencesModelTests {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
-        var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
         fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns("Invalid JSON");
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, fileSystem);
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, Substitute.For<IEnvironmentService>());
 
         await subject.OpenEnvironmentPopup(new(filePath));
 
-        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
+        await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -392,18 +391,17 @@ public class PreferencesModelTests {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
-        var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists(filePath).Returns(true);
         fileSystem.File.ReadAllTextAsync(filePath, Arg.Any<CancellationToken>()).Returns("null");
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, fileSystem);
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, Substitute.For<IEnvironmentService>());
 
         await subject.OpenEnvironmentPopup(new(filePath));
 
-        messageService.DidNotReceive().Send(Arg.Any<OpenEnvironmentMessage>());
+        await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -421,7 +419,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>()) {
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             MaximumRecentCollectionCount = { Value = "25" },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] },
             RequestTimeoutInSeconds = { Value = "300" },
@@ -460,7 +458,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>()) {
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             MaximumRecentCollectionCount = { Value = "25" },
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[ScriptEvaluationMode.Disabled] },
             RequestTimeoutInSeconds = { Value = "300" },
@@ -493,7 +491,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.ClearRecentCollections();
 
@@ -509,7 +507,7 @@ public class PreferencesModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
 
-        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>());
+        var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>());
 
         await subject.ClearRecentCollections();
 

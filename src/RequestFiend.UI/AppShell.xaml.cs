@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using RequestFiend.Models;
 using RequestFiend.Models.Messages;
@@ -17,8 +16,7 @@ public partial class AppShell : Shell,
     IRecipient<SuccessMessage>,
     IRecipient<OpenCollectionRequestMessage>,
     IRecipient<OpenTemplateRequestMessage>,
-    IRecipient<CreateRequestMessage>,
-    IRecipient<OpenEnvironmentMessage> {
+    IRecipient<CreateRequestMessage> {
 
     private CancellationTokenSource? messageCancellationTokenSource;
 
@@ -107,13 +105,6 @@ public partial class AppShell : Shell,
 
         collectionItem.Items.Add(item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
-    }
-
-    public async void Receive(OpenEnvironmentMessage message) {
-        using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Environment);
-        var environmentModel = App.GetRequiredService<EnvironmentModel>();
-
-        await this.ShowPopupAsync(new EnvironmentPopup(environmentModel));
     }
 
     private Tab CreateRequestTab(RequestTemplateModel request) {

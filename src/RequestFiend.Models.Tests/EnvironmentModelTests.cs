@@ -1,8 +1,8 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
-using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,9 +18,8 @@ public class EnvironmentModelTests {
                 new() { Name = "Foo", Value = "Bar" }
             }
         };
-
-        var subject = new EnvironmentModel(Substitute.For<IEnvironmentService>(), Substitute.For<IMessageService>(), new(filePath), environment);
-
+        
+        var subject = new EnvironmentModel(Substitute.For<System.Func<CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), environment);
 
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.PageTitleBase);
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitle);
@@ -36,46 +35,44 @@ public class EnvironmentModelTests {
     public async Task Update() {
         const string filePath = @"C:\Documents\Local.json";
 
+        var closeMethod = Substitute.For<System.Func<CancellationToken, Task>>();
         var environmentService = Substitute.For<IEnvironmentService>();
-        var messageService = Substitute.For<IMessageService>();
         var environment = new Environment() {
             Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
             }
         };
 
-        var subject = new EnvironmentModel(environmentService, messageService, new(filePath), environment);
+        var subject = new EnvironmentModel(closeMethod, environmentService, new(filePath), environment);
 
         subject.Variables[0].Name.Value = "Name";
         subject.Variables[0].Value.Value = "Value";
 
-        await subject.Update();
-
-        Assert.False(subject.Variables.IsModified);
+        await subject.Update(CancellationToken.None);
 
         await environmentService.Received(1).Save(filePath, environment);
-        messageService.Received(1).Send(Arg.Any<SuccessMessage>());
+        await closeMethod.Received().Invoke(CancellationToken.None);
     }
 
     [Fact]
     public async Task Update_Fails_When_Invalid() {
         const string filePath = @"C:\Documents\Local.json";
-
+        
+        var closeMethod = Substitute.For<System.Func<CancellationToken, Task>>();
         var environmentService = Substitute.For<IEnvironmentService>();
-        var messageService = Substitute.For<IMessageService>();
         var environment = new Environment() {
             Variables = {
                 new() { Name = "PreviousName" }
             }
         };
 
-        var subject = new EnvironmentModel(environmentService, messageService, new(filePath), environment);
+        var subject = new EnvironmentModel(closeMethod, environmentService, new(filePath), environment);
 
         subject.Variables[0].Name.Value = "";
 
-        await subject.Update();
+        await subject.Update(CancellationToken.None);
 
         await environmentService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<Environment>());
-        messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
+        await closeMethod.DidNotReceive().Invoke(Arg.Any<CancellationToken>());
     }
 }

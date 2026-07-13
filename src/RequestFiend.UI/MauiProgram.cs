@@ -45,7 +45,6 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddSingleton<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IEnvironmentService, Models.Services.EnvironmentService>();
 
-        mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<Environment>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<FileModel>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollection>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplate>());
@@ -58,7 +57,6 @@ public static class MauiProgram {
             serviceProvider.GetRequiredService<Models.Services.IPopupService>(),
             1000
         ));
-        mauiAppBuilder.Services.AddTransient<EnvironmentModel>();
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<ExchangeModel>();
 

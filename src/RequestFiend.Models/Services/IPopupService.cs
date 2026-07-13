@@ -13,4 +13,5 @@ public interface IPopupService {
     Task<FileSaverResult> ShowSaveDialog(string fileName, Stream stream);
     Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions);
     Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url);
+    Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment);
 }

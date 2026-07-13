@@ -98,7 +98,7 @@ public class UrlModelTests {
 
         await subject.Confirm(CancellationToken.None);
 
-        await closeMethod.DidNotReceive().Invoke(Arg.Any<string?>(), CancellationToken.None);
+        await closeMethod.DidNotReceive().Invoke(Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

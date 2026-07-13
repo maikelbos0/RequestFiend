@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Devices;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
@@ -19,6 +18,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     private readonly IMessageService messageService;
     private readonly IPopupService popupService;
     private readonly IFileSystem fileSystem;
+    private readonly IEnvironmentService environmentService;
 
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
     public ValidatableProperty<string> ScriptEvaluationMode { get; }
@@ -28,12 +28,12 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableImmutableCollection<FileModel> Environments { get; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
-    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService, IFileSystem fileSystem) : base("Preferences", "Preferences") {
+    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService, IFileSystem fileSystem, IEnvironmentService environmentService) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
         this.messageService = messageService;
         this.popupService = popupService;
         this.fileSystem = fileSystem;
-
+        this.environmentService = environmentService;
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()]);
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
@@ -87,7 +87,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         if (saveResult.IsSuccessful) {
             messageService.Send(new SuccessMessage("Environment has been created"));
             AddEnvironment(new(saveResult.FilePath));
-            messageService.Send(new OpenEnvironmentMessage(new(saveResult.FilePath), environment));
+            await popupService.ShowEnvironmentPopup(environmentService, new(saveResult.FilePath), environment);
         }
         else if (saveResult.Exception != null && saveResult.Exception is not System.OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -139,7 +139,7 @@ public partial class PreferencesModel : PageBoundModelBase {
                 var environment = JsonSerializer.Deserialize<Environment>(await fileSystem.File.ReadAllTextAsync(file.FilePath));
 
                 if (environment != null) {
-                    messageService.Send(new OpenEnvironmentMessage(file, environment));
+                    await popupService.ShowEnvironmentPopup(environmentService, file, environment);
                 }
                 else {
                     await popupService.ShowErrorPopup("Failed to load environment.");

@@ -4,6 +4,8 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
@@ -24,6 +26,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public ValidatableProperty<bool> IgnoreRemoteCertificateNotAvailable { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateNameMismatch { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateChainErrors { get; }
+
+    // TODO make it a proper collection
+    public ObservableCollection<RequestTemplate> Requests { get; }
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -49,6 +54,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, setter: value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
+        Requests = new(collection.Requests);
 
         ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, Variables, DefaultHeaders]);
         messageService.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _) => {
@@ -57,18 +63,42 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         });
     }
 
+    // TODO receive request for request added
+
     [RelayCommand]
     public async Task Update() {
         if (HasError) {
             return;
         }
 
+        var sortOrder = Requests.Select((requestTemplate, index) => (requestTemplate, index)).ToDictionary(x => x.requestTemplate, x => x.index);
+        Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
         Reset();
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
         messageService.Send(new RequestTemplateCollectionSettingsUpdatedMessage(Collection));
+    }
+
+    [RelayCommand]
+    public void MoveRequestUp(RequestTemplate request) {
+        var index = Requests.IndexOf(request);
+
+        if (index > 0) {
+            Requests.Remove(request);
+            Requests.Insert(index - 1, request);
+        }
+    }
+
+    [RelayCommand]
+    public void MoveRequestDown(RequestTemplate request) {
+        var index = Requests.IndexOf(request);
+
+        if (index < Requests.Count - 1) {
+            Requests.Remove(request);
+            Requests.Insert(index + 1, request);
+        }
     }
 
     [RelayCommand]
