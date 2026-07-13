@@ -25,7 +25,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableProperty<string> RequestTimeoutInSeconds { get; }
     public ValidatableProperty<string> ExchangeLoggingPath { get; }
     public ValidatableProperty<string> ExchangeLoggingOutputTemplate { get; }
-    [ObservableProperty] public partial FileModelCollection Environments { get; private set; }
+    public ValidatableImmutableCollection<FileModel> Environments { get; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
     public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService, IFileSystem fileSystem) : base("Preferences", "Preferences") {

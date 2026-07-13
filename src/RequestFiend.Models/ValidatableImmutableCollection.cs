@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace RequestFiend.Models;
 
-public class FileModelCollection : ObservableCollection<FileModel>, IValidatable {
+public class ValidatableImmutableCollection<TImmutable> : ObservableCollection<TImmutable>, IValidatable where TImmutable : IImmutable {
     public bool HasError => false;
 
     public bool IsModified {
@@ -28,7 +28,7 @@ public class FileModelCollection : ObservableCollection<FileModel>, IValidatable
         }
     }
 
-    public FileModelCollection(IEnumerable<FileModel> collection) : base(collection) {
+    public ValidatableImmutableCollection(IEnumerable<TImmutable> collection) : base(collection) {
         CollectionChanged += OnCollectionChanged;
 
         HasItems = Count > 0;

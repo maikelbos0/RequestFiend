@@ -96,7 +96,7 @@ public class PreferencesModelTests {
         preferencesService.Received(1).SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
         preferencesService.Received(1).SetExchangeLoggingPath(exchangeLoggingPath);
         preferencesService.Received(1).SetExchangeLoggingOutputTemplate(exchangeLoggingOutputTemplate);
-        preferencesService.Received(1).SetEnvironments(Arg.Is<FileModelCollection>(collection => collection.SequenceEqual(new FileModel[] { new(existingEnvironment), new(newEnvironment) })));
+        preferencesService.Received(1).SetEnvironments(Arg.Is<ValidatableImmutableCollection<FileModel>>(collection => collection.SequenceEqual(new FileModel[] { new(existingEnvironment), new(newEnvironment) })));
         preferencesService.Received(1).SetActiveEnvironment(new(existingEnvironment));
 
         Assert.False(subject.MaximumRecentCollectionCount.IsModified);

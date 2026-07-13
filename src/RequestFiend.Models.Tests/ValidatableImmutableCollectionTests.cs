@@ -1,0 +1,83 @@
+﻿using NSubstitute;
+using System.Collections.Generic;
+using Xunit;
+
+namespace RequestFiend.Models.Tests;
+
+public class ValidatableImmutableCollectionTests {
+    [Fact]
+    public void Constructor() {
+        var collection = new List<IImmutable>() {
+            Substitute.For<IImmutable>(),
+            Substitute.For<IImmutable>()
+        };
+        var subject = new ValidatableImmutableCollection<IImmutable>(collection);
+
+        Assert.Equal(collection, subject);
+        Assert.False(subject.IsModified);
+        Assert.True(subject.HasItems);
+    }
+
+    [Theory]
+    [InlineData(0, 0, false, true)]
+    [InlineData(1, 0, true, true)]
+    [InlineData(0, 1, true, true)]
+    [InlineData(0, 2, true, false)]
+    [InlineData(1, 2, true, true)]
+    public void State(int valuesToAdd, int valuesToRemove, bool expectedIsModified, bool expectedHasItems) {
+        var collection = new List<IImmutable>() {
+            Substitute.For<IImmutable>(),
+            Substitute.For<IImmutable>()
+        };
+        var subject = new ValidatableImmutableCollection<IImmutable>(collection);
+
+        for (var i = 0; i < valuesToRemove; i++) {
+            subject.Remove(subject[^1]);
+        }
+
+        for (var i = 0; i < valuesToAdd; i++) {
+            subject.Add(Substitute.For<IImmutable>());
+        }
+
+        Assert.Equal(expectedIsModified, subject.IsModified);
+        Assert.Equal(expectedHasItems, subject.HasItems);
+    }
+
+    [Fact]
+    public void Remove() {
+        var subject = new ValidatableImmutableCollection<IImmutable>([
+            Substitute.For<IImmutable>(),
+            Substitute.For<IImmutable>(),
+            Substitute.For<IImmutable>()
+        ]);
+
+        var fileModel = subject[1];
+
+        subject.Remove(fileModel);
+
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasItems);
+        Assert.Equal(2, subject.Count);
+    }
+
+    [Fact]
+    public void Add() {
+        var subject = new ValidatableImmutableCollection<IImmutable>([]) {
+            Substitute.For<IImmutable>()
+        };
+
+        Assert.True(subject.IsModified);
+        Assert.True(subject.HasItems);
+    }
+
+    [Fact]
+    public void Reset() {
+        var subject = new ValidatableImmutableCollection<IImmutable>([]) {
+            Substitute.For<IImmutable>()
+        };
+
+        subject.Reset();
+
+        Assert.False(subject.IsModified);
+    }
+}
