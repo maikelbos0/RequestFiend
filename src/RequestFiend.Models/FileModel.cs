@@ -2,5 +2,6 @@
 
 namespace RequestFiend.Models;
 
-public record FileModel(string FilePath) : NamedItemModel(Path.GetFileNameWithoutExtension(FilePath));
-
+public record FileModel(string FilePath) : IImmutable {
+    public string Name { get; } = Path.GetFileNameWithoutExtension(FilePath);
+}

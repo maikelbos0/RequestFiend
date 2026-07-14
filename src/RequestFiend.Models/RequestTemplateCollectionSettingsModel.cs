@@ -4,7 +4,6 @@ using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,9 +25,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public ValidatableProperty<bool> IgnoreRemoteCertificateNotAvailable { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateNameMismatch { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateChainErrors { get; }
-
-    // TODO make it a proper collection
-    public ObservableCollection<RequestTemplate> Requests { get; }
+    public ValidatableImmutableCollection<RequestTemplateItemModel> Requests { get; }
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -54,16 +51,17 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, setter: value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
-        Requests = new(collection.Requests);
+        Requests = new(collection.Requests.Select(request => new RequestTemplateItemModel(request)));
 
-        ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, Variables, DefaultHeaders]);
+        ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, Variables, DefaultHeaders, Requests]);
+
         messageService.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _) => {
             ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
             AllowScriptEvaluation.Reset();
         });
     }
 
-    // TODO receive request for request added
+    // TODO receive request for request added and deleted
 
     [RelayCommand]
     public async Task Update() {
@@ -71,8 +69,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             return;
         }
 
-        var sortOrder = Requests.Select((requestTemplate, index) => (requestTemplate, index)).ToDictionary(x => x.requestTemplate, x => x.index);
-        Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
+        //var sortOrder = Requests.Select((requestTemplate, index) => (requestTemplate, index)).ToDictionary(x => x.requestTemplate, x => x.index);
+        //Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
         Reset();
 
@@ -82,7 +80,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     }
 
     [RelayCommand]
-    public void MoveRequestUp(RequestTemplate request) {
+    public void MoveRequestUp(RequestTemplateItemModel request) {
         var index = Requests.IndexOf(request);
 
         if (index > 0) {
@@ -92,7 +90,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     }
 
     [RelayCommand]
-    public void MoveRequestDown(RequestTemplate request) {
+    public void MoveRequestDown(RequestTemplateItemModel request) {
         var index = Requests.IndexOf(request);
 
         if (index < Requests.Count - 1) {

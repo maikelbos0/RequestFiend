@@ -115,6 +115,11 @@ public class RequestTemplateCollectionSettingsModelTests {
             DefaultHeaders = {
                 new() { Name = "Accept", Value = "application/json" },
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
+            },
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
             }
         };
 
@@ -151,7 +156,8 @@ public class RequestTemplateCollectionSettingsModelTests {
             subject.IgnoreRemoteCertificateNameMismatch,
             subject.IgnoreRemoteCertificateChainErrors,
             subject.Variables,
-            subject.DefaultHeaders
+            subject.DefaultHeaders,
+            subject.Requests
         ], subject.Validatables);
     }
 
@@ -184,7 +190,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         );
-
+        // TODO test order
         subject.AllowScriptEvaluation.Value = true;
         subject.DefaultUrl.Value = "https://default";
         subject.IgnoreRemoteCertificateNotAvailable.Value = true;
@@ -242,7 +248,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         );
-
+        // TODO test order
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.Variables[0].Name.Value = variableName;
 
@@ -252,6 +258,118 @@ public class RequestTemplateCollectionSettingsModelTests {
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
+    }
+
+    [Fact]
+    public void MoveRequestUp() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.MoveRequestUp(subject.Requests[1]);
+
+        Assert.Equal(collection.Requests[1], subject.Requests[0].Request);
+        Assert.Equal(collection.Requests[0], subject.Requests[1].Request);
+        Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
+    }
+
+    [Fact]
+    public void MoveRequestUp_Does_Nothing_For_Highest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.MoveRequestUp(subject.Requests[0]);
+
+        Assert.Equal(collection.Requests[0], subject.Requests[0].Request);
+        Assert.Equal(collection.Requests[1], subject.Requests[1].Request);
+        Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
+    }
+
+    [Fact]
+    public void MoveRequestDown() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.MoveRequestDown(subject.Requests[1]);
+
+        Assert.Equal(collection.Requests[0], subject.Requests[0].Request);
+        Assert.Equal(collection.Requests[2], subject.Requests[1].Request);
+        Assert.Equal(collection.Requests[1], subject.Requests[2].Request);
+    }
+
+    [Fact]
+    public void MoveRequestDown_Does_Nothing_For_Lowest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.MoveRequestDown(subject.Requests[2]);
+
+        Assert.Equal(collection.Requests[0], subject.Requests[0].Request);
+        Assert.Equal(collection.Requests[1], subject.Requests[1].Request);
+        Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
     }
 
     [Theory]
