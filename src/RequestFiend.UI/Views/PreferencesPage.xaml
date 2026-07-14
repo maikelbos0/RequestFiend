@@ -48,7 +48,6 @@
                                         Command="{Binding x:DataType='models:PreferencesModel', Path=OpenEnvironmentPopupCommand, Source={RelativeSource AncestorType={x:Type models:PreferencesModel}}}"
                                         CommandParameter="{Binding .}"
                                         Style="{StaticResource SecondaryButton}" 
-                                        Margin="0"
                                         Grid.Column="1" 
                                         SemanticProperties.Description="Edit environment" />
 
@@ -57,7 +56,6 @@
                                         Command="{Binding x:DataType='models:PreferencesModel', Path=RemoveEnvironmentCommand, Source={RelativeSource AncestorType={x:Type models:PreferencesModel}}}"
                                         CommandParameter="{Binding .}"
                                         Style="{StaticResource SecondaryButton}" 
-                                        Margin="0"
                                         HorizontalOptions="Fill"
                                         MinimumWidthRequest="-1"
                                         Grid.Column="2" 
