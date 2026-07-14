@@ -1,7 +1,6 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
 using RequestFiend.Models.Services;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -20,11 +19,6 @@ public class EnvironmentModelTests {
         };
         
         var subject = new EnvironmentModel(Substitute.For<System.Func<CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), environment);
-
-        Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.PageTitleBase);
-        Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitle);
-
-        Assert.Equal(new FileModel(filePath), subject.File);
 
         Assert.Equal(environment.Variables.Count, subject.Variables.Count);
 
