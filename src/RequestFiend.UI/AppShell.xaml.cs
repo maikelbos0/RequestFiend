@@ -16,7 +16,7 @@ public partial class AppShell : Shell,
     IDisposable,
     IRecipient<SuccessMessage>,
     IRecipient<OpenCollectionRequestMessage>,
-    IRecipient<OpenTemplateRequestMessage>,
+    IRecipient<RequestTemplateCreatedMessage>,
     IRecipient<CreateRequestMessage>,
     IRecipient<RequestTemplateCollectionSettingsUpdatedMessage> {
 
@@ -100,7 +100,7 @@ public partial class AppShell : Shell,
         await GoToAsync($"//{collectionItem.Route}");
     }
 
-    public async void Receive(OpenTemplateRequestMessage message) {
+    public async void Receive(RequestTemplateCreatedMessage message) {
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
         var item = CreateRequestTab(collectionModel.AddRequest(message.Request));
