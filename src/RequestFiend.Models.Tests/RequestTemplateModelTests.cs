@@ -166,7 +166,7 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             FileContent = { Value = "FileContent" }
         };
 
@@ -730,6 +730,7 @@ public class RequestTemplateModelTests {
         Assert.Empty(collection.Requests);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), subject.Id);
+        messageService.Received(1).Send(Arg.Is<RequestTemplateRemovedFromCollectionMessage>(message => message.Request == request), new FileModel(filePath));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
@@ -781,6 +782,7 @@ public class RequestTemplateModelTests {
         Assert.Equal(request, Assert.Single(collection.Requests));
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<System.Guid>());
+        messageService.DidNotReceive().Send(Arg.Any<RequestTemplateRemovedFromCollectionMessage>(), Arg.Any<FileModel>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 }

@@ -195,6 +195,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             Collection.Requests.Remove(Request);
             await requestTemplateCollectionService.Save(File.FilePath, Collection);
             messageService.Send(new RequestTemplateDeletedMessage(), Id);
+            messageService.Send(new RequestTemplateRemovedFromCollectionMessage(Request), File);
             messageService.Send(new SuccessMessage("Request has been deleted"));
         }
     }

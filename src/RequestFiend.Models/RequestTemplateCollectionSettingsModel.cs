@@ -59,9 +59,11 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
             AllowScriptEvaluation.Reset();
         });
-    }
 
-    // TODO receive request for request added and deleted
+        messageService.Register<RequestTemplateCollectionSettingsModel, RequestTemplateRemovedFromCollectionMessage, FileModel>(this, file, (_, message) => {
+            Requests.Remove(new(message.Request));
+        });
+    }
 
     [RelayCommand]
     public async Task Update() {
