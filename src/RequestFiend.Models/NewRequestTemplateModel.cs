@@ -59,6 +59,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new RequestTemplateCreatedMessage(File.FilePath, Collection, request));
+        messageService.Send(new RequestTemplateAddedToCollectionMessage(request), File);
         messageService.Send(new SuccessMessage("Request had been added"));
     }
 

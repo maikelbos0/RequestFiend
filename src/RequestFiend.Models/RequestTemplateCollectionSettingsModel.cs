@@ -60,9 +60,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             AllowScriptEvaluation.Reset();
         });
 
-        messageService.Register<RequestTemplateCollectionSettingsModel, RequestTemplateRemovedFromCollectionMessage, FileModel>(this, file, (_, message) => {
-            Requests.Remove(new(message.Request));
-        });
+        messageService.Register<RequestTemplateCollectionSettingsModel, RequestTemplateRemovedFromCollectionMessage, FileModel>(this, file, (_, message) => Requests.Remove(new(message.Request)));
+
+        messageService.Register<RequestTemplateCollectionSettingsModel, RequestTemplateAddedToCollectionMessage, FileModel>(this, file, (_, message) => Requests.Add(new(message.Request)));
     }
 
     [RelayCommand]
