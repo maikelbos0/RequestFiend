@@ -179,6 +179,10 @@ public class RequestTemplateCollectionSettingsModelTests {
             },
             DefaultHeaders = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" }
             }
         };
 
@@ -190,7 +194,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         );
-        // TODO test order
+        
         subject.AllowScriptEvaluation.Value = true;
         subject.DefaultUrl.Value = "https://default";
         subject.IgnoreRemoteCertificateNotAvailable.Value = true;
@@ -200,8 +204,12 @@ public class RequestTemplateCollectionSettingsModelTests {
         subject.Variables[0].Value.Value = "Value";
         subject.DefaultHeaders[0].Name.Value = "Name";
         subject.DefaultHeaders[0].Value.Value = "Value";
+        (subject.Requests[0], subject.Requests[1]) = (subject.Requests[1], subject.Requests[0]);
 
         await subject.Update();
+
+        Assert.Equal("Bar", collection.Requests[0].Name);
+        Assert.Equal("Foo", collection.Requests[1].Name);
 
         Assert.False(subject.AllowScriptEvaluation.IsModified);
         Assert.False(subject.DefaultUrl.IsModified);
@@ -210,6 +218,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.False(subject.IgnoreRemoteCertificateChainErrors.IsModified);
         Assert.False(subject.DefaultHeaders.IsModified);
         Assert.False(subject.Variables.IsModified);
+        Assert.False(subject.Requests.IsModified);
 
         preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, true);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
@@ -237,6 +246,10 @@ public class RequestTemplateCollectionSettingsModelTests {
             },
             DefaultHeaders = {
                 new() { Name = "PreviousName" }
+            },
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" }
             }
         };
 
@@ -248,11 +261,16 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         );
-        // TODO test order
+        
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.Variables[0].Name.Value = variableName;
+        (subject.Requests[0], subject.Requests[1]) = (subject.Requests[1], subject.Requests[0]);
 
         await subject.Update();
+
+
+        Assert.Equal("Foo", collection.Requests[0].Name);
+        Assert.Equal("Bar", collection.Requests[1].Name);
 
         preferencesService.DidNotReceive().SetCollectionAllowScriptEvaluation(Arg.Any<string>(), Arg.Any<bool>());
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());

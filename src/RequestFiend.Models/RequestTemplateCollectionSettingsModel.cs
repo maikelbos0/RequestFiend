@@ -69,8 +69,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             return;
         }
 
-        //var sortOrder = Requests.Select((requestTemplate, index) => (requestTemplate, index)).ToDictionary(x => x.requestTemplate, x => x.index);
-        //Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
+        var sortOrder = Requests.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
+        Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
         Reset();
 

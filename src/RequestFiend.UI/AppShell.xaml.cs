@@ -5,6 +5,7 @@ using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
 using RequestFiend.UI.Views;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,8 @@ public partial class AppShell : Shell,
     IRecipient<SuccessMessage>,
     IRecipient<OpenCollectionRequestMessage>,
     IRecipient<OpenTemplateRequestMessage>,
-    IRecipient<CreateRequestMessage> {
+    IRecipient<CreateRequestMessage>,
+    IRecipient<RequestTemplateCollectionSettingsUpdatedMessage> {
 
     private CancellationTokenSource? messageCancellationTokenSource;
 
@@ -146,6 +148,28 @@ public partial class AppShell : Shell,
 
         collectionItem.Items.Insert(index, item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
+    }
+
+    public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
+        var collectionItem = Items.First(item => item.StyleId != null);
+        var items = new List<ShellSection>();
+
+        foreach (var request in message.Collection.Requests) {
+            var requestTab = collectionItem.Items.Single(x => x.Items[0].Content is RequestTemplatePage page && ((RequestTemplateModel)page.BindingContext).Request == request);
+            var index = collectionItem.Items.IndexOf(requestTab);
+
+            items.Add(requestTab);
+            collectionItem.Items.Remove(requestTab);
+
+            while (index < collectionItem.Items.Count && collectionItem.Items[index].Items[0].Content is ExchangePage) {
+                items.Add(collectionItem.Items[index]);
+                collectionItem.Items.Remove(collectionItem.Items[index]);
+            }
+        }
+
+        foreach (var item in items) {
+            collectionItem.Items.Add(item);
+        }
     }
 
     private async Task CloseCollectionTab(Tab tab) {
