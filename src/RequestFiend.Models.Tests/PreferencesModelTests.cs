@@ -18,11 +18,28 @@ using Storage = Microsoft.Maui.Storage;
 namespace RequestFiend.Models.Tests;
 
 public class PreferencesModelTests {
+    [Theory]
+    [InlineData("", 0)]
+    [InlineData("0", 0)]
+    [InlineData("1", 1)]
+    [InlineData("10", 10)]
+    public void MaximumRecentCollectionCount(string maximumRecentCollectionCount, int expectedMaximumRecentCollectionCount) {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
+            MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount }
+        };
+
+        subject.MaximumRecentCollectionCount.Set();
+
+        preferencesService.Received().SetMaximumRecentCollectionCount(expectedMaximumRecentCollectionCount);
+    }
+
     [Fact]
     public void ScriptEvaluationMode() {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
-        var collection = new RequestTemplateCollection();
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[Models.ScriptEvaluationMode.Enabled] }
@@ -33,11 +50,28 @@ public class PreferencesModelTests {
         preferencesService.Received().SetScriptEvaluationMode(Models.ScriptEvaluationMode.Enabled);
     }
 
+    [Theory]
+    [InlineData("10", 10)]
+    [InlineData("1", 1)]
+    [InlineData("0", 0)]
+    [InlineData("", null)]
+    public void RequestTimeoutInSeconds(string requestTimeoutInSeconds, int? expectedRequestTimeoutInSeconds) {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
+            RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds }
+        };
+
+        subject.RequestTimeoutInSeconds.Set();
+
+        preferencesService.Received().SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
+    }
+
     [Fact]
     public void ExchangeLoggingPath() {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
-        var collection = new RequestTemplateCollection();
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             ExchangeLoggingPath = { Value = "./Location" }
@@ -54,7 +88,6 @@ public class PreferencesModelTests {
 
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
-        var collection = new RequestTemplateCollection();
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             ExchangeLoggingOutputTemplate = { Value = exchangeLoggingOutputTemplate }
@@ -71,7 +104,6 @@ public class PreferencesModelTests {
 
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
-        var collection = new RequestTemplateCollection();
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
             ActiveEnvironment = { Value = new(activeEnvironment) }
@@ -127,15 +159,8 @@ public class PreferencesModelTests {
         ], subject.Validatables);
     }
 
-    [Theory]
-    [InlineData("", 0, "10", 10)]
-    [InlineData("0", 0, "1", 1)]
-    [InlineData("1", 1, "0", 0)]
-    [InlineData("10", 10, "", null)]
-    public void Update(string maximumRecentCollectionCount, int expectedMaximumRecentCollectionCount, string requestTimeoutInSeconds, int? expectedRequestTimeoutInSeconds) {
-        const ScriptEvaluationMode scriptEvaluationMode = Models.ScriptEvaluationMode.Enabled;
-        const string exchangeLoggingPath = "./Path";
-        const string exchangeLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+    [Fact]
+    public void Update() {
         const string existingEnvironment = @"C:\Documents\Foo.json";
         const string newEnvironment = @"C:\Documents\Bar.json";
 
@@ -144,19 +169,11 @@ public class PreferencesModelTests {
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new PreferencesModel(preferencesService, messageService, Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
-            MaximumRecentCollectionCount = { Value = maximumRecentCollectionCount.ToString() },
-            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[scriptEvaluationMode] },
-            RequestTimeoutInSeconds = { Value = requestTimeoutInSeconds },
-            ExchangeLoggingPath = { Value = exchangeLoggingPath },
-            ExchangeLoggingOutputTemplate = { Value = exchangeLoggingOutputTemplate },
-            Environments = { new(newEnvironment) },
-            ActiveEnvironment = { Value = new(existingEnvironment) }
+            Environments = { new(newEnvironment) }
         };
 
         subject.Update();
 
-        preferencesService.Received(1).SetMaximumRecentCollectionCount(expectedMaximumRecentCollectionCount);
-        preferencesService.Received(1).SetRequestTimeoutInSeconds(expectedRequestTimeoutInSeconds);
         preferencesService.Received(1).SetEnvironments(Arg.Is<ValidatableImmutableCollection<FileModel>>(collection => collection.SequenceEqual(new FileModel[] { new(existingEnvironment), new(newEnvironment) })));
 
         Assert.False(subject.IsModified);
@@ -182,8 +199,6 @@ public class PreferencesModelTests {
 
         subject.Update();
 
-        preferencesService.DidNotReceive().SetMaximumRecentCollectionCount(Arg.Any<int>());
-        preferencesService.DidNotReceive().SetRequestTimeoutInSeconds(Arg.Any<int?>());
         preferencesService.DidNotReceive().SetEnvironments(Arg.Any<IEnumerable<FileModel>>());
 
         Assert.True(subject.IsModified);

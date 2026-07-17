@@ -34,9 +34,10 @@ public partial class PreferencesModel : PageBoundModelBase {
         this.popupService = popupService;
         this.fileSystem = fileSystem;
         this.environmentService = environmentService;
-        MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
+
+        MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), value => preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + value)), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()], _ => preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode()));
-        RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
+        RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", value => preferencesService.SetRequestTimeoutInSeconds(value.Length == 0 ? null : int.Parse(value)), Validator.Numeric);
         ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath, value => preferencesService.SetExchangeLoggingPath(value));
         ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate, value => preferencesService.SetExchangeLoggingOutputTemplate(value));
         Environments = new(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
@@ -50,9 +51,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         if (HasError) {
             return;
         }
-
-        preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + MaximumRecentCollectionCount.Value));
-        preferencesService.SetRequestTimeoutInSeconds(RequestTimeoutInSeconds.Value.Length == 0 ? null : int.Parse(RequestTimeoutInSeconds.Value));
+        
         preferencesService.SetEnvironments(Environments);
         preferencesService.TrimRecentCollections();
 
