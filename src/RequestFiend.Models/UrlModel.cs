@@ -27,7 +27,7 @@ public partial class UrlModel : BoundModelBase {
         var (baseUrl, parameters) = ParseUrl(url);
 
         Collection = collection;
-        BaseUrl = new(() => baseUrl, Validator.Required);
+        BaseUrl = new(() => baseUrl, _ => { }, Validator.Required);
         Parameters = new([.. parameters.Select(parameter => new NameValuePair() { Name = parameter.Name, Value = parameter.Value })], Validator.Required);
 
         ConfigureState([BaseUrl, Parameters]);

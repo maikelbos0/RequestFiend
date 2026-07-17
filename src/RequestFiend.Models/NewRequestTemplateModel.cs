@@ -14,8 +14,8 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
 
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
-    public ValidatableProperty<string> Name { get; } = new(() => "", Validator.Required);
-    public ValidatableProperty<string> Method { get; } = new(() => "GET", Validator.Required);
+    public ValidatableProperty<string> Name { get; } = new(() => "", _ => { }, Validator.Required);
+    public ValidatableProperty<string> Method { get; } = new(() => "GET", _ => { }, Validator.Required);
     public ValidatableProperty<string> Url { get; }
     
     public NewRequestTemplateModel(
@@ -32,7 +32,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         File = file;        
         Collection = collection;
 
-        Url = new(() => collection.DefaultUrl, Validator.Required);
+        Url = new(() => collection.DefaultUrl, _ => { }, Validator.Required);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, file.FilePath, (model, _) => {
             if (!model.Url.IsModified) {
                 model.Url.Reset();

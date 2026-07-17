@@ -18,7 +18,7 @@ public abstract partial class ValidatableProperty : ObservableObject, IValidatab
 public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     private readonly Func<TProperty> getter;
     private readonly Func<TProperty, bool> validator;
-    private readonly Action<TProperty>? setter;
+    private readonly Action<TProperty> setter;
     private TProperty initialValue;
     private TProperty value;
 
@@ -31,11 +31,9 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         }
     }
 
-    public ValidatableProperty(Func<TProperty> getter, Func<TProperty, bool> validator, params IValidatable[] dependencies) : this(getter, null, validator, dependencies) { }
+    public ValidatableProperty(Func<TProperty> getter, Action<TProperty> setter, params IValidatable[] dependencies) : this(getter, setter, _ => true, dependencies) { }
 
-    public ValidatableProperty(Func<TProperty> getter, Action<TProperty>? setter, params IValidatable[] dependencies) : this(getter, setter, _ => true, dependencies) { }
-
-    public ValidatableProperty(Func<TProperty> getter, Action<TProperty>? setter, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
+    public ValidatableProperty(Func<TProperty> getter, Action<TProperty> setter, Func<TProperty, bool> validator, params IValidatable[] dependencies) {
         this.getter = getter;
         this.setter = setter;
         this.validator = validator;
@@ -49,7 +47,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     }
 
     public override void Set() {
-        setter?.Invoke(value);
+        setter.Invoke(value);
         initialValue = value;
         UpdateState();
     }
