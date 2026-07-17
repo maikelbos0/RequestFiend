@@ -44,6 +44,8 @@ public class EnvironmentModelTests {
 
         await subject.Update(CancellationToken.None);
 
+        Assert.False(subject.IsModified);
+
         await environmentService.Received(1).Save(filePath, environment);
         await closeMethod.Received().Invoke(CancellationToken.None);
     }
@@ -65,6 +67,8 @@ public class EnvironmentModelTests {
         subject.Variables[0].Name.Value = "";
 
         await subject.Update(CancellationToken.None);
+
+        Assert.True(subject.IsModified);
 
         await environmentService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<Environment>());
         await closeMethod.DidNotReceive().Invoke(Arg.Any<CancellationToken>());

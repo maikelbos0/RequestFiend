@@ -219,14 +219,7 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal("Bar", collection.Requests[0].Name);
         Assert.Equal("Foo", collection.Requests[1].Name);
 
-        Assert.False(subject.AllowScriptEvaluation.IsModified);
-        Assert.False(subject.DefaultUrl.IsModified);
-        Assert.False(subject.IgnoreRemoteCertificateNotAvailable.IsModified);
-        Assert.False(subject.IgnoreRemoteCertificateNameMismatch.IsModified);
-        Assert.False(subject.IgnoreRemoteCertificateChainErrors.IsModified);
-        Assert.False(subject.DefaultHeaders.IsModified);
-        Assert.False(subject.Variables.IsModified);
-        Assert.False(subject.Requests.IsModified);
+        Assert.False(subject.IsModified);
 
         preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, true);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
@@ -276,9 +269,10 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         await subject.Update();
 
-
         Assert.Equal("Foo", collection.Requests[0].Name);
         Assert.Equal("Bar", collection.Requests[1].Name);
+
+        Assert.True(subject.IsModified);
 
         preferencesService.DidNotReceive().SetCollectionAllowScriptEvaluation(Arg.Any<string>(), Arg.Any<bool>());
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());

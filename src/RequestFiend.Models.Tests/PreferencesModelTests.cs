@@ -99,13 +99,7 @@ public class PreferencesModelTests {
         preferencesService.Received(1).SetEnvironments(Arg.Is<ValidatableImmutableCollection<FileModel>>(collection => collection.SequenceEqual(new FileModel[] { new(existingEnvironment), new(newEnvironment) })));
         preferencesService.Received(1).SetActiveEnvironment(new(existingEnvironment));
 
-        Assert.False(subject.MaximumRecentCollectionCount.IsModified);
-        Assert.False(subject.ScriptEvaluationMode.IsModified);
-        Assert.False(subject.RequestTimeoutInSeconds.IsModified);
-        Assert.False(subject.ExchangeLoggingPath.IsModified);
-        Assert.False(subject.ExchangeLoggingOutputTemplate.IsModified);
-        Assert.False(subject.Environments.IsModified);
-        Assert.False(subject.ActiveEnvironment.IsModified);
+        Assert.False(subject.IsModified);
 
         preferencesService.Received(1).TrimRecentCollections();
 
@@ -135,6 +129,8 @@ public class PreferencesModelTests {
         preferencesService.DidNotReceive().SetExchangeLoggingOutputTemplate(Arg.Any<string>());
         preferencesService.DidNotReceive().SetEnvironments(Arg.Any<IEnumerable<FileModel>>());
         preferencesService.DidNotReceive().SetActiveEnvironment(Arg.Any<FileModel?>());
+
+        Assert.True(subject.IsModified);
 
         preferencesService.DidNotReceive().TrimRecentCollections();
 

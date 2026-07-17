@@ -397,19 +397,7 @@ public class RequestTemplateModelTests {
 
         await subject.Update();
 
-        Assert.False(subject.Name.IsModified);
-        Assert.False(subject.Method.IsModified);
-        Assert.False(subject.Url.IsModified);
-        Assert.False(subject.Headers.IsModified);
-        Assert.False(subject.ContentType.IsModified);
-        Assert.False(subject.HasManualContentTypeHeader.IsModified);
-        Assert.False(subject.StringContent.IsModified);
-        Assert.False(subject.FileContent.IsModified);
-        Assert.False(subject.FormFieldContent.IsModified);
-        Assert.False(subject.FormFileContent.IsModified);
-        Assert.False(subject.PreExchangeScript.IsModified);
-        Assert.False(subject.PostExchangeScript.IsModified);
-        Assert.False(subject.OnExceptionScript.IsModified);
+        Assert.False(subject.IsModified);
 
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -459,6 +447,8 @@ public class RequestTemplateModelTests {
         subject.FormFileContent[0].Value.Value = formFileValue;
 
         await subject.Update();
+
+        Assert.True(subject.IsModified);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());

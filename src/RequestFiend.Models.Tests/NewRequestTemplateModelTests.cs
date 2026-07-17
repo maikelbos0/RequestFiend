@@ -61,9 +61,7 @@ public class NewRequestTemplateModelTests {
         Assert.Equal(method, request.Method);
         Assert.Equal(url, request.Url);
 
-        Assert.False(subject.Name.IsModified);
-        Assert.False(subject.Method.IsModified);
-        Assert.False(subject.Url.IsModified);
+        Assert.False(subject.IsModified);
 
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Is<RequestTemplateCreatedMessage>(message => message.FilePath == filePath && message.Collection == collection));
@@ -93,9 +91,7 @@ public class NewRequestTemplateModelTests {
 
         Assert.Empty(collection.Requests);
 
-        Assert.Equal(name, subject.Name.Value);
-        Assert.Equal(method, subject.Method.Value);
-        Assert.Equal(url, subject.Url.Value);
+        Assert.True(subject.IsModified);
 
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCreatedMessage>());
