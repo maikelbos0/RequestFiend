@@ -26,7 +26,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         get => value;
         set {
             if (SetProperty(ref this.value, value)) {
-                UpdateState(true);
+                UpdateState();
             }
         }
     }
@@ -43,7 +43,7 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         this.validator = validator;
         initialValue = value = getter();
 
-        UpdateState(false);        
+        UpdateState();
 
         foreach (var dependency in dependencies) {
             dependency.PropertyChanged += OnDependencyChanged;
@@ -53,27 +53,23 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
     public override void Set() {
         setter?.Invoke(value);
         initialValue = value;
-        UpdateState(false);
+        UpdateState();
     }
 
     public override void Reset() {
         initialValue = value = getter();
-        UpdateState(true);
+        UpdateState();
     }
 
     private void OnDependencyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(IValidatable.IsModified) || e.PropertyName == nameof(IValidatable.HasError)) {
-            UpdateState(true);
+            UpdateState();
         }
     }
 
-    private void UpdateState(bool invokeSetter) {
+    private void UpdateState() {
         HasError = !validator(Value);
         IsModified = !EqualityComparer<TProperty>.Default.Equals(Value, initialValue);
         IsModifiedWithoutError = IsModified && !HasError;
-
-        if (invokeSetter) {
-            setter?.Invoke(Value);
-        }
     }
 }

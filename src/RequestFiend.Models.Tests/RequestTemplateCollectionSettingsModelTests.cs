@@ -18,7 +18,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        _ = new RequestTemplateCollectionSettingsModel(
+        var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -29,6 +29,8 @@ public class RequestTemplateCollectionSettingsModelTests {
             DefaultUrl = { Value = "https://default" }
         };
 
+        subject.DefaultUrl.Set();
+
         Assert.Equal("https://default", collection.DefaultUrl);
     }
 
@@ -38,7 +40,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        _ = new RequestTemplateCollectionSettingsModel(
+        var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -46,10 +48,12 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         ) {
-            IgnoreRemoteCertificateNameMismatch = { Value = true }
+            IgnoreRemoteCertificateNotAvailable = { Value = true }
         };
 
-        Assert.True(collection.IgnoreRemoteCertificateNameMismatch);
+        subject.IgnoreRemoteCertificateNotAvailable.Set();
+
+        Assert.True(collection.IgnoreRemoteCertificateNotAvailable);
     }
 
     [Fact]
@@ -58,7 +62,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        _ = new RequestTemplateCollectionSettingsModel(
+        var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -68,6 +72,8 @@ public class RequestTemplateCollectionSettingsModelTests {
         ) {
             IgnoreRemoteCertificateNameMismatch = { Value = true }
         };
+
+        subject.IgnoreRemoteCertificateNameMismatch.Set();
 
         Assert.True(collection.IgnoreRemoteCertificateNameMismatch);
     }
@@ -78,7 +84,7 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var collection = new RequestTemplateCollection();
 
-        _ = new RequestTemplateCollectionSettingsModel(
+        var subject = new RequestTemplateCollectionSettingsModel(
             Substitute.For<IRequestTemplateCollectionService>(),
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
@@ -88,6 +94,8 @@ public class RequestTemplateCollectionSettingsModelTests {
         ) {
             IgnoreRemoteCertificateChainErrors = { Value = true }
         };
+
+        subject.IgnoreRemoteCertificateChainErrors.Set();
 
         Assert.True(collection.IgnoreRemoteCertificateChainErrors);
     }

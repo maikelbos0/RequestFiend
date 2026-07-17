@@ -80,7 +80,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         var sortOrder = Requests.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
         Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
         preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
-        Reset();
+        Set();
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));

@@ -61,7 +61,7 @@ public partial class PreferencesModel : PageBoundModelBase {
 
         preferencesService.TrimRecentCollections();
 
-        Reset();
+        Set();
 
         messageService.Send(new PreferencesUpdatedMessage());
         messageService.Send(new SuccessMessage("Preferences have been updated"));

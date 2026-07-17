@@ -13,6 +13,8 @@ public class NameValuePairModelTests {
             Name = { Value = "Name" }
         };
 
+        subject.Name.Set();
+
         Assert.Equal("Name", pair.Name);
     }
 
@@ -23,6 +25,8 @@ public class NameValuePairModelTests {
         var subject = new NameValuePairModel(pair, Validator.Required) {
             Value = { Value = "Value" }
         };
+
+        subject.Value.Set();
 
         Assert.Equal("Value", pair.Value);
     }

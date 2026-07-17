@@ -8,9 +8,11 @@ public class ScriptModelTests {
     [Fact]
     public void References() {
         var script = new Script();
-        _ = new ScriptModel(script) {
+        var subject = new ScriptModel(script) {
             References = { Value = $" Foo {System.Environment.NewLine}{System.Environment.NewLine} Bar " }
         };
+
+        subject.References.Set();
 
         Assert.Equal(["Foo", "Bar"], script.References);
     }
@@ -18,9 +20,11 @@ public class ScriptModelTests {
     [Fact]
     public void Code() {
         var script = new Script();
-        _ = new ScriptModel(script) {
+        var subject = new ScriptModel(script) {
             Code = { Value = "Code" }
         };
+
+        subject.Code.Set();
 
         Assert.Equal("Code", script.Code);
     }

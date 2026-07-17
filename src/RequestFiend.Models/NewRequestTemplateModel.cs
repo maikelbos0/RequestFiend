@@ -48,6 +48,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
             return;
         }
 
+        // TODO could be field so that it can have setters
         var request = new RequestTemplate() {
             Name = Name.Value,
             Method = Method.Value,

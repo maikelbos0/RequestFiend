@@ -98,7 +98,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             return;
         }
 
-        Reset();
+        Set();
 
         PageTitleBase = $"{File.Name} - {Request.Name}";
         ShellItemTitleBase = Request.Name;

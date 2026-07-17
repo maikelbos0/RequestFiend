@@ -32,6 +32,8 @@ public partial class EnvironmentModel : BoundModelBase {
             return;
         }
 
+        Set();
+
         await environmentService.Save(file.FilePath, environment);
         await closeMethod(cancellationToken);
     }

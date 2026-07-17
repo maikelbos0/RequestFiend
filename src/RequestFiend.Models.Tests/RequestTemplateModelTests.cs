@@ -26,9 +26,11 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             Name = { Value = "NewName" }
         };
+
+        subject.Name.Set();
 
         Assert.Equal("NewName", request.Name);
     }
@@ -46,11 +48,13 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
-            Name = { Value = "NewName" }
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+            Method = { Value = "POST" }
         };
 
-        Assert.Equal("NewName", request.Name);
+        subject.Method.Set();
+
+        Assert.Equal("POST", request.Method);
     }
 
     [Fact]
@@ -66,9 +70,11 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             Url = { Value = "https://url" }
         };
+
+        subject.Url.Set();
 
         Assert.Equal("https://url", request.Url);
     }
@@ -103,14 +109,16 @@ public class RequestTemplateModelTests {
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             ContentType = { Value = Options.ContentTypeMap[contentType] }
         };
-
-        Assert.Equal(contentType, request.ContentType);
         Assert.Equal(expectedUsesContent, subject.UsesContent);
         Assert.Equal(expectedUsesStructuredContent, subject.UsesStructuredContent);
         Assert.Equal(expectedUsesUnstructuredContent, subject.UsesUnstructuredContent);
         Assert.Equal(expectedUsesStringContent, subject.UsesStringContent);
         Assert.Equal(expectedUsesFileContent, subject.UsesFileContent);
         Assert.Equal(expectedUsesFormDataContent, subject.UsesFormDataContent);
+
+        subject.ContentType.Set();
+
+        Assert.Equal(contentType, request.ContentType);
     }
 
     [Fact]
@@ -126,9 +134,11 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             HasManualContentTypeHeader = { Value = true }
         };
+
+        subject.HasManualContentTypeHeader.Set();
 
         Assert.True(request.HasManualContentTypeHeader);
     }
@@ -146,9 +156,11 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             StringContent = { Value = "StringContent" }
         };
+
+        subject.StringContent.Set();
 
         Assert.Equal("StringContent", request.StringContent);
     }
@@ -166,9 +178,11 @@ public class RequestTemplateModelTests {
             Requests = { request }
         };
 
-        _ = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
             FileContent = { Value = "FileContent" }
         };
+
+        subject.FileContent.Set();
 
         Assert.Equal("FileContent", request.FileContent);
     }
