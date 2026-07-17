@@ -124,6 +124,36 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.True(collection.IgnoreRemoteCertificateChainErrors);
     }
 
+    [Fact]
+    public void Requests() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var firstRequest = new RequestTemplate() { Name = "Foo", Method = "GET", Url = "https://localhost/" };
+        var secondRequest = new RequestTemplate() { Name = "Bar", Method = "GET", Url = "https://localhost/" };
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                firstRequest,
+                secondRequest
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        (subject.Requests[0], subject.Requests[1]) = (subject.Requests[1], subject.Requests[0]);
+
+        subject.Requests.Set();
+
+        Assert.Equal(secondRequest, collection.Requests[0]);
+        Assert.Equal(firstRequest, collection.Requests[1]);
+    }
+
     [Theory]
     [InlineData(ScriptEvaluationMode.Disabled, false)]
     [InlineData(ScriptEvaluationMode.Enabled, false)]
@@ -209,10 +239,6 @@ public class RequestTemplateCollectionSettingsModelTests {
             },
             DefaultHeaders = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            Requests = {
-                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
-                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" }
             }
         };
 
@@ -224,7 +250,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         );
-        
+
         subject.AllowScriptEvaluation.Value = true;
         subject.DefaultUrl.Value = "https://default";
         subject.IgnoreRemoteCertificateNotAvailable.Value = true;
@@ -234,12 +260,8 @@ public class RequestTemplateCollectionSettingsModelTests {
         subject.Variables[0].Value.Value = "Value";
         subject.DefaultHeaders[0].Name.Value = "Name";
         subject.DefaultHeaders[0].Value.Value = "Value";
-        (subject.Requests[0], subject.Requests[1]) = (subject.Requests[1], subject.Requests[0]);
 
         await subject.Update();
-
-        Assert.Equal("Bar", collection.Requests[0].Name);
-        Assert.Equal("Foo", collection.Requests[1].Name);
 
         Assert.False(subject.IsModified);
 
@@ -268,10 +290,6 @@ public class RequestTemplateCollectionSettingsModelTests {
             },
             DefaultHeaders = {
                 new() { Name = "PreviousName" }
-            },
-            Requests = {
-                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
-                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" }
             }
         };
 
@@ -283,15 +301,11 @@ public class RequestTemplateCollectionSettingsModelTests {
             new(filePath),
             collection
         );
-        
+
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.Variables[0].Name.Value = variableName;
-        (subject.Requests[0], subject.Requests[1]) = (subject.Requests[1], subject.Requests[0]);
 
         await subject.Update();
-
-        Assert.Equal("Foo", collection.Requests[0].Name);
-        Assert.Equal("Bar", collection.Requests[1].Name);
 
         Assert.True(subject.IsModified);
 

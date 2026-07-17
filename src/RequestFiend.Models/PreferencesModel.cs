@@ -38,10 +38,13 @@ public partial class PreferencesModel : PageBoundModelBase {
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), value => preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + value)), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()], _ => preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode()));
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", value => preferencesService.SetRequestTimeoutInSeconds(value.Length == 0 ? null : int.Parse(value)), Validator.Numeric);
-        ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath, value => preferencesService.SetExchangeLoggingPath(value));
-        ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate, value => preferencesService.SetExchangeLoggingOutputTemplate(value));
-        Environments = new(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
-        ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()), value => preferencesService.SetActiveEnvironment(value));
+        ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath, preferencesService.SetExchangeLoggingPath);
+        ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate, preferencesService.SetExchangeLoggingOutputTemplate);
+        Environments = new(
+            () => preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase),
+            preferencesService.SetEnvironments
+        );
+        ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()), preferencesService.SetActiveEnvironment);
 
         ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
     }
@@ -51,11 +54,10 @@ public partial class PreferencesModel : PageBoundModelBase {
         if (HasError) {
             return;
         }
-        
-        preferencesService.SetEnvironments(Environments);
-        preferencesService.TrimRecentCollections();
 
         Set();
+
+        preferencesService.TrimRecentCollections();
 
         messageService.Send(new PreferencesUpdatedMessage());
         messageService.Send(new SuccessMessage("Preferences have been updated"));
@@ -152,8 +154,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     public async Task ResetPreferences() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to reset your preferences?")) {
             preferencesService.Reset();
-
-            Environments.Clear();
+            
             Reset();
 
             messageService.Send(new PreferencesUpdatedMessage());

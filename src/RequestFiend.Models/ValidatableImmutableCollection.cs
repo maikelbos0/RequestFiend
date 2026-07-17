@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -6,6 +7,9 @@ using System.ComponentModel;
 namespace RequestFiend.Models;
 
 public class ValidatableImmutableCollection<TImmutable> : ObservableCollection<TImmutable>, IValidatable where TImmutable : IImmutable {
+    private readonly Func<IEnumerable<TImmutable>> getter;
+    private readonly Action<IEnumerable<TImmutable>> setter;
+
     public bool HasError => false;
 
     public bool IsModified {
@@ -28,7 +32,10 @@ public class ValidatableImmutableCollection<TImmutable> : ObservableCollection<T
         }
     }
 
-    public ValidatableImmutableCollection(IEnumerable<TImmutable> collection) : base(collection) {
+    public ValidatableImmutableCollection(Func<IEnumerable<TImmutable>> getter, Action<IEnumerable<TImmutable>> setter) : base(getter()) {
+        this.getter = getter;
+        this.setter = setter;
+
         CollectionChanged += OnCollectionChanged;
 
         HasItems = Count > 0;
@@ -41,10 +48,15 @@ public class ValidatableImmutableCollection<TImmutable> : ObservableCollection<T
     }
 
     public void Set() {
+        setter(this);
         IsModified = false;
     }
 
     public void Reset() {
+        Clear();
+        foreach (var item in getter()) {
+            Add(item);
+        }
         IsModified = false;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -11,7 +12,7 @@ public class ValidatableImmutableCollectionTests {
             Substitute.For<IImmutable>(),
             Substitute.For<IImmutable>()
         };
-        var subject = new ValidatableImmutableCollection<IImmutable>(collection);
+        var subject = new ValidatableImmutableCollection<IImmutable>(() => collection, Substitute.For<Action<IEnumerable<IImmutable>>>());
 
         Assert.Equal(collection, subject);
         Assert.False(subject.IsModified);
@@ -25,11 +26,10 @@ public class ValidatableImmutableCollectionTests {
     [InlineData(0, 2, true, false)]
     [InlineData(1, 2, true, true)]
     public void State(int valuesToAdd, int valuesToRemove, bool expectedIsModified, bool expectedHasItems) {
-        var collection = new List<IImmutable>() {
+        var subject = new ValidatableImmutableCollection<IImmutable>(() => [
             Substitute.For<IImmutable>(),
             Substitute.For<IImmutable>()
-        };
-        var subject = new ValidatableImmutableCollection<IImmutable>(collection);
+        ], Substitute.For<Action<IEnumerable<IImmutable>>>());
 
         for (var i = 0; i < valuesToRemove; i++) {
             subject.Remove(subject[^1]);
@@ -45,11 +45,11 @@ public class ValidatableImmutableCollectionTests {
 
     [Fact]
     public void Remove() {
-        var subject = new ValidatableImmutableCollection<IImmutable>([
+        var subject = new ValidatableImmutableCollection<IImmutable>(() => [
             Substitute.For<IImmutable>(),
             Substitute.For<IImmutable>(),
             Substitute.For<IImmutable>()
-        ]);
+        ], Substitute.For<Action<IEnumerable<IImmutable>>>());
 
         var fileModel = subject[1];
 
@@ -62,7 +62,7 @@ public class ValidatableImmutableCollectionTests {
 
     [Fact]
     public void Add() {
-        var subject = new ValidatableImmutableCollection<IImmutable>([]) {
+        var subject = new ValidatableImmutableCollection<IImmutable>(() => [], Substitute.For<Action<IEnumerable<IImmutable>>>()) {
             Substitute.For<IImmutable>()
         };
 
@@ -72,23 +72,28 @@ public class ValidatableImmutableCollectionTests {
 
     [Fact]
     public void Set() {
-        var subject = new ValidatableImmutableCollection<IImmutable>([]) {
+        var setter = Substitute.For<Action<IEnumerable<IImmutable>>>();
+
+        var subject = new ValidatableImmutableCollection<IImmutable>(() => [], setter) {
             Substitute.For<IImmutable>()
         };
 
         subject.Set();
 
+        setter.Received(1).Invoke(subject);
         Assert.False(subject.IsModified);
     }
 
     [Fact]
     public void Reset() {
-        var subject = new ValidatableImmutableCollection<IImmutable>([]) {
+        var subject = new ValidatableImmutableCollection<IImmutable>(() => [Substitute.For<IImmutable>()], Substitute.For<Action<IEnumerable<IImmutable>>>()) {
             Substitute.For<IImmutable>()
         };
 
         subject.Reset();
 
+        Assert.Single(subject);
+        Assert.True(subject.HasItems);
         Assert.False(subject.IsModified);
     }
 }

@@ -51,7 +51,13 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
-        Requests = new(collection.Requests.Select(request => new RequestTemplateItemModel(request)));
+        Requests = new(
+            () => collection.Requests.Select(request => new RequestTemplateItemModel(request)),
+            value => {
+                var sortOrder = value.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
+                Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
+            }
+        );
 
         ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, Variables, DefaultHeaders, Requests]);
 
@@ -77,8 +83,6 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             return;
         }
 
-        var sortOrder = Requests.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
-        Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
         Set();
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);

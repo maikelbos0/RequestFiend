@@ -99,6 +99,22 @@ public class PreferencesModelTests {
     }
 
     [Fact]
+    public void Environments() {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
+            Environments = {
+                new(@"C:\Documents\Environment.json")
+            }
+        };
+
+        subject.Environments.Set();
+
+        preferencesService.Received().SetEnvironments(subject.Environments);
+    }
+
+    [Fact]
     public void ActiveEnvironment() {
         const string activeEnvironment = @"C:\Documents\Environment.json";
 
@@ -174,8 +190,6 @@ public class PreferencesModelTests {
 
         subject.Update();
 
-        preferencesService.Received(1).SetEnvironments(Arg.Is<ValidatableImmutableCollection<FileModel>>(collection => collection.SequenceEqual(new FileModel[] { new(existingEnvironment), new(newEnvironment) })));
-
         Assert.False(subject.IsModified);
 
         preferencesService.Received(1).TrimRecentCollections();
@@ -198,8 +212,6 @@ public class PreferencesModelTests {
         };
 
         subject.Update();
-
-        preferencesService.DidNotReceive().SetEnvironments(Arg.Any<IEnumerable<FileModel>>());
 
         Assert.True(subject.IsModified);
 
