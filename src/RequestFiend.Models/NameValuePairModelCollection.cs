@@ -87,6 +87,15 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         collection.Add(pair);
     }
 
+    public void Set() {
+        foreach (var pair in this) {
+            pair.Set();
+        }
+
+        unmodifiedCount = Count;
+        IsModified = false;
+    }
+
     public void Reset() {
         foreach (var pair in this) {
             pair.Reset();

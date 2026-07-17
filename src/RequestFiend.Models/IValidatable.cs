@@ -6,5 +6,7 @@ public interface IValidatable : INotifyPropertyChanged {
     bool HasError { get; }
     bool IsModified { get; }
 
+    void Set();
+
     void Reset();
 }

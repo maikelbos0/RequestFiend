@@ -49,4 +49,30 @@ public class BoundModelBaseTests {
         Assert.Equal(expectedIsModified, subject.IsModified);
         Assert.Equal(expectedIsModifiedWithoutError, subject.IsModifiedWithoutError);
     }
+
+    [Fact]
+    public void Set() {
+        var validatable = Substitute.For<IValidatable>();
+
+        var subject = new BoundModelBase();
+
+        subject.ConfigureState([validatable]);
+
+        subject.Set();
+
+        validatable.Received(1).Set();
+    }
+
+    [Fact]
+    public void Reset() {
+        var validatable = Substitute.For<IValidatable>();
+
+        var subject = new BoundModelBase();
+
+        subject.ConfigureState([validatable]);
+
+        subject.Reset();
+
+        validatable.Received(1).Reset();
+    }
 }

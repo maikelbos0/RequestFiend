@@ -10,6 +10,8 @@ public abstract partial class ValidatableProperty : ObservableObject, IValidatab
     [ObservableProperty] public partial bool IsModified { get; protected set; }
     [ObservableProperty] public partial bool IsModifiedWithoutError { get; protected set; }
 
+    public abstract void Set();
+
     public abstract void Reset();
 }
 
@@ -46,6 +48,12 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         foreach (var dependency in dependencies) {
             dependency.PropertyChanged += OnDependencyChanged;
         }
+    }
+
+    public override void Set() {
+        setter?.Invoke(value);
+        initialValue = value;
+        UpdateState(false);
     }
 
     public override void Reset() {

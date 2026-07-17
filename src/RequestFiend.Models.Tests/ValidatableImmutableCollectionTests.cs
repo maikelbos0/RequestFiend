@@ -71,6 +71,17 @@ public class ValidatableImmutableCollectionTests {
     }
 
     [Fact]
+    public void Set() {
+        var subject = new ValidatableImmutableCollection<IImmutable>([]) {
+            Substitute.For<IImmutable>()
+        };
+
+        subject.Set();
+
+        Assert.False(subject.IsModified);
+    }
+
+    [Fact]
     public void Reset() {
         var subject = new ValidatableImmutableCollection<IImmutable>([]) {
             Substitute.For<IImmutable>()

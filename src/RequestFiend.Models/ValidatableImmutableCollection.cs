@@ -40,6 +40,10 @@ public class ValidatableImmutableCollection<TImmutable> : ObservableCollection<T
         IsModified = true;
     }
 
+    public void Set() {
+        IsModified = false;
+    }
+
     public void Reset() {
         IsModified = false;
     }

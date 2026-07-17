@@ -125,6 +125,32 @@ public class NameValuePairModelCollectionTests {
     }
 
     [Fact]
+    public void Set() {
+        var collection = new List<NameValuePair>() {
+            new() { Name = "FirstName", Value = "FirstValue" },
+            new() { Name = "SecondName", Value = "SecondValue" }
+        };
+
+        var subject = new NameValuePairModelCollection(collection, Validator.Required);
+
+        foreach (var pair in subject) {
+            pair.Name.Value = "ChangedName";
+            pair.Value.Value = "ChangedValue";
+        }
+
+        subject.Set();
+
+        Assert.False(subject.IsModified);
+        foreach (var pair in subject) {
+            Assert.False(pair.IsModified);
+        }
+        foreach (var pair in collection) {
+            Assert.Equal("ChangedName", pair.Name);
+            Assert.Equal("ChangedValue", pair.Value);
+        }
+    }
+
+    [Fact]
     public void Reset() {
         var collection = new List<NameValuePair>() {
             new() { Name = "FirstName", Value = "FirstValue" },
