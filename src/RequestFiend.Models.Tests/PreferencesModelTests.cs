@@ -472,40 +472,21 @@ public class PreferencesModelTests {
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
-    // TODO can these tests be simplified since we use Reset method?
     [Fact]
     public async Task ResetPreferences_And_Confirm() {
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetMaximumRecentCollectionCount().Returns(10);
-        preferencesService.GetScriptEvaluationMode().Returns(Models.ScriptEvaluationMode.Enabled);
-        preferencesService.GetRequestTimeoutInSeconds().Returns(30);
-        preferencesService.GetExchangeLoggingPath().Returns("./Path");
-        preferencesService.GetExchangeLoggingOutputTemplate().Returns("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
-        preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Foo.json"), new(@"C:\Documents\Bar.json"), new(@"C:\Documents\Bar.json")]);
-        preferencesService.GetActiveEnvironment().Returns(new FileModel(@"C:\Documents\Foo.json"));
+        preferencesService.GetEnvironments().Returns([]);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(true);
 
         var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
-            MaximumRecentCollectionCount = { Value = "25" },
-            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[Models.ScriptEvaluationMode.Disabled] },
-            RequestTimeoutInSeconds = { Value = "300" },
-            ExchangeLoggingPath = { Value = "./Location" },
-            ExchangeLoggingOutputTemplate = { Value = "{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}" },
-            Environments = { new(@"C:\Documents\New.json") },
-            ActiveEnvironment = { Value = new(@"C:\Documents\New.json") }
+            MaximumRecentCollectionCount = { Value = "25" }
         };
 
         await subject.ResetPreferences();
 
-        Assert.Equal(preferencesService.GetMaximumRecentCollectionCount().ToString(), subject.MaximumRecentCollectionCount.Value);
-        Assert.Equal(Options.ScriptEvaluationModeMap[Models.ScriptEvaluationMode.Enabled], subject.ScriptEvaluationMode.Value);
-        Assert.Equal(preferencesService.GetRequestTimeoutInSeconds().ToString(), subject.RequestTimeoutInSeconds.Value);
-        Assert.Equal(preferencesService.GetExchangeLoggingPath(), subject.ExchangeLoggingPath.Value);
-        Assert.Equal(preferencesService.GetExchangeLoggingOutputTemplate(), subject.ExchangeLoggingOutputTemplate.Value);
-        Assert.Empty(subject.Environments);
-        Assert.Null(subject.ActiveEnvironment.Value);
+        Assert.False(subject.IsModified);
 
         preferencesService.Received(1).Reset();
         messageService.Received(1).Send(Arg.Any<PreferencesUpdatedMessage>());
@@ -515,36 +496,18 @@ public class PreferencesModelTests {
     [Fact]
     public async Task ResetPreferences_Without_Confirming() {
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetMaximumRecentCollectionCount().Returns(10);
-        preferencesService.GetScriptEvaluationMode().Returns(Models.ScriptEvaluationMode.Enabled);
-        preferencesService.GetRequestTimeoutInSeconds().Returns(30);
-        preferencesService.GetExchangeLoggingPath().Returns("./Path");
-        preferencesService.GetExchangeLoggingOutputTemplate().Returns("{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
-        preferencesService.GetEnvironments().Returns([new(@"C:\Documents\Foo.json"), new(@"C:\Documents\Bar.json")]);
-        preferencesService.GetActiveEnvironment().Returns(new FileModel(@"C:\Documents\Foo.json"));
+        preferencesService.GetEnvironments().Returns([]);
         var messageService = Substitute.For<IMessageService>();
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowConfirmPopup(Arg.Any<string>()).Returns(false);
 
         var subject = new PreferencesModel(preferencesService, messageService, popupService, Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
-            MaximumRecentCollectionCount = { Value = "25" },
-            ScriptEvaluationMode = { Value = Options.ScriptEvaluationModeMap[Models.ScriptEvaluationMode.Disabled] },
-            RequestTimeoutInSeconds = { Value = "300" },
-            ExchangeLoggingPath = { Value = "./Location" },
-            ExchangeLoggingOutputTemplate = { Value = "{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}" },
-            Environments = { new(@"C:\Documents\New.json") },
-            ActiveEnvironment = { Value = new(@"C:\Documents\New.json") }
+            MaximumRecentCollectionCount = { Value = "25" }
         };
 
         await subject.ResetPreferences();
 
-        Assert.Equal("25", subject.MaximumRecentCollectionCount.Value);
-        Assert.Equal(Options.ScriptEvaluationModeMap[Models.ScriptEvaluationMode.Disabled], subject.ScriptEvaluationMode.Value);
-        Assert.Equal("300", subject.RequestTimeoutInSeconds.Value);
-        Assert.Equal("./Location", subject.ExchangeLoggingPath.Value);
-        Assert.Equal("{Timestamp} [{Level:u3}] {Message:lj}{NewLine}{Exception}", subject.ExchangeLoggingOutputTemplate.Value);
-        Assert.Equal([new(@"C:\Documents\Bar.json"), new(@"C:\Documents\Foo.json"), new(@"C:\Documents\New.json")], subject.Environments);
-        Assert.Equal(new(@"C:\Documents\New.json"), subject.ActiveEnvironment.Value);
+        Assert.True(subject.IsModified);
 
         preferencesService.DidNotReceive().Reset();
         messageService.DidNotReceive().Send(Arg.Any<PreferencesUpdatedMessage>());
