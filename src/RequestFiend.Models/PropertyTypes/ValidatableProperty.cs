@@ -31,8 +31,6 @@ public sealed class ValidatableProperty<TProperty> : ValidatableProperty {
         }
     }
 
-    public ValidatableProperty(Func<TProperty> getter, params IValidatable[] dependencies) : this(getter, null, _ => true, dependencies) { }
-
     public ValidatableProperty(Func<TProperty> getter, Func<TProperty, bool> validator, params IValidatable[] dependencies) : this(getter, null, validator, dependencies) { }
 
     public ValidatableProperty(Func<TProperty> getter, Action<TProperty>? setter, params IValidatable[] dependencies) : this(getter, setter, _ => true, dependencies) { }

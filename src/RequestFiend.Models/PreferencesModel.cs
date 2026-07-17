@@ -35,12 +35,12 @@ public partial class PreferencesModel : PageBoundModelBase {
         this.fileSystem = fileSystem;
         this.environmentService = environmentService;
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), Validator.Numeric);
-        ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()]);
+        ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()], _ => preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode()));
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", Validator.Numeric);
-        ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath);
-        ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate);
+        ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath, value => preferencesService.SetExchangeLoggingPath(value));
+        ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate, value => preferencesService.SetExchangeLoggingOutputTemplate(value));
         Environments = new(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase));
-        ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()));
+        ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()), value => preferencesService.SetActiveEnvironment(value));
 
         ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
     }
@@ -52,13 +52,8 @@ public partial class PreferencesModel : PageBoundModelBase {
         }
 
         preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + MaximumRecentCollectionCount.Value));
-        preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode());
         preferencesService.SetRequestTimeoutInSeconds(RequestTimeoutInSeconds.Value.Length == 0 ? null : int.Parse(RequestTimeoutInSeconds.Value));
-        preferencesService.SetExchangeLoggingPath(ExchangeLoggingPath.Value);
-        preferencesService.SetExchangeLoggingOutputTemplate(ExchangeLoggingOutputTemplate.Value);
         preferencesService.SetEnvironments(Environments);
-        preferencesService.SetActiveEnvironment(ActiveEnvironment.Value);
-
         preferencesService.TrimRecentCollections();
 
         Set();

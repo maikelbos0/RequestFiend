@@ -44,11 +44,11 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         Collection = collection;
 
         ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
-        AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath));
+        AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath), value => preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, value));
         DefaultUrl = new(() => collection.DefaultUrl, value => collection.DefaultUrl = value);
-        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable, setter: value => collection.IgnoreRemoteCertificateNotAvailable = value);
-        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, setter: value => collection.IgnoreRemoteCertificateNameMismatch = value);
-        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, setter: value => collection.IgnoreRemoteCertificateChainErrors = value);
+        IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable, value => collection.IgnoreRemoteCertificateNotAvailable = value);
+        IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, value => collection.IgnoreRemoteCertificateNameMismatch = value);
+        IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
         Requests = new(collection.Requests.Select(request => new RequestTemplateItemModel(request)));
@@ -79,7 +79,6 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         var sortOrder = Requests.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
         Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
-        preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, AllowScriptEvaluation.Value);
         Set();
 
         await requestTemplateCollectionService.Save(File.FilePath, Collection);

@@ -13,6 +13,30 @@ namespace RequestFiend.Models.Tests;
 
 public class RequestTemplateCollectionSettingsModelTests {
     [Fact]
+    public void AllowScriptEvaluation() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(false);
+        var collection = new RequestTemplateCollection();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            preferencesService,
+            new(filePath),
+            collection
+        ) {
+            AllowScriptEvaluation = { Value = true }
+        };
+
+        subject.AllowScriptEvaluation.Set();
+
+        preferencesService.Received().SetCollectionAllowScriptEvaluation(filePath, true);
+    }
+
+    [Fact]
     public void DefaultUrl() {
         const string filePath = @"C:\Documents\External data requests.json";
 
@@ -175,8 +199,6 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
         var messageService = Substitute.For<IMessageService>();
-        var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(false);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://previous",
             IgnoreRemoteCertificateNotAvailable = false,
@@ -198,7 +220,7 @@ public class RequestTemplateCollectionSettingsModelTests {
             requestTemplateCollectionService,
             Substitute.For<IPopupService>(),
             messageService,
-            preferencesService,
+            Substitute.For<IPreferencesService>(),
             new(filePath),
             collection
         );
@@ -221,7 +243,6 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         Assert.False(subject.IsModified);
 
-        preferencesService.Received(1).SetCollectionAllowScriptEvaluation(filePath, true);
         await requestTemplateCollectionService.Received(1).Save(filePath, collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
         messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.Collection == collection));
@@ -274,7 +295,6 @@ public class RequestTemplateCollectionSettingsModelTests {
 
         Assert.True(subject.IsModified);
 
-        preferencesService.DidNotReceive().SetCollectionAllowScriptEvaluation(Arg.Any<string>(), Arg.Any<bool>());
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
