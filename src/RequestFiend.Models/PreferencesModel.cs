@@ -129,7 +129,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public async Task OpenEnvironmentPopup(FileModel file) {
+    public async Task ShowEnvironmentPopup(FileModel file) {
         if (fileSystem.File.Exists(file.FilePath)) {
             try {
                 var environment = JsonSerializer.Deserialize<Environment>(await fileSystem.File.ReadAllTextAsync(file.FilePath));

@@ -45,7 +45,7 @@
 
                                     <Button 
                                         Text="Edit"
-                                        Command="{Binding x:DataType='models:PreferencesModel', Path=OpenEnvironmentPopupCommand, Source={RelativeSource AncestorType={x:Type models:PreferencesModel}}}"
+                                        Command="{Binding x:DataType='models:PreferencesModel', Path=ShowEnvironmentPopupCommand, Source={RelativeSource AncestorType={x:Type models:PreferencesModel}}}"
                                         CommandParameter="{Binding .}"
                                         Style="{StaticResource SecondaryButton}" 
                                         Grid.Column="1" 

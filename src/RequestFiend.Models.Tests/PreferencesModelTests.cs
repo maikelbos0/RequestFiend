@@ -409,7 +409,7 @@ public class PreferencesModelTests {
     }
 
     [Fact]
-    public async Task OpenEnvironmentPopup() {
+    public async Task ShowEnvironmentPopup() {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -422,14 +422,14 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, environmentService);
 
-        await subject.OpenEnvironmentPopup(new(filePath));
+        await subject.ShowEnvironmentPopup(new(filePath));
 
         await popupService.Received(1).ShowEnvironmentPopup(environmentService, new(filePath), Arg.Any<Environment>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
     [Fact]
-    public async Task OpenEnvironmentPopup_Fails_For_Missing_File() {
+    public async Task ShowEnvironmentPopup_Fails_For_Missing_File() {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -440,14 +440,14 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, Substitute.For<IEnvironmentService>());
 
-        await subject.OpenEnvironmentPopup(new(filePath));
+        await subject.ShowEnvironmentPopup(new(filePath));
 
         await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
     [Fact]
-    public async Task OpenEnvironmentPopup_Fails_For_Deserialization_Error() {
+    public async Task ShowEnvironmentPopup_Fails_For_Deserialization_Error() {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -459,14 +459,14 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, Substitute.For<IEnvironmentService>());
 
-        await subject.OpenEnvironmentPopup(new(filePath));
+        await subject.ShowEnvironmentPopup(new(filePath));
 
         await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
     [Fact]
-    public async Task OpenEnvironmentPopup_Fails_For_Null_Deserialization() {
+    public async Task ShowEnvironmentPopup_Fails_For_Null_Deserialization() {
         const string filePath = @"C:\Documents\Local.json";
 
         var popupService = Substitute.For<IPopupService>();
@@ -478,7 +478,7 @@ public class PreferencesModelTests {
 
         var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), popupService, fileSystem, Substitute.For<IEnvironmentService>());
 
-        await subject.OpenEnvironmentPopup(new(filePath));
+        await subject.ShowEnvironmentPopup(new(filePath));
 
         await popupService.DidNotReceive().ShowEnvironmentPopup(Arg.Any<IEnvironmentService>(), Arg.Any<FileModel>(), Arg.Any<Environment>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
