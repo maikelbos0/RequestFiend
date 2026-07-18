@@ -14,7 +14,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     private readonly Func<string, bool> nameValidator;
     private readonly Func<string, bool> valueValidator;
     private readonly IValidatable[] dependencies;
-    private int unmodifiedCount;
+    private readonly Queue<Action> changes = [];
 
     public bool HasError {
         get;
@@ -61,7 +61,6 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
             base.Add(new(pair, nameValidator, valueValidator, dependencies));
         }
 
-        unmodifiedCount = Count;
         IsModified = false;
     }
 
@@ -70,7 +69,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         var index = IndexOf(pair);
 
         if (index > -1) {
-            collection.RemoveAt(index);
+            changes.Enqueue(() => collection.RemoveAt(index));
             base.Remove(pair);
         }
     }
@@ -84,24 +83,26 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
 
     public void Add(NameValuePair pair) {
         base.Add(new(pair, nameValidator, valueValidator, dependencies));
-        collection.Add(pair);
+        changes.Enqueue(() => collection.Add(pair));
     }
 
     public void Set() {
+        while (changes.TryDequeue(out var change)) {
+            change();
+        }
+
         foreach (var pair in this) {
             pair.Set();
         }
 
-        unmodifiedCount = Count;
         IsModified = false;
     }
 
     public void Reset() {
-        foreach (var pair in this) {
-            pair.Reset();
+        Clear();
+        foreach (var pair in collection) {
+            Add(pair);
         }
-
-        unmodifiedCount = Count;
         IsModified = false;
     }
 
@@ -130,6 +131,6 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
     private void UpdateState() {
         HasItems = Count > 0;
         HasError = this.Any(nameValuePairModel => nameValuePairModel.HasError);
-        IsModified = Count != unmodifiedCount || this.Any(nameValuePairModel => nameValuePairModel.IsModified);
+        IsModified = Count != collection.Count || this.Any(nameValuePairModel => nameValuePairModel.IsModified);
     }
 }

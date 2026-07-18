@@ -76,7 +76,8 @@ public class NameValuePairModelCollectionTests {
         Assert.True(subject.HasItems);
         Assert.Equal(2, subject.Count);
         Assert.DoesNotContain(pair, subject);
-        Assert.Equal(2, collection.Count);
+
+        Assert.Equal(3, collection.Count);
     }
 
     [Theory]
@@ -97,7 +98,8 @@ public class NameValuePairModelCollectionTests {
         Assert.Equal(expectedHasError, pair.Name.HasError);
         Assert.Equal("", pair.Value.Value);
         Assert.Equal(expectedHasError, pair.Value.HasError);
-        Assert.Single(collection);
+
+        Assert.Empty(collection);
     }
 
     [Theory]
@@ -121,14 +123,16 @@ public class NameValuePairModelCollectionTests {
         Assert.Equal(expectedHasError, pair.Name.HasError);
         Assert.Equal(value, pair.Value.Value);
         Assert.Equal(expectedHasError, pair.Value.HasError);
-        Assert.Single(collection);
+
+        Assert.Empty(collection);
     }
 
     [Fact]
     public void Set() {
         var collection = new List<NameValuePair>() {
             new() { Name = "FirstName", Value = "FirstValue" },
-            new() { Name = "SecondName", Value = "SecondValue" }
+            new() { Name = "SecondName", Value = "SecondValue" },
+            new() { Name = "ThirdName", Value = "ThirdValue" }
         };
 
         var subject = new NameValuePairModelCollection(collection, Validator.Required);
@@ -138,15 +142,22 @@ public class NameValuePairModelCollectionTests {
             pair.Value.Value = "ChangedValue";
         }
 
+        subject.Remove(subject[1]);
+        subject.Add("NewName", "NewValue");
+        subject.Remove(subject[^1]);
+        subject.Add("NewName", "NewValue");
+
         subject.Set();
 
         Assert.False(subject.IsModified);
         foreach (var pair in subject) {
             Assert.False(pair.IsModified);
         }
-        foreach (var pair in collection) {
-            Assert.Equal("ChangedName", pair.Name);
-            Assert.Equal("ChangedValue", pair.Value);
+
+        Assert.Equal(3, collection.Count);
+        for (var i = 0; i < subject.Count; i++) {
+            Assert.Equal(subject[i].Name.Value, collection[i].Name);
+            Assert.Equal(subject[i].Value.Value, collection[i].Value);
         }
     }
 
@@ -164,8 +175,11 @@ public class NameValuePairModelCollectionTests {
             pair.Value.Value = "ChangedValue";
         }
 
+        subject.Add("NewName", "NewValue");
+
         subject.Reset();
 
+        Assert.Equal(2, subject.Count);
         Assert.False(subject.IsModified);
         foreach (var pair in subject) {
             Assert.False(pair.IsModified);
