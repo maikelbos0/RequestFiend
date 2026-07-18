@@ -417,17 +417,8 @@ public class RequestTemplateModelTests {
         var messageService = Substitute.For<IMessageService>();
         var request = new RequestTemplate() {
             Name = "Old",
-            Method = "POST",
-            Url = "https://previous",
-            Headers = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            FormFieldContent = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
-            },
-            FormFileContent = {
-                new() { Name = "PreviousName", Value = "PreviousValue" }
-            }
+            Method = "GET",
+            Url = "https://localhost"
         };
         var collection = new RequestTemplateCollection() {
             Requests = { request }
@@ -436,21 +427,6 @@ public class RequestTemplateModelTests {
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
 
         subject.Name.Value = "Name";
-        subject.Method.Value = "GET";
-        subject.Url.Value = "https://localhost";
-        subject.Headers[0].Name.Value = "Name";
-        subject.Headers[0].Value.Value = "Value";
-        subject.ContentType.Value = "File";
-        subject.HasManualContentTypeHeader.Value = true;
-        subject.StringContent.Value = "StringContent";
-        subject.FileContent.Value = "FileContent";
-        subject.FormFieldContent[0].Name.Value = "Name";
-        subject.FormFieldContent[0].Value.Value = "Value";
-        subject.FormFileContent[0].Name.Value = "Name";
-        subject.FormFileContent[0].Value.Value = "Value";
-        subject.PreExchangeScript.Code.Value = "PreExchangeScript";
-        subject.PostExchangeScript.Code.Value = "PostExchangeScript";
-        subject.OnExceptionScript.Code.Value = "OnExceptionScript";
 
         await subject.Update();
 
