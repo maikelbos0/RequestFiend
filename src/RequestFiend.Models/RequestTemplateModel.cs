@@ -89,7 +89,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
             return;
         }
 
-        messageService.Send(new CreateExchangeMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
+        messageService.Send(new CreateExchangeMessage(File.FilePath, Id, Collection, CreateRequest().CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
     }
 
     public RequestTemplate CreateRequest()

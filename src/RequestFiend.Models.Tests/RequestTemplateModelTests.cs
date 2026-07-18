@@ -297,11 +297,13 @@ public class RequestTemplateModelTests {
         var environmentService = Substitute.For<IEnvironmentService>();
         environmentService.GetActiveEnvironment().Returns(new Environment());
 
-        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, environmentService, new(filePath), collection, request);
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, environmentService, new(filePath), collection, request) {
+            Name = { Value = "ChangedName" }
+        };
 
         await subject.CreateExchange();
 
-        messageService.Received(1).Send(Arg.Is<CreateExchangeMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection));
+        messageService.Received(1).Send(Arg.Is<CreateExchangeMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection && message.Request.Name == subject.Name.Value));
     }
 
     [Theory]
