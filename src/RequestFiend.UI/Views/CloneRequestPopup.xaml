@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:RequestFiend.Models;assembly=RequestFiend.Models"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:views="clr-namespace:RequestFiend.UI.Views"
+    x:Class="RequestFiend.UI.Views.CloneRequestPopup"
+    x:DataType="models:CloneRequestTemplateModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SecondaryDark}}">
+
+    <ScrollView>
+        <VerticalStackLayout>
+            <Grid ColumnDefinitions="*,*">
+                <Button Text="Clone request" Command="{Binding CloneCommand}" IsEnabled="{Binding IsModifiedWithoutError}" MinimumWidthRequest="-1"/>
+
+                <Button Text="Cancel" Clicked="OnCancelClicked" MinimumWidthRequest="-1" Grid.Column="1"/>
+            </Grid>
+
+            <Label Text="Name" Style="{StaticResource EntryLabel}"/>
+
+            <views:ValidatableEntry Text="{Binding Name}"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</toolkit:Popup>

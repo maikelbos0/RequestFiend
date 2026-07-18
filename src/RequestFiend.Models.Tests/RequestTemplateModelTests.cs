@@ -355,6 +355,78 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
+    public async Task ShowClonePopup() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
+        var popupService = Substitute.For<IPopupService>();
+        var messageService = Substitute.For<IMessageService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+            Name = { Value = "ChangedName" }
+        };
+
+        await subject.ShowClonePopup();
+
+        await popupService.Received(1).ShowCloneRequestPopup(requestTemplateCollectionService, messageService, new(filePath), collection, Arg.Is<RequestTemplate>(request => request.Name == "ChangedName"));
+    }
+
+    [Theory]
+    [InlineData("", "", "", "", "", "", "", "", "")]
+    [InlineData("", "POST", "https://localhost", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "", "https://localhost", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "", "Name", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "", "JSON", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "File", "", "Name", "", "")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "", "Name", "FileContent")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "", "FileContent")]
+    [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "Name", "")]
+    public async Task ShowClonePopup_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var popupService = Substitute.For<IPopupService>();
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost",
+            Headers = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            FormFieldContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            FormFileContent = {
+                new() { Name = "PreviousName", Value = "PreviousValue" }
+            }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
+
+        subject.Name.Value = name;
+        subject.Method.Value = method;
+        subject.Url.Value = url;
+        subject.Headers[0].Name.Value = headerName;
+        subject.ContentType.Value = contentType;
+        subject.FileContent.Value = fileContent;
+        subject.FormFieldContent[0].Name.Value = formFieldName;
+        subject.FormFileContent[0].Name.Value = formFileName;
+        subject.FormFileContent[0].Value.Value = formFileValue;
+
+        await subject.ShowClonePopup();
+
+        await popupService.DidNotReceive().ShowCloneRequestPopup(Arg.Any<IRequestTemplateCollectionService>(), Arg.Any<IMessageService>(), Arg.Any<FileModel>(), Arg.Any<RequestTemplateCollection>(), Arg.Any<RequestTemplate>());
+    }
+
+    [Fact]
     public void CreateRequest() {
         const string filePath = @"C:\Documents\External data requests.json";
 

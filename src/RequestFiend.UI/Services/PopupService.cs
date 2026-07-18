@@ -63,4 +63,7 @@ public class PopupService : IPopupService {
 
     public Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment)
         => Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentService, file, environment));
+
+    public Task<IPopupResult> ShowCloneRequestPopup(IRequestTemplateCollectionService requestTemplateCollectionService, IMessageService messageService, FileModel file, RequestTemplateCollection collection, RequestTemplate request)
+        => Shell.Current.ShowPopupAsync(new CloneRequestPopup(requestTemplateCollectionService, messageService, file, collection, request));
 }

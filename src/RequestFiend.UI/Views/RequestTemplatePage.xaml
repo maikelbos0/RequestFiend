@@ -20,6 +20,8 @@
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
                 <Button Text="Execute" Command="{Binding CreateExchangeCommand}" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
 
+                <Button Text="Clone" Command="{Binding ShowClonePopupCommand}" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+
                 <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
 
                 <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"/>

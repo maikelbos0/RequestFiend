@@ -92,6 +92,15 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         messageService.Send(new CreateExchangeMessage(File.FilePath, Id, Collection, CreateRequest().CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
     }
 
+    [RelayCommand]
+    public async Task ShowClonePopup() {
+        if (HasError) {
+            return;
+        }
+
+        await  popupService.ShowCloneRequestPopup(requestTemplateCollectionService, messageService, File, Collection, CreateRequest());
+    }
+
     public RequestTemplate CreateRequest()
         => new() {
             Name = Name.Value,
