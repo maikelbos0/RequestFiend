@@ -281,7 +281,7 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
-    public async Task CreateRequest() {
+    public async Task CreateExchange() {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
@@ -299,9 +299,9 @@ public class RequestTemplateModelTests {
 
         var subject = new RequestTemplateModel(requestTemplateCollectionService, Substitute.For<IPopupService>(), messageService, environmentService, new(filePath), collection, request);
 
-        await subject.CreateRequest();
+        await subject.CreateExchange();
 
-        messageService.Received(1).Send(Arg.Is<CreateRequestMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection));
+        messageService.Received(1).Send(Arg.Is<CreateExchangeMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection));
     }
 
     [Theory]
@@ -315,7 +315,7 @@ public class RequestTemplateModelTests {
     [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "", "Name", "FileContent")]
     [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "", "FileContent")]
     [InlineData("Name", "POST", "https://localhost", "Name", "Multipart form data", "", "Name", "Name", "")]
-    public async Task CreateRequest_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
+    public async Task CreateExchange_Fails_When_Invalid(string name, string method, string url, string headerName, string contentType, string fileContent, string formFieldName, string formFileName, string formFileValue) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
@@ -347,9 +347,9 @@ public class RequestTemplateModelTests {
         subject.FormFileContent[0].Name.Value = formFileName;
         subject.FormFileContent[0].Value.Value = formFileValue;
 
-        await subject.CreateRequest();
+        await subject.CreateExchange();
 
-        messageService.DidNotReceive().Send(Arg.Any<CreateRequestMessage>());
+        messageService.DidNotReceive().Send(Arg.Any<CreateExchangeMessage>());
     }
 
     [Fact]

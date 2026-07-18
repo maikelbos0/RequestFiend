@@ -18,7 +18,7 @@
     <ScrollView>
         <VerticalStackLayout>
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
-                <Button Text="Execute" Command="{Binding CreateRequestCommand}" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
+                <Button Text="Execute" Command="{Binding CreateExchangeCommand}" IsEnabled="{Binding HasError, Converter={toolkit:IsEqualConverter}, ConverterParameter={x:Boolean False}}"/>
 
                 <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
 

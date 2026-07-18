@@ -84,12 +84,12 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     }
 
     [RelayCommand]
-    public async Task CreateRequest() {
+    public async Task CreateExchange() {
         if (HasError) {
             return;
         }
 
-        messageService.Send(new CreateRequestMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
+        messageService.Send(new CreateExchangeMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
     }
 
     [RelayCommand]

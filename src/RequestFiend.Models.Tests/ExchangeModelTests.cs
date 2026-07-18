@@ -284,7 +284,7 @@ public class ExchangeModelTests {
 
         subject.Close();
 
-        messageService.Received(1).Send(Arg.Any<CloseRequestMessage>(), subject.Id);
+        messageService.Received(1).Send(Arg.Any<CloseExchangeMessage>(), subject.Id);
     }
 
     [Fact]

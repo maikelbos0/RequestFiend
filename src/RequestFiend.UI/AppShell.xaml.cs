@@ -17,7 +17,7 @@ public partial class AppShell : Shell,
     IRecipient<SuccessMessage>,
     IRecipient<OpenCollectionRequestMessage>,
     IRecipient<RequestTemplateCreatedMessage>,
-    IRecipient<CreateRequestMessage>,
+    IRecipient<CreateExchangeMessage>,
     IRecipient<RequestTemplateCollectionSettingsUpdatedMessage> {
 
     private CancellationTokenSource? messageCancellationTokenSource;
@@ -125,7 +125,7 @@ public partial class AppShell : Shell,
         return item;
     }
 
-    public async void Receive(CreateRequestMessage message) {
+    public async void Receive(CreateExchangeMessage message) {
         using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection, message.Request);
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
         var (requestItem, index) = collectionItem.Items
@@ -143,7 +143,7 @@ public partial class AppShell : Shell,
             StyleId = request.Id
         };
 
-        WeakReferenceMessenger.Default.Register<Tab, CloseRequestMessage, string>(item, request.Id, async (tab, _)
+        WeakReferenceMessenger.Default.Register<Tab, CloseExchangeMessage, string>(item, request.Id, async (tab, _)
             => await CloseCollectionTab(tab));
 
         collectionItem.Items.Insert(index, item);

@@ -133,7 +133,7 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
     [RelayCommand]
     public void Close() {
         executingCancellationTokenSource?.Cancel();
-        messageService.Send(new CloseRequestMessage(), Id);
+        messageService.Send(new CloseExchangeMessage(), Id);
     }
 
     public Task OnRequestCreated(HttpRequestMessage request) {

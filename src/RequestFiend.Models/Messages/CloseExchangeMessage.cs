@@ -1,3 +1,3 @@
 ﻿namespace RequestFiend.Models.Messages;
 
-public record CloseRequestMessage();
+public record CloseExchangeMessage();
