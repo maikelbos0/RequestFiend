@@ -185,4 +185,20 @@ public class NameValuePairModelCollectionTests {
             Assert.False(pair.IsModified);
         }
     }
+
+    [Fact]
+    public void CreateNameValuePair() {
+        var subject = new NameValuePairModelCollection([], Validator.Required) {
+            { "FirstName", "FirstValue" },
+            { "SecondName", "SecondValue" }
+        };
+
+        var result = subject.CreateNameValuePairs();
+
+        Assert.Equal(subject.Count, result.Count);
+        for (var i = 0; i < subject.Count; i++) {
+            Assert.Equal(subject[i].Name.Value, result[i].Name);
+            Assert.Equal(subject[i].Value.Value, result[i].Value);
+        }
+    }
 }

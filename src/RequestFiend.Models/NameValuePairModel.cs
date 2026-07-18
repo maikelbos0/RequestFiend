@@ -16,4 +16,10 @@ public partial class NameValuePairModel : BoundModelBase, IValidatable {
 
         ConfigureState([Name, Value]);
     }
+
+    public NameValuePair CreateNameValuePair()
+        => new() {
+            Name = Name.Value,
+            Value = Value.Value
+        };
 }

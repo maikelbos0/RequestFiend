@@ -45,4 +45,17 @@ public class NameValuePairModelTests {
         Assert.Equal(expectedHasError, subject.Value.HasError);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
+
+    [Fact]
+    public void CreateNameValuePair() {
+        var subject = new NameValuePairModel(new NameValuePair() { Name = "", Value = "" }, Validator.Required) {
+            Name = { Value = "Name" },
+            Value = { Value = "Value" }
+        };
+
+        var result = subject.CreateNameValuePair();
+
+        Assert.Equal(subject.Name.Value, result.Name);
+        Assert.Equal(subject.Value.Value, result.Value);
+    }
 }

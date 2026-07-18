@@ -59,4 +59,17 @@ public class ScriptModelTests {
 
         Assert.Equal(expectedValue, subject.ShowReferences);
     }
+
+    [Fact]
+    public void CreateScript() {
+        var subject = new ScriptModel(new()) {
+            References = { Value = $" Foo {System.Environment.NewLine}{System.Environment.NewLine} Bar " },
+            Code = { Value = "Code" }
+        };
+
+        var result = subject.CreateScript();
+
+        Assert.Equal(["Foo", "Bar"], result.References);
+        Assert.Equal(subject.Code.Value, result.Code);
+    }
 }

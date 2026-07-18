@@ -92,6 +92,23 @@ public partial class RequestTemplateModel : PageBoundModelBase {
         messageService.Send(new CreateExchangeMessage(File.FilePath, Id, Collection, Request.CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
     }
 
+    public RequestTemplate CreateRequest()
+        => new() {
+            Name = Name.Value,
+            Method = Method.Value,
+            Url = Url.Value,
+            Headers = Headers.CreateNameValuePairs(),
+            ContentType = GetContentType(),
+            HasManualContentTypeHeader = HasManualContentTypeHeader.Value,
+            StringContent = StringContent.Value,
+            FileContent = FileContent.Value,
+            FormFieldContent = FormFieldContent.CreateNameValuePairs(),
+            FormFileContent = FormFileContent.CreateNameValuePairs(),
+            PreExchangeScript = PreExchangeScript.CreateScript(),
+            PostExchangeScript = PostExchangeScript.CreateScript(),
+            OnExceptionScript = OnExceptionScript.CreateScript()
+        };
+
     [RelayCommand]
     public async Task Update() {
         if (HasError) {

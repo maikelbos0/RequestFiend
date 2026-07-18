@@ -31,4 +31,12 @@ public partial class ScriptModel : BoundModelBase, IValidatable {
     [RelayCommand]
     public void ToggleShowReferences()
         => ShowReferences = !ShowReferences;
+
+    public Script CreateScript()
+        => new() {
+            References = [.. GetNewLineFinder().Split(References.Value)
+                .Where(reference => !string.IsNullOrWhiteSpace(reference))
+                .Select(reference => reference.Trim())],
+            Code = Code.Value
+        };
 }

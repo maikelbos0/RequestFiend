@@ -133,4 +133,7 @@ public partial class NameValuePairModelCollection : ObservableCollection<NameVal
         HasError = this.Any(nameValuePairModel => nameValuePairModel.HasError);
         IsModified = Count != collection.Count || this.Any(nameValuePairModel => nameValuePairModel.IsModified);
     }
+
+    public List<NameValuePair> CreateNameValuePairs()
+        => [.. this.Select(pair => pair.CreateNameValuePair())];
 }

@@ -353,6 +353,61 @@ public class RequestTemplateModelTests {
     }
 
     [Fact]
+    public void CreateRequest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "",
+            Method = "",
+            Url = ""
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request) {
+            Name = { Value = "Name" },
+            Method = { Value = "GET" },
+            Url = { Value = "https://localhost" },
+            Headers = {
+                new() { Name = "Name", Value = "Value" }
+            },
+            ContentType = { Value = Options.ContentTypeMap[Core.ContentType.Json] },
+            HasManualContentTypeHeader = { Value = true },
+            StringContent = { Value = "StringContent" },
+            FileContent = { Value = "FileContent" },
+            FormFieldContent = {
+                new() { Name = "Name", Value = "Value" },
+                new() { Name = "Key", Value = "Value" }
+            },
+            FormFileContent = {
+                new() { Name = "Data", Value = "Value" },
+                new() { Name = "File", Value = "Value" },
+                new() { Name = "Image", Value = "Value" }
+            },
+            PreExchangeScript = { Code = { Value = "PreExchangeScript" } },
+            PostExchangeScript = { Code = { Value = "PostExchangeScript" } },
+            OnExceptionScript = { Code = { Value = "OnExceptionScript" } }
+        };
+
+        var result = subject.CreateRequest();
+
+        Assert.Equal(result.Name, subject.Name.Value);
+        Assert.Equal(result.Method, subject.Method.Value);
+        Assert.Equal(result.Url, subject.Url.Value);
+        Assert.Equal(result.Headers.Count, subject.Headers.Count);
+        Assert.Equal(Options.ContentTypeMap[result.ContentType], subject.ContentType.Value);
+        Assert.Equal(result.HasManualContentTypeHeader, subject.HasManualContentTypeHeader.Value);
+        Assert.Equal(result.StringContent, subject.StringContent.Value);
+        Assert.Equal(result.FileContent, subject.FileContent.Value);
+        Assert.Equal(result.FormFieldContent.Count, subject.FormFieldContent.Count);
+        Assert.Equal(result.FormFileContent.Count, subject.FormFileContent.Count);
+        Assert.Equal(result.PreExchangeScript.Code, subject.PreExchangeScript.Code.Value);
+        Assert.Equal(result.PostExchangeScript.Code, subject.PostExchangeScript.Code.Value);
+        Assert.Equal(result.OnExceptionScript.Code, subject.OnExceptionScript.Code.Value);
+    }
+
+    [Fact]
     public async Task Update() {
         const string filePath = @"C:\Documents\External data requests.json";
 
