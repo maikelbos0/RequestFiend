@@ -13,7 +13,6 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
-    private readonly IPreferencesService preferencesService;
 
     [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
     public FileModel File { get; }
