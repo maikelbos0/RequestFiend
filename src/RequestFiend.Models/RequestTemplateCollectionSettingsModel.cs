@@ -37,7 +37,6 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-        this.preferencesService = preferencesService;
 
         File = file;
         Collection = collection;
