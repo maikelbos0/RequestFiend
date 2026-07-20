@@ -426,6 +426,89 @@ public class RequestTemplateCollectionSettingsModelTests {
         Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
     }
 
+    [Fact]
+    public void SelectRequest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.SelectRequest(subject.Requests[1]);
+
+        Assert.Equal(subject.Requests[1], subject.SelectedRequest);
+    }
+
+    [Fact]
+    public void MoveSelectedRequest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.SelectedRequest = subject.Requests[2];
+
+        subject.MoveSelectedRequest(subject.Requests[0]);
+
+        Assert.Equal(collection.Requests[2], subject.Requests[0].Request);
+        Assert.Equal(collection.Requests[0], subject.Requests[1].Request);
+        Assert.Equal(collection.Requests[1], subject.Requests[2].Request);
+    }
+    [Fact]
+    public void DeselectRequest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Foo", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Bar", Method = "GET", Url = "https://localhost/" },
+                new() { Name = "Baz", Method = "GET", Url = "https://localhost/" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            new(filePath),
+            collection
+        );
+
+        subject.SelectedRequest = subject.Requests[1];
+
+        subject.DeselectRequest();
+
+        Assert.Null(subject.SelectedRequest);
+    }
+
     [Theory]
     [InlineData(false, true)]
     [InlineData(true, false)]

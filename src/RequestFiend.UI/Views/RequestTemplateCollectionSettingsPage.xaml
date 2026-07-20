@@ -9,6 +9,10 @@
     Title="{Binding PageTitle}">
 
     <ScrollView>
+        <ScrollView.GestureRecognizers>
+            <DropGestureRecognizer DropCommand="{Binding DeselectRequestCommand}"/>
+        </ScrollView.GestureRecognizers>
+        
         <VerticalStackLayout>
             <StackLayout Orientation="{Binding StackOrientation}" HorizontalOptions="{Binding StackHorizontalOptions}">
                 <Button Text="Save changes" Command="{Binding UpdateCommand}" IsEnabled="{Binding IsModifiedWithoutError}"/>
@@ -100,9 +104,21 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:RequestTemplateItemModel">
                                 <Grid ColumnDefinitions="*,44,44,44" Style="{StaticResource Table}">
+                                    <Grid.GestureRecognizers>
+                                        <DropGestureRecognizer
+                                            DragOverCommand="{Binding x:DataType='models:RequestTemplateCollectionSettingsModel', Path=MoveSelectedRequestCommand, Source={RelativeSource AncestorType={x:Type models:RequestTemplateCollectionSettingsModel}}}"
+                                            DragOverCommandParameter="{Binding .}"/>
+                                    </Grid.GestureRecognizers>
+
                                     <Label Text="{Binding Request.Name}" Margin="0,10,0,0"/>
 
                                     <Border Style="{StaticResource SecondaryButtonBorder}" HorizontalOptions="Fill" MinimumWidthRequest="-1" Grid.Column="1" SemanticProperties.Description="Drag request">
+                                        <Border.GestureRecognizers>
+                                            <DragGestureRecognizer
+                                                DragStartingCommand="{Binding x:DataType='models:RequestTemplateCollectionSettingsModel', Path=SelectRequestCommand, Source={RelativeSource AncestorType={x:Type models:RequestTemplateCollectionSettingsModel}}}"
+                                                DragStartingCommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        
                                         <Label Text="⋮⋮" Style="{StaticResource SecondaryButtonLabel}"/>
                                     </Border>
 

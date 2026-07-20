@@ -14,7 +14,6 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
 
-    [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<bool> AllowScriptEvaluation { get; }
@@ -25,6 +24,8 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public ValidatableProperty<bool> IgnoreRemoteCertificateNameMismatch { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateChainErrors { get; }
     public ValidatableImmutableCollection<RequestTemplateItemModel> Requests { get; }
+    [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
+    [ObservableProperty] public partial RequestTemplateItemModel? SelectedRequest { get; set; }
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -102,10 +103,30 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public void MoveRequestDown(RequestTemplateItemModel request) {
         var index = Requests.IndexOf(request);
 
-        if (index < Requests.Count - 1) {
+        if (index > -1 && index < Requests.Count - 1) {
             Requests.Remove(request);
             Requests.Insert(index + 1, request);
         }
+    }
+
+    [RelayCommand]
+    public void SelectRequest(RequestTemplateItemModel request) {
+        SelectedRequest = request;
+    }
+
+    [RelayCommand]
+    public void MoveSelectedRequest(RequestTemplateItemModel request) {
+        var index = Requests.IndexOf(request);
+
+        if (SelectedRequest != null && SelectedRequest != request && index >= -1) {
+            Requests.Remove(SelectedRequest);
+            Requests.Insert(index, SelectedRequest);
+        }
+    }
+
+    [RelayCommand]
+    public void DeselectRequest() {
+        SelectedRequest = null;
     }
 
     [RelayCommand]
