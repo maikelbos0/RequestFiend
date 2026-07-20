@@ -98,13 +98,13 @@
 
             <Border>
                 <VerticalStackLayout Style="{StaticResource ElementGroup}">
-                    <CollectionView ItemsSource="{Binding Requests}" Margin="0,-5,0,-5">
+                    <CollectionView ItemsSource="{Binding Requests}" Margin="-15,-5,-15,-5">
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:RequestTemplateItemModel">
-                                <Border>
+                                <Border Padding="15,0,15,0">
                                     <Border.Style>
                                         <MultiBinding Converter="{converters:SelectedItemStyleConverter}">
                                             <Binding Path="." />
