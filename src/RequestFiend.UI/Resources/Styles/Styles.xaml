@@ -28,6 +28,10 @@
         <Setter Property="MinimumWidthRequest" Value="160"/>
     </Style>
 
+    <Style TargetType="Border" x:Key="SelectedItemBorder">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryHighlight}, Dark={StaticResource PrimaryHighlightDark}}" />
+    </Style>
+
     <Style TargetType="BoxView">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>

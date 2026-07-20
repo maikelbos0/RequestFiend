@@ -7,11 +7,14 @@
     <Color x:Key="Primary">#EAFAFF</Color>
     <Color x:Key="PrimaryDark">#00A2C9</Color>
     <Color x:Key="PrimaryDarkText">#212121</Color>
+    <Color x:Key="PrimaryHighlight">#8DDFFF</Color>
+    <Color x:Key="PrimaryHighlightDark">#0F7299</Color>
     <Color x:Key="Secondary">#C0F0FF</Color>
     <Color x:Key="SecondaryDark">#1E2C45</Color>
     <Color x:Key="SecondaryDarkText">#0089C4</Color>
     <Color x:Key="Tertiary">#99C5E4</Color>
     <Color x:Key="TertiaryDark">#145371</Color>
+    
     <Color x:Key="Error">#FFD0E0</Color>
     <Color x:Key="ErrorDark">#300010</Color>
     <Color x:Key="ErrorIcon">#C05030</Color>
