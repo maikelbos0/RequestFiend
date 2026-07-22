@@ -10,7 +10,7 @@
 
     <ScrollView>
         <VerticalStackLayout>
-            <Label Text="Request fiend" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1"/>
+            <Label Text="RequestFiend" Style="{StaticResource Header}" SemanticProperties.HeadingLevel="Level1"/>
 
             <Label Text="An open source platform for managing and executing API requests." Style="{StaticResource SectionHeader}" SemanticProperties.HeadingLevel="Level2"/>
             
