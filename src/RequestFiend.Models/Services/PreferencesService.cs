@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Storage;
 using RequestFiend.Models.Messages;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ public class PreferencesService : IPreferencesService {
     private const int DefaultRequestTimeoutInSeconds = InfiniteRequestTimeoutInSeconds;
     private const string DefaultLoggingPath = "";
     private const string DefaultLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+    private const int DefaultExchangeLoggingMinimumLevel = (int)LogEventLevel.Information;
+    private const int DefaultOtherSourceLoggingMinimumLevel = (int)LogEventLevel.Information;
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
@@ -22,6 +25,8 @@ public class PreferencesService : IPreferencesService {
     private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
     private const string LoggingPath = nameof(LoggingPath);
     private const string LoggingOutputTemplate = nameof(LoggingOutputTemplate);
+    private const string MinimumExchangeLoggingLevel = nameof(MinimumExchangeLoggingLevel);
+    private const string MinimumOtherSourceLoggingLevel = nameof(MinimumOtherSourceLoggingLevel);
     private const string Environments = nameof(Environments);
     private const string ActiveEnvironment = nameof(ActiveEnvironment);
 
@@ -111,6 +116,18 @@ public class PreferencesService : IPreferencesService {
 
     public void SetLoggingOutputTemplate(string? loggingOutputTemplate)
         => Preferences.Set(LoggingOutputTemplate, loggingOutputTemplate);
+
+    public LogEventLevel GetMinimumExchangeLoggingLevel()
+        => (LogEventLevel)Preferences.Get(MinimumExchangeLoggingLevel, DefaultExchangeLoggingMinimumLevel);
+
+    public void SetMinimumExchangeLoggingLevel(LogEventLevel minimumExchangeLoggingLevel)
+        => Preferences.Set(MinimumExchangeLoggingLevel, (int)minimumExchangeLoggingLevel);
+
+    public LogEventLevel GetMinimumOtherSourceLoggingLevel()
+        => (LogEventLevel)Preferences.Get(MinimumOtherSourceLoggingLevel, DefaultOtherSourceLoggingMinimumLevel);
+
+    public void SetMinimumOtherSourceLoggingLevel(LogEventLevel minimumOtherSourceLoggingLevel)
+        => Preferences.Set(MinimumOtherSourceLoggingLevel, (int)minimumOtherSourceLoggingLevel);
 
     public List<FileModel> GetEnvironments()
         => JsonSerializer.Deserialize<List<FileModel>>(Preferences.Get(Environments, "[]")) ?? [];

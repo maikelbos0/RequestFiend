@@ -25,6 +25,8 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableProperty<string> RequestTimeoutInSeconds { get; }
     public ValidatableProperty<string> LoggingPath { get; }
     public ValidatableProperty<string> LoggingOutputTemplate { get; }
+    public ValidatableProperty<string> MinimumExchangeLoggingLevel { get; }
+    public ValidatableProperty<string> MinimumOtherSourceLoggingLevel { get; }
     public ValidatableImmutableCollection<FileModel> Environments { get; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
@@ -40,13 +42,12 @@ public partial class PreferencesModel : PageBoundModelBase {
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", value => preferencesService.SetRequestTimeoutInSeconds(value.Length == 0 ? null : int.Parse(value)), Validator.Numeric);
         LoggingPath = new(preferencesService.GetLoggingPath, preferencesService.SetLoggingPath);
         LoggingOutputTemplate = new(preferencesService.GetLoggingOutputTemplate, preferencesService.SetLoggingOutputTemplate);
-        Environments = new(
-            () => preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase),
-            preferencesService.SetEnvironments
-        );
+        MinimumExchangeLoggingLevel = new(() => Options.LogEventLevelMap[preferencesService.GetMinimumExchangeLoggingLevel()], value => preferencesService.SetMinimumExchangeLoggingLevel(Options.ReverseLogEventLevelMap[value]));
+        MinimumOtherSourceLoggingLevel = new(() => Options.LogEventLevelMap[preferencesService.GetMinimumOtherSourceLoggingLevel()], value => preferencesService.SetMinimumOtherSourceLoggingLevel(Options.ReverseLogEventLevelMap[value]));
+        Environments = new(() => preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase), preferencesService.SetEnvironments);
         ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()), preferencesService.SetActiveEnvironment);
 
-        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, LoggingPath, LoggingOutputTemplate, Environments, ActiveEnvironment]);
+        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, LoggingPath, LoggingOutputTemplate, MinimumExchangeLoggingLevel, MinimumOtherSourceLoggingLevel, Environments, ActiveEnvironment]);
     }
 
     [RelayCommand]

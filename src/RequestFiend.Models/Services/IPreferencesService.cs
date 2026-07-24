@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Serilog.Events;
+using System.Collections.Generic;
 
 namespace RequestFiend.Models.Services;
 
@@ -20,6 +21,10 @@ public interface IPreferencesService {
     void SetLoggingPath(string loggingPath);
     string GetLoggingOutputTemplate();
     void SetLoggingOutputTemplate(string loggingOutputTemplate);
+    LogEventLevel GetMinimumExchangeLoggingLevel();
+    void SetMinimumExchangeLoggingLevel(LogEventLevel minimumExchangeLoggingLevel);
+    LogEventLevel GetMinimumOtherSourceLoggingLevel();
+    void SetMinimumOtherSourceLoggingLevel(LogEventLevel minimumOtherSourceLoggingLevel);
     List<FileModel> GetEnvironments();
     void SetEnvironments(IEnumerable<FileModel> environments);
     FileModel? GetActiveEnvironment();

@@ -4,7 +4,7 @@ using NSubstitute.ReturnsExtensions;
 using RequestFiend.Core;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.Services;
-using System.Collections.Generic;
+using Serilog.Events;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -99,6 +99,34 @@ public class PreferencesModelTests {
     }
 
     [Fact]
+    public void MinimumExchangeLoggingLevel() {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
+            MinimumExchangeLoggingLevel = { Value = Options.LogEventLevelMap[LogEventLevel.Warning] }
+        };
+
+        subject.MinimumExchangeLoggingLevel.Set();
+
+        preferencesService.Received().SetMinimumExchangeLoggingLevel(LogEventLevel.Warning);
+    }
+
+    [Fact]
+    public void MinimumOtherSourceLoggingLevel() {
+        var preferencesService = Substitute.For<IPreferencesService>();
+        preferencesService.GetEnvironments().Returns([]);
+
+        var subject = new PreferencesModel(preferencesService, Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), Substitute.For<IFileSystem>(), Substitute.For<IEnvironmentService>()) {
+            MinimumOtherSourceLoggingLevel = { Value = Options.LogEventLevelMap[LogEventLevel.Warning] }
+        };
+
+        subject.MinimumOtherSourceLoggingLevel.Set();
+
+        preferencesService.Received().SetMinimumOtherSourceLoggingLevel(LogEventLevel.Warning);
+    }
+
+    [Fact]
     public void Environments() {
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetEnvironments().Returns([]);
@@ -130,11 +158,8 @@ public class PreferencesModelTests {
         preferencesService.Received().SetActiveEnvironment(new(activeEnvironment));
     }
 
-    [Theory]
-    [InlineData(Models.ScriptEvaluationMode.Disabled)]
-    [InlineData(Models.ScriptEvaluationMode.Enabled)]
-    [InlineData(Models.ScriptEvaluationMode.CollectionScoped)]
-    public void Constructor(ScriptEvaluationMode scriptEvaluationMode) {
+    [Fact]
+    public void Constructor() {
         const int maximumRecentCollectionCount = 10;
         const int requestTimeoutInSeconds = 90;
         const string loggingPath = "./Path";
@@ -143,10 +168,12 @@ public class PreferencesModelTests {
 
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetMaximumRecentCollectionCount().Returns(maximumRecentCollectionCount);
-        preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
+        preferencesService.GetScriptEvaluationMode().Returns(Models.ScriptEvaluationMode.CollectionScoped);
         preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
         preferencesService.GetLoggingPath().Returns(loggingPath);
         preferencesService.GetLoggingOutputTemplate().Returns(loggingOutputTemplate);
+        preferencesService.GetMinimumExchangeLoggingLevel().Returns(LogEventLevel.Warning);
+        preferencesService.GetMinimumOtherSourceLoggingLevel().Returns(LogEventLevel.Error);
         preferencesService.GetEnvironments().Returns([new(activeEnvironment), new(@"C:\Documents\Bar.json"), new(@"C:\Documents\Bar.json")]);
         preferencesService.GetActiveEnvironment().Returns(new FileModel(activeEnvironment));
 
@@ -156,10 +183,12 @@ public class PreferencesModelTests {
         Assert.Equal("Preferences", subject.ShellItemTitleBase);
 
         Assert.Equal(maximumRecentCollectionCount.ToString(), subject.MaximumRecentCollectionCount.Value);
-        Assert.Equal(Options.ScriptEvaluationModeMap[scriptEvaluationMode], subject.ScriptEvaluationMode.Value);
+        Assert.Equal(Options.ScriptEvaluationModeMap[Models.ScriptEvaluationMode.CollectionScoped], subject.ScriptEvaluationMode.Value);
         Assert.Equal(requestTimeoutInSeconds.ToString(), subject.RequestTimeoutInSeconds.Value);
         Assert.Equal(loggingPath, subject.LoggingPath.Value);
         Assert.Equal(loggingOutputTemplate, subject.LoggingOutputTemplate.Value);
+        Assert.Equal(Options.LogEventLevelMap[LogEventLevel.Warning], subject.MinimumExchangeLoggingLevel.Value);
+        Assert.Equal(Options.LogEventLevelMap[LogEventLevel.Error], subject.MinimumOtherSourceLoggingLevel.Value);
         Assert.Equal(preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase), subject.Environments);
         Assert.Equal(new(activeEnvironment), subject.ActiveEnvironment.Value);
         Assert.Contains(subject.Environments, environment => ReferenceEquals(environment, subject.ActiveEnvironment.Value));
@@ -170,6 +199,8 @@ public class PreferencesModelTests {
             subject.ScriptEvaluationMode,
             subject.LoggingPath,
             subject.LoggingOutputTemplate,
+            subject.MinimumExchangeLoggingLevel,
+            subject.MinimumOtherSourceLoggingLevel,
             subject.Environments,
             subject.ActiveEnvironment
         ], subject.Validatables);

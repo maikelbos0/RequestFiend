@@ -91,6 +91,18 @@
                     <views:ValidatableEntry Text="{Binding LoggingOutputTemplate}"/>
 
                     <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
+
+                    <Label Text="Minimum exchange log event level" Style="{StaticResource EntryLabel}"/>
+
+                    <views:ValidatablePicker SelectedItem="{Binding MinimumExchangeLoggingLevel}" ItemsSource="{x:Static models:Options.LogEventLevels}"/>
+
+                    <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
+
+                    <Label Text="Minimum other source log event level" Style="{StaticResource EntryLabel}"/>
+
+                    <views:ValidatablePicker SelectedItem="{Binding MinimumOtherSourceLoggingLevel}" ItemsSource="{x:Static models:Options.LogEventLevels}"/>
+
+                    <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

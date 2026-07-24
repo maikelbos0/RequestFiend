@@ -1,4 +1,5 @@
 ﻿using RequestFiend.Core;
+using Serilog.Events;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
@@ -12,6 +13,16 @@ public static class Options {
     ]);
     public static ImmutableDictionary<string, ScriptEvaluationMode> ReverseScriptEvaluationModeMap { get; } = ScriptEvaluationModeMap.ToImmutableDictionary(pair => pair.Value, pair => pair.Key);
     public static ImmutableArray<string> ScriptEvaluationModes { get; } = [.. ScriptEvaluationModeMap.Values];
+    public static ImmutableDictionary<LogEventLevel, string> LogEventLevelMap { get; } = ImmutableDictionary.CreateRange([
+        KeyValuePair.Create(LogEventLevel.Verbose, "Verbose"),
+        KeyValuePair.Create(LogEventLevel.Debug, "Debug"),
+        KeyValuePair.Create(LogEventLevel.Information, "Information"),
+        KeyValuePair.Create(LogEventLevel.Warning, "Warning"),
+        KeyValuePair.Create(LogEventLevel.Error, "Error"),
+        KeyValuePair.Create(LogEventLevel.Fatal, "Fatal")
+    ]);
+    public static ImmutableDictionary<string, LogEventLevel> ReverseLogEventLevelMap { get; } = LogEventLevelMap.ToImmutableDictionary(pair => pair.Value, pair => pair.Key);
+    public static ImmutableArray<string> LogEventLevels { get; } = [.. LogEventLevelMap.Values];
     public static ImmutableArray<string> Methods { get; } = ["GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"];
     public static ImmutableDictionary<ContentType, string> ContentTypeMap { get; } = ImmutableDictionary.CreateRange([
         KeyValuePair.Create(ContentType.None, "None"),
