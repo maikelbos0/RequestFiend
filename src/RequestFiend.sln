@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.8.12009.203 stable
+VisualStudioVersion = 18.8.12009.203
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.Core", "RequestFiend.Core\RequestFiend.Core.csproj", "{B45902F2-CD5A-43CA-ADF1-F9C5CB641247}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.Models", "RequestFiend.Models\RequestFiend.Models.csproj", "{FBE8CAE4-8179-4402-9849-3325BB210343}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.Console", "RequestFiend.Console\RequestFiend.Console.csproj", "{6F3ED621-89E3-4B31-9C5B-11D22B1F1EED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestFiend.Console.Tests", "RequestFiend.Console.Tests\RequestFiend.Console.Tests.csproj", "{426642F8-C736-49C0-8407-57C05B68E28D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,10 @@ Global
 		{6F3ED621-89E3-4B31-9C5B-11D22B1F1EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F3ED621-89E3-4B31-9C5B-11D22B1F1EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F3ED621-89E3-4B31-9C5B-11D22B1F1EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426642F8-C736-49C0-8407-57C05B68E28D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426642F8-C736-49C0-8407-57C05B68E28D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426642F8-C736-49C0-8407-57C05B68E28D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426642F8-C736-49C0-8407-57C05B68E28D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
