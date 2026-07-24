@@ -11,10 +11,10 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class ExchangeLogModelTests {
+public class LogModelTests {
     [Fact]
     public void Constructor() {
-        var subject = new ExchangeLogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
+        var subject = new LogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
 
         Assert.Equal("Exchange log", subject.PageTitleBase);
         Assert.Equal("Exchange log", subject.ShellItemTitleBase);
@@ -24,7 +24,7 @@ public class ExchangeLogModelTests {
 
     [Fact]
     public async Task Add_And_StartUpdating() {
-        var subject = new ExchangeLogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
+        var subject = new LogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
@@ -41,7 +41,7 @@ public class ExchangeLogModelTests {
 
     [Fact]
     public async Task Clear_And_StartUpdating() {
-        var subject = new ExchangeLogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
+        var subject = new LogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
         var cancellationTokenSource = new CancellationTokenSource();
         var updatingTask = subject.StartUpdating(cancellationTokenSource.Token);
 
@@ -64,7 +64,7 @@ public class ExchangeLogModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, null));
 
-        var subject = new ExchangeLogModel(messageService, popupService, 1) {
+        var subject = new LogModel(messageService, popupService, 1) {
             LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
         };
 
@@ -81,7 +81,7 @@ public class ExchangeLogModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new Exception()));
 
-        var subject = new ExchangeLogModel(messageService, popupService, 1) {
+        var subject = new LogModel(messageService, popupService, 1) {
             LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
         };
 
@@ -98,7 +98,7 @@ public class ExchangeLogModelTests {
         var popupService = Substitute.For<IPopupService>();
         popupService.ShowSaveDialog(Arg.Any<string>(), Arg.Any<Stream>()).Returns(new FileSaverResult(null, new OperationCanceledException()));
 
-        var subject = new ExchangeLogModel(messageService, popupService, 1) {
+        var subject = new LogModel(messageService, popupService, 1) {
             LogEvents = $"Test 1{Environment.NewLine}Test 2{Environment.NewLine}"
         };
 

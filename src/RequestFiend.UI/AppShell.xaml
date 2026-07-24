@@ -49,5 +49,5 @@
 
     <ShellContent Title="Preferences" Icon="gears_solid_full.png" ContentTemplate="{DataTemplate views:PreferencesPage}" Route="PreferencesPage" />
 
-    <ShellContent Title="Exchange log" Icon="file_lines_solid_full.png" ContentTemplate="{DataTemplate views:ExchangeLogPage}" Route="ExchangeLogPage" />
+    <ShellContent Title="Log" Icon="file_lines_solid_full.png" ContentTemplate="{DataTemplate views:LogPage}" Route="LogPage" />
 </Shell>
