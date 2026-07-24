@@ -52,21 +52,23 @@ public static class MauiProgram {
 
         mauiAppBuilder.Services.AddSingleton<MainPageModel>();
         mauiAppBuilder.Services.AddSingleton<PreferencesModel>();
-        mauiAppBuilder.Services.AddSingleton(serviceProvider => new ExchangeLogModel(
+        mauiAppBuilder.Services.AddSingleton(serviceProvider => new LogModel(
             serviceProvider.GetRequiredService<Models.Services.IMessageService>(),
             serviceProvider.GetRequiredService<Models.Services.IPopupService>(),
-            1000
+            200
         ));
         mauiAppBuilder.Services.AddTransient<RequestTemplateCollectionModel>();
         mauiAppBuilder.Services.AddTransient<ExchangeModel>();
 
         mauiAppBuilder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
-            loggerConfiguration.MinimumLevel.Is(default!);
             var preferencesService = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>();
             var loggingPath = preferencesService.GetLoggingPath();
             var loggingOutputTemplate = preferencesService.GetLoggingOutputTemplate();
 
-            loggerConfiguration.WriteTo.Sink(new Models.Services.ExchangeLogSink(serviceProvider.GetRequiredService<ExchangeLogModel>(), loggingOutputTemplate));
+            loggerConfiguration.MinimumLevel.Is(preferencesService.GetMinimumOtherSourceLoggingLevel());
+            loggerConfiguration.MinimumLevel.Override(nameof(RequestFiend), preferencesService.GetMinimumExchangeLoggingLevel());
+
+            loggerConfiguration.WriteTo.Sink(new Models.Services.LogModelSink(serviceProvider.GetRequiredService<LogModel>(), loggingOutputTemplate));
 
             if (!string.IsNullOrWhiteSpace(loggingPath)) {
                 loggerConfiguration.WriteTo.File(loggingPath, outputTemplate: loggingOutputTemplate, rollingInterval: RollingInterval.Day);

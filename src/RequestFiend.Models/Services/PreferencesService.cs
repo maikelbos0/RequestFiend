@@ -17,7 +17,7 @@ public class PreferencesService : IPreferencesService {
     private const string DefaultLoggingPath = "";
     private const string DefaultLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
     private const int DefaultExchangeLoggingMinimumLevel = (int)LogEventLevel.Information;
-    private const int DefaultOtherSourceLoggingMinimumLevel = (int)LogEventLevel.Information;
+    private const int DefaultOtherSourceLoggingMinimumLevel = (int)LogEventLevel.Error;
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
