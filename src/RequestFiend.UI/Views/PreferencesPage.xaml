@@ -80,15 +80,15 @@
                         </CollectionView.Footer>
                     </CollectionView>
 
-                    <Label Text="Exchange logging path (leave blank to disable)" Style="{StaticResource EntryLabel}"/>
+                    <Label Text="Logging path (leave blank to disable)" Style="{StaticResource EntryLabel}"/>
 
-                    <views:ValidatableEntry Text="{Binding ExchangeLoggingPath}"/>
+                    <views:ValidatableEntry Text="{Binding LoggingPath}"/>
 
                     <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
 
-                    <Label Text="Exchange logging output template (Serilog style)" Style="{StaticResource EntryLabel}"/>
+                    <Label Text="Logging output template (Serilog style)" Style="{StaticResource EntryLabel}"/>
 
-                    <views:ValidatableEntry Text="{Binding ExchangeLoggingOutputTemplate}"/>
+                    <views:ValidatableEntry Text="{Binding LoggingOutputTemplate}"/>
 
                     <Label Text="(a restart is required for this setting to take effect)" Style="{StaticResource EntryInfoLabel}"/>
                 </VerticalStackLayout>

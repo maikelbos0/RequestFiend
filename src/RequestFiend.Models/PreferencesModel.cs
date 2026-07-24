@@ -23,8 +23,8 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
     public ValidatableProperty<string> ScriptEvaluationMode { get; }
     public ValidatableProperty<string> RequestTimeoutInSeconds { get; }
-    public ValidatableProperty<string> ExchangeLoggingPath { get; }
-    public ValidatableProperty<string> ExchangeLoggingOutputTemplate { get; }
+    public ValidatableProperty<string> LoggingPath { get; }
+    public ValidatableProperty<string> LoggingOutputTemplate { get; }
     public ValidatableImmutableCollection<FileModel> Environments { get; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
@@ -38,15 +38,15 @@ public partial class PreferencesModel : PageBoundModelBase {
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), value => preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + value)), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()], _ => preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode()));
         RequestTimeoutInSeconds = new(() => preferencesService.GetRequestTimeoutInSeconds()?.ToString() ?? "", value => preferencesService.SetRequestTimeoutInSeconds(value.Length == 0 ? null : int.Parse(value)), Validator.Numeric);
-        ExchangeLoggingPath = new(preferencesService.GetExchangeLoggingPath, preferencesService.SetExchangeLoggingPath);
-        ExchangeLoggingOutputTemplate = new(preferencesService.GetExchangeLoggingOutputTemplate, preferencesService.SetExchangeLoggingOutputTemplate);
+        LoggingPath = new(preferencesService.GetLoggingPath, preferencesService.SetLoggingPath);
+        LoggingOutputTemplate = new(preferencesService.GetLoggingOutputTemplate, preferencesService.SetLoggingOutputTemplate);
         Environments = new(
             () => preferencesService.GetEnvironments().Distinct().OrderBy(environment => environment.Name, System.StringComparer.CurrentCultureIgnoreCase),
             preferencesService.SetEnvironments
         );
         ActiveEnvironment = new(() => Environments.SingleOrDefault(environment => environment == preferencesService.GetActiveEnvironment()), preferencesService.SetActiveEnvironment);
 
-        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, ExchangeLoggingPath, ExchangeLoggingOutputTemplate, Environments, ActiveEnvironment]);
+        ConfigureState([RequestTimeoutInSeconds, MaximumRecentCollectionCount, ScriptEvaluationMode, LoggingPath, LoggingOutputTemplate, Environments, ActiveEnvironment]);
     }
 
     [RelayCommand]

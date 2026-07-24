@@ -13,15 +13,15 @@ public class PreferencesService : IPreferencesService {
     private const bool DefaultCollectionAllowScriptEvaluation = false;
     private const int InfiniteRequestTimeoutInSeconds = -1;
     private const int DefaultRequestTimeoutInSeconds = InfiniteRequestTimeoutInSeconds;
-    private const string DefaultExchangeLoggingPath = "";
-    private const string DefaultExchangeLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
+    private const string DefaultLoggingPath = "";
+    private const string DefaultLoggingOutputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
     private const string ShowRecentCollections = nameof(ShowRecentCollections);
     private const string RecentCollections = nameof(RecentCollections);
     private const string MaximumRecentCollectionCount = nameof(MaximumRecentCollectionCount);
     private const string CollectionAllowScriptEvaluation = nameof(CollectionAllowScriptEvaluation);
     private const string RequestTimeoutInSeconds = nameof(RequestTimeoutInSeconds);
-    private const string ExchangeLoggingPath = nameof(ExchangeLoggingPath);
-    private const string ExchangeLoggingOutputTemplate = nameof(ExchangeLoggingOutputTemplate);
+    private const string LoggingPath = nameof(LoggingPath);
+    private const string LoggingOutputTemplate = nameof(LoggingOutputTemplate);
     private const string Environments = nameof(Environments);
     private const string ActiveEnvironment = nameof(ActiveEnvironment);
 
@@ -100,17 +100,17 @@ public class PreferencesService : IPreferencesService {
     public void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds)
         => Preferences.Set(RequestTimeoutInSeconds, requestTimeoutInSeconds ?? InfiniteRequestTimeoutInSeconds);
 
-    public string GetExchangeLoggingPath()
-        => Preferences.Get(ExchangeLoggingPath, DefaultExchangeLoggingPath);
+    public string GetLoggingPath()
+        => Preferences.Get(LoggingPath, DefaultLoggingPath);
 
-    public void SetExchangeLoggingPath(string? exchangeLoggingPath)
-        => Preferences.Set(ExchangeLoggingPath, exchangeLoggingPath);
+    public void SetLoggingPath(string? loggingPath)
+        => Preferences.Set(LoggingPath, loggingPath);
 
-    public string GetExchangeLoggingOutputTemplate()
-        => Preferences.Get(ExchangeLoggingOutputTemplate, DefaultExchangeLoggingOutputTemplate);
+    public string GetLoggingOutputTemplate()
+        => Preferences.Get(LoggingOutputTemplate, DefaultLoggingOutputTemplate);
 
-    public void SetExchangeLoggingOutputTemplate(string? exchangeLoggingOutputTemplate)
-        => Preferences.Set(ExchangeLoggingOutputTemplate, exchangeLoggingOutputTemplate);
+    public void SetLoggingOutputTemplate(string? loggingOutputTemplate)
+        => Preferences.Set(LoggingOutputTemplate, loggingOutputTemplate);
 
     public List<FileModel> GetEnvironments()
         => JsonSerializer.Deserialize<List<FileModel>>(Preferences.Get(Environments, "[]")) ?? [];

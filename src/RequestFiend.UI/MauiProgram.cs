@@ -61,14 +61,15 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddTransient<ExchangeModel>();
 
         mauiAppBuilder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
+            loggerConfiguration.MinimumLevel.Is(default!);
             var preferencesService = serviceProvider.GetRequiredService<Models.Services.IPreferencesService>();
-            var exchangeLoggingPath = preferencesService.GetExchangeLoggingPath();
-            var exchangeLoggingOutputTemplate = preferencesService.GetExchangeLoggingOutputTemplate();
+            var loggingPath = preferencesService.GetLoggingPath();
+            var loggingOutputTemplate = preferencesService.GetLoggingOutputTemplate();
 
-            loggerConfiguration.WriteTo.Sink(new Models.Services.ExchangeLogSink(serviceProvider.GetRequiredService<ExchangeLogModel>(), exchangeLoggingOutputTemplate));
+            loggerConfiguration.WriteTo.Sink(new Models.Services.ExchangeLogSink(serviceProvider.GetRequiredService<ExchangeLogModel>(), loggingOutputTemplate));
 
-            if (!string.IsNullOrWhiteSpace(exchangeLoggingPath)) {
-                loggerConfiguration.WriteTo.File(exchangeLoggingPath, outputTemplate: exchangeLoggingOutputTemplate, rollingInterval: RollingInterval.Day);
+            if (!string.IsNullOrWhiteSpace(loggingPath)) {
+                loggerConfiguration.WriteTo.File(loggingPath, outputTemplate: loggingOutputTemplate, rollingInterval: RollingInterval.Day);
             }
         });
 
