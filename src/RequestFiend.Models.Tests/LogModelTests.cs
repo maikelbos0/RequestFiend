@@ -16,8 +16,8 @@ public class LogModelTests {
     public void Constructor() {
         var subject = new LogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);
 
-        Assert.Equal("Exchange log", subject.PageTitleBase);
-        Assert.Equal("Exchange log", subject.ShellItemTitleBase);
+        Assert.Equal("Log", subject.PageTitleBase);
+        Assert.Equal("Log", subject.ShellItemTitleBase);
 
         Assert.Equal([], subject.Validatables);
     }

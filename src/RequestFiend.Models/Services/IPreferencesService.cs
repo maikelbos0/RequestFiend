@@ -17,9 +17,9 @@ public interface IPreferencesService {
     int? GetRequestTimeoutInSeconds();
     void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds);
     string GetLoggingPath();
-    void SetExchangeLoggingPath(string exchangeLoggingPath);
-    string GetExchangeLoggingOutputTemplate();
-    void SetExchangeLoggingOutputTemplate(string exchangeLoggingOutputTemplate);
+    void SetLoggingPath(string loggingPath);
+    string GetLoggingOutputTemplate();
+    void SetLoggingOutputTemplate(string loggingOutputTemplate);
     List<FileModel> GetEnvironments();
     void SetEnvironments(IEnumerable<FileModel> environments);
     FileModel? GetActiveEnvironment();
