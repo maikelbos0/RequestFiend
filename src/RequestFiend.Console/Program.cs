@@ -3,11 +3,14 @@ using Microsoft.Extensions.Hosting;
 using RequestFiend.Console;
 using RequestFiend.Core;
 using System.CommandLine;
+using System.IO.Abstractions;
 using System.Net.Http;
 using System.Threading;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Services.AddSingleton<IFileSystem, FileSystem>();
+builder.Services.AddSingleton<ParserBuilder>();
 builder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
     .ConfigurePrimaryHttpMessageHandler(static serviceProvider => new SocketsHttpHandler() {
         PooledConnectionLifetime = System.TimeSpan.Zero,
@@ -18,13 +21,14 @@ builder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
     .ConfigureHttpClient(static httpClient => httpClient.Timeout = Timeout.InfiniteTimeSpan);
 builder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
 builder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
-builder.Services.AddSingleton<ICommandHandler, CommandHandler>();
+builder.Services.AddSingleton<CommandHandler>();
 
 var host = builder.Build();
+var parserBuilder = host.Services.GetRequiredService<ParserBuilder>();
 
 var collectionArgument = new Argument<RequestTemplateCollection>("collection") {
     Description = "Collection from which to execute requests",
-    CustomParser = Parsers.CreateJsonFileParser<RequestTemplateCollection>("collection")
+    CustomParser = parserBuilder.BuildJsonFileParser<RequestTemplateCollection>("collection")
 };
 var allowScriptEvaluationOption = new Option<bool>("--allow-script-evaluation", "-s") {
     Description = "Enable the evaluation of configured request scripts"
@@ -32,13 +36,13 @@ var allowScriptEvaluationOption = new Option<bool>("--allow-script-evaluation", 
 
 var requestTimeoutInSecondsOption = new Option<int?>("--request-timeout", "-t") {
     Description = "Timeout in seconds for executing requests",
-    CustomParser = Parsers.CreateSecondsParser("option '--request-timeout'"),
+    CustomParser = parserBuilder.BuildSecondsParser("option '--request-timeout'"),
     Arity = ArgumentArity.ZeroOrMore,
     AllowMultipleArgumentsPerToken = true
 };
 var environmentOption = new Option<Environment?>("--environment", "-e") {
     Description = "Environment from which to use variables",
-    CustomParser = Parsers.CreateJsonFileParser<Environment>("option '--environment'"),
+    CustomParser = parserBuilder.BuildJsonFileParser<Environment>("option '--environment'"),
     Arity = ArgumentArity.ZeroOrMore,
     AllowMultipleArgumentsPerToken = true
 };
@@ -53,7 +57,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var collection = parseResult.GetRequiredValue(collectionArgument);
     var options = new ExchangeOptions(parseResult.GetValue(allowScriptEvaluationOption), parseResult.GetValue(requestTimeoutInSecondsOption));
     var environment = parseResult.GetValue(environmentOption);
-    var handler = host.Services.GetRequiredService<ICommandHandler>();
+    var handler = host.Services.GetRequiredService<CommandHandler>();
 
     await handler.ExecuteRequests(collection, options, environment, cancellationToken);
 });

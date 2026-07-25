@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Console;
 
-public class CommandHandler : ICommandHandler {
+public class CommandHandler {
     private readonly IExchangeHandler exchangeHandler;
 
     public CommandHandler(IExchangeHandler exchangeHandler) {

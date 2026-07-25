@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NSubstitute;
 using System.CommandLine;
+using System.IO.Abstractions;
+using System.Text.Json;
 using Xunit;
 
 namespace RequestFiend.Console.Tests;
@@ -8,9 +10,16 @@ public class ParsersTests {
     private sealed record Data(string Value);
 
     [Fact]
-    public void CreateJsonFileParser_When_Valid() {
+    public void BuildJsonFileParser_When_Valid() {
+        var data = new Data("Foo");
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem.File.Exists("./Data.json").Returns(true);
+        fileSystem.File.ReadAllText("./Data.json").Returns(JsonSerializer.Serialize(data));
+
+        var subject = new ParserBuilder(fileSystem);
+
         var option = new Option<Data>("--data") {
-            CustomParser = Parsers.CreateJsonFileParser<Data>("option '--data'"),
+            CustomParser = subject.BuildJsonFileParser<Data>("option '--data'"),
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = true
         };
@@ -20,18 +29,24 @@ public class ParsersTests {
         var result = command.Parse(["--data", "./Data.json"]);
 
         Assert.Empty(result.Errors);
-        Assert.Equal(new("Foo"), result.GetValue(option));
+        Assert.Equal(data, result.GetValue(option));
     }
 
     [Theory]
-    [InlineData(new string[] { }, "Missing required argument for option '--data'.")]
-    [InlineData(new string[] { "./Data.json", "./Empty.json" }, "Received too many arguments for option '--data'.")]
-    [InlineData(new string[] { "./Missing.json" }, "Argument for option '--data' must be an existing file.")]
-    [InlineData(new string[] { "./Empty.json" }, "Argument for option '--data' must be a valid JSON file.")]
-    [InlineData(new string[] { "./Invalid.json" }, "Argument for option '--data' must be a valid JSON file: 'I' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.")]
-    public void CreateJsonFileParser_When_Invalid(string[] arguments, string expectedError) {
+    [InlineData(true, "{\"Value\": \"Foo\"}", new string[] { }, "Missing required argument for option '--data'.")]
+    [InlineData(true, "{\"Value\": \"Foo\"}", new string[] { "./Data.json", "./Data.json" }, "Received too many arguments for option '--data'.")]
+    [InlineData(false, null, new string[] { "./Data.json" }, "Argument for option '--data' must be an existing file.")]
+    [InlineData(true, "null", new string[] { "./Data.json" }, "Argument for option '--data' must be a valid JSON file.")]
+    [InlineData(true, "Invalid", new string[] { "./Data.json" }, "Argument for option '--data' must be a valid JSON file: 'I' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.")]
+    public void BuildJsonFileParser_When_Invalid(bool fileExists, string? fileContents, string[] arguments, string expectedError) {
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem.File.Exists("./Data.json").Returns(fileExists);
+        fileSystem.File.ReadAllText("./Data.json").Returns(fileContents);
+
+        var subject = new ParserBuilder(fileSystem);
+
         var option = new Option<Data>("--data") {
-            CustomParser = Parsers.CreateJsonFileParser<Data>("option '--data'"),
+            CustomParser = subject.BuildJsonFileParser<Data>("option '--data'"),
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = true
         };
@@ -46,9 +61,11 @@ public class ParsersTests {
     [Theory]
     [InlineData("1", 1)]
     [InlineData("123", 123)]
-    public void CreateSecondsParser_When_Valid(string argument, int expectedValue) {
+    public void BuildSecondsParser_When_Valid(string argument, int expectedValue) {
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>());
+
         var option = new Option<int?>("--seconds") {
-            CustomParser = Parsers.CreateSecondsParser("option '--seconds'"),
+            CustomParser = subject.BuildSecondsParser("option '--seconds'"),
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = true
         };
@@ -68,9 +85,11 @@ public class ParsersTests {
     [InlineData(new string[] { "1a" }, "Argument for option '--seconds' must be a positive number of seconds.")]
     [InlineData(new string[] { "0" }, "Argument for option '--seconds' must be a positive number of seconds.")]
     [InlineData(new string[] { "-1" }, "Argument for option '--seconds' must be a positive number of seconds.")]
-    public void CreateSecondsParser_When_Invalid(string[] arguments, string expectedError) {
+    public void BuildSecondsParser_When_Invalid(string[] arguments, string expectedError) {
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>());
+
         var option = new Option<int?>("--seconds") {
-            CustomParser = Parsers.CreateSecondsParser("option '--seconds'"),
+            CustomParser = subject.BuildSecondsParser("option '--seconds'"),
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = true
         };

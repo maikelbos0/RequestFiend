@@ -1,12 +1,18 @@
 ﻿using System;
 using System.CommandLine.Parsing;
-using System.IO;
+using System.IO.Abstractions;
 using System.Text.Json;
 
 namespace RequestFiend.Console;
 
-public static class Parsers {
-    public static Func<ArgumentResult, TValue?> CreateJsonFileParser<TValue>(string name) where TValue : class
+public class ParserBuilder {
+    private readonly IFileSystem fileSystem;
+
+    public ParserBuilder(IFileSystem fileSystem) {
+        this.fileSystem = fileSystem;
+    }
+
+    public Func<ArgumentResult, TValue?> BuildJsonFileParser<TValue>(string name) where TValue : class
         => result => {
             if (result.Tokens.Count == 0) {
                 result.AddError($"Missing required argument for {name}.");
@@ -18,14 +24,13 @@ public static class Parsers {
                 return null;
             }
 
-            // TODO could we inject services and use IFileSystem?
-            if (!File.Exists(result.Tokens[0].Value)) {
+            if (!fileSystem.File.Exists(result.Tokens[0].Value)) {
                 result.AddError($"Argument for {name} must be an existing file.");
                 return null;
             }
 
             try {
-                var value = JsonSerializer.Deserialize<TValue>(File.ReadAllText(result.Tokens[0].Value));
+                var value = JsonSerializer.Deserialize<TValue>(fileSystem.File.ReadAllText(result.Tokens[0].Value));
 
                 if (value == null) {
                     result.AddError($"Argument for {name} must be a valid JSON file.");
@@ -40,7 +45,7 @@ public static class Parsers {
             }
         };
 
-    public static Func<ArgumentResult, int?> CreateSecondsParser(string name)
+    public Func<ArgumentResult, int?> BuildSecondsParser(string name)
         => result => {
             if (result.Tokens.Count == 0) {
                 result.AddError($"Missing required argument for {name}.");
