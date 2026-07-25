@@ -7,7 +7,7 @@ namespace RequestFiend.Console;
 
 public static class Parsers {
     public static Func<ArgumentResult, TValue?> CreateJsonFileParser<TValue>(string name) where TValue : class
-        => (ArgumentResult result) => {
+        => result => {
             if (result.Tokens.Count == 0) {
                 result.AddError($"Missing required argument for {name}.");
                 return null;
@@ -18,6 +18,7 @@ public static class Parsers {
                 return null;
             }
 
+            // TODO could we inject services and use IFileSystem?
             if (!File.Exists(result.Tokens[0].Value)) {
                 result.AddError($"Argument for {name} must be an existing file.");
                 return null;
@@ -39,8 +40,8 @@ public static class Parsers {
             }
         };
 
-    public static Func<ArgumentResult, TimeSpan?> CreateSecondsParser(string name)
-        => (ArgumentResult result) => {
+    public static Func<ArgumentResult, int?> CreateSecondsParser(string name)
+        => result => {
             if (result.Tokens.Count == 0) {
                 result.AddError($"Missing required argument for {name}.");
                 return null;
@@ -56,6 +57,6 @@ public static class Parsers {
                 return null;
             }
 
-            return TimeSpan.FromSeconds(seconds);
+            return seconds;
         };
 }
