@@ -1,7 +1,26 @@
-﻿using RequestFiend.Console;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using RequestFiend.Console;
 using RequestFiend.Core;
 using System.CommandLine;
-using System.Threading.Tasks;
+using System.Net.Http;
+using System.Threading;
+
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
+    .ConfigurePrimaryHttpMessageHandler(static serviceProvider => new SocketsHttpHandler() {
+        PooledConnectionLifetime = System.TimeSpan.Zero,
+        SslOptions = {
+            RemoteCertificateValidationCallback = serviceProvider.GetRequiredService<IServerCertificateValidationHandler>().Handle
+        }
+    })
+    .ConfigureHttpClient(static httpClient => httpClient.Timeout = Timeout.InfiniteTimeSpan);
+builder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
+builder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
+builder.Services.AddSingleton<ICommandHandler, CommandHandler>();
+
+var host = builder.Build();
 
 var collectionArgument = new Argument<RequestTemplateCollection>("collection") {
     Description = "Collection from which to execute requests",
@@ -11,7 +30,7 @@ var allowScriptEvaluationOption = new Option<bool>("--allow-script-evaluation", 
     Description = "Enable the evaluation of configured request scripts"
 };
 
-var requestTimeoutInSecondsOption = new Option<System.TimeSpan?>("--request-timeout", "-t") {
+var requestTimeoutInSecondsOption = new Option<int?>("--request-timeout", "-t") {
     Description = "Timeout in seconds for executing requests",
     CustomParser = Parsers.CreateSecondsParser("option '--request-timeout'"),
     Arity = ArgumentArity.ZeroOrMore,
@@ -30,18 +49,13 @@ var rootCommand = new RootCommand("RequestFiend - An open source platform for ma
     environmentOption
 };
 
-rootCommand.SetAction((parseResult, cancellationToken) => {
+rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var collection = parseResult.GetRequiredValue(collectionArgument);
-    var allowScriptEvaluation = parseResult.GetValue(allowScriptEvaluationOption);
-    var requestTimeoutInSeconds = parseResult.GetValue(requestTimeoutInSecondsOption);
+    var options = new ExchangeOptions(parseResult.GetValue(allowScriptEvaluationOption), parseResult.GetValue(requestTimeoutInSecondsOption));
     var environment = parseResult.GetValue(environmentOption);
+    var handler = host.Services.GetRequiredService<ICommandHandler>();
 
-    System.Console.WriteLine(collection);
-    System.Console.WriteLine(allowScriptEvaluation);
-    System.Console.WriteLine(requestTimeoutInSeconds);
-    System.Console.WriteLine(environment);
-
-    return Task.CompletedTask;
+    await handler.ExecuteRequests(collection, options, environment, cancellationToken);
 });
 
 await rootCommand.Parse(args).InvokeAsync();
