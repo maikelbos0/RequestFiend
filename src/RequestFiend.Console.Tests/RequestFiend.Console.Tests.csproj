@@ -25,4 +25,22 @@
 		<ProjectReference Include="..\RequestFiend.Console\RequestFiend.Console.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Remove="Data.json" />
+		<None Remove="Empty.json" />
+		<None Remove="Invalid.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Data.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Empty.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Invalid.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
 </Project>
