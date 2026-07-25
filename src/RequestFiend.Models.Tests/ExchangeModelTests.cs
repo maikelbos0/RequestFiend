@@ -98,7 +98,7 @@ public class ExchangeModelTests {
 
         await subject.Execute();
 
-        _ = exchangeHandler.Received(1).Execute(Arg.Any<RequestTemplateSnapshot>(), collection, new(expectedAllowScriptEvaluation, requestTimeoutInSeconds, null), subject, Arg.Any<CancellationToken>());
+        _ = exchangeHandler.Received(1).Execute(Arg.Any<RequestTemplateSnapshot>(), collection, new(expectedAllowScriptEvaluation, requestTimeoutInSeconds), subject, Arg.Any<CancellationToken>());
         Assert.Equal([$"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Executing request...", $"{Path.GetFileNameWithoutExtension(filePath)} - {request.Name} - Exchange"], pageTitleBaseValues);
         Assert.Equal([$"{request.Name} - Executing request...", $"{request.Name} - Exchange"], shellItemTitleBaseValues);
         Assert.Equal([true, false], isExecutingValues);

@@ -39,7 +39,7 @@ public class ExchangetHandlerTests {
         );
         var collection = new RequestTemplateCollection();
 
-        var result = await subject.Execute(request, collection, new(false, null, null), CancellationToken.None);
+        var result = await subject.Execute(request, collection, new(false, null), CancellationToken.None);
 
         Received.InOrder(async () => {
             serverCertificateValidationHandler.Initialize(collection);
@@ -80,7 +80,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         Assert.Null(result.Request);
         Assert.Null(result.Response);
@@ -113,7 +113,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        var result = await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         Assert.NotNull(result.Request);
         Assert.Null(result.Response);
@@ -147,7 +147,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null), exchangeListener, CancellationToken.None);
 
         Received.InOrder(async () => {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
@@ -189,7 +189,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null), exchangeListener, CancellationToken.None);
 
         Received.InOrder(async () => {
             await scriptEvaluator.Evaluate(request.PreExchangeScript, result, CancellationToken.None);
@@ -233,7 +233,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        var result = await subject.Execute(request, new(), new(true, null, null), exchangeListener, CancellationToken.None);
+        var result = await subject.Execute(request, new(), new(true, null), exchangeListener, CancellationToken.None);
 
         await exchangeListener.Received(1).OnExceptionCaught(Arg.Is<Exception>(exception => exception == result.Exception));
     }
@@ -264,7 +264,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
+        await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<ScriptSnapshot>(), Arg.Any<ExchangeContext>(), Arg.Any<CancellationToken>());
     }
@@ -295,7 +295,7 @@ public class ExchangetHandlerTests {
             new([], "OnExceptionScript")
         );
 
-        await subject.Execute(request, new(), new(false, null, null), CancellationToken.None);
+        await subject.Execute(request, new(), new(false, null), CancellationToken.None);
 
         await scriptEvaluator.DidNotReceive().Evaluate(Arg.Any<ScriptSnapshot>(), Arg.Any<ExchangeContext>(), Arg.Any<CancellationToken>());
     }
