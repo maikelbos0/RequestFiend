@@ -1,10 +1,16 @@
 ﻿using MimeMapping;
-using System.IO;
+using System.IO.Abstractions;
 using System.Net.Http;
 
 namespace RequestFiend.Core;
 
 public class FormDataContentManager : IContentManager {
+    private readonly IFileSystem fileSystem;
+
+    public FormDataContentManager(IFileSystem fileSystem) {
+        this.fileSystem = fileSystem;
+    }
+
     public HttpContent? GetContent(RequestTemplateSnapshot request) {
         var content = new MultipartFormDataContent();
 
@@ -19,7 +25,7 @@ public class FormDataContentManager : IContentManager {
         foreach (var formFile in request.FormFileContent) {
             var filePath = request.Variables.Apply(formFile.Value);
 
-            content.Add(new ByteArrayContent(File.ReadAllBytes(request.Variables.Apply(formFile.Value))) {
+            content.Add(new ByteArrayContent(fileSystem.File.ReadAllBytes(request.Variables.Apply(formFile.Value))) {
                 Headers = {
                     ContentType = new(MimeUtility.GetMimeMapping(filePath))
                 }

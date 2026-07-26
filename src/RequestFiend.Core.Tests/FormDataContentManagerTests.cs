@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using NSubstitute;
+using System.IO.Abstractions;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,7 +12,12 @@ public class FormDataContentManagerTests {
     [InlineData(false, "multipart/form-data")]
     [InlineData(true, null)]
     public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
-        var subject = new FormDataContentManager();
+        var fileContents = Encoding.UTF8.GetBytes("{\"Value\": \"Foo\"}");
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem.File.ReadAllBytes("./Data.json").Returns(fileContents);
+
+        var subject = new FormDataContentManager(fileSystem);
         var request = new RequestTemplateSnapshot(
             new([
                 new("{{FileName}}", "Data.json"),
@@ -40,6 +47,6 @@ public class FormDataContentManagerTests {
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
         Assert.Equal("The Replacement and Another get replaced", await Assert.IsType<StringContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Description")).ReadAsStringAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(File.ReadAllBytes("./Data.json"), await Assert.IsType<ByteArrayContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Data")).ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(fileContents, await Assert.IsType<ByteArrayContent>(Assert.Single(result, content => content.Headers.ContentDisposition?.Name == "Data")).ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
     }
 }

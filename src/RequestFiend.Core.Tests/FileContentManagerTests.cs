@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using NSubstitute;
+using System.IO.Abstractions;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,7 +12,12 @@ public class FileContentManagerTests {
     [InlineData(false, "application/json")]
     [InlineData(true, null)]
     public async Task GetContent(bool hasManualContentTypeHeader, string? expectedMediaType) {
-        var subject = new FileContentManager();
+        var fileContents = Encoding.UTF8.GetBytes("{\"Value\": \"Foo\"}");
+
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem.File.ReadAllBytes("./Data.json").Returns(fileContents);
+
+        var subject = new FileContentManager(fileSystem);
         var request = new RequestTemplateSnapshot(
             new([
                 new("{{FileName}}", "Data.json")
@@ -33,6 +40,6 @@ public class FileContentManagerTests {
         var result = Assert.IsType<ByteArrayContent>(subject.GetContent(request));
 
         Assert.Equal(expectedMediaType, result.Headers.ContentType?.MediaType);
-        Assert.Equal(File.ReadAllBytes("./Data.json"), await result.ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(fileContents, await result.ReadAsByteArrayAsync(TestContext.Current.CancellationToken));
     }
 }

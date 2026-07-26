@@ -20,16 +20,6 @@ public record RequestTemplateSnapshot(
     ScriptSnapshot PostExchangeScript,
     ScriptSnapshot OnExceptionScript
 ) {
-    public IContentManager GetContentManager() => ContentType switch {
-        ContentType.None => new NoneContentManager(),
-        ContentType.Text => new TextContentManager(),
-        ContentType.Json => new JsonContentManager(),
-        ContentType.Xml => new XmlContentManager(),
-        ContentType.File => new FileContentManager(),
-        ContentType.FormData => new FormDataContentManager(),
-        _ => throw new NotImplementedException($"Received unknown content type '{ContentType}'.")
-    };
-
     public HttpRequestMessage CreateMessage() {
         var message = new HttpRequestMessage(HttpMethod.Parse(Method), new Uri(Variables.Apply(Url)));
 
@@ -37,7 +27,7 @@ public record RequestTemplateSnapshot(
             message.Headers.Add(Variables.Apply(header.Name), Variables.Apply(header.Value));
         }
 
-        message.Content = GetContentManager().GetContent(this);
+        message.Content = ContentManagerProvider.Provide(ContentType).GetContent(this);
 
         return message;
     }

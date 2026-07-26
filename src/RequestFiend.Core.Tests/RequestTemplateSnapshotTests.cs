@@ -1,40 +1,15 @@
-﻿using System;
+﻿using NSubstitute;
+using System.IO.Abstractions;
 using System.Net.Http;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
 public class RequestTemplateSnapshotTests {
-    [Theory]
-    [InlineData(ContentType.None, typeof(NoneContentManager))]
-    [InlineData(ContentType.Text, typeof(TextContentManager))]
-    [InlineData(ContentType.Json, typeof(JsonContentManager))]
-    [InlineData(ContentType.Xml, typeof(XmlContentManager))]
-    [InlineData(ContentType.File, typeof(FileContentManager))]
-    [InlineData(ContentType.FormData, typeof(FormDataContentManager))]
-    public void GetContentManager(ContentType contentType, Type expectedManagerType) {
-        var subject = new RequestTemplateSnapshot(
-            new([]),
-            "Request",
-            "GET",
-            "https://localhost/",
-            [],
-            contentType,
-            false,
-            "StringContent",
-            "FileContent",
-            [],
-            [],
-            new([], "Code"),
-            new([], "Code"),
-            new([], "Code")
-        );
-
-        Assert.Equal(expectedManagerType, subject.GetContentManager().GetType());
-    }
-
     [Fact]
     public void CreateMessage_Creates_Message() {
+        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
+
         var subject = new RequestTemplateSnapshot(
             new([]),
             "Request",
@@ -61,6 +36,8 @@ public class RequestTemplateSnapshotTests {
 
     [Fact]
     public void CreateMessage_Applies_Variables() {
+        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
+
         var subject = new RequestTemplateSnapshot(
             new([
                 new("{{BaseUrl}}", "https://localhost:7001/")
@@ -88,6 +65,8 @@ public class RequestTemplateSnapshotTests {
 
     [Fact]
     public void CreateMessage_Adds_Headers_Using_Variables() {
+        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
+
         var subject = new RequestTemplateSnapshot(
             new([
                 new("{{HeaderName}}", "Accept"),
@@ -119,6 +98,8 @@ public class RequestTemplateSnapshotTests {
 
     [Fact]
     public void CreateMessage_Adds_Content_If_Available() {
+        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
+
         var subject = new RequestTemplateSnapshot(
             new([
                 new("{{BaseUrl}}", "https://localhost:7001/")

@@ -24,6 +24,9 @@ builder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
 builder.Services.AddSingleton<CommandHandler>();
 
 var host = builder.Build();
+
+ContentManagerProvider.Initialize(host.Services.GetRequiredService<IFileSystem>());
+
 var parserBuilder = host.Services.GetRequiredService<ParserBuilder>();
 
 var collectionArgument = new Argument<RequestTemplateCollection>("collection") {
