@@ -12,8 +12,8 @@ using System.Threading;
 namespace RequestFiend.UI;
 
 public static class MauiProgram {
-    public static MauiApp CreateMauiApp()
-        => MauiApp.CreateBuilder()
+    public static MauiApp CreateMauiApp() {
+        var app = MauiApp.CreateBuilder()
             .UseMauiApp<App>()
             .ConfigureServices()
             .UseMauiCommunityToolkit()
@@ -23,6 +23,11 @@ public static class MauiProgram {
                 fonts.AddFont("FiraCode-Regular.ttf", "FiraCodeRegular");
             })
             .Build();
+
+        ContentManagerProvider.Initialize(app.Services.GetRequiredService<IFileSystem>());
+
+        return app;
+    }
 
     private static MauiAppBuilder ConfigureServices(this MauiAppBuilder mauiAppBuilder) {
         mauiAppBuilder.Services.AddSingleton<IFileSystem, FileSystem>();
