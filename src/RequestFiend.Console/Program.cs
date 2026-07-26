@@ -18,10 +18,10 @@ builder.Configuration.AddCommandLine(args, new Dictionary<string, string>() {
     { "-lp", "logging-path" },
     { "--logging-output-template", "logging-output-template" },
     { "-lo", "logging-output-template" },
-    { "--minimum-exchange-logging-level", "minimum-exchange-logging-level" },
-    { "-me", "minimum-exchange-logging-level" },
-    { "--minimum-other-source-logging-level", "minimum-other-source-logging-level" },
-    { "-mo", "minimum-other-source-logging-level" },
+    { "--exchange-logging-level", "exchange-logging-level" },
+    { "-el", "exchange-logging-level" },
+    { "--other-logging-level", "other-logging-level" },
+    { "-ol", "other-logging-level" },
 });
 builder.Services.AddSingleton<IFileSystem, FileSystem>();
 builder.Services.AddSingleton<ParserBuilder>();
@@ -41,11 +41,11 @@ builder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
     var loggingPath = builder.Configuration["logging-path"];
     var loggingOutputTemplate = builder.Configuration["logging-output-template"] ?? "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-    if (System.Enum.TryParse<LogEventLevel>(builder.Configuration["minimum-other-source-logging-level"], out var minimumOtherSourceLoggingLevel)) {
+    if (System.Enum.TryParse<LogEventLevel>(builder.Configuration["other-logging-level"], out var minimumOtherSourceLoggingLevel)) {
         loggerConfiguration.MinimumLevel.Override(nameof(RequestFiend), minimumOtherSourceLoggingLevel);
     }
 
-    if (System.Enum.TryParse<LogEventLevel>(builder.Configuration["minimum-exchange-logging-level"], out var minimumExchangeLoggingLevel)) {
+    if (System.Enum.TryParse<LogEventLevel>(builder.Configuration["exchange-logging-level"], out var minimumExchangeLoggingLevel)) {
         loggerConfiguration.MinimumLevel.Override(nameof(RequestFiend), minimumExchangeLoggingLevel);
     }
 
@@ -69,48 +69,23 @@ var collectionArgument = new Argument<RequestTemplateCollection>("collection") {
 var allowScriptEvaluationOption = new Option<bool>("--allow-script-evaluation", "-s") {
     Description = "Enable the evaluation of configured request scripts"
 };
-
 var requestTimeoutInSecondsOption = new Option<int?>("--request-timeout", "-t") {
     Description = "Timeout in seconds for executing requests",
-    CustomParser = parserBuilder.BuildSecondsParser("option '--request-timeout'"),
-    Arity = ArgumentArity.ZeroOrMore,
-    AllowMultipleArgumentsPerToken = true
+    CustomParser = parserBuilder.BuildSecondsParser("option '--request-timeout'")
 };
 var environmentOption = new Option<Environment?>("--environment", "-e") {
     Description = "Environment from which to use variables",
-    CustomParser = parserBuilder.BuildJsonFileParser<Environment>("option '--environment'"),
-    Arity = ArgumentArity.ZeroOrMore,
-    AllowMultipleArgumentsPerToken = true
+    CustomParser = parserBuilder.BuildJsonFileParser<Environment>("option '--environment'")
 };
 var rootCommand = new RootCommand("RequestFiend - An open source platform for managing and executing API requests.") {
     collectionArgument,
     allowScriptEvaluationOption,
     requestTimeoutInSecondsOption,
     environmentOption,
-    new Option<string>("--logging-path", "-lp") {
-        Description = "File path for logging",
-        CustomParser = _ => null,
-        Arity = ArgumentArity.ZeroOrMore,
-        AllowMultipleArgumentsPerToken = true
-    },
-    new Option<string>("--logging-output-template", "-lo") {
-        Description = "Logging output template (Serilog style",
-        CustomParser = _ => null,
-        Arity = ArgumentArity.ZeroOrMore,
-        AllowMultipleArgumentsPerToken = true
-    },
-    new Option<string>("--minimum-exchange-logging-level", "-me") {
-        Description = "Minimum level required for logging from request execution",
-        CustomParser = _ => null,
-        Arity = ArgumentArity.ZeroOrMore,
-        AllowMultipleArgumentsPerToken = true
-    },
-    new Option<string>("--minimum-other-source-logging-level", "-mo") {
-        Description = "Minimum level required for logging from other sources",
-        CustomParser = _ => null,
-        Arity = ArgumentArity.ZeroOrMore,
-        AllowMultipleArgumentsPerToken = true
-    }
+    new Option<string>("--logging-path", "-lp") { Description = "File path for logging" },
+    new Option<string>("--logging-output-template", "-lo") { Description = "Logging output template (Serilog style" },
+    new Option<string>("--exchange-logging-level", "-el") { Description = $"Minimum level required for logging from request execution ({string.Join(", ", System.Enum.GetValues<LogEventLevel>())})" },
+    new Option<string>("--other-logging-level", "-ol") { Description = $"Minimum level required for logging from other sources ({string.Join(", ", System.Enum.GetValues<LogEventLevel>())})" }
 };
 
 rootCommand.SetAction(async (parseResult, cancellationToken) => {

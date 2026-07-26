@@ -14,14 +14,8 @@ public class ParserBuilder {
 
     public Func<ArgumentResult, TValue?> BuildJsonFileParser<TValue>(string name) where TValue : class
         => result => {
-            if (result.Tokens.Count == 0) {
-                result.AddError($"Missing required argument for {name}.");
-                return null;
-            }
-
-            if (result.Tokens.Count > 1) {
-                result.AddError($"Received too many arguments for {name}.");
-                return null;
+            if (result.Tokens.Count != 1) {
+                throw new ArgumentException("Parser must be called with a single argument.");
             }
 
             if (!fileSystem.File.Exists(result.Tokens[0].Value)) {
@@ -47,14 +41,8 @@ public class ParserBuilder {
 
     public Func<ArgumentResult, int?> BuildSecondsParser(string name)
         => result => {
-            if (result.Tokens.Count == 0) {
-                result.AddError($"Missing required argument for {name}.");
-                return null;
-            }
-
-            if (result.Tokens.Count > 1) {
-                result.AddError($"Received too many arguments for {name}.");
-                return null;
+            if (result.Tokens.Count != 1) {
+                throw new ArgumentException("Parser must be called with a single argument.");
             }
 
             if (!int.TryParse(result.Tokens[0].Value, out var seconds) || seconds < 1) {
