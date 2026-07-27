@@ -12,14 +12,16 @@ public class ParserBuilder {
         this.fileSystem = fileSystem;
     }
 
-    public Func<ArgumentResult, TValue?> BuildJsonFileParser<TValue>(string name) where TValue : class
+    public Func<ArgumentResult, TValue?> BuildJsonFileParser<TValue>() where TValue : class
         => result => {
             if (result.Tokens.Count != 1) {
                 throw new ArgumentException("Parser must be called with a single argument.");
             }
 
+            var name = GetName(result);
+
             if (!fileSystem.File.Exists(result.Tokens[0].Value)) {
-                result.AddError($"Argument for {name} must be an existing file.");
+                result.AddError($"{name} must be an existing file.");
                 return null;
             }
 
@@ -27,29 +29,39 @@ public class ParserBuilder {
                 var value = JsonSerializer.Deserialize<TValue>(fileSystem.File.ReadAllText(result.Tokens[0].Value));
 
                 if (value == null) {
-                    result.AddError($"Argument for {name} must be a valid JSON file.");
+                    result.AddError($"{name} must be a valid JSON file.");
                     return null;
                 }
 
                 return value;
             }
             catch (Exception exception) {
-                result.AddError($"Argument for {name} must be a valid JSON file: {exception.Message}");
+                result.AddError($"{name} must be a valid JSON file: {exception.Message}");
                 return null;
             }
         };
 
-    public Func<ArgumentResult, int?> BuildSecondsParser(string name)
+    public Func<ArgumentResult, int?> BuildSecondsParser()
         => result => {
             if (result.Tokens.Count != 1) {
                 throw new ArgumentException("Parser must be called with a single argument.");
             }
 
+            var name = GetName(result);
+
             if (!int.TryParse(result.Tokens[0].Value, out var seconds) || seconds < 1) {
-                result.AddError($"Argument for {name} must be a positive number of seconds.");
+                result.AddError($"{name} must be a positive number of seconds.");
                 return null;
             }
 
             return seconds;
         };
+
+    private static string GetName(ArgumentResult result) {
+        if (result.Parent is OptionResult optionResult) {
+            return $"Argument for option '{optionResult.IdentifierToken?.Value ?? optionResult.Option.Name}'";
+        }
+
+        return $"Argument '{result.Argument.Name}'";
+    }
 }

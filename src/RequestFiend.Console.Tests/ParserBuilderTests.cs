@@ -19,7 +19,7 @@ public class ParsersTests {
         var subject = new ParserBuilder(fileSystem);
 
         var option = new Option<Data>("--data") {
-            CustomParser = subject.BuildJsonFileParser<Data>("option '--data'")
+            CustomParser = subject.BuildJsonFileParser<Data>()
         };
 
         var command = new RootCommand() { option };
@@ -34,20 +34,42 @@ public class ParsersTests {
     [InlineData(false, null, "Argument for option '--data' must be an existing file.")]
     [InlineData(true, "null", "Argument for option '--data' must be a valid JSON file.")]
     [InlineData(true, "Invalid", "Argument for option '--data' must be a valid JSON file: 'I' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.")]
-    public void BuildJsonFileParser_When_Invalid(bool fileExists, string? fileContents, string expectedError) {
+    public void BuildJsonFileParser_When_Invalid_Option(bool fileExists, string? fileContents, string expectedError) {
         var fileSystem = Substitute.For<IFileSystem>();
         fileSystem.File.Exists("./Data.json").Returns(fileExists);
         fileSystem.File.ReadAllText("./Data.json").Returns(fileContents);
 
         var subject = new ParserBuilder(fileSystem);
 
-        var option = new Option<Data>("--data") {
-            CustomParser = subject.BuildJsonFileParser<Data>("option '--data'")
+        var command = new RootCommand() {
+            new Option<Data>("--data") {
+                CustomParser = subject.BuildJsonFileParser<Data>()
+            }
         };
 
-        var command = new RootCommand() { option };
-
         var result = command.Parse(["--data", "./Data.json"]);
+
+        Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
+    }
+
+    [Theory]
+    [InlineData(false, null, "Argument 'data' must be an existing file.")]
+    [InlineData(true, "null", "Argument 'data' must be a valid JSON file.")]
+    [InlineData(true, "Invalid", "Argument 'data' must be a valid JSON file: 'I' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.")]
+    public void BuildJsonFileParser_When_Invalid_Argument(bool fileExists, string? fileContents, string expectedError) {
+        var fileSystem = Substitute.For<IFileSystem>();
+        fileSystem.File.Exists("./Data.json").Returns(fileExists);
+        fileSystem.File.ReadAllText("./Data.json").Returns(fileContents);
+
+        var subject = new ParserBuilder(fileSystem);
+
+        var command = new RootCommand() {
+            new Argument<Data>("data") {
+                CustomParser = subject.BuildJsonFileParser<Data>()
+            }
+        };
+
+        var result = command.Parse(["./Data.json"]);
 
         Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
     }
@@ -59,7 +81,7 @@ public class ParsersTests {
         var subject = new ParserBuilder(Substitute.For<IFileSystem>());
 
         var option = new Option<int?>("--seconds") {
-            CustomParser = subject.BuildSecondsParser("option '--seconds'")
+            CustomParser = subject.BuildSecondsParser()
         };
 
         var command = new RootCommand() { option };
@@ -75,16 +97,35 @@ public class ParsersTests {
     [InlineData("1a", "Argument for option '--seconds' must be a positive number of seconds.")]
     [InlineData("0", "Argument for option '--seconds' must be a positive number of seconds.")]
     [InlineData("-1", "Argument for option '--seconds' must be a positive number of seconds.")]
-    public void BuildSecondsParser_When_Invalid(string argument, string expectedError) {
+    public void BuildSecondsParser_When_Invalid_Option(string argument, string expectedError) {
         var subject = new ParserBuilder(Substitute.For<IFileSystem>());
 
-        var option = new Option<int?>("--seconds") {
-            CustomParser = subject.BuildSecondsParser("option '--seconds'")
+        var command = new RootCommand() {
+            new Option<int?>("--seconds") {
+                CustomParser = subject.BuildSecondsParser()
+            }
         };
 
-        var command = new RootCommand() { option };
-
         var result = command.Parse(["--seconds", argument]);
+
+        Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
+    }
+
+    [Theory]
+    [InlineData("", "Argument 'seconds' must be a positive number of seconds.")]
+    [InlineData("1a", "Argument 'seconds' must be a positive number of seconds.")]
+    [InlineData("0", "Argument 'seconds' must be a positive number of seconds.")]
+    [InlineData("-1", "Argument 'seconds' must be a positive number of seconds.")]
+    public void BuildSecondsParser_When_Invalid_Argument(string argument, string expectedError) {
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>());
+
+        var command = new RootCommand() {
+            new Argument<int?>("seconds") {
+                CustomParser = subject.BuildSecondsParser()
+            }
+        };
+
+        var result = command.Parse([argument]);
 
         Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
     }

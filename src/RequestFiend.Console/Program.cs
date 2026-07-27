@@ -64,18 +64,18 @@ var parserBuilder = host.Services.GetRequiredService<ParserBuilder>();
 
 var collectionArgument = new Argument<RequestTemplateCollection>("collection") {
     Description = "Collection from which to execute requests",
-    CustomParser = parserBuilder.BuildJsonFileParser<RequestTemplateCollection>("collection")
+    CustomParser = parserBuilder.BuildJsonFileParser<RequestTemplateCollection>()
 };
 var allowScriptEvaluationOption = new Option<bool>("--allow-script-evaluation", "-s") {
     Description = "Enable the evaluation of configured request scripts"
 };
 var requestTimeoutInSecondsOption = new Option<int?>("--request-timeout", "-t") {
     Description = "Timeout in seconds for executing requests",
-    CustomParser = parserBuilder.BuildSecondsParser("option '--request-timeout'")
+    CustomParser = parserBuilder.BuildSecondsParser()
 };
 var environmentOption = new Option<Environment?>("--environment", "-e") {
     Description = "Environment from which to use variables",
-    CustomParser = parserBuilder.BuildJsonFileParser<Environment>("option '--environment'")
+    CustomParser = parserBuilder.BuildJsonFileParser<Environment>()
 };
 var rootCommand = new RootCommand("RequestFiend - An open source platform for managing and executing API requests.") {
     collectionArgument,
