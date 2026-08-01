@@ -10,6 +10,7 @@ public class GlobParser {
     public bool TryParse(string input, [NotNullWhen(true)] out string? pattern) {
         var patternBuilder = new StringBuilder();
         var isInSet = false;
+        int startOfSet = 0;
         
         for (var i = 0; i < input.Length; i++) {
             if (input[i] == '?' && !isInSet) {
@@ -26,8 +27,15 @@ public class GlobParser {
                     i++;
                     patternBuilder.Append('^');
                 }
+
+                startOfSet = i;
             }
             else if (input[i] == ']' && isInSet) {
+                if (startOfSet == i - 1) {
+                    pattern = null;
+                    return false;
+                }
+
                 isInSet = false;
                 patternBuilder.Append(input[i]);
             }
@@ -40,6 +48,11 @@ public class GlobParser {
                     AppendCharacter(patternBuilder, input[i]);
                 }
             }
+        }
+
+        if (isInSet) {
+            pattern = null;
+            return false;
         }
 
         pattern = patternBuilder.ToString();

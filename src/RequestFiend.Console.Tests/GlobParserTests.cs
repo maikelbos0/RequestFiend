@@ -14,6 +14,10 @@ public class GlobParserTests {
     [InlineData("Test [[*+]", true, "Test [\\[\\*\\+]")]
     [InlineData("Test [!a-z]", true, "Test [^a-z]")]
     [InlineData("Test [![*+]", true, "Test [^\\[\\*\\+]")]
+    [InlineData("Test [", false, null)]
+    [InlineData("Test [!", false, null)]
+    [InlineData("Test []", false, null)]
+    [InlineData("Test [!]", false, null)]
     public void TryParse(string input, bool expectedResult, string? expectedPattern) {
         var subject = new GlobParser();
 
