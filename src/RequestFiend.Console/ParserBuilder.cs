@@ -8,9 +8,11 @@ namespace RequestFiend.Console;
 
 public class ParserBuilder {
     private readonly IFileSystem fileSystem;
+    private readonly IGlobParser globParser;
 
-    public ParserBuilder(IFileSystem fileSystem) {
+    public ParserBuilder(IFileSystem fileSystem, IGlobParser globParser) {
         this.fileSystem = fileSystem;
+        this.globParser = globParser;
     }
 
     public Func<ArgumentResult, TValue?> BuildJsonFileParser<TValue>() where TValue : class
@@ -65,12 +67,12 @@ public class ParserBuilder {
             }
 
             var name = GetName(result);
-            var pattern = result.Tokens[0].Value;
 
             try {
-                pattern = pattern
-                    .Replace("*", ".*")
-                    .Replace("?", ".*");
+                if (!globParser.TryParse(result.Tokens[0].Value, out var pattern)) {
+                    result.AddError($"{name} must be a valid glob pattern.");
+                    return null;
+                }
 
                 return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }

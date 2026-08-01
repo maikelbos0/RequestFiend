@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.IO.Abstractions;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Xunit;
 
 namespace RequestFiend.Console.Tests;
@@ -16,7 +17,7 @@ public class ParsersTests {
         fileSystem.File.Exists("./Data.json").Returns(true);
         fileSystem.File.ReadAllText("./Data.json").Returns(JsonSerializer.Serialize(data));
 
-        var subject = new ParserBuilder(fileSystem);
+        var subject = new ParserBuilder(fileSystem, Substitute.For<IGlobParser>());
 
         var option = new Option<Data>("--data") {
             CustomParser = subject.BuildJsonFileParser<Data>()
@@ -39,7 +40,7 @@ public class ParsersTests {
         fileSystem.File.Exists("./Data.json").Returns(fileExists);
         fileSystem.File.ReadAllText("./Data.json").Returns(fileContents);
 
-        var subject = new ParserBuilder(fileSystem);
+        var subject = new ParserBuilder(fileSystem, Substitute.For<IGlobParser>());
 
         var command = new RootCommand() {
             new Option<Data>("--data") {
@@ -61,7 +62,7 @@ public class ParsersTests {
         fileSystem.File.Exists("./Data.json").Returns(fileExists);
         fileSystem.File.ReadAllText("./Data.json").Returns(fileContents);
 
-        var subject = new ParserBuilder(fileSystem);
+        var subject = new ParserBuilder(fileSystem, Substitute.For<IGlobParser>());
 
         var command = new RootCommand() {
             new Argument<Data>("data") {
@@ -78,7 +79,7 @@ public class ParsersTests {
     [InlineData("1", 1)]
     [InlineData("123", 123)]
     public void BuildSecondsParser_When_Valid(string argument, int expectedValue) {
-        var subject = new ParserBuilder(Substitute.For<IFileSystem>());
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>(), Substitute.For<IGlobParser>());
 
         var option = new Option<int?>("--seconds") {
             CustomParser = subject.BuildSecondsParser()
@@ -98,7 +99,7 @@ public class ParsersTests {
     [InlineData("0", "Argument for option '--seconds' must be a positive number of seconds.")]
     [InlineData("-1", "Argument for option '--seconds' must be a positive number of seconds.")]
     public void BuildSecondsParser_When_Invalid_Option(string argument, string expectedError) {
-        var subject = new ParserBuilder(Substitute.For<IFileSystem>());
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>(), Substitute.For<IGlobParser>());
 
         var command = new RootCommand() {
             new Option<int?>("--seconds") {
@@ -117,7 +118,7 @@ public class ParsersTests {
     [InlineData("0", "Argument 'seconds' must be a positive number of seconds.")]
     [InlineData("-1", "Argument 'seconds' must be a positive number of seconds.")]
     public void BuildSecondsParser_When_Invalid_Argument(string argument, string expectedError) {
-        var subject = new ParserBuilder(Substitute.For<IFileSystem>());
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>(), Substitute.For<IGlobParser>());
 
         var command = new RootCommand() {
             new Argument<int?>("seconds") {
@@ -126,6 +127,78 @@ public class ParsersTests {
         };
 
         var result = command.Parse([argument]);
+
+        Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
+    }
+
+    [Fact]
+    public void BuildGlobParser_When_Valid() {
+        var globParser = Substitute.For<IGlobParser>();
+        globParser.TryParse("argu*", out _).Returns(callInfo => {
+            callInfo[1] = "argu.*";
+            return true;
+        });
+
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>(), globParser);
+
+        var option = new Option<Regex?>("--filter") {
+            CustomParser = subject.BuildGlobParser()
+        };
+
+        var command = new RootCommand() { option };
+
+        var result = command.Parse(["--filter", "argu*"]);
+
+        Assert.Empty(result.Errors);
+
+        var regex = result.GetValue(option);
+        Assert.NotNull(regex);
+        Assert.Equal("argu.*", regex.ToString());
+        Assert.Equal(RegexOptions.IgnoreCase | RegexOptions.Compiled, regex.Options);
+    }
+
+    [Theory]
+    [InlineData(false, null, "Argument for option '--filter' must be a valid glob pattern.")]
+    [InlineData(true, "[]", "Argument for option '--filter' must be a valid glob pattern.")]
+    public void BuildGlobParser_When_Invalid_Option(bool isValid, string? pattern, string expectedError) {
+        var globParser = Substitute.For<IGlobParser>();
+        globParser.TryParse("argu*", out _).Returns(callInfo => {
+            callInfo[1] = pattern;
+            return isValid;
+        });
+
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>(), globParser);
+
+        var option = new Option<Regex?>("--filter") {
+            CustomParser = subject.BuildGlobParser()
+        };
+
+        var command = new RootCommand() { option };
+
+        var result = command.Parse(["--filter", "argu*"]);
+
+        Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
+    }
+
+    [Theory]
+    [InlineData(false, null, "Argument 'filter' must be a valid glob pattern.")]
+    [InlineData(true, "[]", "Argument 'filter' must be a valid glob pattern.")]
+    public void BuildGlobParser_When_Invalid_Argument(bool isValid, string? pattern, string expectedError) {
+        var globParser = Substitute.For<IGlobParser>();
+        globParser.TryParse("argu*", out _).Returns(callInfo => {
+            callInfo[1] = pattern;
+            return isValid;
+        });
+
+        var subject = new ParserBuilder(Substitute.For<IFileSystem>(), globParser);
+
+        var command = new RootCommand() {
+            new Argument<Regex?>("filter") {
+                CustomParser = subject.BuildGlobParser()
+            }
+        };
+
+        var result = command.Parse(["argu*"]);
 
         Assert.Equivalent(expectedError, Assert.Single(result.Errors).Message);
     }
