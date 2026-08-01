@@ -2,6 +2,7 @@
 using System.CommandLine.Parsing;
 using System.IO.Abstractions;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace RequestFiend.Console;
 
@@ -55,6 +56,28 @@ public class ParserBuilder {
             }
 
             return seconds;
+        };
+
+    public Func<ArgumentResult, Regex?> BuildGlobParser()
+        => result => {
+            if (result.Tokens.Count != 1) {
+                throw new ArgumentException("Parser must be called with a single argument.");
+            }
+
+            var name = GetName(result);
+            var pattern = result.Tokens[0].Value;
+
+            try {
+                pattern = pattern
+                    .Replace("*", ".*")
+                    .Replace("?", ".*");
+
+                return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            }
+            catch {
+                result.AddError($"{name} must be a valid glob pattern.");
+                return null;
+            }
         };
 
     private static string GetName(ArgumentResult result) {

@@ -83,3 +83,11 @@ public static class MauiProgram {
         return mauiAppBuilder;
     }
 }
+
+// TODO console (in progress)
+// TODO secrets
+// TODO verification of status, etc for automated
+// TODO add help?
+// TODO Postman import
+// TODO Bruno import
+// TODO make various UI sections collapsible for long pages

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace RequestFiend.Console;
@@ -7,7 +7,9 @@ namespace RequestFiend.Console;
 public class GlobParser {
     private const char singleCharacterMatch = '?';
     private const char zeroOrMoreCharactersMatch = '*';
-    private static readonly HashSet<char> regexSpecialCharacters = [ '.', '$', '^', '{', '(', '|', ')', '+', '\\'];
+    private const char characterRangeStart = '[';
+    private const char escapeNextCharacter = '`';
+    private static readonly HashSet<char> regexSpecialCharacters = [ '.', '$', '^', '{', '[', '(', '|', ')', '*', '+', '?', '\\'];
 
     // . $ ^ { [ ( | ) * + ? \
     public bool TryParse(string input, [NotNullWhen(true)] out string? pattern) {
@@ -21,7 +23,13 @@ public class GlobParser {
                 patternBuilder.Append(".*");
             }
             else {
-                AppendCharacter(patternBuilder, input[i]);
+                if (input[i] == escapeNextCharacter) {
+                    i++;
+                }
+
+                if (input.Length > i) {
+                    AppendCharacter(patternBuilder, input[i]);
+                }
             }
         }
 

@@ -8,6 +8,8 @@ public class GlobParserTests {
     [InlineData("*Test", true, ".*Test")]
     [InlineData("Test?", true, "Test.")]
     [InlineData(". $ ^ { ( | ) + \\", true, "\\. \\$ \\^ \\{ \\( \\| \\) \\+ \\\\")]
+    [InlineData("`T`e`s`t`", true, "Test")]
+    [InlineData("`* `? `[", true, "\\* \\? \\[")]
     public void TryParse(string input, bool expectedResult, string? expectedPattern) {
         var subject = new GlobParser();
 
