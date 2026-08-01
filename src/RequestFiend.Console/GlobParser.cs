@@ -5,25 +5,34 @@ using System.Text;
 namespace RequestFiend.Console;
 
 public class GlobParser {
-    private const char singleCharacterMatch = '?';
-    private const char zeroOrMoreCharactersMatch = '*';
-    private const char characterRangeStart = '[';
-    private const char escapeNextCharacter = '`';
     private static readonly HashSet<char> regexSpecialCharacters = [ '.', '$', '^', '{', '[', '(', '|', ')', '*', '+', '?', '\\'];
 
-    // . $ ^ { [ ( | ) * + ? \
     public bool TryParse(string input, [NotNullWhen(true)] out string? pattern) {
         var patternBuilder = new StringBuilder();
+        var isInSet = false;
         
         for (var i = 0; i < input.Length; i++) {
-            if (input[i] == singleCharacterMatch) {
+            if (input[i] == '?' && !isInSet) {
                 patternBuilder.Append('.');
             }
-            else if (input[i] == zeroOrMoreCharactersMatch) {
+            else if (input[i] == '*' && !isInSet) {
                 patternBuilder.Append(".*");
             }
+            else if (input[i] == '[' && !isInSet) {
+                isInSet = true;
+                patternBuilder.Append(input[i]);
+
+                if (input.Length > i + 1 && input[i+1]== '!') {
+                    i++;
+                    patternBuilder.Append('^');
+                }
+            }
+            else if (input[i] == ']' && isInSet) {
+                isInSet = false;
+                patternBuilder.Append(input[i]);
+            }
             else {
-                if (input[i] == escapeNextCharacter) {
+                if (input[i] == '`') {
                     i++;
                 }
 
