@@ -8,7 +8,7 @@ public class GlobParser : IGlobParser {
     private static readonly HashSet<char> regexSpecialCharacters = ['.', '$', '^', '{', '[', '(', '|', ')', '*', '+', '?', '\\'];
 
     public bool TryParse(string input, [NotNullWhen(true)] out string? pattern) {
-        var patternBuilder = new StringBuilder();
+        var patternBuilder = new StringBuilder("^");
         var isInSet = false;
         int startOfSet = 0;
 
@@ -59,7 +59,7 @@ public class GlobParser : IGlobParser {
             return false;
         }
 
-        pattern = patternBuilder.ToString();
+        pattern = patternBuilder.Append("$").ToString();
         return true;
     }
 }
