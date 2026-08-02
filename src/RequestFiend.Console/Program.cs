@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.IO.Abstractions;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 var builder = Host.CreateApplicationBuilder();
@@ -24,6 +25,7 @@ builder.Configuration.AddCommandLine(args, new Dictionary<string, string>() {
     { "-ol", "other-logging-level" },
 });
 builder.Services.AddSingleton<IFileSystem, FileSystem>();
+builder.Services.AddSingleton<IGlobParser, GlobParser>();
 builder.Services.AddSingleton<ParserBuilder>();
 builder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
     .ConfigurePrimaryHttpMessageHandler(static serviceProvider => new SocketsHttpHandler() {
@@ -77,11 +79,21 @@ var environmentOption = new Option<Environment?>("--environment", "-e") {
     Description = "Environment from which to use variables",
     CustomParser = parserBuilder.BuildJsonFileParser<Environment>()
 };
+var includeOption = new Option<Regex?>("--include", "-i") {
+    Description = "Requests to include (glob pattern)",
+    CustomParser = parserBuilder.BuildGlobParser()
+};
+var excludeOption = new Option<Regex?>("--exclude", "-x") {
+    Description = "Requests to exclude (glob pattern)",
+    CustomParser = parserBuilder.BuildGlobParser()
+};
 var rootCommand = new RootCommand("RequestFiend - An open source platform for managing and executing API requests.") {
     collectionArgument,
     allowScriptEvaluationOption,
     requestTimeoutInSecondsOption,
     environmentOption,
+    includeOption,
+    excludeOption,
     new Option<string>("--logging-path", "-lp") { Description = "File path for logging" },
     new Option<string>("--logging-output-template", "-lo") { Description = "Logging output template (Serilog style" },
     new Option<string>("--exchange-logging-level", "-el") { Description = $"Minimum level required for logging from request execution ({string.Join(", ", System.Enum.GetValues<LogEventLevel>())})" },
@@ -93,12 +105,12 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var options = new ExchangeOptions(parseResult.GetValue(allowScriptEvaluationOption), parseResult.GetValue(requestTimeoutInSecondsOption));
     var environment = parseResult.GetValue(environmentOption);
     var handler = host.Services.GetRequiredService<CommandHandler>();
+    var requestFilter = new RequestFilter(parseResult.GetValue(includeOption), parseResult.GetValue(excludeOption));
 
-    await handler.ExecuteRequests(collection, options, environment, cancellationToken);
+    await handler.ExecuteRequests(collection, options, environment, requestFilter, cancellationToken);
 });
 
 await rootCommand.Parse(args).InvokeAsync();
 
-// TODO add filter
 // TODO how to save results?
 // TODO cross-platform?

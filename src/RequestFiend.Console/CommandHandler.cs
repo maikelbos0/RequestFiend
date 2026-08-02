@@ -1,4 +1,5 @@
 ﻿using RequestFiend.Core;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,9 +16,10 @@ public class CommandHandler {
         RequestTemplateCollection collection,
         ExchangeOptions exchangeOptions,
         Environment? environment,
+        IRequestFilter requestFilter,
         CancellationToken cancellationToken
     ) {
-        foreach (var request in collection.Requests) {
+        foreach (var request in collection.Requests.Where(requestFilter.IsMatch)) {
             await exchangeHandler.Execute(
                 request.CreateSnapshot(collection, environment),
                 collection,
