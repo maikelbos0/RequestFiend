@@ -7,7 +7,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class FileContentManagerTests {
+public class FileContentManagerTests : TestsBase {
     [Theory]
     [InlineData(false, "application/json")]
     [InlineData(true, null)]

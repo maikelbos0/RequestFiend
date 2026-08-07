@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Core.Tests;
 
-public class NameValuePairTests {
+public class NameValuePairTests : TestsBase {
     [Fact]
     public void CreateSnapshot() {
         var subject = new NameValuePair() {

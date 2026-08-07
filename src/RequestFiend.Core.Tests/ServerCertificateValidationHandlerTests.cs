@@ -3,7 +3,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class ServerCertificateValidationHandlerTests {
+public class ServerCertificateValidationHandlerTests : TestsBase {
     [Theory]
     [InlineData(SslPolicyErrors.None, false, false, false, true)]
     [InlineData(SslPolicyErrors.RemoteCertificateNotAvailable, false, false, false, false)]

@@ -60,7 +60,7 @@ builder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {
 
 var host = builder.Build();
 
-ContentManagerProvider.Initialize(host.Services.GetRequiredService<IFileSystem>());
+AppHost.Services = host.Services;
 
 var parserBuilder = host.Services.GetRequiredService<ParserBuilder>();
 

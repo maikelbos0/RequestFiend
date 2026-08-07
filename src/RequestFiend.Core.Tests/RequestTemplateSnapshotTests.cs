@@ -1,15 +1,14 @@
 ﻿using NSubstitute;
+using System;
 using System.IO.Abstractions;
 using System.Net.Http;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class RequestTemplateSnapshotTests {
+public class RequestTemplateSnapshotTests : TestsBase {
     [Fact]
     public void CreateMessage_Creates_Message() {
-        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
-
         var subject = new RequestTemplateSnapshot(
             new([]),
             "Request",
@@ -36,8 +35,6 @@ public class RequestTemplateSnapshotTests {
 
     [Fact]
     public void CreateMessage_Applies_Variables() {
-        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
-
         var subject = new RequestTemplateSnapshot(
             new([
                 new("{{BaseUrl}}", "https://localhost:7001/")
@@ -65,8 +62,6 @@ public class RequestTemplateSnapshotTests {
 
     [Fact]
     public void CreateMessage_Adds_Headers_Using_Variables() {
-        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
-
         var subject = new RequestTemplateSnapshot(
             new([
                 new("{{HeaderName}}", "Accept"),
@@ -98,8 +93,6 @@ public class RequestTemplateSnapshotTests {
 
     [Fact]
     public void CreateMessage_Adds_Content_If_Available() {
-        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
-
         var subject = new RequestTemplateSnapshot(
             new([
                 new("{{BaseUrl}}", "https://localhost:7001/")

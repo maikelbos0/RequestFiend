@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Core.Tests;
 
-public class VariableSnapshotTests {
+public class VariableSnapshotTests : TestsBase {
     [Fact]
     public void Create() {
         var subject = VariableSnapshot.Create([

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class TextContentManagerTests {
+public class TextContentManagerTests : TestsBase {
     [Theory]
     [InlineData(false, "text/plain")]
     [InlineData(true, null)]

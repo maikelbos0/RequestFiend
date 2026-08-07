@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Core.Tests;
 
-public class ScriptTests {
+public class ScriptTests : TestsBase {
     [Fact]
     public void CreateSnapshot() {
         var subject = new Script() {

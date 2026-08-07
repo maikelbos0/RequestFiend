@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class XmlContentManagerTests {
+public class XmlContentManagerTests : TestsBase {
     [Theory]
     [InlineData(false, XmlContentManager.DefaultMediaType)]
     [InlineData(true, null)]

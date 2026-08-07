@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class JsonContentManagerTests {
+public class JsonContentManagerTests : TestsBase {
     [Theory]
     [InlineData(false, JsonContentManager.DefaultMediaType)]
     [InlineData(true, null)]

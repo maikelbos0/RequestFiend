@@ -2,7 +2,6 @@
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System;
-using System.Collections.Immutable;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +9,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class ExchangetHandlerTests {
+public class ExchangeHandlerTests : TestsBase {
     [Fact]
     public async Task Execute() {
         var expectedResponse = new HttpResponseMessage();

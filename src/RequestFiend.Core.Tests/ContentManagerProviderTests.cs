@@ -1,11 +1,9 @@
-﻿using NSubstitute;
-using System;
-using System.IO.Abstractions;
+﻿using System;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class ContentManagerProviderTests {
+public class ContentManagerProviderTests : TestsBase {
     [Theory]
     [InlineData(ContentType.None, typeof(NoneContentManager))]
     [InlineData(ContentType.Text, typeof(TextContentManager))]
@@ -14,8 +12,6 @@ public class ContentManagerProviderTests {
     [InlineData(ContentType.File, typeof(FileContentManager))]
     [InlineData(ContentType.FormData, typeof(FormDataContentManager))]
     public void Provide(ContentType contentType, Type expectedManagerType) {
-        ContentManagerProvider.Initialize(Substitute.For<IFileSystem>());
-        
         Assert.Equal(expectedManagerType, ContentManagerProvider.Provide(contentType).GetType());
     }
 }

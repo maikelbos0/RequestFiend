@@ -2,7 +2,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class RequestTemplateCollectionTests {
+public class RequestTemplateCollectionTests : TestsBase {
     [Fact]
     public void CreateVariableSnapshot() {
         var subject = new RequestTemplateCollection() {

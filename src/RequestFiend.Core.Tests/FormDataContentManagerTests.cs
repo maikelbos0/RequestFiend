@@ -7,7 +7,7 @@ using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class FormDataContentManagerTests {
+public class FormDataContentManagerTests : TestsBase {
     [Theory]
     [InlineData(false, "multipart/form-data")]
     [InlineData(true, null)]

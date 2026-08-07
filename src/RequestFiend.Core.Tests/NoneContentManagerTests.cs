@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Core.Tests;
 
-public class NoneContentManagerTests {
+public class NoneContentManagerTests : TestsBase {
     [Fact]
     public void GetContent() {
         var subject = new NoneContentManager();

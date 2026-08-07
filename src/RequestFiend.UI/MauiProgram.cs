@@ -24,7 +24,7 @@ public static class MauiProgram {
             })
             .Build();
 
-        ContentManagerProvider.Initialize(app.Services.GetRequiredService<IFileSystem>());
+        AppHost.Services = app.Services;
 
         return app;
     }
