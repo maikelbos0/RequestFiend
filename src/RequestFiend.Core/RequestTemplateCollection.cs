@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RequestFiend.Core;
 
-public class RequestTemplateCollection {
+public class RequestTemplateCollection : ISecretOwner {
     private readonly Dictionary<string, object> sessionData = [];
     private readonly Dictionary<string, string> sessionVariables = [];
 
@@ -13,12 +13,20 @@ public class RequestTemplateCollection {
     public bool IgnoreRemoteCertificateChainErrors { get; set; }
     public List<RequestTemplate> Requests { get; set; } = [];
     public List<NameValuePair> Variables { get; set; } = [];
+    public List<Secret> Secrets { get; set; } = [];
     public List<NameValuePair> DefaultHeaders { get; set; } = [];
+    public byte[]? Salt { get; set; }
 
     public Dictionary<string, object> GetSessionData() => sessionData;
 
     public Dictionary<string, string> GetSessionVariables() => sessionVariables;
 
     public VariableSnapshot CreateVariableSnapshot(Environment? environment)
-        => VariableSnapshot.Create(sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }), Variables, environment?.Variables ?? []);
+        => VariableSnapshot.Create(
+            sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }),
+            Variables,
+            Secrets.Select(secret => new NameValuePair() { Name = secret.Name, Value = secret.GetValue(this) ?? "" }),
+            environment?.Variables ?? [],
+            environment?.Secrets.Select(secret => new NameValuePair() { Name = secret.Name, Value = secret.GetValue(environment) ?? "" }) ?? []
+        );
 }

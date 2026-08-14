@@ -2,6 +2,8 @@
 
 namespace RequestFiend.Core;
 
-public class Environment {
+public class Environment : ISecretOwner {
     public List<NameValuePair> Variables { get; set; } = [];
+    public List<Secret> Secrets { get; set; } = [];
+    public byte[]? Salt { get; set; }
 }
