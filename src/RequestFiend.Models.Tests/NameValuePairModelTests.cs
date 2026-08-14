@@ -9,7 +9,7 @@ public class NameValuePairModelTests {
     public void Name() {
         var pair = new NameValuePair() { Name = "PreviousName", Value = "PreviousValue" };
 
-        var subject = new NameValuePairModel(pair, Validator.Required) {
+        var subject = new NameValuePairModel(pair, Validator.Required, _ => true) {
             Name = { Value = "Name" }
         };
 
@@ -22,7 +22,7 @@ public class NameValuePairModelTests {
     public void Value() {
         var pair = new NameValuePair() { Name = "PreviousName", Value = "PreviousValue" };
 
-        var subject = new NameValuePairModel(pair, Validator.Required) {
+        var subject = new NameValuePairModel(pair, Validator.Required, _ => true) {
             Value = { Value = "Value" }
         };
 
@@ -48,7 +48,7 @@ public class NameValuePairModelTests {
 
     [Fact]
     public void CreateNameValuePair() {
-        var subject = new NameValuePairModel(new NameValuePair() { Name = "", Value = "" }, Validator.Required) {
+        var subject = new NameValuePairModel(new NameValuePair() { Name = "", Value = "" }, Validator.Required, _ => true) {
             Name = { Value = "Name" },
             Value = { Value = "Value" }
         };

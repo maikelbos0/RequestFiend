@@ -735,7 +735,7 @@ public class RequestTemplateModelTests {
             Method = "POST",
             Url = "https://localhost"
         };
-        var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required);
+        var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required, _ => true);
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
@@ -758,7 +758,7 @@ public class RequestTemplateModelTests {
             Url = "https://localhost"
         };
 
-        var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required);
+        var pair = new NameValuePairModel(new() { Name = "Name", Value = "PreviousValue" }, Validator.Required, _ => true);
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), new(), request);
 
