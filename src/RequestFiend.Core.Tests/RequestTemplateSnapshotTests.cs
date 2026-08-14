@@ -1,7 +1,4 @@
-﻿using NSubstitute;
-using System;
-using System.IO.Abstractions;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;

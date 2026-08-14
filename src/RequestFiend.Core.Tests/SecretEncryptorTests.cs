@@ -1,13 +1,11 @@
 ﻿using NSubstitute;
-using NSubstitute.ReturnsExtensions;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
-public class SecretEncryptorTests {
+public class SecretEncryptorTests : TestsBase {
     [Fact]
-    public async Task Encrypt_And_Decrypt() {
+    public void Encrypt_And_Decrypt() {
         const string value = "Plain text";
 
         var secretOwner = Substitute.For<ISecretOwner>();
@@ -17,40 +15,12 @@ public class SecretEncryptorTests {
 
         var subject = new SecretEncryptor(passwordProvider);
 
-        var encryptedValue = await subject.Encrypt(secretOwner, value);
+        var encryptResult = subject.Encrypt(secretOwner, value);
 
-        Assert.NotNull(encryptedValue);
+        Assert.NotEqual(value, encryptResult);
 
-        var decryptedValue = await subject.Decrypt(secretOwner, encryptedValue);
+        var decryptResult = subject.Decrypt(secretOwner, encryptResult);
 
-        Assert.Equal(value, decryptedValue);
-    }
-
-    [Fact]
-    public async Task Encrypt_Returns_Null_For_Missing_Password() {
-        var secretOwner = Substitute.For<ISecretOwner>();
-
-        var passwordProvider = Substitute.For<IPasswordProvider>();
-        passwordProvider.Provide(secretOwner).ReturnsNull();
-
-        var subject = new SecretEncryptor(passwordProvider);
-
-        var result = await subject.Encrypt(secretOwner, "Plain text");
-
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task Decrypt_Returns_Null_For_Missing_Password() {
-        var secretOwner = Substitute.For<ISecretOwner>();
-
-        var passwordProvider = Substitute.For<IPasswordProvider>();
-        passwordProvider.Provide(secretOwner).ReturnsNull();
-
-        var subject = new SecretEncryptor(passwordProvider);
-
-        var result = await subject.Decrypt(secretOwner, "Encrypted text");
-
-        Assert.Null(result);
+        Assert.Equal(value, decryptResult);
     }
 }

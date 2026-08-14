@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-
-namespace RequestFiend.Core;
+﻿namespace RequestFiend.Core;
 
 public interface IPasswordProvider {
-    Task<string?> Provide(ISecretOwner owner);
+    string Provide(ISecretOwner owner);
 }

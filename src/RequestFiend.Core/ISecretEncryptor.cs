@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-
-namespace RequestFiend.Core;
+﻿namespace RequestFiend.Core;
 
 public interface ISecretEncryptor {
-    Task<string?> Encrypt(ISecretOwner owner, string decryptedValue);
-    Task<string?> Decrypt(ISecretOwner owner, string encryptedValue);
+    string Encrypt(ISecretOwner owner, string decryptedValue);
+    string Decrypt(ISecretOwner owner, string encryptedValue);
 }
