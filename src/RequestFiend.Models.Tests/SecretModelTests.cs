@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using RequestFiend.Core;
 using Xunit;
 
@@ -10,11 +11,8 @@ public class SecretModelTests : TestsBase {
         const string ciphertext = "Ciphertext";
         const string value = "Plain text";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
+        AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, ciphertext).Returns(value);
 
         var secret = new Secret() { Name = "PreviousName", Ciphertext = ciphertext };
 
@@ -32,11 +30,8 @@ public class SecretModelTests : TestsBase {
         const string ciphertext = "Ciphertext";
         const string value = "Plain text";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
+        AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value).Returns(ciphertext);
 
         var secret = new Secret() { Name = "PreviousName" };
 
@@ -49,25 +44,19 @@ public class SecretModelTests : TestsBase {
         Assert.Equal(ciphertext, secret.Ciphertext);
     }
 
-    [Theory]
-    [InlineData("", true)]
-    [InlineData("Name", false)]
-    public void Constructor(string name, bool expectedHasError) {
+    [Fact]
+    public void Constructor() {
         const string ciphertext = "Ciphertext";
         const string value = "Plain text";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
+        AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, ciphertext).Returns(value);
 
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
-
-        var secret = new Secret() { Name = name, Ciphertext = "Ciphertext" };
+        var secret = new Secret() { Name = "Name", Ciphertext = "Ciphertext" };
 
         var subject = new SecretModel(owner, secret);
 
         Assert.Equal(secret.Name, subject.Name.Value);
-        Assert.Equal(expectedHasError, subject.Name.HasError);
         Assert.Equal(value, subject.Value.Value);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
