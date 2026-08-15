@@ -6,9 +6,9 @@ public class Secret {
     public required string Name { get; set; }
     public string? Ciphertext { get; set; }
 
-    public string? GetValue(ISecretOwner owner) {
+    public string GetValue(ISecretOwner owner) {
         if (Ciphertext == null) {
-            return null;
+            return "";
         }
 
         return AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, Ciphertext);

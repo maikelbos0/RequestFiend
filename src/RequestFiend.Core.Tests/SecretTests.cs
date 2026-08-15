@@ -26,7 +26,7 @@ public class SecretTests : TestsBase {
     }
     
     [Fact]
-    public void GetValue_Returns_Null_For_Null_Ciphertext() {
+    public void GetValue_Returns_Empty_String_For_Null_Ciphertext() {
         var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
 
@@ -38,7 +38,7 @@ public class SecretTests : TestsBase {
 
         var result = subject.GetValue(owner);
 
-        Assert.Null(result);
+        Assert.Empty(result);
 
         secretEncryptor.DidNotReceive().Decrypt(owner, Arg.Any<string>());
     }
