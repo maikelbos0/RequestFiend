@@ -4,7 +4,7 @@ using Xunit.Internal;
 
 namespace RequestFiend.Models.Tests;
 
-public class ScriptModelTests {
+public class ScriptModelTests : TestsBase {
     [Fact]
     public void References() {
         var script = new Script();

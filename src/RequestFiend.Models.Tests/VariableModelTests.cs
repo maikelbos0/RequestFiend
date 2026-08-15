@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class VariableModelTests {
+public class VariableModelTests : TestsBase {
     [Fact]
     public void CreateRange() {
         var variables = ImmutableDictionary.CreateRange([

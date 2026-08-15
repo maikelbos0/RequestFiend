@@ -6,7 +6,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class HttpResponseModelTests {
+public class HttpResponseModelTests : TestsBase {
     [Theory]
     [InlineData(HttpStatusCode.OK, "200 OK")]
     [InlineData(HttpStatusCode.IMUsed, "226 IM Used")]

@@ -18,7 +18,7 @@ using Storage = Microsoft.Maui.Storage;
 
 namespace RequestFiend.Models.Tests;
 
-public class MainPageModelTests {
+public class MainPageModelTests : TestsBase {
     [Fact]
     public void Constructor() {
         var recentCollection = new List<FileModel>();

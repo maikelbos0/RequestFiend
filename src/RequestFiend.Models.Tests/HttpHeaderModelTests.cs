@@ -3,7 +3,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class HttpHeaderModelTests {
+public class HttpHeaderModelTests : TestsBase {
     [Fact]
     public void Create() {
         var header = new KeyValuePair<string, IEnumerable<string>>("Accept", ["application/json", "application/xml"]);

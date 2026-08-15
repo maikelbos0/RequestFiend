@@ -5,7 +5,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class PageBoundModelBaseTests {
+public class PageBoundModelBaseTests : TestsBase {
     [Theory]
     [InlineData(400, true, false, false, true)]
     [InlineData(539, true, false, false, true)]

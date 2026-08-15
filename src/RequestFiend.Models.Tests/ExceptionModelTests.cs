@@ -3,7 +3,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class ExceptionModelTests {
+public class ExceptionModelTests : TestsBase {
     [Fact]
     public void Create() {
         Exception exception;

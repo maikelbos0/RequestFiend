@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Converters;
 
-public class SelectedItemStyleConverterTests {
+public class SelectedItemStyleConverterTests : TestsBase {
     [Fact]
     public void Convert_Returns_Style_If_Equal() {
         var subject = new SelectedItemStyleConverter();

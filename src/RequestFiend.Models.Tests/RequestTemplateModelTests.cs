@@ -12,7 +12,7 @@ using Storage = Microsoft.Maui.Storage;
 
 namespace RequestFiend.Models.Tests;
 
-public class RequestTemplateModelTests {
+public class RequestTemplateModelTests : TestsBase {
     [Fact]
     public void Name() {
         const string filePath = @"C:\Documents\External data requests.json";

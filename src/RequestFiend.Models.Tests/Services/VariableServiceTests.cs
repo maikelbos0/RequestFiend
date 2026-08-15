@@ -3,7 +3,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Services;
 
-public class VariableServiceTests {
+public class VariableServiceTests : TestsBase {
     [Theory]
     [InlineData("")]
     [InlineData("Foo", "text:Foo")]

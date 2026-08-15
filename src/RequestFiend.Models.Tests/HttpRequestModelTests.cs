@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class HttpRequestModelTests {
+public class HttpRequestModelTests : TestsBase {
     [Fact]
     public void Create_Without_Content() {
         var request = new HttpRequestMessage() {

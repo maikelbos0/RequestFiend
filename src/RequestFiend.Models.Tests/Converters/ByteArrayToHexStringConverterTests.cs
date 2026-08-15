@@ -3,7 +3,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Converters;
 
-public class ByteArrayToHexStringConverterTests {
+public class ByteArrayToHexStringConverterTests : TestsBase {
     [Theory]
     [InlineData(null, null)]
     [InlineData(new byte[] { }, "")]

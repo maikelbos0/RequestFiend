@@ -6,7 +6,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class RequestTemplateCollectionModelTests {
+public class RequestTemplateCollectionModelTests : TestsBase {
     [Fact]
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";

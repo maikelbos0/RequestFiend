@@ -5,7 +5,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class HttpContentModelTests {
+public class HttpContentModelTests : TestsBase {
     [Fact]
     public async Task Create_Null_Content() {
         var subject = await HttpContentModel.Create(null);

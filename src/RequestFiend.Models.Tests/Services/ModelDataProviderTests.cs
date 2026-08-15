@@ -5,7 +5,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Services;
 
-public class ModelDataProviderTests {
+public class ModelDataProviderTests : TestsBase {
     private record DataType1();
     private record DataType2();
     private record DataType3();

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class NameValuePairModelTests {
+public class NameValuePairModelTests : TestsBase {
     [Fact]
     public void Name() {
         var pair = new NameValuePair() { Name = "PreviousName", Value = "PreviousValue" };

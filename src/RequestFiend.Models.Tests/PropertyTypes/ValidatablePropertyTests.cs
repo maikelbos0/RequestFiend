@@ -5,7 +5,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.PropertyTypes;
 
-public class ValidatablePropertyTests {
+public class ValidatablePropertyTests : TestsBase {
     [Theory]
     [InlineData("", true)]
     [InlineData("Value", false)]

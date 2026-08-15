@@ -13,7 +13,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class ExchangeModelTests {
+public class ExchangeModelTests : TestsBase {
     [Fact]
     public void Constructor() {
         const string filePath = @"C:\Documents\External data requests.json";

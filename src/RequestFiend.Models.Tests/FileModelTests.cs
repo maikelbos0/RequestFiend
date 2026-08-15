@@ -2,7 +2,7 @@
 
 namespace RequestFiend.Models.Tests;
 
-public class FileModelTests {
+public class FileModelTests : TestsBase {
     [Fact]
     public void Name() {
         var subject = new FileModel(@"C:\Path\To\File.json");

@@ -11,7 +11,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Services;
 
-public class EnvironmentServiceTests {
+public class EnvironmentServiceTests : TestsBase {
     [Fact]
     public async Task Save() {
         const string filePath = @"C:\Documents\Local.json";

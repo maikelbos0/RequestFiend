@@ -10,7 +10,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests.Services;
 
-public class RequestTemplateCollectionServiceTests {
+public class RequestTemplateCollectionServiceTests : TestsBase {
     [Fact]
     public async Task Save() {
         const string filePath = @"C:\Documents\External data requests.json";

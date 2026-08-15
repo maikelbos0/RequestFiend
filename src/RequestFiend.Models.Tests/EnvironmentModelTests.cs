@@ -7,7 +7,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class EnvironmentModelTests {
+public class EnvironmentModelTests : TestsBase {
     [Fact]
     public void Constructor() {
         const string filePath = @"C:\Documents\Local.json";

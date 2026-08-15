@@ -5,7 +5,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class ValidatableImmutableCollectionTests {
+public class ValidatableImmutableCollectionTests : TestsBase {
     [Fact]
     public void Constructor() {
         var collection = new List<IImmutable>() {

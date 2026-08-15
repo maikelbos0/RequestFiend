@@ -5,7 +5,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class NameValuePairModelCollectionTests {
+public class NameValuePairModelCollectionTests : TestsBase {
     [Theory]
     [InlineData(false, true)]
     [InlineData(true, false)]

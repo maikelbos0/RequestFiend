@@ -11,7 +11,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class LogModelTests {
+public class LogModelTests : TestsBase {
     [Fact]
     public void Constructor() {
         var subject = new LogModel(Substitute.For<IMessageService>(), Substitute.For<IPopupService>(), 1);

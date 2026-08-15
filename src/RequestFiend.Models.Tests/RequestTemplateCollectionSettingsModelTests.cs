@@ -11,7 +11,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class RequestTemplateCollectionSettingsModelTests {
+public class RequestTemplateCollectionSettingsModelTests : TestsBase {
     [Fact]
     public void AllowScriptEvaluation() {
         const string filePath = @"C:\Documents\External data requests.json";

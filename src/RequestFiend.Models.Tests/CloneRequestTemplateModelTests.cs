@@ -9,7 +9,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class CloneRequestTemplateModelTests {
+public class CloneRequestTemplateModelTests : TestsBase {
     [Fact]
     public void Name() {
         const string filePath = @"C:\Documents\External data requests.json";

@@ -17,7 +17,7 @@ using Storage = Microsoft.Maui.Storage;
 
 namespace RequestFiend.Models.Tests;
 
-public class PreferencesModelTests {
+public class PreferencesModelTests : TestsBase {
     [Theory]
     [InlineData("", 0)]
     [InlineData("0", 0)]

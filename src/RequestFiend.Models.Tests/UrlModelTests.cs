@@ -7,7 +7,7 @@ using Xunit;
 
 namespace RequestFiend.Models.Tests;
 
-public class UrlModelTests {
+public class UrlModelTests : TestsBase {
     [Theory]
     [InlineData("https://localhost/api")]
     [InlineData("https://localhost/api?")]
