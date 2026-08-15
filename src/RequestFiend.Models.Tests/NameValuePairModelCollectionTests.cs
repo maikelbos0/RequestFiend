@@ -187,7 +187,7 @@ public class NameValuePairModelCollectionTests : TestsBase {
     }
 
     [Fact]
-    public void CreateNameValuePair() {
+    public void CreateNameValuePairs() {
         var subject = new NameValuePairModelCollection([], Validator.Required) {
             { "FirstName", "FirstValue" },
             { "SecondName", "SecondValue" }
