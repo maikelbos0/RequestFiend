@@ -10,11 +10,8 @@ public class SecretTests : TestsBase {
         const string ciphertext = "Ciphertext";
         const string value = "Plain text";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
         secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new Secret() {
             Name = "Name",
@@ -29,11 +26,8 @@ public class SecretTests : TestsBase {
     public void GetValue_Returns_Empty_String_For_Null_Decrypt_Result() {
         const string ciphertext = "Ciphertext";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
         secretEncryptor.Decrypt(owner, ciphertext).ReturnsNull();
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new Secret() {
             Name = "Name",
@@ -47,10 +41,7 @@ public class SecretTests : TestsBase {
 
     [Fact]
     public void GetValue_Returns_Empty_String_For_Null_Ciphertext() {
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new Secret() {
             Name = "Name"
@@ -68,11 +59,8 @@ public class SecretTests : TestsBase {
         const string ciphertext = "Ciphertext";
         const string value = "Plain text";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
         secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new Secret() {
             Name = "Name"
@@ -87,11 +75,8 @@ public class SecretTests : TestsBase {
     public void SetValue_Keeps_Previous_Ciphertext_For_Null_Encrypt_Result() {
         const string value = "Plain text";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
         secretEncryptor.Encrypt(owner, value).ReturnsNull();
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new Secret() {
             Name = "Name",
@@ -105,10 +90,7 @@ public class SecretTests : TestsBase {
 
     [Fact]
     public void SetValue_Sets_Ciphertext_To_Null_For_Null_Value() {
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
         var owner = Substitute.For<ISecretOwner>();
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new Secret() {
             Name = "Name",

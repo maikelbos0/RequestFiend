@@ -31,7 +31,7 @@ public class LogModelTests : TestsBase {
         subject.Add($"Test 1{Environment.NewLine}");
         subject.Add($"Test 2{Environment.NewLine}");
 
-        await Task.Delay(10, TestContext.Current.CancellationToken);
+        await Task.Delay(20, TestContext.Current.CancellationToken);
 
         cancellationTokenSource.Cancel();
         await updatingTask;
@@ -50,10 +50,10 @@ public class LogModelTests : TestsBase {
 
         subject.Clear();
 
+        await Task.Delay(20, TestContext.Current.CancellationToken);
+
         cancellationTokenSource.Cancel();
         await updatingTask;
-
-        await Task.Delay(10, TestContext.Current.CancellationToken);
 
         Assert.Empty(subject.LogEvents);
     }

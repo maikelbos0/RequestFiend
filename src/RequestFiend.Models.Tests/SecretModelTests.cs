@@ -12,7 +12,7 @@ public class SecretModelTests : TestsBase {
         const string value = "Plain text";
 
         var owner = Substitute.For<ISecretOwner>();
-        AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, ciphertext).Returns(value);
+        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
 
         var secret = new Secret() { Name = "PreviousName", Ciphertext = ciphertext };
 
@@ -31,7 +31,7 @@ public class SecretModelTests : TestsBase {
         const string value = "Plain text";
 
         var owner = Substitute.For<ISecretOwner>();
-        AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value).Returns(ciphertext);
+        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
 
         var secret = new Secret() { Name = "PreviousName" };
 
@@ -50,7 +50,7 @@ public class SecretModelTests : TestsBase {
         const string value = "Plain text";
 
         var owner = Substitute.For<ISecretOwner>();
-        AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, ciphertext).Returns(value);
+        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
 
         var secret = new Secret() { Name = "Name", Ciphertext = "Ciphertext" };
 
@@ -67,8 +67,8 @@ public class SecretModelTests : TestsBase {
         const string value = "Plain text";
 
         var owner = Substitute.For<ISecretOwner>();
-        AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner).Returns(true);
-        AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value).Returns(ciphertext);
+        passwordProvider.CanProvide(owner).Returns(true);
+        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
 
         var secret = new Secret() { Name = "PreviousName" };
 
@@ -93,8 +93,8 @@ public class SecretModelTests : TestsBase {
         const string value = "Plain text";
 
         var owner = Substitute.For<ISecretOwner>();
-        AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner).Returns(false);
-        AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value).Returns(ciphertext);
+        passwordProvider.CanProvide(owner).Returns(false);
+        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
 
         var secret = new Secret() { Name = "PreviousName" };
 

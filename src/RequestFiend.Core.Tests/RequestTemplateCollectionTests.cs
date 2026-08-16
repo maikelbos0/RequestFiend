@@ -8,11 +8,6 @@ public class RequestTemplateCollectionTests : TestsBase {
     public void CreateVariableSnapshot() {
         const string ciphertext = "Ciphertext";
 
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
-        secretEncryptor.Decrypt(Arg.Any<ISecretOwner>(), Arg.Any<string>()).Returns("BazValue");
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
-
         var subject = new RequestTemplateCollection() {
             Variables = {
                 new() { Name = "Foo", Value = "FooValue" }
@@ -22,6 +17,7 @@ public class RequestTemplateCollectionTests : TestsBase {
             }
         };
 
+        secretEncryptor.Decrypt(subject, ciphertext).Returns("BazValue");
         subject.GetSessionVariables().Add("Bar", "BarValue");
 
         var result = subject.CreateVariableSnapshot(null);
@@ -34,11 +30,6 @@ public class RequestTemplateCollectionTests : TestsBase {
     [Fact]
     public void CreateVariableSnapshot_With_Environment() {
         const string ciphertext = "Ciphertext";
-
-        var secretEncryptor = Substitute.For<ISecretEncryptor>();
-        secretEncryptor.Decrypt(Arg.Any<ISecretOwner>(), Arg.Any<string>()).Returns("BazValue");
-
-        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
 
         var subject = new RequestTemplateCollection() {
             Variables = {
@@ -54,6 +45,8 @@ public class RequestTemplateCollectionTests : TestsBase {
                 new() { Name = "Baz", Ciphertext = "Ciphertext" }
             }
         };
+
+        secretEncryptor.Decrypt(environment, ciphertext).Returns("BazValue");
 
         var result = subject.CreateVariableSnapshot(environment);
 
