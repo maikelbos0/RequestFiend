@@ -25,8 +25,8 @@ public class RequestTemplateCollection : ISecretOwner {
         => VariableSnapshot.Create(
             sessionVariables.Select(pair => new NameValuePair() { Name = pair.Key, Value = pair.Value }),
             Variables,
-            Secrets.Select(secret => new NameValuePair() { Name = secret.Name, Value = secret.GetValue(this) ?? "" }),
+            Secrets.Select(secret => new NameValuePair() { Name = secret.Name, Value = secret.GetPlaintextValue(this) ?? "" }),
             environment?.Variables ?? [],
-            environment?.Secrets.Select(secret => new NameValuePair() { Name = secret.Name, Value = secret.GetValue(environment) ?? "" }) ?? []
+            environment?.Secrets.Select(secret => new NameValuePair() { Name = secret.Name, Value = secret.GetPlaintextValue(environment) ?? "" }) ?? []
         );
 }

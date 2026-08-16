@@ -5,7 +5,7 @@ namespace RequestFiend.Core.Tests;
 
 public class SecretEncryptorTests : TestsBase {
     [Fact]
-    public void Encrypt_And_Decrypt() {
+    public void TryEncrypt_And_TryDecrypt() {
         const string value = "Plain text";
 
         var secretOwner = Substitute.For<ISecretOwner>();
@@ -18,13 +18,9 @@ public class SecretEncryptorTests : TestsBase {
 
         var subject = new SecretEncryptor(passwordProvider);
 
-        var encryptResult = subject.Encrypt(secretOwner, value);
-
+        Assert.True(subject.TryEncrypt(secretOwner, value, out var encryptResult));
         Assert.NotNull(encryptResult);
-        Assert.NotEqual(value, encryptResult);
-
-        var decryptResult = subject.Decrypt(secretOwner, encryptResult);
-
+        Assert.True(subject.TryDecrypt(secretOwner, encryptResult, out var decryptResult));
         Assert.Equal(value, decryptResult);
     }
 
@@ -37,8 +33,7 @@ public class SecretEncryptorTests : TestsBase {
 
         var subject = new SecretEncryptor(passwordProvider);
 
-        var result = subject.Encrypt(secretOwner, "Plain text");
-
+        Assert.False(subject.TryEncrypt(secretOwner, "Plain text", out var result));
         Assert.Null(result);
     }
 
@@ -51,8 +46,7 @@ public class SecretEncryptorTests : TestsBase {
 
         var subject = new SecretEncryptor(passwordProvider);
 
-        var result = subject.Decrypt(secretOwner, "Encrypted text");
-
+        Assert.False(subject.TryDecrypt(secretOwner, "Encrypted text", out var result));
         Assert.Null(result);
     }
 }

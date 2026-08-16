@@ -4,22 +4,22 @@ namespace RequestFiend.Core;
 
 public class Secret {
     public required string Name { get; set; }
-    public string? Ciphertext { get; set; }
+    public string? EncryptedValue { get; set; }
 
-    public string GetValue(ISecretOwner owner) {
-        if (Ciphertext == null) {
+    public string GetPlaintextValue(ISecretOwner owner) {
+        if (EncryptedValue == null || !AppHost.Services.GetRequiredService<ISecretEncryptor>().TryDecrypt(owner, EncryptedValue, out var result)) {
             return "";
         }
 
-        return AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, Ciphertext) ?? "";
+        return result;
     }
 
-    public void SetValue(ISecretOwner owner, string? value) {
+    public void SetPlaintextValue(ISecretOwner owner, string? value) {
         if (value == null) {
-            Ciphertext = null;
+            EncryptedValue = null;
         }
-        else {
-            Ciphertext = AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value) ?? Ciphertext;
+        else if (AppHost.Services.GetRequiredService<ISecretEncryptor>().TryEncrypt(owner, value, out var result)) {
+            EncryptedValue = result;
         }
     }
 }

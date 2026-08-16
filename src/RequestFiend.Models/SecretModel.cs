@@ -14,7 +14,7 @@ public class SecretModel : BoundModelBase, IValidatable {
         this.owner = owner;
 
         Name = new(() => secret.Name, value => secret.Name = value, Validator.Required);
-        Value = new(() => secret.GetValue(owner), value => secret.SetValue(owner, value));
+        Value = new(() => secret.GetPlaintextValue(owner), value => secret.SetPlaintextValue(owner, value));
 
         ConfigureState([Name, Value]);
     }

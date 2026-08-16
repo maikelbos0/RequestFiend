@@ -15,29 +15,32 @@ public class SecretEncryptor : ISecretEncryptor {
         this.passwordProvider = passwordProvider;
     }
 
-    public string? Encrypt(ISecretOwner owner, string value) {
+    public bool TryEncrypt(ISecretOwner owner, string plaintextValue, [NotNullWhen(true)] out string? result) {
         if (!TryGetKey(owner, out var key)) {
-            return null;
+            result = null;
+            return false;
         }
 
         using var aes = new AesGcm(key, BlockSizeInBytes);
 
-        var plaintext = Encoding.UTF8.GetBytes(value);
-        var result = new byte[NonceSizeInBytes + BlockSizeInBytes + plaintext.Length];
-        var nonce = result.AsSpan(0, NonceSizeInBytes);
-        var tag = result.AsSpan(NonceSizeInBytes, BlockSizeInBytes);
-        var ciphertext = result.AsSpan(NonceSizeInBytes + BlockSizeInBytes);
+        var plaintext = Encoding.UTF8.GetBytes(plaintextValue);
+        var target = new byte[NonceSizeInBytes + BlockSizeInBytes + plaintext.Length];
+        var nonce = target.AsSpan(0, NonceSizeInBytes);
+        var tag = target.AsSpan(NonceSizeInBytes, BlockSizeInBytes);
+        var ciphertext = target.AsSpan(NonceSizeInBytes + BlockSizeInBytes);
 
-        Buffer.BlockCopy(RandomNumberGenerator.GetBytes(BlockSizeInBytes), 0, result, 0, BlockSizeInBytes);
+        Buffer.BlockCopy(RandomNumberGenerator.GetBytes(BlockSizeInBytes), 0, target, 0, BlockSizeInBytes);
 
         aes.Encrypt(nonce, plaintext, ciphertext, tag);
 
-        return Convert.ToBase64String(result);
+        result = Convert.ToBase64String(target);
+        return true;
     }
 
-    public string? Decrypt(ISecretOwner owner, string encryptedValue) {
+    public bool TryDecrypt(ISecretOwner owner, string encryptedValue, [NotNullWhen(true)] out string? result) {
         if (!TryGetKey(owner, out var key)) {
-            return null;
+            result = null;
+            return false;
         }
 
         using var aes = new AesGcm(key, BlockSizeInBytes);
@@ -50,7 +53,8 @@ public class SecretEncryptor : ISecretEncryptor {
 
         aes.Decrypt(nonce, ciphertext, tag, plaintext);
 
-        return Encoding.UTF8.GetString(plaintext);
+        result = Encoding.UTF8.GetString(plaintext);
+        return true;
     }
 
     private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key) {
@@ -61,10 +65,7 @@ public class SecretEncryptor : ISecretEncryptor {
             return false;
         }
 
-        if (owner.Salt == null) {
-            owner.Salt = RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
-        }
-
+        owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
         key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
         return true;
     }

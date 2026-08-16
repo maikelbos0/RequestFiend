@@ -6,30 +6,29 @@ namespace RequestFiend.Core.Tests;
 public class RequestTemplateCollectionTests : TestsBase {
     [Fact]
     public void CreateVariableSnapshot() {
-        const string ciphertext = "Ciphertext";
+        const string encryptedValue = "EncryptedValue";
 
         var subject = new RequestTemplateCollection() {
             Variables = {
                 new() { Name = "Foo", Value = "FooValue" }
             },
             Secrets = {
-                new() { Name = "Baz", Ciphertext = "Ciphertext" }
+                new() { Name = "Baz", EncryptedValue = encryptedValue }
             }
         };
 
-        secretEncryptor.Decrypt(subject, ciphertext).Returns("BazValue");
         subject.GetSessionVariables().Add("Bar", "BarValue");
 
         var result = subject.CreateVariableSnapshot(null);
 
         Assert.Equal(3, result.Variables.Count);
 
-        secretEncryptor.Received(1).Decrypt(subject, ciphertext);
+        secretEncryptor.Received(1).TryDecrypt(subject, encryptedValue, out Arg.Any<string?>());
     }
 
     [Fact]
     public void CreateVariableSnapshot_With_Environment() {
-        const string ciphertext = "Ciphertext";
+        const string encryptedValue = "EncryptedValue";
 
         var subject = new RequestTemplateCollection() {
             Variables = {
@@ -42,16 +41,14 @@ public class RequestTemplateCollectionTests : TestsBase {
                 new() { Name = "Bar", Value = "BazValue" }
             },
             Secrets = {
-                new() { Name = "Baz", Ciphertext = "Ciphertext" }
+                new() { Name = "Baz", EncryptedValue = encryptedValue }
             }
         };
-
-        secretEncryptor.Decrypt(environment, ciphertext).Returns("BazValue");
 
         var result = subject.CreateVariableSnapshot(environment);
 
         Assert.Equal(3, result.Variables.Count);
 
-        secretEncryptor.Received(1).Decrypt(environment, ciphertext);
+        secretEncryptor.Received(1).TryDecrypt(environment, encryptedValue, out Arg.Any<string?>());
     }
 }

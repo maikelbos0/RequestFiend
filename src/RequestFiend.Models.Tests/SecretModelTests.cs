@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
+﻿using NSubstitute;
 using RequestFiend.Core;
 using Xunit;
 
@@ -8,15 +7,9 @@ namespace RequestFiend.Models.Tests;
 public class SecretModelTests : TestsBase {
     [Fact]
     public void Name() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
+        var secret = new Secret() { Name = "PreviousName" };
 
-        var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
-
-        var secret = new Secret() { Name = "PreviousName", Ciphertext = ciphertext };
-
-        var subject = new SecretModel(owner, secret) {
+        var subject = new SecretModel(Substitute.For<ISecretOwner>(), secret) {
             Name = { Value = "Name" }
         };
 
@@ -27,54 +20,63 @@ public class SecretModelTests : TestsBase {
 
     [Fact]
     public void Value() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
+        const string encryptedValue = "EncryptedValue";
+        const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
+        secretEncryptor.TryEncrypt(owner, plaintextValue, out Arg.Any<string?>()).Returns(callInfo => {
+            callInfo[2] = encryptedValue;
+            return true;
+        });
 
         var secret = new Secret() { Name = "PreviousName" };
 
         var subject = new SecretModel(owner, secret) {
-            Value = { Value = value }
+            Value = { Value = plaintextValue }
         };
 
         subject.Value.Set();
 
-        Assert.Equal(ciphertext, secret.Ciphertext);
+        Assert.Equal(encryptedValue, secret.EncryptedValue);
     }
 
     [Fact]
     public void Constructor() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
+        const string encryptedValue = "EncryptedValue";
+        const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
+        secretEncryptor.TryDecrypt(owner, encryptedValue, out Arg.Any<string?>()).Returns(callInfo => {
+            callInfo[2] = plaintextValue;
+            return true;
+        });
 
-        var secret = new Secret() { Name = "Name", Ciphertext = "Ciphertext" };
+        var secret = new Secret() { Name = "Name", EncryptedValue = encryptedValue };
 
         var subject = new SecretModel(owner, secret);
 
         Assert.Equal(secret.Name, subject.Name.Value);
-        Assert.Equal(value, subject.Value.Value);
+        Assert.Equal(plaintextValue, subject.Value.Value);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
 
     [Fact]
     public void Set_When_Password_Can_Be_Provided() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
+        const string encryptedValue = "EncryptedValue";
+        const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
         passwordProvider.CanProvide(owner).Returns(true);
-        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
+        secretEncryptor.TryEncrypt(owner, plaintextValue, out Arg.Any<string?>()).Returns(callInfo => {
+            callInfo[2] = encryptedValue;
+            return true;
+        });
 
         var secret = new Secret() { Name = "PreviousName" };
 
         var subject = new SecretModel(owner, secret) {
             Name = { Value = "Name" },
-            Value = { Value = value }
+            Value = { Value = plaintextValue }
         };
 
         subject.Set();
@@ -84,23 +86,19 @@ public class SecretModelTests : TestsBase {
         Assert.False(subject.Value.IsModified);
 
         Assert.Equal(subject.Name.Value, secret.Name);
-        Assert.Equal(ciphertext, secret.Ciphertext);
+        Assert.Equal(encryptedValue, secret.EncryptedValue);
     }
 
     [Fact]
     public void Set_When_Password_Cannot_Be_Provided() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
-
         var owner = Substitute.For<ISecretOwner>();
         passwordProvider.CanProvide(owner).Returns(false);
-        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
 
         var secret = new Secret() { Name = "PreviousName" };
 
         var subject = new SecretModel(owner, secret) {
             Name = { Value = "Name" },
-            Value = { Value = value }
+            Value = { Value = "PlaintextValue" }
         };
 
         subject.Set();

@@ -1,106 +1,111 @@
 ﻿using NSubstitute;
-using NSubstitute.ReturnsExtensions;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
 
 public class SecretTests : TestsBase {
     [Fact]
-    public void GetValue() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
+    public void GetPlaintextValue() {
+        const string encryptedValue = "EncryptedValue";
+        const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Decrypt(owner, ciphertext).Returns(value);
+        secretEncryptor.TryDecrypt(owner, encryptedValue, out Arg.Any<string?>()).Returns(callInfo => {
+            callInfo[2] = plaintextValue;
+            return true;
+        });
 
         var subject = new Secret() {
             Name = "Name",
-            Ciphertext = ciphertext
+            EncryptedValue = encryptedValue
         };
 
-        var result = subject.GetValue(owner);
+        var result = subject.GetPlaintextValue(owner);
 
-        Assert.Equal(value, result);
+        Assert.Equal(plaintextValue, result);
     }
     [Fact]
-    public void GetValue_Returns_Empty_String_For_Null_Decrypt_Result() {
-        const string ciphertext = "Ciphertext";
+    public void GetPlaintextValue_Returns_Empty_String_For_Null_Decrypt_Result() {
+        const string encryptedValue = "EncryptedValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Decrypt(owner, ciphertext).ReturnsNull();
+        secretEncryptor.TryDecrypt(owner, encryptedValue, out Arg.Any<string?>()).Returns(false);
 
         var subject = new Secret() {
             Name = "Name",
-            Ciphertext = ciphertext
+            EncryptedValue = encryptedValue
         };
 
-        var result = subject.GetValue(owner);
+        var result = subject.GetPlaintextValue(owner);
 
         Assert.Empty(result);
     }
 
     [Fact]
-    public void GetValue_Returns_Empty_String_For_Null_Ciphertext() {
+    public void GetPlaintextValue_Returns_Empty_String_For_Null_EncryptedValue() {
         var owner = Substitute.For<ISecretOwner>();
 
         var subject = new Secret() {
             Name = "Name"
         };
 
-        var result = subject.GetValue(owner);
+        var result = subject.GetPlaintextValue(owner);
 
         Assert.Empty(result);
 
-        secretEncryptor.DidNotReceive().Decrypt(owner, Arg.Any<string>());
+        secretEncryptor.DidNotReceive().TryDecrypt(owner, Arg.Any<string>(), out Arg.Any<string?>());
     }
 
     [Fact]
-    public void SetValue() {
-        const string ciphertext = "Ciphertext";
-        const string value = "Plain text";
+    public void SetPlaintextValue() {
+        const string encryptedValue = "EncryptedValue";
+        const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Encrypt(owner, value).Returns(ciphertext);
+        secretEncryptor.TryEncrypt(owner, plaintextValue, out Arg.Any<string?>()).Returns(callInfo => {
+            callInfo[2] = encryptedValue;
+            return true;
+        });
 
         var subject = new Secret() {
             Name = "Name"
         };
 
-        subject.SetValue(owner, value);
+        subject.SetPlaintextValue(owner, plaintextValue);
 
-        Assert.Equal(ciphertext, subject.Ciphertext);
+        Assert.Equal(encryptedValue, subject.EncryptedValue);
     }
 
     [Fact]
-    public void SetValue_Keeps_Previous_Ciphertext_For_Null_Encrypt_Result() {
-        const string value = "Plain text";
+    public void SetPlaintextValue_Keeps_Previous_EncryptedValue_For_Null_Encrypt_Result() {
+        const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        secretEncryptor.Encrypt(owner, value).ReturnsNull();
+        secretEncryptor.TryEncrypt(owner, plaintextValue, out Arg.Any<string?>()).Returns(false);
 
         var subject = new Secret() {
             Name = "Name",
-            Ciphertext = "PreviousCiphertext"
+            EncryptedValue = "PreviousEncryptedValue"
         };
 
-        subject.SetValue(owner, value);
+        subject.SetPlaintextValue(owner, plaintextValue);
 
-        Assert.Equal("PreviousCiphertext", subject.Ciphertext);
+        Assert.Equal("PreviousEncryptedValue", subject.EncryptedValue);
     }
 
     [Fact]
-    public void SetValue_Sets_Ciphertext_To_Null_For_Null_Value() {
+    public void SetPlaintextValue_Sets_EncryptedValue_To_Null_For_Null_PlaintextValue() {
         var owner = Substitute.For<ISecretOwner>();
 
         var subject = new Secret() {
             Name = "Name",
-            Ciphertext = "PreviousCiphertext"
+            EncryptedValue = "PreviousEncryptedValue"
         };
 
-        subject.SetValue(owner, null);
+        subject.SetPlaintextValue(owner, null);
 
-        Assert.Null(subject.Ciphertext);
+        Assert.Null(subject.EncryptedValue);
 
-        secretEncryptor.DidNotReceive().Encrypt(owner, Arg.Any<string>());
+        secretEncryptor.DidNotReceive().TryEncrypt(owner, Arg.Any<string>(), out Arg.Any<string?>());
     }
 }
