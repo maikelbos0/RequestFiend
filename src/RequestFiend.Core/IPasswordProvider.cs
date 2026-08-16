@@ -1,5 +1,8 @@
-﻿namespace RequestFiend.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RequestFiend.Core;
 
 public interface IPasswordProvider {
-    string Provide(ISecretOwner owner);
+    bool CanProvide(ISecretOwner owner);
+    bool TryProvide(ISecretOwner owner, [NotNullWhen(true)] out string? password);
 }

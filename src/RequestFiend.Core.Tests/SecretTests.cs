@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
@@ -24,7 +25,26 @@ public class SecretTests : TestsBase {
 
         Assert.Equal(value, result);
     }
-    
+    [Fact]
+    public void GetValue_Returns_Empty_String_For_Null_Decrypt_Result() {
+        const string ciphertext = "Ciphertext";
+
+        var secretEncryptor = Substitute.For<ISecretEncryptor>();
+        var owner = Substitute.For<ISecretOwner>();
+        secretEncryptor.Decrypt(owner, ciphertext).ReturnsNull();
+
+        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
+
+        var subject = new Secret() {
+            Name = "Name",
+            Ciphertext = ciphertext
+        };
+
+        var result = subject.GetValue(owner);
+
+        Assert.Empty(result);
+    }
+
     [Fact]
     public void GetValue_Returns_Empty_String_For_Null_Ciphertext() {
         var secretEncryptor = Substitute.For<ISecretEncryptor>();
@@ -61,6 +81,26 @@ public class SecretTests : TestsBase {
         subject.SetValue(owner, value);
 
         Assert.Equal(ciphertext, subject.Ciphertext);
+    }
+
+    [Fact]
+    public void SetValue_Keeps_Previous_Ciphertext_For_Null_Encrypt_Result() {
+        const string value = "Plain text";
+
+        var secretEncryptor = Substitute.For<ISecretEncryptor>();
+        var owner = Substitute.For<ISecretOwner>();
+        secretEncryptor.Encrypt(owner, value).ReturnsNull();
+
+        AppHost.Services.GetService(typeof(ISecretEncryptor)).Returns(secretEncryptor);
+
+        var subject = new Secret() {
+            Name = "Name",
+            Ciphertext = "PreviousCiphertext"
+        };
+
+        subject.SetValue(owner, value);
+
+        Assert.Equal("PreviousCiphertext", subject.Ciphertext);
     }
 
     [Fact]

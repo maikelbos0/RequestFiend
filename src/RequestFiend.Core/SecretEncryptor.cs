@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -14,8 +15,10 @@ public class SecretEncryptor : ISecretEncryptor {
         this.passwordProvider = passwordProvider;
     }
 
-    public string Encrypt(ISecretOwner owner, string value) {
-        var key = GetKey(owner);
+    public string? Encrypt(ISecretOwner owner, string value) {
+        if (!TryGetKey(owner, out var key)) {
+            return null;
+        }
 
         using var aes = new AesGcm(key, BlockSizeInBytes);
 
@@ -32,8 +35,10 @@ public class SecretEncryptor : ISecretEncryptor {
         return Convert.ToBase64String(result);
     }
 
-    public string Decrypt(ISecretOwner owner, string encryptedValue) {
-        var key = GetKey(owner);
+    public string? Decrypt(ISecretOwner owner, string encryptedValue) {
+        if (!TryGetKey(owner, out var key)) {
+            return null;
+        }
 
         using var aes = new AesGcm(key, BlockSizeInBytes);
 
@@ -48,15 +53,19 @@ public class SecretEncryptor : ISecretEncryptor {
         return Encoding.UTF8.GetString(plaintext);
     }
 
-    private byte[] GetKey(ISecretOwner owner) {
+    private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key) {
         const int Iterations = 1_000_000;
 
-        var password = passwordProvider.Provide(owner);
+        if (!passwordProvider.TryProvide(owner, out var password)) {
+            key = null;
+            return false;
+        }
 
         if (owner.Salt == null) {
             owner.Salt = RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
         }
 
-        return Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+        key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+        return true;
     }
 }

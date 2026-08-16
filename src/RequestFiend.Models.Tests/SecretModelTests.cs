@@ -60,4 +60,53 @@ public class SecretModelTests : TestsBase {
         Assert.Equal(value, subject.Value.Value);
         Assert.Equal([subject.Name, subject.Value], subject.Validatables);
     }
+
+    [Fact]
+    public void Set_When_Password_Can_Be_Provided() {
+        const string ciphertext = "Ciphertext";
+        const string value = "Plain text";
+
+        var owner = Substitute.For<ISecretOwner>();
+        AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner).Returns(true);
+        AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value).Returns(ciphertext);
+
+        var secret = new Secret() { Name = "PreviousName" };
+
+        var subject = new SecretModel(owner, secret) {
+            Name = { Value = "Name" },
+            Value = { Value = value }
+        };
+
+        subject.Set();
+
+        Assert.False(subject.IsModified);
+        Assert.False(subject.Name.IsModified);
+        Assert.False(subject.Value.IsModified);
+
+        Assert.Equal(subject.Name.Value, secret.Name);
+        Assert.Equal(ciphertext, secret.Ciphertext);
+    }
+
+    [Fact]
+    public void Set_When_Password_Cannot_Be_Provided() {
+        const string ciphertext = "Ciphertext";
+        const string value = "Plain text";
+
+        var owner = Substitute.For<ISecretOwner>();
+        AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner).Returns(false);
+        AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value).Returns(ciphertext);
+
+        var secret = new Secret() { Name = "PreviousName" };
+
+        var subject = new SecretModel(owner, secret) {
+            Name = { Value = "Name" },
+            Value = { Value = value }
+        };
+
+        subject.Set();
+
+        Assert.True(subject.IsModified);
+        Assert.True(subject.Name.IsModified);
+        Assert.True(subject.Value.IsModified);
+    }
 }

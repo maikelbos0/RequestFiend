@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using RequestFiend.Core;
 using System.Collections.Generic;
 using Xunit;
@@ -95,14 +96,17 @@ public class SecretModelCollectionTests : TestsBase {
     }
 
     [Fact]
-    public void Set() {
+    public void Set_When_Password_Can_Be_Provided() {
+        var owner = Substitute.For<ISecretOwner>();
+        AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner).Returns(true);
+
         var collection = new List<Secret>() {
             new() { Name = "FirstName" },
             new() { Name = "SecondName" },
             new() { Name = "ThirdName" }
         };
-        var subject = new SecretModelCollection(Substitute.For<ISecretOwner>(), collection);
-        
+        var subject = new SecretModelCollection(owner, collection);
+
         foreach (var secret in subject) {
             secret.Name.Value = "ChangedName";
         }
@@ -123,6 +127,34 @@ public class SecretModelCollectionTests : TestsBase {
         for (var i = 0; i < subject.Count; i++) {
             Assert.Equal(subject[i].Name.Value, collection[i].Name);
         }
+    }
+
+    [Fact]
+    public void Set_When_Password_Cannot_Be_Provided() {
+        var owner = Substitute.For<ISecretOwner>();
+        AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner).Returns(false);
+
+        var collection = new List<Secret>() {
+            new() { Name = "FirstName" },
+            new() { Name = "SecondName" },
+            new() { Name = "ThirdName" }
+        };
+        var subject = new SecretModelCollection(owner, collection);
+
+        foreach (var secret in subject) {
+            secret.Name.Value = "ChangedName";
+        }
+
+        subject.Remove(subject[1]);
+        subject.Add(new Secret() { Name = "NewName" });
+        subject.Remove(subject[^1]);
+        subject.Add(new Secret() { Name = "NewName" });
+
+        subject.Set();
+
+        Assert.True(subject.IsModified);
+        Assert.True(subject[0].IsModified);
+        Assert.True(subject[1].IsModified);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using RequestFiend.Core;
 using System;
 using System.Collections.Generic;
@@ -77,15 +78,17 @@ public partial class SecretModelCollection : ObservableCollection<SecretModel>, 
     }
 
     public void Set() {
-        while (changes.TryDequeue(out var change)) {
-            change();
-        }
+        if (AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner)) {
+            while (changes.TryDequeue(out var change)) {
+                change();
+            }
 
-        foreach (var pair in this) {
-            pair.Set();
-        }
+            foreach (var pair in this) {
+                pair.Set();
+            }
 
-        IsModified = false;
+            IsModified = false;
+        }
     }
 
     public void Reset() {

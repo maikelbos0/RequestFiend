@@ -11,7 +11,7 @@ public class Secret {
             return "";
         }
 
-        return AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, Ciphertext);
+        return AppHost.Services.GetRequiredService<ISecretEncryptor>().Decrypt(owner, Ciphertext) ?? "";
     }
 
     public void SetValue(ISecretOwner owner, string? value) {
@@ -19,7 +19,7 @@ public class Secret {
             Ciphertext = null;
         }
         else {
-            Ciphertext = AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value);
+            Ciphertext = AppHost.Services.GetRequiredService<ISecretEncryptor>().Encrypt(owner, value) ?? Ciphertext;
         }
     }
 }
