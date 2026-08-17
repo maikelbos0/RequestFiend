@@ -15,14 +15,18 @@ public class EnvironmentModelTests : TestsBase {
         var environment = new Environment() {
             Variables = {
                 new() { Name = "Foo", Value = "Bar" }
+            },
+            Secrets = {
+                new() { Name = "PreviousName" }
             }
         };
         
         var subject = new EnvironmentModel(Substitute.For<System.Func<CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), environment);
 
         Assert.Equal(environment.Variables.Count, subject.Variables.Count);
+        Assert.Equal(environment.Secrets.Count, subject.Secrets.Count);
 
-        Assert.Equal([subject.Variables], subject.Validatables);
+        Assert.Equal([subject.Variables, subject.Secrets], subject.Validatables);
     }
 
     [Fact]
@@ -34,6 +38,9 @@ public class EnvironmentModelTests : TestsBase {
         var environment = new Environment() {
             Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Secrets = {
+                new() { Name = "PreviousName" }
             }
         };
 
@@ -50,8 +57,11 @@ public class EnvironmentModelTests : TestsBase {
         await closeMethod.Received().Invoke(CancellationToken.None);
     }
 
-    [Fact]
-    public async Task Update_Fails_When_Invalid() {
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("", "Name")]
+    [InlineData("Name", "")]
+    public async Task Update_Fails_When_Invalid(string variableName, string secretName) {
         const string filePath = @"C:\Documents\Local.json";
         
         var closeMethod = Substitute.For<System.Func<CancellationToken, Task>>();
@@ -59,12 +69,16 @@ public class EnvironmentModelTests : TestsBase {
         var environment = new Environment() {
             Variables = {
                 new() { Name = "PreviousName" }
+            },
+            Secrets = {
+                new() { Name = "PreviousName" }
             }
         };
 
         var subject = new EnvironmentModel(closeMethod, environmentService, new(filePath), environment);
 
-        subject.Variables[0].Name.Value = "";
+        subject.Variables[0].Name.Value = variableName;
+        subject.Secrets[0].Name.Value = secretName;
 
         await subject.Update(CancellationToken.None);
 

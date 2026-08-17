@@ -19,6 +19,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public ValidatableProperty<bool> AllowScriptEvaluation { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection Variables { get; }
+    public SecretModelCollection Secrets { get; }
     public NameValuePairModelCollection DefaultHeaders { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateNotAvailable { get; }
     public ValidatableProperty<bool> IgnoreRemoteCertificateNameMismatch { get; }
@@ -49,6 +50,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, value => collection.IgnoreRemoteCertificateNameMismatch = value);
         IgnoreRemoteCertificateChainErrors = new(() => collection.IgnoreRemoteCertificateChainErrors, value => collection.IgnoreRemoteCertificateChainErrors = value);
         Variables = new(collection.Variables, Validator.VariableName);
+        Secrets = new(collection, collection.Secrets);
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
         Requests = new(
             () => collection.Requests.Select(request => new RequestTemplateItemModel(request)),
@@ -58,7 +60,17 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             }
         );
 
-        ConfigureState([AllowScriptEvaluation, DefaultUrl, IgnoreRemoteCertificateNotAvailable, IgnoreRemoteCertificateNameMismatch, IgnoreRemoteCertificateChainErrors, Variables, DefaultHeaders, Requests]);
+        ConfigureState([
+            AllowScriptEvaluation,
+            DefaultUrl,
+            IgnoreRemoteCertificateNotAvailable,
+            IgnoreRemoteCertificateNameMismatch,
+            IgnoreRemoteCertificateChainErrors,
+            Variables,
+            Secrets,
+            DefaultHeaders,
+            Requests
+        ]);
 
         messageService.Register<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>(this, (_, _) => {
             ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;

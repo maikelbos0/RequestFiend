@@ -174,6 +174,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Variables = {
                 new() { Name = "Foo", Value = "Bar" }
             },
+            Secrets = {
+
+            },
             DefaultHeaders = {
                 new() { Name = "Accept", Value = "application/json" },
                 new() { Name = "X-api-key", Value = "4p1-k3y" }
@@ -207,6 +210,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         Assert.Equal(collection.IgnoreRemoteCertificateNameMismatch, subject.IgnoreRemoteCertificateNameMismatch.Value);
         Assert.Equal(collection.IgnoreRemoteCertificateChainErrors, subject.IgnoreRemoteCertificateChainErrors.Value);
         Assert.Equal(collection.Variables.Count, subject.Variables.Count);
+        Assert.Equal(collection.Secrets.Count, subject.Secrets.Count);
         Assert.Equal(collection.DefaultHeaders.Count, subject.DefaultHeaders.Count);
 
         messageService.Received(1).Register(subject, Arg.Any<MessageHandler<RequestTemplateCollectionSettingsModel, PreferencesUpdatedMessage>>());
@@ -218,6 +222,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             subject.IgnoreRemoteCertificateNameMismatch,
             subject.IgnoreRemoteCertificateChainErrors,
             subject.Variables,
+            subject.Secrets,
             subject.DefaultHeaders,
             subject.Requests
         ], subject.Validatables);
@@ -236,6 +241,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             IgnoreRemoteCertificateChainErrors = false,
             Variables = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
+            },
+            Secrets = {
+                new() { Name = "PreviousName" }
             },
             DefaultHeaders = {
                 new() { Name = "PreviousName", Value = "PreviousValue" }
@@ -271,10 +279,11 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
     }
 
     [Theory]
-    [InlineData("", "")]
-    [InlineData("", "Name")]
-    [InlineData("Name", "")]
-    public async Task Update_Fails_When_Invalid(string headerName, string variableName) {
+    [InlineData("", "", "")]
+    [InlineData("", "Name", "Name")]
+    [InlineData("Name", "", "Name")]
+    [InlineData("Name", "Name", "")]
+    public async Task Update_Fails_When_Invalid(string headerName, string variableName, string secretName) {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var requestTemplateCollectionService = Substitute.For<IRequestTemplateCollectionService>();
@@ -286,6 +295,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             IgnoreRemoteCertificateNameMismatch = false,
             IgnoreRemoteCertificateChainErrors = false,
             Variables = {
+                new() { Name = "PreviousName" }
+            },
+            Secrets = {
                 new() { Name = "PreviousName" }
             },
             DefaultHeaders = {
@@ -304,6 +316,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.DefaultHeaders[0].Name.Value = headerName;
         subject.Variables[0].Name.Value = variableName;
+        subject.Secrets[0].Name.Value = secretName;
 
         await subject.Update();
 

@@ -14,6 +14,7 @@ public partial class EnvironmentModel : BoundModelBase {
     private readonly Environment environment;
 
     public NameValuePairModelCollection Variables { get; }
+    public SecretModelCollection Secrets { get; }
 
     public EnvironmentModel(System.Func<CancellationToken, Task> closeMethod, IEnvironmentService environmentService, FileModel file, Environment environment) {
         this.closeMethod = closeMethod;
@@ -22,8 +23,9 @@ public partial class EnvironmentModel : BoundModelBase {
         this.environment = environment;
 
         Variables = new(environment.Variables, Validator.VariableName);
+        Secrets = new(environment, environment.Secrets);
 
-        ConfigureState([Variables]);
+        ConfigureState([Variables, Secrets]);
     }
 
     [RelayCommand]
