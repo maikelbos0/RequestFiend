@@ -7,11 +7,15 @@ public class Secret {
     public string? EncryptedValue { get; set; }
 
     public string GetPlaintextValue(ISecretOwner owner) {
-        if (EncryptedValue == null || !AppHost.Services.GetRequiredService<ISecretEncryptor>().TryDecrypt(owner, EncryptedValue, out var result)) {
+        if (EncryptedValue == null) {
             return "";
         }
-
-        return result;
+        else if (AppHost.Services.GetRequiredService<ISecretEncryptor>().TryDecrypt(owner, EncryptedValue, out var result)) {
+            return result;
+        }
+        else {
+            return "********";
+        }
     }
 
     public void SetPlaintextValue(ISecretOwner owner, string? value) {

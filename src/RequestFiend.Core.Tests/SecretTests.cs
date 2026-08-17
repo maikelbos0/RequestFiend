@@ -25,7 +25,7 @@ public class SecretTests : TestsBase {
         Assert.Equal(plaintextValue, result);
     }
     [Fact]
-    public void GetPlaintextValue_Returns_Empty_String_For_Null_Decrypt_Result() {
+    public void GetPlaintextValue_Returns_Masked_String_For_False_Decrypt_Result() {
         const string encryptedValue = "EncryptedValue";
 
         var owner = Substitute.For<ISecretOwner>();
@@ -38,7 +38,7 @@ public class SecretTests : TestsBase {
 
         var result = subject.GetPlaintextValue(owner);
 
-        Assert.Empty(result);
+        Assert.Equal("********", result);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class SecretTests : TestsBase {
     }
 
     [Fact]
-    public void SetPlaintextValue_Keeps_Previous_EncryptedValue_For_Null_Encrypt_Result() {
+    public void SetPlaintextValue_Keeps_Previous_EncryptedValue_For_False_Encrypt_Result() {
         const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
