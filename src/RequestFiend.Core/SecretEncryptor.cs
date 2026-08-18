@@ -66,7 +66,7 @@ public class SecretEncryptor : ISecretEncryptor {
         }
 
         owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
-        key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+        key = Rfc2898DeriveBytes.Pbkdf2(password.Span, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
         return true;
     }
 }

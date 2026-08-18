@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 
 namespace RequestFiend.Core;
 
 public interface IPasswordProvider {
     bool CanProvide(ISecretOwner owner);
-    bool TryProvide(ISecretOwner owner, [NotNullWhen(true)] out string? password);
+    bool TryProvide(ISecretOwner owner, out ReadOnlyMemory<byte> password);
 }

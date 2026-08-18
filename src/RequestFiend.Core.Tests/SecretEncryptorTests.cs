@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using System;
 using Xunit;
 
 namespace RequestFiend.Core.Tests;
@@ -11,8 +12,8 @@ public class SecretEncryptorTests : TestsBase {
         var secretOwner = Substitute.For<ISecretOwner>();
 
         var passwordProvider = Substitute.For<IPasswordProvider>();
-        passwordProvider.TryProvide(secretOwner, out Arg.Any<string?>()).Returns(callInfo => {
-            callInfo[1] = "password";
+        passwordProvider.TryProvide(secretOwner, out Arg.Any<ReadOnlyMemory<byte>>()).Returns(callInfo => {
+            callInfo[1] = new ReadOnlyMemory<byte>("password"u8.ToArray());
             return true;
         });
 
@@ -29,7 +30,7 @@ public class SecretEncryptorTests : TestsBase {
         var secretOwner = Substitute.For<ISecretOwner>();
 
         var passwordProvider = Substitute.For<IPasswordProvider>();
-        passwordProvider.TryProvide(secretOwner, out Arg.Any<string?>()).Returns(false);
+        passwordProvider.TryProvide(secretOwner, out Arg.Any<ReadOnlyMemory<byte>>()).Returns(false);
 
         var subject = new SecretEncryptor(passwordProvider);
 
@@ -42,7 +43,7 @@ public class SecretEncryptorTests : TestsBase {
         var secretOwner = Substitute.For<ISecretOwner>();
 
         var passwordProvider = Substitute.For<IPasswordProvider>();
-        passwordProvider.TryProvide(secretOwner, out Arg.Any<string?>()).Returns(false);
+        passwordProvider.TryProvide(secretOwner, out Arg.Any<ReadOnlyMemory<byte>>()).Returns(false);
 
         var subject = new SecretEncryptor(passwordProvider);
 
