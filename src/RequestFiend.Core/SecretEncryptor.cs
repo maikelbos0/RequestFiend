@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,7 +11,8 @@ public class SecretEncryptor : ISecretEncryptor {
     public const int NonceSizeInBytes = 12;
 
     private readonly IPasswordProvider passwordProvider;
-    private readonly ConcurrentDictionary<ISecretOwner, byte[]> keys = new();
+    private readonly Dictionary<ISecretOwner, byte[]> keys = [];
+    private readonly Lock keysLock = new();
 
     public SecretEncryptor(IPasswordProvider passwordProvider) {
         this.passwordProvider = passwordProvider;
@@ -23,23 +24,24 @@ public class SecretEncryptor : ISecretEncryptor {
         owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
         var key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
 
-        keys.AddOrUpdate(
-            owner, 
-            (_) => key,
-            (_, previousKey) => {
-                CryptographicOperations.ZeroMemory(key);
-                return key;
+        lock (keysLock) {
+            if (keys.Remove(owner, out var previousKey)) {
+                CryptographicOperations.ZeroMemory(previousKey);
             }
-        );
-    }
 
-    public void Lock(ISecretOwner owner) {
-        if (keys.TryRemove(owner, out var key)) {
-            CryptographicOperations.ZeroMemory(key);
+            keys[owner] = key;
         }
     }
 
-    public bool IsLocked(ISecretOwner owner) => !keys.ContainsKey(owner);
+    public void Lock(ISecretOwner owner) {
+        if (keys.Remove(owner, out var previousKey)) {
+            CryptographicOperations.ZeroMemory(previousKey);
+        }
+    }
+
+    public bool IsLocked(ISecretOwner owner) {
+        return !keys.ContainsKey(owner);
+    }
 
     public bool TryEncrypt(ISecretOwner owner, string plaintextValue, [NotNullWhen(true)] out string? result) {
         if (!TryGetKey(owner, out var key)) {
