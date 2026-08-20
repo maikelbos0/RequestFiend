@@ -6,6 +6,24 @@ namespace RequestFiend.Core.Tests;
 
 public class SecretEncryptorTests : TestsBase {
     [Fact]
+    public void Unlock_Lock_And_IsLocked() {
+        var secretOwner = Substitute.For<ISecretOwner>();
+        var otherOwner = Substitute.For<ISecretOwner>();
+        
+        var subject = new SecretEncryptor(Substitute.For<IPasswordProvider>());
+
+        subject.Unlock(secretOwner, "password");
+
+        Assert.True(subject.IsLocked(otherOwner));
+        Assert.False(subject.IsLocked(secretOwner));
+
+        subject.Lock(secretOwner);
+
+        Assert.True(subject.IsLocked(otherOwner));
+        Assert.True(subject.IsLocked(secretOwner));
+    }
+
+    [Fact]
     public void TryEncrypt_And_TryDecrypt() {
         const string value = "Plain text";
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,10 +11,35 @@ public class SecretEncryptor : ISecretEncryptor {
     public const int NonceSizeInBytes = 12;
 
     private readonly IPasswordProvider passwordProvider;
+    private readonly ConcurrentDictionary<ISecretOwner, byte[]> keys = new();
 
     public SecretEncryptor(IPasswordProvider passwordProvider) {
         this.passwordProvider = passwordProvider;
     }
+
+    public void Unlock(ISecretOwner owner, string password) {
+        const int Iterations = 1_000_000;
+
+        owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
+        var key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+
+        keys.AddOrUpdate(
+            owner, 
+            (_) => key,
+            (_, previousKey) => {
+                CryptographicOperations.ZeroMemory(key);
+                return key;
+            }
+        );
+    }
+
+    public void Lock(ISecretOwner owner) {
+        if (keys.TryRemove(owner, out var key)) {
+            CryptographicOperations.ZeroMemory(key);
+        }
+    }
+
+    public bool IsLocked(ISecretOwner owner) => !keys.ContainsKey(owner);
 
     public bool TryEncrypt(ISecretOwner owner, string plaintextValue, [NotNullWhen(true)] out string? result) {
         if (!TryGetKey(owner, out var key)) {
