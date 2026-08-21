@@ -11,13 +11,8 @@ public class SecretEncryptor : ISecretEncryptor {
     public const int BlockSizeInBytes = 16;
     public const int NonceSizeInBytes = 12;
 
-    private readonly IPasswordProvider passwordProvider;
-    private readonly Dictionary<ISecretOwner, byte[]> keys = [];
-    private readonly Lock keysLock = new();
-
-    public SecretEncryptor(IPasswordProvider passwordProvider) {
-        this.passwordProvider = passwordProvider;
-    }
+    private readonly Dictionary<ISecretOwner, byte[]> keyStore = [];
+    private readonly Lock keyStoreLock = new();
 
     public void Unlock(ISecretOwner owner, string password) {
         const int Iterations = 1_000_000;
@@ -25,23 +20,23 @@ public class SecretEncryptor : ISecretEncryptor {
         owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes);
         var key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
 
-        lock (keysLock) {
-            if (keys.Remove(owner, out var previousKey)) {
+        lock (keyStoreLock) {
+            if (keyStore.Remove(owner, out var previousKey)) {
                 CryptographicOperations.ZeroMemory(previousKey);
             }
 
-            keys[owner] = key;
+            keyStore[owner] = key;
         }
     }
 
     public void Lock(ISecretOwner owner) {
-        if (keys.Remove(owner, out var previousKey)) {
+        if (keyStore.Remove(owner, out var previousKey)) {
             CryptographicOperations.ZeroMemory(previousKey);
         }
     }
 
     public bool IsLocked(ISecretOwner owner) {
-        return !keys.ContainsKey(owner);
+        return !keyStore.ContainsKey(owner);
     }
 
     public bool TryEncrypt(ISecretOwner owner, string plaintextValue, [NotNullWhen(true)] out string? result) {
@@ -87,15 +82,8 @@ public class SecretEncryptor : ISecretEncryptor {
     }
 
     private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key) {
-        const int Iterations = 1_000_000;
-
-        if (!passwordProvider.TryProvide(owner, out var password)) {
-            key = null;
-            return false;
+        lock (keyStoreLock) {
+            return keyStore.TryGetValue(owner, out key);
         }
-
-        owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
-        key = Rfc2898DeriveBytes.Pbkdf2(password.Span, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
-        return true;
     }
 }
