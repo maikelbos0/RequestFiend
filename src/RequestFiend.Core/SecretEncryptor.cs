@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace RequestFiend.Core;
 
@@ -21,7 +22,7 @@ public class SecretEncryptor : ISecretEncryptor {
     public void Unlock(ISecretOwner owner, string password) {
         const int Iterations = 1_000_000;
 
-        owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes / 8);
+        owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes);
         var key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
 
         lock (keysLock) {
