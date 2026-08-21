@@ -1,8 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RequestFiend.Core;
 
-public interface ISecretEncryptor {
+public interface ISecretEncryptor : IDisposable {
     void Unlock(ISecretOwner owner, string password);
     void Lock(ISecretOwner owner);
     bool IsLocked(ISecretOwner owner);

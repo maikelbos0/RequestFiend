@@ -20,7 +20,7 @@ public class SecretEncryptorTests : TestsBase {
         var owner = Substitute.For<ISecretOwner>();
         owner.Salt.ReturnsNull();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
 
         subject.Unlock(owner, "password");
@@ -38,7 +38,7 @@ public class SecretEncryptorTests : TestsBase {
         var owner = Substitute.For<ISecretOwner>();
         owner.Salt.Returns(salt);
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
 
         subject.Unlock(owner, "password");
@@ -55,7 +55,7 @@ public class SecretEncryptorTests : TestsBase {
         var owner = Substitute.For<ISecretOwner>();
         owner.Salt.Returns(new byte[SecretEncryptor.BlockSizeInBytes]);
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
         var key = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
         var originalKey = key.ToArray();
@@ -68,13 +68,24 @@ public class SecretEncryptorTests : TestsBase {
         Assert.NotEqual(new byte[SecretEncryptor.BlockSizeInBytes], newKey);
         Assert.NotEqual(originalKey, newKey);
     }
-    
+
+    [Fact]
+    public void Unlock_Throws_When_Disposed() {
+        SecretEncryptor subject;
+
+        using (var encryptor = new SecretEncryptor()) {
+            subject = encryptor;
+        }
+
+        Assert.Throws<ObjectDisposedException>(() => subject.Unlock(Substitute.For<ISecretOwner>(), "password"));
+    }
+
     [Fact]
     public void Lock_When_Unlocked() {
         var owner = Substitute.For<ISecretOwner>();
         var otherOwner = Substitute.For<ISecretOwner>();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
         var key = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
         keyStore[owner] = key;
@@ -86,12 +97,12 @@ public class SecretEncryptorTests : TestsBase {
         Assert.Contains(otherOwner, keyStore);
         Assert.Equal(new byte[SecretEncryptor.BlockSizeInBytes], key);
     }
-    
+
     [Fact]
     public void Lock_When_Locked() {
         var otherOwner = Substitute.For<ISecretOwner>();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
         keyStore[otherOwner] = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
 
@@ -101,10 +112,21 @@ public class SecretEncryptorTests : TestsBase {
     }
 
     [Fact]
+    public void Lock_Throws_When_Disposed() {
+        SecretEncryptor subject;
+
+        using (var encryptor = new SecretEncryptor()) {
+            subject = encryptor;
+        }
+
+        Assert.Throws<ObjectDisposedException>(() => subject.Lock(Substitute.For<ISecretOwner>()));
+    }
+
+    [Fact]
     public void IsLocked() {
         var owner = Substitute.For<ISecretOwner>();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
         keyStore[owner] = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
 
@@ -113,12 +135,23 @@ public class SecretEncryptorTests : TestsBase {
     }
 
     [Fact]
+    public void IsLocked_Throws_When_Disposed() {
+        SecretEncryptor subject;
+
+        using (var encryptor = new SecretEncryptor()) {
+            subject = encryptor;
+        }
+
+        Assert.Throws<ObjectDisposedException>(() => subject.IsLocked(Substitute.For<ISecretOwner>()));
+    }
+
+    [Fact]
     public void TryEncrypt_And_TryDecrypt() {
         const string value = "Plain text";
 
         var owner = Substitute.For<ISecretOwner>();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
         keyStore[owner] = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
 
@@ -132,19 +165,56 @@ public class SecretEncryptorTests : TestsBase {
     public void TryEncrypt_Returns_Null_For_Missing_Password() {
         var owner = Substitute.For<ISecretOwner>();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
 
         Assert.False(subject.TryEncrypt(owner, "Plain text", out var result));
         Assert.Null(result);
     }
 
     [Fact]
+    public void TryEncrypt_Throws_When_Disposed() {
+        SecretEncryptor subject;
+
+        using (var encryptor = new SecretEncryptor()) {
+            subject = encryptor;
+        }
+
+        Assert.Throws<ObjectDisposedException>(() => subject.TryEncrypt(Substitute.For<ISecretOwner>(), "Plain text", out _));
+    }
+
+    [Fact]
     public void TryDecrypt_Returns_Null_For_Missing_Password() {
         var owner = Substitute.For<ISecretOwner>();
 
-        var subject = new SecretEncryptor();
+        using var subject = new SecretEncryptor();
 
         Assert.False(subject.TryDecrypt(owner, "Encrypted text", out var result));
         Assert.Null(result);
+    }
+
+    [Fact]
+    public void TryDecrypt_Throws_When_Disposed() {
+        SecretEncryptor subject;
+
+        using (var encryptor = new SecretEncryptor()) {
+            subject = encryptor;
+        }
+
+        Assert.Throws<ObjectDisposedException>(() => subject.TryDecrypt(Substitute.For<ISecretOwner>(), "Encrypted text", out _));
+    }
+
+    [Fact]
+    public void Dispose() {
+        Dictionary<ISecretOwner, byte[]> keyStore;
+
+        using (var subject = new SecretEncryptor()) {
+            keyStore = GetKeyStore(subject);
+            keyStore[Substitute.For<ISecretOwner>()] = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
+            keyStore[Substitute.For<ISecretOwner>()] = RandomNumberGenerator.GetBytes(SecretEncryptor.BlockSizeInBytes);
+        }
+
+        foreach (var key in keyStore.Values) {
+            Assert.Equal(new byte[SecretEncryptor.BlockSizeInBytes], key);
+        }
     }
 }

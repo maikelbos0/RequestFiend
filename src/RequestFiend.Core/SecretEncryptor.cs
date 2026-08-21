@@ -13,9 +13,12 @@ public class SecretEncryptor : ISecretEncryptor {
 
     private readonly Dictionary<ISecretOwner, byte[]> keyStore = [];
     private readonly Lock keyStoreLock = new();
+    private bool isDisposed;
 
     public void Unlock(ISecretOwner owner, string password) {
         const int Iterations = 1_000_000;
+
+        ObjectDisposedException.ThrowIf(isDisposed, this);
 
         owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes);
         var key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
@@ -30,14 +33,22 @@ public class SecretEncryptor : ISecretEncryptor {
     }
 
     public void Lock(ISecretOwner owner) {
+        ObjectDisposedException.ThrowIf(isDisposed, this);
+
         if (keyStore.Remove(owner, out var previousKey)) {
             CryptographicOperations.ZeroMemory(previousKey);
         }
     }
 
-    public bool IsLocked(ISecretOwner owner) => !keyStore.ContainsKey(owner);
+    public bool IsLocked(ISecretOwner owner) {
+        ObjectDisposedException.ThrowIf(isDisposed, this);
+
+        return !keyStore.ContainsKey(owner);
+    }
 
     public bool TryEncrypt(ISecretOwner owner, string plaintextValue, [NotNullWhen(true)] out string? result) {
+        ObjectDisposedException.ThrowIf(isDisposed, this);
+
         if (!TryGetKey(owner, out var key)) {
             result = null;
             return false;
@@ -60,6 +71,8 @@ public class SecretEncryptor : ISecretEncryptor {
     }
 
     public bool TryDecrypt(ISecretOwner owner, string encryptedValue, [NotNullWhen(true)] out string? result) {
+        ObjectDisposedException.ThrowIf(isDisposed, this);
+
         if (!TryGetKey(owner, out var key)) {
             result = null;
             return false;
@@ -82,6 +95,20 @@ public class SecretEncryptor : ISecretEncryptor {
     private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key) {
         lock (keyStoreLock) {
             return keyStore.TryGetValue(owner, out key);
+        }
+    }
+
+    public void Dispose() {
+        if (isDisposed) {
+            return;
+        }
+
+        isDisposed = true;
+
+        lock (keyStoreLock) {
+            foreach (var key in keyStore.Values) {
+                CryptographicOperations.ZeroMemory(key);
+            }
         }
     }
 }
