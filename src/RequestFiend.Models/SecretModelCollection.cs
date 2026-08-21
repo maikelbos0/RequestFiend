@@ -78,7 +78,7 @@ public partial class SecretModelCollection : ObservableCollection<SecretModel>, 
     }
 
     public void Set() {
-        if (AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner)) {
+        if (!AppHost.Services.GetRequiredService<ISecretEncryptor>().IsLocked(owner)) {
             while (changes.TryDequeue(out var change)) {
                 change();
             }

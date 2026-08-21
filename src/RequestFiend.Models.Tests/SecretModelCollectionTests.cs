@@ -98,7 +98,7 @@ public class SecretModelCollectionTests : TestsBase {
     [Fact]
     public void Set_When_Password_Can_Be_Provided() {
         var owner = Substitute.For<ISecretOwner>();
-        passwordProvider.CanProvide(owner).Returns(true);
+        secretEncryptor.IsLocked(owner).Returns(false);
 
         var collection = new List<Secret>() {
             new() { Name = "FirstName" },
@@ -132,7 +132,7 @@ public class SecretModelCollectionTests : TestsBase {
     [Fact]
     public void Set_When_Password_Cannot_Be_Provided() {
         var owner = Substitute.For<ISecretOwner>();
-        passwordProvider.CanProvide(owner).Returns(false);
+        secretEncryptor.IsLocked(owner).Returns(true);
 
         var collection = new List<Secret>() {
             new() { Name = "FirstName" },

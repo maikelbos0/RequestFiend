@@ -35,9 +35,7 @@ public class SecretEncryptor : ISecretEncryptor {
         }
     }
 
-    public bool IsLocked(ISecretOwner owner) {
-        return !keyStore.ContainsKey(owner);
-    }
+    public bool IsLocked(ISecretOwner owner) => !keyStore.ContainsKey(owner);
 
     public bool TryEncrypt(ISecretOwner owner, string plaintextValue, [NotNullWhen(true)] out string? result) {
         if (!TryGetKey(owner, out var key)) {

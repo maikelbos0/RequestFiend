@@ -20,7 +20,7 @@ public class SecretModel : BoundModelBase, IValidatable {
     }
 
     public override void Set() {
-        if (AppHost.Services.GetRequiredService<IPasswordProvider>().CanProvide(owner)) {
+        if (!AppHost.Services.GetRequiredService<ISecretEncryptor>().IsLocked(owner)) {
             base.Set();
         }
     }

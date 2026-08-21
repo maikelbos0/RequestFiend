@@ -66,7 +66,7 @@ public class SecretModelTests : TestsBase {
         const string plaintextValue = "PlaintextValue";
 
         var owner = Substitute.For<ISecretOwner>();
-        passwordProvider.CanProvide(owner).Returns(true);
+        secretEncryptor.IsLocked(owner).Returns(false);
         secretEncryptor.TryEncrypt(owner, plaintextValue, out Arg.Any<string?>()).Returns(callInfo => {
             callInfo[2] = encryptedValue;
             return true;
@@ -92,7 +92,7 @@ public class SecretModelTests : TestsBase {
     [Fact]
     public void Set_When_Password_Cannot_Be_Provided() {
         var owner = Substitute.For<ISecretOwner>();
-        passwordProvider.CanProvide(owner).Returns(false);
+        secretEncryptor.IsLocked(owner).Returns(true);
 
         var secret = new Secret() { Name = "PreviousName" };
 
