@@ -16,44 +16,56 @@ public class SecretEncryptorTests : TestsBase {
         => keyStoreFieldInfo.GetValue(subject) as Dictionary<ISecretOwner, byte[]> ?? throw new InvalidOperationException();
 
     [Fact]
-    public void Unlock_Without_Salt() {
+    public void TryUnlock_Without_EncryptionData() {
         var owner = Substitute.For<ISecretOwner>();
-        owner.Salt.ReturnsNull();
+        owner.EncryptionData.ReturnsNull();
 
         using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
 
-        subject.Unlock(owner, "password");
+        Assert.True(subject.TryUnlock(owner, "password"));
 
         var key = Assert.Contains(owner, keyStore);
         Assert.Equal(SHA256.HashSizeInBytes, key.Length);
         Assert.NotEqual(new byte[SecretEncryptor.BlockSizeInBytes], key);
 
-        owner.Received().Salt = Arg.Is<byte[]>(salt => salt.Length == SecretEncryptor.BlockSizeInBytes);
+        owner.Received().EncryptionData = Arg.Any<string>();
     }
 
     [Fact]
-    public void Unlock_With_Salt() {
-        var salt = new byte[SecretEncryptor.BlockSizeInBytes];
+    public void TryUnlock_With_EncryptionData() {
         var owner = Substitute.For<ISecretOwner>();
-        owner.Salt.Returns(salt);
+        owner.EncryptionData.Returns("aAWgMAiTzerdlc/Fv63ZVhhLOLakNnhAedqerlPHiSESAEuTlT81WTsLBfzZ");
 
         using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
 
-        subject.Unlock(owner, "password");
+        Assert.True(subject.TryUnlock(owner, "password"));
 
         var key = Assert.Contains(owner, keyStore);
         Assert.Equal(SHA256.HashSizeInBytes, key.Length);
         Assert.NotEqual(new byte[SecretEncryptor.BlockSizeInBytes], key);
 
-        owner.DidNotReceive().Salt = Arg.Any<byte[]>();
+        owner.DidNotReceive().EncryptionData = Arg.Any<string>();
     }
 
     [Fact]
-    public void Unlock_When_Unlocked() {
+    public void TryUnlock_With_EncryptionData_And_Wrong_Password() {
         var owner = Substitute.For<ISecretOwner>();
-        owner.Salt.Returns(new byte[SecretEncryptor.BlockSizeInBytes]);
+        owner.EncryptionData.Returns("aAWgMAiTzerdlc/Fv63ZVhhLOLakNnhAedqerlPHiSESAEuTlT81WTsLBfzZ");
+
+        using var subject = new SecretEncryptor();
+        var keyStore = GetKeyStore(subject);
+
+        Assert.False(subject.TryUnlock(owner, "wrong"));
+
+        Assert.DoesNotContain(owner, keyStore);
+    }
+
+    [Fact]
+    public void TryUnlock_When_Unlocked() {
+        var owner = Substitute.For<ISecretOwner>();
+        owner.EncryptionData.Returns("aAWgMAiTzerdlc/Fv63ZVhhLOLakNnhAedqerlPHiSESAEuTlT81WTsLBfzZ");
 
         using var subject = new SecretEncryptor();
         var keyStore = GetKeyStore(subject);
@@ -61,7 +73,7 @@ public class SecretEncryptorTests : TestsBase {
         var originalKey = key.ToArray();
         keyStore[owner] = key;
 
-        subject.Unlock(owner, "password");
+        Assert.True(subject.TryUnlock(owner, "password"));
 
         var newKey = Assert.Contains(owner, keyStore);
         Assert.Equal(new byte[SecretEncryptor.BlockSizeInBytes], key);
@@ -70,14 +82,14 @@ public class SecretEncryptorTests : TestsBase {
     }
 
     [Fact]
-    public void Unlock_Throws_When_Disposed() {
+    public void TryUnlock_Throws_When_Disposed() {
         SecretEncryptor subject;
 
         using (var encryptor = new SecretEncryptor()) {
             subject = encryptor;
         }
 
-        Assert.Throws<ObjectDisposedException>(() => subject.Unlock(Substitute.For<ISecretOwner>(), "password"));
+        Assert.Throws<ObjectDisposedException>(() => subject.TryUnlock(Substitute.For<ISecretOwner>(), "password"));
     }
 
     [Fact]

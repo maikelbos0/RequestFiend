@@ -8,6 +8,7 @@ using System.Threading;
 namespace RequestFiend.Core;
 
 public class SecretEncryptor : ISecretEncryptor {
+    public const byte VerificationCode = 42;
     public const int BlockSizeInBytes = 16;
     public const int NonceSizeInBytes = 12;
 
@@ -15,13 +16,33 @@ public class SecretEncryptor : ISecretEncryptor {
     private readonly Lock keyStoreLock = new();
     private bool isDisposed;
 
-    public void Unlock(ISecretOwner owner, string password) {
+    public bool TryUnlock(ISecretOwner owner, string password) {
         const int Iterations = 1_000_000;
 
         ObjectDisposedException.ThrowIf(isDisposed, this);
 
-        owner.Salt ??= RandomNumberGenerator.GetBytes(BlockSizeInBytes);
-        var key = Rfc2898DeriveBytes.Pbkdf2(password, owner.Salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+        byte[] key;
+
+        if (owner.EncryptionData == null) {
+            var salt = RandomNumberGenerator.GetBytes(BlockSizeInBytes);
+
+            key = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+            byte[] encryptionData = [.. salt, .. Encrypt(key, [VerificationCode])];
+            owner.EncryptionData = Convert.ToBase64String(encryptionData);
+        }
+        else {
+            var source = Convert.FromBase64String(owner.EncryptionData);
+            var salt = source.AsSpan(0, BlockSizeInBytes);
+
+            key = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithmName.SHA256, SHA256.HashSizeInBytes);
+
+            try {
+                _ = Decrypt(key, source.AsSpan(BlockSizeInBytes));
+            }
+            catch {
+                return false;
+            }
+        }
 
         lock (keyStoreLock) {
             if (keyStore.Remove(owner, out var previousKey)) {
@@ -30,6 +51,8 @@ public class SecretEncryptor : ISecretEncryptor {
 
             keyStore[owner] = key;
         }
+
+        return true;
     }
 
     public void Lock(ISecretOwner owner) {
@@ -54,9 +77,13 @@ public class SecretEncryptor : ISecretEncryptor {
             return false;
         }
 
+        result = Convert.ToBase64String(Encrypt(key, Encoding.UTF8.GetBytes(plaintextValue)));
+        return true;
+    }
+
+    private static byte[] Encrypt(byte[] key, byte[] plaintext) {
         using var aes = new AesGcm(key, BlockSizeInBytes);
 
-        var plaintext = Encoding.UTF8.GetBytes(plaintextValue);
         var target = new byte[NonceSizeInBytes + BlockSizeInBytes + plaintext.Length];
         var nonce = target.AsSpan(0, NonceSizeInBytes);
         var tag = target.AsSpan(NonceSizeInBytes, BlockSizeInBytes);
@@ -66,8 +93,7 @@ public class SecretEncryptor : ISecretEncryptor {
 
         aes.Encrypt(nonce, plaintext, ciphertext, tag);
 
-        result = Convert.ToBase64String(target);
-        return true;
+        return target;
     }
 
     public bool TryDecrypt(ISecretOwner owner, string encryptedValue, [NotNullWhen(true)] out string? result) {
@@ -78,18 +104,21 @@ public class SecretEncryptor : ISecretEncryptor {
             return false;
         }
 
+        result = Encoding.UTF8.GetString(Decrypt(key, Convert.FromBase64String(encryptedValue)));
+        return true;
+    }
+
+    private static byte[] Decrypt(byte[] key, Span<byte> source) {
         using var aes = new AesGcm(key, BlockSizeInBytes);
 
-        var source = Convert.FromBase64String(encryptedValue);
-        var nonce = source.AsSpan(0, NonceSizeInBytes);
-        var tag = source.AsSpan(NonceSizeInBytes, BlockSizeInBytes);
-        var ciphertext = source.AsSpan(NonceSizeInBytes + BlockSizeInBytes);
+        var nonce = source[..NonceSizeInBytes];
+        var tag = source.Slice(NonceSizeInBytes, BlockSizeInBytes);
+        var ciphertext = source[(NonceSizeInBytes + BlockSizeInBytes)..];
         var plaintext = new byte[ciphertext.Length];
 
         aes.Decrypt(nonce, ciphertext, tag, plaintext);
 
-        result = Encoding.UTF8.GetString(plaintext);
-        return true;
+        return plaintext;
     }
 
     private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key) {

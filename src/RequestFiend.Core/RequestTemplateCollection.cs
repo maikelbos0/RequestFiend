@@ -15,7 +15,7 @@ public class RequestTemplateCollection : ISecretOwner {
     public List<NameValuePair> Variables { get; set; } = [];
     public List<Secret> Secrets { get; set; } = [];
     public List<NameValuePair> DefaultHeaders { get; set; } = [];
-    public byte[]? Salt { get; set; }
+    public string? EncryptionData { get; set; }
 
     public Dictionary<string, object> GetSessionData() => sessionData;
 
