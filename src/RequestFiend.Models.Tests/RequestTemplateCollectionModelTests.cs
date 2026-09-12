@@ -23,6 +23,7 @@ public class RequestTemplateCollectionModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<IEnvironmentService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -56,6 +57,7 @@ public class RequestTemplateCollectionModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<IEnvironmentService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );

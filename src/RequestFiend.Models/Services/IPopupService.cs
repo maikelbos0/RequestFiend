@@ -14,5 +14,6 @@ public interface IPopupService {
     Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions);
     Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url);
     Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment);
+    Task<IPopupResult> ShowUnlockPopup(ISecretEncryptor secretEncryptor, ISecretOwner owner);
     Task<IPopupResult> ShowCloneRequestPopup(IRequestTemplateCollectionService requestTemplateCollectionService, IMessageService messageService, FileModel file, RequestTemplateCollection collection, RequestTemplate request);
 }

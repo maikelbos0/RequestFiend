@@ -25,6 +25,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             preferencesService,
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         ) {
@@ -47,6 +48,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         ) {
@@ -69,6 +71,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         ) {
@@ -91,6 +94,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         ) {
@@ -113,6 +117,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         ) {
@@ -142,6 +147,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -193,6 +199,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             messageService,
             preferencesService,
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -255,6 +262,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             messageService,
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -310,6 +318,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             messageService,
             preferencesService,
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -325,6 +334,51 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
+    }
+
+    [Fact]
+    public async Task Unlock() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection();
+        var popupService = Substitute.For<IPopupService>();
+        var secretEncryptor = Substitute.For<ISecretEncryptor>();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            popupService,
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            secretEncryptor,
+            new(filePath),
+            collection
+        );
+
+        await subject.Unlock();
+
+        await popupService.Received().ShowUnlockPopup(secretEncryptor, collection);
+    }
+
+    [Fact]
+    public void Lock() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection();
+        var secretEncryptor = Substitute.For<ISecretEncryptor>();
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            secretEncryptor,
+            new(filePath),
+            collection
+        );
+
+        subject.Lock();
+
+        secretEncryptor.Received().Lock(collection);
     }
 
     [Fact]
@@ -344,6 +398,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -372,6 +427,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -400,6 +456,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -428,6 +485,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -456,6 +514,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -482,6 +541,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -511,6 +571,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -533,6 +594,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             new()
         ) {
@@ -555,6 +617,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             new()
         ) {
@@ -577,6 +640,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             new()
         ) {
@@ -599,6 +663,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IPopupService>(),
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             new()
         ) {
@@ -630,6 +695,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             popupService,
             messageService,
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );
@@ -660,6 +726,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             popupService,
             messageService,
             Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
             new(filePath),
             collection
         );

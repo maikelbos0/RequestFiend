@@ -13,6 +13,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
+    private readonly ISecretEncryptor secretEncryptor;
 
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
@@ -33,12 +34,14 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IPopupService popupService,
         IMessageService messageService,
         IPreferencesService preferencesService,
+        ISecretEncryptor secretEncryptor,
         FileModel file,
         RequestTemplateCollection collection
     ) : base($"{file.Name} - Collection settings", "Collection settings") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
+        this.secretEncryptor = secretEncryptor;
 
         File = file;
         Collection = collection;
@@ -100,6 +103,14 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         messageService.Send(new SuccessMessage("Changes have been saved"));
         messageService.Send(new RequestTemplateCollectionSettingsUpdatedMessage(Collection));
     }
+
+    [RelayCommand]
+    public async Task Unlock()
+        => await popupService.ShowUnlockPopup(secretEncryptor, Collection);
+
+    [RelayCommand]
+    public void Lock()
+        => secretEncryptor.Lock(Collection);
 
     [RelayCommand]
     public void MoveRequestUp(RequestTemplateItemModel request) {
