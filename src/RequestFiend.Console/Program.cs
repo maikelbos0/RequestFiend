@@ -37,6 +37,7 @@ builder.Services.AddHttpClient<IExchangeHandler, ExchangeHandler>()
     .ConfigureHttpClient(static httpClient => httpClient.Timeout = Timeout.InfiniteTimeSpan);
 builder.Services.AddSingleton<IServerCertificateValidationHandler, ServerCertificateValidationHandler>();
 builder.Services.AddSingleton<IScriptEvaluator, ScriptEvaluator>();
+builder.Services.AddSingleton<ISecretEncryptor, SecretEncryptor>();
 builder.Services.AddSingleton<CommandHandler>();
 
 builder.Services.AddSerilog((serviceProvider, loggerConfiguration) => {

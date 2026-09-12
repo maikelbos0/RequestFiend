@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 
 namespace RequestFiend.Core;
 
@@ -13,7 +12,6 @@ public class SecretEncryptor : ISecretEncryptor {
     public const int NonceSizeInBytes = 12;
 
     private readonly Dictionary<ISecretOwner, byte[]> keyStore = [];
-    private readonly Lock keyStoreLock = new();
     private bool isDisposed;
 
     public bool TryUnlock(ISecretOwner owner, string password) {
@@ -44,13 +42,11 @@ public class SecretEncryptor : ISecretEncryptor {
             }
         }
 
-        lock (keyStoreLock) {
-            if (keyStore.Remove(owner, out var previousKey)) {
-                CryptographicOperations.ZeroMemory(previousKey);
-            }
-
-            keyStore[owner] = key;
+        if (keyStore.Remove(owner, out var previousKey)) {
+            CryptographicOperations.ZeroMemory(previousKey);
         }
+
+        keyStore[owner] = key;
 
         return true;
     }
@@ -121,23 +117,25 @@ public class SecretEncryptor : ISecretEncryptor {
         return plaintext;
     }
 
-    private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key) {
-        lock (keyStoreLock) {
-            return keyStore.TryGetValue(owner, out key);
-        }
-    }
+    private bool TryGetKey(ISecretOwner owner, [NotNullWhen(true)] out byte[]? key)
+        => keyStore.TryGetValue(owner, out key);
 
     public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~SecretEncryptor() => Dispose(false);
+
+    public void Dispose(bool _) {
         if (isDisposed) {
             return;
         }
 
-        isDisposed = true;
-
-        lock (keyStoreLock) {
-            foreach (var key in keyStore.Values) {
-                CryptographicOperations.ZeroMemory(key);
-            }
+        foreach (var key in keyStore.Values) {
+            CryptographicOperations.ZeroMemory(key);
         }
+
+        isDisposed = true;
     }
 }
