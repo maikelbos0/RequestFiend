@@ -13,7 +13,7 @@ public interface IPopupService {
     Task<FileSaverResult> ShowSaveDialog(string fileName, Stream stream);
     Task<FileResult?> ShowPickFileDialog(PickOptions pickOptions);
     Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url);
-    Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment);
-    Task<IPopupResult> ShowUnlockPopup(ISecretEncryptor secretEncryptor, ISecretOwner owner);
+    Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, IPopupService popupService, ISecretEncryptor secretEncryptor, FileModel file, Environment environment);
+    Task<IPopupResult<bool>> ShowUnlockPopup(ISecretEncryptor secretEncryptor, ISecretOwner owner);
     Task<IPopupResult> ShowCloneRequestPopup(IRequestTemplateCollectionService requestTemplateCollectionService, IMessageService messageService, FileModel file, RequestTemplateCollection collection, RequestTemplate request);
 }

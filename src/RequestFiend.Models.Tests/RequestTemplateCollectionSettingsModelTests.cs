@@ -341,7 +341,10 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var collection = new RequestTemplateCollection();
+        var popupResult = Substitute.For<IPopupResult<bool>>();
+        popupResult.Result.Returns(true);
         var popupService = Substitute.For<IPopupService>();
+        popupService.ShowUnlockPopup(Arg.Any<ISecretEncryptor>(), Arg.Any<ISecretOwner>()).Returns(popupResult);
         var secretEncryptor = Substitute.For<ISecretEncryptor>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -352,9 +355,13 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             secretEncryptor,
             new(filePath),
             collection
-        );
+        ) {
+            IsLocked = true
+        };
 
         await subject.Unlock();
+
+        Assert.False(subject.IsLocked);
 
         await popupService.Received().ShowUnlockPopup(secretEncryptor, collection);
     }
@@ -374,9 +381,13 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             secretEncryptor,
             new(filePath),
             collection
-        );
+        ) {
+            IsLocked = false
+        };
 
         subject.Lock();
+
+        Assert.True(subject.IsLocked);
 
         secretEncryptor.Received().Lock(collection);
     }

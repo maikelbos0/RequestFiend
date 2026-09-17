@@ -27,9 +27,9 @@ public partial class UnlockModel : BoundModelBase {
     }
 
     [RelayCommand]
-    public async Task TryUnlock(CancellationToken cancellationToken) {
+    public async Task<bool> TryUnlock(CancellationToken cancellationToken) {
         if (HasError) {
-            return;
+            return false;
         }
 
         IsValid = secretEncryptor.TryUnlock(owner, Password.Value);
@@ -37,5 +37,7 @@ public partial class UnlockModel : BoundModelBase {
         if (IsValid) {
             await closeMethod(cancellationToken);
         }
+
+        return IsValid;
     }
 }

@@ -28,6 +28,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     public ValidatableImmutableCollection<RequestTemplateItemModel> Requests { get; }
     [ObservableProperty] public partial bool ShowAllowScriptEvaluation { get; set; }
     [ObservableProperty] public partial RequestTemplateItemModel? SelectedRequest { get; set; }
+    [ObservableProperty] public partial bool IsLocked { get; set; } = true;
 
     public RequestTemplateCollectionSettingsModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
@@ -105,12 +106,16 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     }
 
     [RelayCommand]
-    public async Task Unlock()
-        => await popupService.ShowUnlockPopup(secretEncryptor, Collection);
+    public async Task Unlock() {
+        var result = await popupService.ShowUnlockPopup(secretEncryptor, Collection);
+        IsLocked = !result.Result;
+    }
 
     [RelayCommand]
-    public void Lock()
-        => secretEncryptor.Lock(Collection);
+    public void Lock() {
+        secretEncryptor.Lock(Collection);
+        IsLocked = true;
+    }
 
     [RelayCommand]
     public void MoveRequestUp(RequestTemplateItemModel request) {

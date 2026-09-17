@@ -61,11 +61,11 @@ public class PopupService : IPopupService {
     public Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url)
         => Shell.Current.ShowPopupAsync<string>(new UrlPopup(collection, url));
 
-    public Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, FileModel file, Environment environment)
-        => Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentService, file, environment));
+    public Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, IPopupService popupService, ISecretEncryptor secretEncryptor, FileModel file, Environment environment)
+        => Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentService, popupService, secretEncryptor, file, environment));
 
-    public Task<IPopupResult> ShowUnlockPopup(ISecretEncryptor secretEncryptor, ISecretOwner owner)
-        => Shell.Current.ShowPopupAsync(new UnlockPopup(secretEncryptor, owner));
+    public Task<IPopupResult<bool>> ShowUnlockPopup(ISecretEncryptor secretEncryptor, ISecretOwner owner)
+        => Shell.Current.ShowPopupAsync<bool>(new UnlockPopup(secretEncryptor, owner));
 
     public Task<IPopupResult> ShowCloneRequestPopup(IRequestTemplateCollectionService requestTemplateCollectionService, IMessageService messageService, FileModel file, RequestTemplateCollection collection, RequestTemplate request)
         => Shell.Current.ShowPopupAsync(new CloneRequestPopup(requestTemplateCollectionService, messageService, file, collection, request));

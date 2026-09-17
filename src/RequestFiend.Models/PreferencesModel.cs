@@ -19,6 +19,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     private readonly IPopupService popupService;
     private readonly IFileSystem fileSystem;
     private readonly IEnvironmentService environmentService;
+    private readonly ISecretEncryptor secretEncryptor;
 
     public ValidatableProperty<string> MaximumRecentCollectionCount { get; }
     public ValidatableProperty<string> ScriptEvaluationMode { get; }
@@ -30,12 +31,20 @@ public partial class PreferencesModel : PageBoundModelBase {
     public ValidatableImmutableCollection<FileModel> Environments { get; }
     public ValidatableProperty<FileModel?> ActiveEnvironment { get; }
 
-    public PreferencesModel(IPreferencesService preferencesService, IMessageService messageService, IPopupService popupService, IFileSystem fileSystem, IEnvironmentService environmentService) : base("Preferences", "Preferences") {
+    public PreferencesModel(
+        IPreferencesService preferencesService,
+        IMessageService messageService,
+        IPopupService popupService,
+        IFileSystem fileSystem,
+        IEnvironmentService environmentService,
+        ISecretEncryptor secretEncryptor
+    ) : base("Preferences", "Preferences") {
         this.preferencesService = preferencesService;
         this.messageService = messageService;
         this.popupService = popupService;
         this.fileSystem = fileSystem;
         this.environmentService = environmentService;
+        this.secretEncryptor = secretEncryptor;
 
         MaximumRecentCollectionCount = new(() => preferencesService.GetMaximumRecentCollectionCount().ToString(), value => preferencesService.SetMaximumRecentCollectionCount(int.Parse("0" + value)), Validator.Numeric);
         ScriptEvaluationMode = new(() => Options.ScriptEvaluationModeMap[preferencesService.GetScriptEvaluationMode()], _ => preferencesService.SetScriptEvaluationMode(GetScriptEvaluationMode()));
@@ -84,7 +93,7 @@ public partial class PreferencesModel : PageBoundModelBase {
         if (saveResult.IsSuccessful) {
             messageService.Send(new SuccessMessage("Environment has been created"));
             AddEnvironment(new(saveResult.FilePath));
-            await popupService.ShowEnvironmentPopup(environmentService, new(saveResult.FilePath), environment);
+            await popupService.ShowEnvironmentPopup(environmentService, popupService, secretEncryptor, new(saveResult.FilePath), environment);
         }
         else if (saveResult.Exception != null && saveResult.Exception is not System.OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -136,7 +145,7 @@ public partial class PreferencesModel : PageBoundModelBase {
                 var environment = JsonSerializer.Deserialize<Environment>(await fileSystem.File.ReadAllTextAsync(file.FilePath));
 
                 if (environment != null) {
-                    await popupService.ShowEnvironmentPopup(environmentService, file, environment);
+                    await popupService.ShowEnvironmentPopup(environmentService, popupService, secretEncryptor, file, environment);
                 }
                 else {
                     await popupService.ShowErrorPopup("Failed to load environment.");
@@ -155,7 +164,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     public async Task ResetPreferences() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to reset your preferences?")) {
             preferencesService.Reset();
-            
+
             Reset();
 
             messageService.Send(new PreferencesUpdatedMessage());

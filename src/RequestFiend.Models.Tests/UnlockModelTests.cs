@@ -28,11 +28,27 @@ public class UnlockModelTests : TestsBase {
             Password = { Value = "password" }
         };
 
-        await subject.TryUnlock(CancellationToken.None);
+        Assert.True(await subject.TryUnlock(CancellationToken.None));
 
         secretEncryptor.Received().TryUnlock(owner, "password");
 
         await closeMethod.Received().Invoke(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task TryUnlock_When_Invalid() {
+        var closeMethod = Substitute.For<Func<CancellationToken, Task>>();
+        var secretEncryptor = Substitute.For<ISecretEncryptor>();
+        var owner = Substitute.For<ISecretOwner>();
+        secretEncryptor.TryUnlock(Arg.Any<ISecretOwner>(), Arg.Any<string>()).Returns(true);
+
+        var subject = new UnlockModel(closeMethod, secretEncryptor, owner);
+
+        Assert.False(await subject.TryUnlock(CancellationToken.None));
+
+        secretEncryptor.DidNotReceive().TryUnlock(Arg.Any<ISecretOwner>(), Arg.Any<string>());
+
+        await closeMethod.DidNotReceive().Invoke(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -46,7 +62,7 @@ public class UnlockModelTests : TestsBase {
             Password = { Value = "password" }
         };
 
-        await subject.TryUnlock(CancellationToken.None);
+        Assert.False(await subject.TryUnlock(CancellationToken.None));
 
         secretEncryptor.Received().TryUnlock(owner, "password");
 
