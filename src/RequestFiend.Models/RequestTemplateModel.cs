@@ -254,4 +254,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     [RelayCommand]
     public void ToggleHasManualContentTypeHeader()
         => HasManualContentTypeHeader.Value = !HasManualContentTypeHeader.Value;
+
+    public bool Equals(RequestTemplate request)
+        => Request == request;
 }

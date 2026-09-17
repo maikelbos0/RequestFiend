@@ -894,4 +894,44 @@ public class RequestTemplateModelTests : TestsBase {
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateRemovedFromCollectionMessage>(), Arg.Any<FileModel>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
+
+    [Fact]
+    public void Equals_Current_Request() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
+
+        Assert.True(subject.Equals(request));
+    }
+
+    [Fact]
+    public void Equals_Different_Request() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
+
+        Assert.False(subject.Equals(new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        }));
+    }
 }

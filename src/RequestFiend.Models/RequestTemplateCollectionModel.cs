@@ -1,4 +1,6 @@
-﻿using RequestFiend.Core;
+﻿using CommunityToolkit.Maui.Core.Extensions;
+using Microsoft.Maui.Controls;
+using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,5 +49,21 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         requests.Add(model);
         ConfigureState([model]);
         return model;
+    }
+
+    public void SynchronizeRequests(IList<ShellSection> items) {
+        foreach (var request in collection.Requests) {
+            var requestModel = requests.Single(x => x.Equals(request));
+            requests.Remove(requestModel);
+            requests.Add(requestModel);
+
+            var requestItems = items.SkipWhile(x => (x.Items[0].Content as ContentPage)?.BindingContext != requestModel)
+                .TakeWhile(x => x.Items[0].Content is ContentPage page && (page.BindingContext == requestModel || page.BindingContext is not RequestTemplateModel))
+                .ToList();
+            foreach (var requestItem in requestItems) {
+                items.Remove(requestItem);
+                items.Add(requestItem);
+            }
+        }
     }
 }

@@ -152,24 +152,9 @@ public partial class AppShell : Shell,
 
     public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
         var collectionItem = Items.First(item => item.StyleId != null);
-        var items = new List<ShellSection>();
+        var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
 
-        foreach (var request in message.Collection.Requests) {
-            var requestTab = collectionItem.Items.Single(x => x.Items[0].Content is RequestTemplatePage page && ((RequestTemplateModel)page.BindingContext).Request == request);
-            var index = collectionItem.Items.IndexOf(requestTab);
-
-            items.Add(requestTab);
-            collectionItem.Items.Remove(requestTab);
-
-            while (index < collectionItem.Items.Count && collectionItem.Items[index].Items[0].Content is ExchangePage) {
-                items.Add(collectionItem.Items[index]);
-                collectionItem.Items.Remove(collectionItem.Items[index]);
-            }
-        }
-
-        foreach (var item in items) {
-            collectionItem.Items.Add(item);
-        }
+        collectionModel.SynchronizeRequests(collectionItem.Items);
     }
 
     private async Task CloseCollectionTab(Tab tab) {
