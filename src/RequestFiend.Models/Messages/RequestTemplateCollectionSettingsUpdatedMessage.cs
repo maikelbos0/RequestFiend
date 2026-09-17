@@ -1,5 +1,6 @@
 ﻿using RequestFiend.Core;
+using System;
 
 namespace RequestFiend.Models.Messages;
 
-public record RequestTemplateCollectionSettingsUpdatedMessage(RequestTemplateCollection Collection);
+public record RequestTemplateCollectionSettingsUpdatedMessage(string FilePath, [property: Obsolete] RequestTemplateCollection Collection);

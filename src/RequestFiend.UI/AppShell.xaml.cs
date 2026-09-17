@@ -151,7 +151,7 @@ public partial class AppShell : Shell,
     }
 
     public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
-        var collectionItem = Items.First(item => item.StyleId != null);
+        var collectionItem = Items.First(item => item.StyleId == message.FilePath);
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
 
         collectionModel.SynchronizeRequests(collectionItem.Items);
