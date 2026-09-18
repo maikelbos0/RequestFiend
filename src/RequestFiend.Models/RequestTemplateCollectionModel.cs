@@ -36,8 +36,8 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
         this.file = file;
         this.collection = collection;
 
-        Settings = new(requestTemplateCollectionService, popupService, messageService, preferencesService, secretEncryptor, file, collection);
-        NewRequest = new(requestTemplateCollectionService, popupService, messageService, file, collection);
+        Settings = new(requestTemplateCollectionService, popupService, messageService, preferencesService, secretEncryptor, environmentService, file, collection);
+        NewRequest = new(requestTemplateCollectionService, popupService, messageService, environmentService, file, collection);
         requests.AddRange(collection.Requests.Select(request => new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, environmentService, file, collection, request)));
 
         ConfigureState([Settings, NewRequest, .. requests]);

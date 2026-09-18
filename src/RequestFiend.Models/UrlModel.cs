@@ -11,20 +11,22 @@ using System.Web;
 
 namespace RequestFiend.Models;
 
-public partial class UrlModel : BoundModelBase {
+public partial class UrlModel : BoundModelBase, IVariableSnapshotProvider {
     private static string EncodeUrlComponent(string urlComponent) {
         return string.Join("", VariableService.ProcessText(urlComponent, HttpUtility.UrlEncode, variableReference => variableReference));
     }
 
     private readonly Func<string?, CancellationToken, Task> closeMethod;
+    private readonly IEnvironmentService environmentService;
 
     // TODO private
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; }
 
-    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, RequestTemplateCollection collection, string url) {
+    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, IEnvironmentService environmentService, RequestTemplateCollection collection, string url) {
         this.closeMethod = closeMethod;
+        this.environmentService = environmentService;
         var (baseUrl, parameters) = ParseUrl(url);
 
         Collection = collection;
@@ -97,4 +99,7 @@ public partial class UrlModel : BoundModelBase {
     [RelayCommand]
     public Task Cancel(CancellationToken cancellationToken)
         => closeMethod(null, cancellationToken);
+
+    public async Task<VariableSnapshot> CreateVariableSnapshot()
+        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }

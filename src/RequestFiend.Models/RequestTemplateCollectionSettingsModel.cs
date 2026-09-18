@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase {
+public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase, IVariableSnapshotProvider {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
     private readonly ISecretEncryptor secretEncryptor;
+    private readonly IEnvironmentService environmentService;
 
     // TODO make private fields
     public FileModel File { get; }
@@ -38,6 +39,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         IMessageService messageService,
         IPreferencesService preferencesService,
         ISecretEncryptor secretEncryptor,
+        IEnvironmentService environmentService,
         FileModel file,
         RequestTemplateCollection collection
     ) : base($"{file.Name} - Collection settings", "Collection settings") {
@@ -45,7 +47,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         this.popupService = popupService;
         this.messageService = messageService;
         this.secretEncryptor = secretEncryptor;
-
+        this.environmentService = environmentService;
         File = file;
         Collection = collection;
 
@@ -177,11 +179,14 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
     [RelayCommand]
     public async Task ShowDefaultUrlPopup() {
-        var result = await popupService.ShowUrlPopup(Collection, DefaultUrl.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, Collection, DefaultUrl.Value);
 
         if (result.Result != null) {
             DefaultUrl.Value = result.Result;
             messageService.Send(new ValidatablePropertyUpdatedMessage(DefaultUrl));
         }
     }
+
+    public async Task<VariableSnapshot> CreateVariableSnapshot()
+        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }

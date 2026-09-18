@@ -37,6 +37,7 @@ public partial class ValidatableEntry : Grid, IRecipient<ActiveEnvironmentChange
         set => SetValue(TextProperty, value);
     }
 
+    // TODO take from page model here and for editor
     public RequestTemplateCollection? Collection {
         get => GetValue(CollectionProperty) as RequestTemplateCollection;
         set => SetValue(CollectionProperty, value);

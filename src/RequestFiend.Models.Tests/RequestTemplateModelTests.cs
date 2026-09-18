@@ -574,14 +574,15 @@ public class RequestTemplateModelTests : TestsBase {
             Url = url
         };
         popupResult.Result.Returns(expectedUrl);
-        popupService.ShowUrlPopup(collection, url).Returns(popupResult);
+        var environmentService = Substitute.For<IEnvironmentService>();
+        popupService.ShowUrlPopup(environmentService, collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, environmentService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, url);
+        await popupService.Received(1).ShowUrlPopup(environmentService, collection, url);
         Assert.Equal(expectedUrl, subject.Url.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.Url));
     }
@@ -600,14 +601,15 @@ public class RequestTemplateModelTests : TestsBase {
             Url = url
         };
         popupResult.Result.ReturnsNull();
-        popupService.ShowUrlPopup(collection, url).Returns(popupResult);
+        var environmentService = Substitute.For<IEnvironmentService>();
+        popupService.ShowUrlPopup(environmentService, collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
-        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, Substitute.For<IEnvironmentService>(), new(filePath), collection, request);
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, environmentService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, url);
+        await popupService.Received(1).ShowUrlPopup(environmentService, collection, url);
         Assert.Equal(url, subject.Url.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }
@@ -933,5 +935,35 @@ public class RequestTemplateModelTests : TestsBase {
             Method = "GET",
             Url = "https://localhost"
         }));
+    }
+
+    [Fact]
+    public async Task CreateVariableSnapshot() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var environmentService = Substitute.For<IEnvironmentService>();
+        environmentService.GetActiveEnvironment().Returns(new Environment() {
+            Variables = {
+                new() { Name = "Foo", Value = "FooValue" }
+            }
+        });
+
+        var request = new RequestTemplate() {
+            Name = "Name",
+            Method = "GET",
+            Url = "https://localhost"
+        };
+        var collection = new RequestTemplateCollection() {
+            Requests = { request },
+            Variables = {
+                new() { Name = "Bar", Value = "BarValue" }
+            }
+        };
+
+        var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), Substitute.For<IPopupService>(), Substitute.For<IMessageService>(), environmentService, new(filePath), collection, request);
+
+        var result = await subject.CreateVariableSnapshot();
+
+        Assert.Equal(2, result.Variables.Count);
     }
 }

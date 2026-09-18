@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace RequestFiend.Models;
 
-public partial class RequestTemplateModel : PageBoundModelBase {
+public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapshotProvider {
     private readonly static JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
@@ -136,7 +136,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     [RelayCommand]
     public async Task ShowUrlPopup() {
-        var result = await popupService.ShowUrlPopup(Collection, Url.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, Collection, Url.Value);
 
         if (result.Result != null) {
             Url.Value = result.Result;
@@ -258,4 +258,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
 
     public bool Equals(RequestTemplate request)
         => Request == request;
+
+    public async Task<VariableSnapshot> CreateVariableSnapshot()
+        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }

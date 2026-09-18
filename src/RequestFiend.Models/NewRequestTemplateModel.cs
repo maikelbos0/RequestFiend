@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace RequestFiend.Models;
 
-public partial class NewRequestTemplateModel : PageBoundModelBase {
+public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnapshotProvider {
     private readonly IRequestTemplateCollectionService requestTemplateCollectionService;
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
+    private readonly IEnvironmentService environmentService;
 
     public FileModel File { get; }
 
@@ -25,13 +26,14 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
         IMessageService messageService,
+        IEnvironmentService environmentService,
         FileModel file,
         RequestTemplateCollection collection
     ) : base($"{file.Name} - New request", "New request") {
         this.requestTemplateCollectionService = requestTemplateCollectionService;
         this.popupService = popupService;
         this.messageService = messageService;
-
+        this.environmentService = environmentService;
         File = file;        
         Collection = collection;
 
@@ -68,11 +70,14 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
 
     [RelayCommand]
     public async Task ShowUrlPopup() {
-        var result = await popupService.ShowUrlPopup(Collection, Url.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, Collection, Url.Value);
 
         if (result.Result != null) {
             Url.Value = result.Result;
             messageService.Send(new ValidatablePropertyUpdatedMessage(Url));
         }
     }
+
+    public async Task<VariableSnapshot> CreateVariableSnapshot()
+        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -26,6 +27,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             preferencesService,
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -49,6 +51,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -72,6 +75,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -95,6 +99,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -118,6 +123,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -148,6 +154,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -200,6 +207,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             messageService,
             preferencesService,
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -263,6 +271,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             messageService,
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -319,6 +328,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             messageService,
             preferencesService,
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -353,6 +363,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             secretEncryptor,
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -379,6 +390,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             secretEncryptor,
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         ) {
@@ -410,6 +422,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -439,6 +452,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -468,6 +482,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -497,6 +512,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -526,6 +542,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -553,6 +570,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -583,6 +601,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             collection
         );
@@ -606,6 +625,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             new()
         ) {
@@ -629,6 +649,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             new()
         ) {
@@ -652,6 +673,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             new()
         ) {
@@ -675,6 +697,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             Substitute.For<IMessageService>(),
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            Substitute.For<IEnvironmentService>(),
             new(filePath),
             new()
         ) {
@@ -698,7 +721,8 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             DefaultUrl = defaultUrl
         };
         popupResult.Result.Returns(expectedUrl);
-        popupService.ShowUrlPopup(collection, defaultUrl).Returns(popupResult);
+        var environmentService = Substitute.For<IEnvironmentService>(); 
+        popupService.ShowUrlPopup(environmentService, collection, defaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -707,13 +731,14 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             messageService,
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            environmentService,
             new(filePath),
             collection
         );
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, defaultUrl);
+        await popupService.Received(1).ShowUrlPopup(environmentService, collection, defaultUrl);
         Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.DefaultUrl));
     }
@@ -729,7 +754,8 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             DefaultUrl = defaultUrl
         };
         popupResult.Result.ReturnsNull();
-        popupService.ShowUrlPopup(collection, defaultUrl).Returns(popupResult);
+        var environmentService = Substitute.For<IEnvironmentService>(); 
+        popupService.ShowUrlPopup(environmentService, collection, defaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -738,14 +764,48 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
             messageService,
             Substitute.For<IPreferencesService>(),
             Substitute.For<ISecretEncryptor>(),
+            environmentService,
             new(filePath),
             collection
         );
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(collection, defaultUrl);
+        await popupService.Received(1).ShowUrlPopup(environmentService, collection, defaultUrl);
         Assert.Equal(defaultUrl, subject.DefaultUrl.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
+    }
+
+    [Fact]
+    public async Task CreateVariableSnapshot() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var environmentService = Substitute.For<IEnvironmentService>();
+        environmentService.GetActiveEnvironment().Returns(new Environment() {
+            Variables = {
+                new() { Name = "Foo", Value = "FooValue" }
+            }
+        });
+
+        var collection = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = "Bar", Value = "BarValue" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionSettingsModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            Substitute.For<ISecretEncryptor>(),
+            environmentService,
+            new(filePath),
+            collection
+        );
+
+        var result = await subject.CreateVariableSnapshot();
+
+        Assert.Equal(2, result.Variables.Count);
     }
 }

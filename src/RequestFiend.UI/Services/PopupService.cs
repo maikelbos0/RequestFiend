@@ -58,8 +58,8 @@ public class PopupService : IPopupService {
         return true;
     }
 
-    public Task<IPopupResult<string>> ShowUrlPopup(RequestTemplateCollection collection, string url)
-        => Shell.Current.ShowPopupAsync<string>(new UrlPopup(collection, url));
+    public Task<IPopupResult<string>> ShowUrlPopup(IEnvironmentService environmentService, RequestTemplateCollection collection, string url)
+        => Shell.Current.ShowPopupAsync<string>(new UrlPopup(environmentService, collection, url));
 
     public Task<IPopupResult> ShowEnvironmentPopup(IEnvironmentService environmentService, IPopupService popupService, ISecretEncryptor secretEncryptor, FileModel file, Environment environment)
         => Shell.Current.ShowPopupAsync(new EnvironmentPopup(environmentService, popupService, secretEncryptor, file, environment));

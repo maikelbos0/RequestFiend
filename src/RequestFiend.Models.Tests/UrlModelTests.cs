@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
 using RequestFiend.Core;
-using System;
+using RequestFiend.Models.Services;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -14,7 +14,7 @@ public class UrlModelTests : TestsBase {
     public void Constructor_Without_Parameters(string url) {
         var collection = new RequestTemplateCollection();
 
-        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), collection, url);
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), collection, url);
 
         Assert.Equal(collection, subject.Collection);
 
@@ -26,7 +26,7 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public void Constructor_With_Parameters() {
-        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), new(), "https://localhost/api?Foo&%7bBar%7d=Test%2b{{Qux}}&Baz");
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo&%7bBar%7d=Test%2b{{Qux}}&Baz");
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Equal(3, subject.Parameters.Count);
@@ -39,7 +39,7 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public void ParseQueryStringFromBaseUrl_Without_Parameters() {
-        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), new(), "https://localhost/api?Foo");
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo");
 
         subject.ParseQueryStringFromBaseUrl();
 
@@ -51,7 +51,7 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public void ParseQueryStringFromBaseUrl_With_Parameters() {
-        var subject = new UrlModel(Substitute.For<Func<string?, CancellationToken, Task>>(), new(), "https://localhost/api?Foo") {
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo") {
             BaseUrl = { Value = "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz" }
         };
 
@@ -74,9 +74,9 @@ public class UrlModelTests : TestsBase {
     [InlineData("https://localhost/api", "https://localhost/api", true, "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz=")]
     [InlineData("https://localhost/api?Foo", "https://localhost/api?Bar", false, "https://localhost/api?Bar&Foo=")]
     public async Task Confirm(string url, string baseUrl, bool addParameters, string expectedUrl) {
-        var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
+        var closeMethod = Substitute.For<System.Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, new(), url) {
+        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(), url) {
             BaseUrl = { Value = baseUrl }
         };
 
@@ -92,9 +92,9 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public async Task Confirm_Fails_When_Invalid() {
-        var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
+        var closeMethod = Substitute.For<System.Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, new(), "");
+        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(), "");
 
         await subject.Confirm(CancellationToken.None);
 
@@ -103,12 +103,34 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public async Task Cancel() {
-        var closeMethod = Substitute.For<Func<string?, CancellationToken, Task>>();
+        var closeMethod = Substitute.For<System.Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, new(), "https://localhost/api?Foo");
+        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo");
 
         await subject.Cancel(CancellationToken.None);
 
         await closeMethod.Received(1).Invoke(null, CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task CreateVariableSnapshot() {
+        var environmentService = Substitute.For<IEnvironmentService>();
+        environmentService.GetActiveEnvironment().Returns(new Environment() {
+            Variables = {
+                new() { Name = "Foo", Value = "FooValue" }
+            }
+        });
+
+        var collection = new RequestTemplateCollection() {
+            Variables = {
+                new() { Name = "Bar", Value = "BarValue" }
+            }
+        };
+
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), environmentService, collection, "");
+
+        var result = await subject.CreateVariableSnapshot();
+
+        Assert.Equal(2, result.Variables.Count);
     }
 }
