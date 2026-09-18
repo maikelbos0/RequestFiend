@@ -91,7 +91,7 @@ public partial class AppShell : Shell,
             });
 
             foreach (var request in collectionModel.Requests) {
-                collectionItem.Items.Add(CreateRequestTab(request));
+                collectionItem.Items.Add(CreateRequestTab(collectionModel, request));
             }
 
             Items.Add(collectionItem);
@@ -103,13 +103,13 @@ public partial class AppShell : Shell,
     public async void Receive(RequestTemplateCreatedMessage message) {
         var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
-        var item = CreateRequestTab(collectionModel.AddRequest(message.Request));
+        var item = CreateRequestTab(collectionModel, collectionModel.AddRequest(message.Request));
 
         collectionItem.Items.Add(item);
         await GoToAsync($"//{collectionItem.Route}/{item.Route}");
     }
 
-    private Tab CreateRequestTab(RequestTemplateModel request) {
+    private Tab CreateRequestTab(RequestTemplateCollectionModel collectionModel, RequestTemplateModel request) {
         var item = new Tab() {
             Icon = "paper_plane_solid_full.png",
             Items = {
@@ -119,8 +119,10 @@ public partial class AppShell : Shell,
             StyleId = request.Id
         };
 
-        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async (tab, _)
-            => await CloseCollectionTab(tab));
+        WeakReferenceMessenger.Default.Register<Tab, RequestTemplateDeletedMessage, string>(item, request.Id, async(tab, _) => {
+            collectionModel.RemoveRequest(request);
+            await CloseCollectionTab(tab);
+        });
 
         return item;
     }

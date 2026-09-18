@@ -104,6 +104,10 @@ public partial class ValidatableEntry : Grid, IRecipient<ActiveEnvironmentChange
             }
             catch { }
         }
+        else {
+            Overlay.IsVisible = false;
+            Overlay.FormattedText = null;
+        }
     }
 
     public async void Receive(ActiveEnvironmentChangedMessage _) {

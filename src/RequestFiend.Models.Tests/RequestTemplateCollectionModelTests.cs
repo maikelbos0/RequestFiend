@@ -16,7 +16,7 @@ public class RequestTemplateCollectionModelTests : TestsBase {
 
         var collection = new RequestTemplateCollection() {
             Requests = {
-                new() { Name = "Request", Method = "GET", Url = "https://localhost" },
+                new() { Name = "Request", Method = "GET", Url = "https://localhost" }
             }
         };
 
@@ -82,6 +82,34 @@ public class RequestTemplateCollectionModelTests : TestsBase {
     }
 
     [Fact]
+    public void RemoveRequest() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var collection = new RequestTemplateCollection() {
+            Requests = {
+                new() { Name = "Request", Method = "GET", Url = "https://localhost" }
+            }
+        };
+
+        var subject = new RequestTemplateCollectionModel(
+            Substitute.For<IRequestTemplateCollectionService>(),
+            Substitute.For<IPopupService>(),
+            Substitute.For<IMessageService>(),
+            Substitute.For<IPreferencesService>(),
+            Substitute.For<IEnvironmentService>(),
+            Substitute.For<ISecretEncryptor>(),
+            new(filePath),
+            collection
+        );
+
+        subject.RemoveRequest(subject.Requests.Single());
+
+        Assert.Empty(subject.Requests);
+
+        Assert.Equal([subject.Settings, subject.NewRequest], subject.Validatables);
+    }
+
+    [Fact]
     public void SynchronizeRequests() {
         const string filePath = @"C:\Documents\External data requests.json";
 
@@ -89,7 +117,7 @@ public class RequestTemplateCollectionModelTests : TestsBase {
             Requests = {
                 new() { Name = "First", Method = "GET", Url = "https://localhost" },
                 new() { Name = "Second", Method = "GET", Url = "https://localhost" },
-                new() { Name = "Third", Method = "GET", Url = "https://localhost" },
+                new() { Name = "Third", Method = "GET", Url = "https://localhost" }
             }
         };
 

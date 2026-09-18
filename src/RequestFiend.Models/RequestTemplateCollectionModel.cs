@@ -46,8 +46,13 @@ public partial class RequestTemplateCollectionModel : PageBoundModelBase {
     public RequestTemplateModel AddRequest(RequestTemplate request) {
         var model = new RequestTemplateModel(requestTemplateCollectionService, popupService, messageService, environmentService, file, collection, request);
         requests.Add(model);
-        ConfigureState([model]);
+        ConfigureState([Settings, NewRequest, .. requests]);
         return model;
+    }
+
+    public void RemoveRequest(RequestTemplateModel request) {
+        requests.Remove(request);
+        ConfigureState([Settings, NewRequest, .. requests]);
     }
 
     public void SynchronizeRequests(IList<ShellSection> items) {

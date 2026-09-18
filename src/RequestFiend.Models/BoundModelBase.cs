@@ -6,19 +6,23 @@ using System.Linq;
 namespace RequestFiend.Models;
 
 public partial class BoundModelBase : ObservableObject, IValidatable {
-    private readonly List<IValidatable> validatables = [];
+    private List<IValidatable> validatables = [];
 
     [ObservableProperty] public partial bool HasError { get; private set; }
     [ObservableProperty] public partial bool IsModified { get; private set; }
     [ObservableProperty] public partial bool IsModifiedWithoutError { get; private set; }
     public IEnumerable<IValidatable> Validatables => validatables;
 
-    public virtual void ConfigureState(IEnumerable<IValidatable> validatables) {
-        this.validatables.AddRange(validatables);
-
-        foreach (var validatable in validatables) {
-            validatable.PropertyChanged += OnValidatableChanged;
+    public void ConfigureState(IEnumerable<IValidatable> validatables) {
+        foreach (var addedValidatable in validatables.Except(this.validatables)) {
+            addedValidatable.PropertyChanged += OnValidatableChanged;
         }
+
+        foreach (var removedValidatable in this.validatables.Except(validatables)) {
+            removedValidatable.PropertyChanged -= OnValidatableChanged;
+        }
+
+        this.validatables = [.. validatables];
 
         UpdateState();
     }

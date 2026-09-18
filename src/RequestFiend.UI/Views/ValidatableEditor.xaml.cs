@@ -105,6 +105,10 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
             }
             catch { }
         }
+        else {
+            Overlay.IsVisible = false;
+            Overlay.FormattedText = null;
+        }
     }
 
     public async void Receive(ActiveEnvironmentChangedMessage _) {
