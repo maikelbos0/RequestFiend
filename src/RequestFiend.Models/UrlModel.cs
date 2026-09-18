@@ -18,6 +18,7 @@ public partial class UrlModel : BoundModelBase {
 
     private readonly Func<string?, CancellationToken, Task> closeMethod;
 
+    // TODO private
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; }

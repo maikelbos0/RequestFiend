@@ -23,6 +23,12 @@ public partial class ValidatableEntry : Grid, IRecipient<ActiveEnvironmentChange
         default(RequestTemplateCollection),
         propertyChanged: (bindable, _, _) => ((ValidatableEntry)bindable).UpdateOverlay()
     );
+    public static readonly BindableProperty IsPasswordProperty = BindableProperty.Create(
+        nameof(IsPassword),
+        typeof(bool),
+        typeof(ValidatableEntry),
+        false
+    );
 
     private readonly IEnvironmentService environmentService;
 
@@ -34,6 +40,11 @@ public partial class ValidatableEntry : Grid, IRecipient<ActiveEnvironmentChange
     public RequestTemplateCollection? Collection {
         get => GetValue(CollectionProperty) as RequestTemplateCollection;
         set => SetValue(CollectionProperty, value);
+    }
+
+    public bool IsPassword {
+        get => (bool)GetValue(IsPasswordProperty);
+        set => SetValue(IsPasswordProperty, value);
     }
 
     public ValidatableEntry() {

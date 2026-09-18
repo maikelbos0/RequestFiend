@@ -13,7 +13,10 @@ public partial class NewRequestTemplateModel : PageBoundModelBase {
     private readonly IMessageService messageService;
 
     public FileModel File { get; }
+
+    // TODO private
     public RequestTemplateCollection Collection { get; }
+
     public ValidatableProperty<string> Name { get; } = new(() => "", _ => { }, Validator.Required);
     public ValidatableProperty<string> Method { get; } = new(() => "GET", _ => { }, Validator.Required);
     public ValidatableProperty<string> Url { get; }

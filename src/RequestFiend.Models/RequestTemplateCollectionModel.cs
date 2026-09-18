@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Core.Extensions;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using RequestFiend.Core;
 using RequestFiend.Models.Services;
 using System.Collections.Generic;

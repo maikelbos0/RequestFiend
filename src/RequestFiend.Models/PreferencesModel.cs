@@ -119,7 +119,7 @@ public partial class PreferencesModel : PageBoundModelBase {
     private void AddEnvironment(FileModel newEnvironment) {
         if (!Environments.Contains(newEnvironment)) {
             var index = Environments
-                .Select((environment, index) => new { Index = index, Comparison = System.StringComparer.InvariantCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
+                .Select((environment, index) => new { Index = index, Comparison = System.StringComparer.CurrentCultureIgnoreCase.Compare(environment.Name, newEnvironment.Name) })
                 .Where(item => item.Comparison < 0)
                 .Select(item => item.Index + 1)
                 .DefaultIfEmpty(0)

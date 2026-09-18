@@ -13,7 +13,8 @@
         Text="{Binding x:DataType='views:ValidatableEntry', Path=Text.Value, Source={x:Reference Root}}"
         Focused="OnEntryFocused"
         Unfocused="OnEntryUnfocused"
-        Grid.ColumnSpan="2">
+        Grid.ColumnSpan="2"
+        IsPassword="{Binding x:DataType='views:ValidatableEntry', Path=IsPassword, Source={x:Reference Root}}">
 
         <Entry.Triggers>
             <DataTrigger TargetType="Entry" Binding="{Binding x:DataType='views:ValidatableEntry', Path=Text.HasError, Source={x:Reference Root}}" Value="True">

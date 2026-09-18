@@ -20,6 +20,7 @@ public partial class RequestTemplateModel : PageBoundModelBase {
     private readonly IMessageService messageService;
     private readonly IEnvironmentService environmentService;
 
+    // TODO make private fields
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
     public RequestTemplate Request { get; }

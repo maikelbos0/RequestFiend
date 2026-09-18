@@ -51,6 +51,7 @@ public static class MauiProgram {
         mauiAppBuilder.Services.AddSingleton<Models.Services.IRequestTemplateCollectionService, Models.Services.RequestTemplateCollectionService>();
         mauiAppBuilder.Services.AddSingleton<Models.Services.IEnvironmentService, Models.Services.EnvironmentService>();
 
+        // TODO revisit these as much as possible
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<FileModel>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplateCollection>());
         mauiAppBuilder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<Models.Services.IModelDataProvider>().GetData<RequestTemplate>());
@@ -85,8 +86,12 @@ public static class MauiProgram {
     }
 }
 
+// TODO move core classes to private in models
+// TODO sort out subscribe to messages with/without token
+// TODO sort out FileModel vs raw string usage
+// TODO verify use of secondary button + hide vs disable
 // TODO console (in progress)
-// TODO secrets
+// TODO secrets (in progress)
 // TODO verification of status, etc for automated
 // TODO add help?
 // TODO Postman import

@@ -15,8 +15,10 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IMessageService messageService;
     private readonly ISecretEncryptor secretEncryptor;
 
+    // TODO make private fields
     public FileModel File { get; }
     public RequestTemplateCollection Collection { get; }
+
     public ValidatableProperty<bool> AllowScriptEvaluation { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection Variables { get; }

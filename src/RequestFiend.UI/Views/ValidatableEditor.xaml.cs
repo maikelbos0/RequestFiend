@@ -112,6 +112,7 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
         UpdateOverlay();
     }
 
+    // TODO figure out how to do this without depending on Collection
     public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
         if (message.Collection == Collection) {
             UpdateOverlay();
