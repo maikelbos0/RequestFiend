@@ -504,7 +504,7 @@ public class RequestTemplateModelTests : TestsBase {
 
         Assert.False(subject.IsModified);
 
-        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
     }
 
@@ -555,7 +555,7 @@ public class RequestTemplateModelTests : TestsBase {
 
         Assert.True(subject.IsModified);
 
-        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<FileModel>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
     }
 
@@ -839,7 +839,7 @@ public class RequestTemplateModelTests : TestsBase {
         await subject.Delete();
 
         Assert.Empty(collection.Requests);
-        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
         messageService.Received(1).Send(Arg.Any<RequestTemplateDeletedMessage>(), subject.Id);
         messageService.Received(1).Send(Arg.Is<RequestTemplateRemovedFromCollectionMessage>(message => message.Request == request), new FileModel(filePath));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -891,7 +891,7 @@ public class RequestTemplateModelTests : TestsBase {
         await subject.Delete();
 
         Assert.Equal(request, Assert.Single(collection.Requests));
-        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<FileModel>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateDeletedMessage>(), Arg.Any<System.Guid>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateRemovedFromCollectionMessage>(), Arg.Any<FileModel>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());

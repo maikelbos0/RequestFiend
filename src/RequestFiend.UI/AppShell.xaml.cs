@@ -61,16 +61,17 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(OpenCollectionRequestMessage message) {
-        var collectionItem = Items.SingleOrDefault(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+        // TODO use os-dependent comparison in FileModel for finding
+        var collectionItem = Items.SingleOrDefault(item => string.Equals(item.StyleId, message.File.FilePath, StringComparison.OrdinalIgnoreCase));
 
         if (collectionItem == null) {
-            using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection);
+            using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Collection);
             var collectionModel = App.GetRequiredService<RequestTemplateCollectionModel>();
 
             collectionItem = new FlyoutItem() {
                 Icon = "folder_open_solid_full.png",
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
-                StyleId = message.FilePath,
+                StyleId = message.File.FilePath, // TODO does any work need to be done here?
                 BindingContext = collectionModel
             };
 

@@ -55,7 +55,7 @@ public class ExchangeModelTests : TestsBase {
         var exchangeHandler = Substitute.For<IExchangeHandler>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
-        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(collectionAllowScriptEvaluation);
+        preferencesService.GetCollectionAllowScriptEvaluation(new(filePath)).Returns(collectionAllowScriptEvaluation);
         preferencesService.GetRequestTimeoutInSeconds().Returns(requestTimeoutInSeconds);
 
         var request = new RequestTemplateSnapshot(

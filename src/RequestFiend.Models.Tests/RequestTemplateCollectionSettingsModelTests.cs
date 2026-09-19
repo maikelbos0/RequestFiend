@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -18,7 +17,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         const string filePath = @"C:\Documents\External data requests.json";
 
         var preferencesService = Substitute.For<IPreferencesService>();
-        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(false);
+        preferencesService.GetCollectionAllowScriptEvaluation(new(filePath)).Returns(false);
         var collection = new RequestTemplateCollection();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -36,7 +35,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.AllowScriptEvaluation.Set();
 
-        preferencesService.Received().SetCollectionAllowScriptEvaluation(filePath, true);
+        preferencesService.Received().SetCollectionAllowScriptEvaluation(new(filePath), true);
     }
 
     [Fact]
@@ -178,7 +177,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         var messageService = Substitute.For<IMessageService>();
         var preferencesService = Substitute.For<IPreferencesService>();
         preferencesService.GetScriptEvaluationMode().Returns(scriptEvaluationMode);
-        preferencesService.GetCollectionAllowScriptEvaluation(filePath).Returns(allowScriptEvaluation);
+        preferencesService.GetCollectionAllowScriptEvaluation(new(filePath)).Returns(allowScriptEvaluation);
         var collection = new RequestTemplateCollection() {
             DefaultUrl = "https://default",
             IgnoreRemoteCertificateNotAvailable = true,
@@ -290,7 +289,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         Assert.False(subject.IsModified);
 
-        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
         messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.FilePath == filePath));
     }
@@ -341,7 +340,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         Assert.True(subject.IsModified);
 
-        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<FileModel>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCollectionSettingsUpdatedMessage>());
     }

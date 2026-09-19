@@ -130,7 +130,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
         PageTitleBase = $"{File.Name} - {Request.Name}";
         ShellItemTitleBase = Request.Name;
 
-        await requestTemplateCollectionService.Save(File.FilePath, Collection);
+        await requestTemplateCollectionService.Save(File, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 
@@ -220,7 +220,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
             Collection.Requests.Remove(Request);
-            await requestTemplateCollectionService.Save(File.FilePath, Collection);
+            await requestTemplateCollectionService.Save(File, Collection);
             messageService.Send(new RequestTemplateDeletedMessage(), Id);
             messageService.Send(new RequestTemplateRemovedFromCollectionMessage(Request), File);
             messageService.Send(new SuccessMessage("Request has been deleted"));

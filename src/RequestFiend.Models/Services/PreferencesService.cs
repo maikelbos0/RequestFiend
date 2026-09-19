@@ -1,7 +1,6 @@
 ﻿using Microsoft.Maui.Storage;
 using RequestFiend.Models.Messages;
 using Serilog.Events;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -58,12 +57,12 @@ public class PreferencesService : IPreferencesService {
         messageService.Send(new RecentCollectionsChangedMessage());
     }
 
-    public void PushRecentCollection(string filePath) {
+    public void PushRecentCollection(FileModel file) {
         var recentCollections = GetRecentCollections();
         var maximumRecentCollectionCount = GetMaximumRecentCollectionCount();
 
-        recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
-        recentCollections.Insert(0, new(filePath));
+        recentCollections.Remove(file);
+        recentCollections.Insert(0, file);
 
         if (recentCollections.Count > maximumRecentCollectionCount) {
             recentCollections.RemoveRange(maximumRecentCollectionCount, recentCollections.Count - maximumRecentCollectionCount);
@@ -72,10 +71,10 @@ public class PreferencesService : IPreferencesService {
         SetRecentCollections(recentCollections);
     }
 
-    public void RemoveRecentCollection(string filePath) {
+    public void RemoveRecentCollection(FileModel file) {
         var recentCollections = GetRecentCollections();
 
-        recentCollections.RemoveAll(recentCollection => string.Equals(recentCollection.FilePath, filePath, StringComparison.InvariantCultureIgnoreCase));
+        recentCollections.Remove(file);
 
         SetRecentCollections(recentCollections);
     }
@@ -86,11 +85,11 @@ public class PreferencesService : IPreferencesService {
     public void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode)
         => Preferences.Set(nameof(ScriptEvaluationMode), (int)scriptEvaluationMode);
 
-    public bool GetCollectionAllowScriptEvaluation(string filePath)
-        => Preferences.Get($"{CollectionAllowScriptEvaluation}_{filePath}", DefaultCollectionAllowScriptEvaluation);
+    public bool GetCollectionAllowScriptEvaluation(FileModel file)
+        => Preferences.Get($"{CollectionAllowScriptEvaluation}_{file.FilePath}", DefaultCollectionAllowScriptEvaluation);
 
-    public void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation)
-        => Preferences.Set($"{CollectionAllowScriptEvaluation}_{filePath}", allowScriptEvaluation);
+    public void SetCollectionAllowScriptEvaluation(FileModel file, bool allowScriptEvaluation)
+        => Preferences.Set($"{CollectionAllowScriptEvaluation}_{file.FilePath}", allowScriptEvaluation);
 
     public int? GetRequestTimeoutInSeconds() {
         var requestTimeoutInSeconds = Preferences.Get(RequestTimeoutInSeconds, DefaultRequestTimeoutInSeconds);

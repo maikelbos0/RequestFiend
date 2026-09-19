@@ -52,7 +52,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         Collection = collection;
 
         ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
-        AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath), value => preferencesService.SetCollectionAllowScriptEvaluation(File.FilePath, value));
+        AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file), value => preferencesService.SetCollectionAllowScriptEvaluation(file, value));
         DefaultUrl = new(() => collection.DefaultUrl, value => collection.DefaultUrl = value);
         IgnoreRemoteCertificateNotAvailable = new(() => collection.IgnoreRemoteCertificateNotAvailable, value => collection.IgnoreRemoteCertificateNotAvailable = value);
         IgnoreRemoteCertificateNameMismatch = new(() => collection.IgnoreRemoteCertificateNameMismatch, value => collection.IgnoreRemoteCertificateNameMismatch = value);
@@ -104,7 +104,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         Set();
 
-        await requestTemplateCollectionService.Save(File.FilePath, Collection);
+        await requestTemplateCollectionService.Save(File, Collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
         messageService.Send(new RequestTemplateCollectionSettingsUpdatedMessage(File.FilePath, Collection));
     }

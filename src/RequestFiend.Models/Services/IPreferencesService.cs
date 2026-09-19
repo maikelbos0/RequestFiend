@@ -9,12 +9,12 @@ public interface IPreferencesService {
     List<FileModel> GetRecentCollections();
     void TrimRecentCollections();
     void ClearRecentCollections();
-    void PushRecentCollection(string filePath);
-    void RemoveRecentCollection(string filePath);
+    void PushRecentCollection(FileModel file);
+    void RemoveRecentCollection(FileModel file);
     ScriptEvaluationMode GetScriptEvaluationMode();
     void SetScriptEvaluationMode(ScriptEvaluationMode scriptEvaluationMode);
-    bool GetCollectionAllowScriptEvaluation(string filePath);
-    void SetCollectionAllowScriptEvaluation(string filePath, bool allowScriptEvaluation);
+    bool GetCollectionAllowScriptEvaluation(FileModel file);
+    void SetCollectionAllowScriptEvaluation(FileModel file, bool allowScriptEvaluation);
     int? GetRequestTimeoutInSeconds();
     void SetRequestTimeoutInSeconds(int? requestTimeoutInSeconds);
     string GetLoggingPath();

@@ -29,10 +29,10 @@ public class RequestTemplateCollectionServiceTests : TestsBase {
 
         var subject = new RequestTemplateCollectionService(messageService, fileSystem, preferencesService);
 
-        await subject.Save(filePath, collection);
+        await subject.Save(new(filePath), collection);
 
         await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection), Arg.Any<CancellationToken>());
-        messageService.Received(1).Send(Arg.Any<RequestTemplateCollectionUpdatedMessage>(), filePath);
-        preferencesService.Received(1).PushRecentCollection(filePath);
+        messageService.Received(1).Send(Arg.Any<RequestTemplateCollectionUpdatedMessage>(), new FileModel(filePath));
+        preferencesService.Received(1).PushRecentCollection(new(filePath));
     }
 }

@@ -38,7 +38,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
         Collection = collection;
 
         Url = new(() => collection.DefaultUrl, _ => { }, Validator.Required);
-        messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, string>(this, file.FilePath, (model, _) => {
+        messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, FileModel>(this, file, (model, _) => {
             if (!model.Url.IsModified) {
                 model.Url.Reset();
             }
@@ -62,7 +62,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
 
         Reset();
 
-        await requestTemplateCollectionService.Save(File.FilePath, Collection);
+        await requestTemplateCollectionService.Save(File, Collection);
         messageService.Send(new RequestTemplateCreatedMessage(File.FilePath, Collection, request));
         messageService.Send(new RequestTemplateAddedToCollectionMessage(request), File);
         messageService.Send(new SuccessMessage("Request has been added"));

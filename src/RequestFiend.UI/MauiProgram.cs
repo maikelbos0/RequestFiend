@@ -88,7 +88,7 @@ public static class MauiProgram {
 
 // TODO move core classes to private in models
 // TODO sort out subscribe to messages with/without token
-// TODO sort out FileModel vs raw string usage
+// TODO sort out FileModel vs raw string usage (in progress)
 // TODO verify use of secondary button + hide vs disable
 // TODO console (in progress)
 // TODO secrets (in progress)

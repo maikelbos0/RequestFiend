@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -32,7 +31,7 @@ public class NewRequestTemplateModelTests : TestsBase {
 
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
-        messageService.Received(1).Register(subject, filePath, Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
+        messageService.Received(1).Register(subject, new FileModel(filePath), Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());
 
         Assert.Equal([subject.Name, subject.Method, subject.Url], subject.Validatables);
     }
@@ -64,7 +63,7 @@ public class NewRequestTemplateModelTests : TestsBase {
 
         Assert.False(subject.IsModified);
 
-        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
         messageService.Received(1).Send(Arg.Is<RequestTemplateCreatedMessage>(message => message.FilePath == filePath && message.Collection == collection));
         messageService.Received(1).Send(Arg.Any<RequestTemplateAddedToCollectionMessage>(), new FileModel(filePath));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -94,7 +93,7 @@ public class NewRequestTemplateModelTests : TestsBase {
 
         Assert.True(subject.IsModified);
 
-        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<FileModel>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCreatedMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateAddedToCollectionMessage>(), Arg.Any<FileModel>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());

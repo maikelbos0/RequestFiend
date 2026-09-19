@@ -44,8 +44,8 @@ public partial class MainPageModel : PageBoundModelBase {
         var saveResult = await popupService.ShowSaveDialog(".json", stream);
 
         if (saveResult.IsSuccessful) {
-            messageService.Send(new OpenCollectionRequestMessage(saveResult.FilePath, collection));
-            preferencesService.PushRecentCollection(saveResult.FilePath);
+            messageService.Send(new OpenCollectionRequestMessage(new(saveResult.FilePath), collection));
+            preferencesService.PushRecentCollection(new(saveResult.FilePath));
         }
         else if (saveResult.Exception != null && saveResult.Exception is not OperationCanceledException) {
             await popupService.ShowErrorPopup($"Failed to create collection: {saveResult.Exception.Message}");
@@ -64,19 +64,19 @@ public partial class MainPageModel : PageBoundModelBase {
         });
 
         if (file != null) {
-            await OpenCollection(file.FullPath);
+            await OpenCollection(new(file.FullPath));
         }
     }
 
     [RelayCommand]
-    public async Task OpenCollection(string filePath) {
-        if (fileSystem.File.Exists(filePath)) {
+    public async Task OpenCollection(FileModel file) {
+        if (fileSystem.File.Exists(file.FilePath)) {
             try {
-                var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(await fileSystem.File.ReadAllTextAsync(filePath));
+                var collection = JsonSerializer.Deserialize<RequestTemplateCollection>(await fileSystem.File.ReadAllTextAsync(file.FilePath));
 
                 if (collection != null) {
-                    messageService.Send(new OpenCollectionRequestMessage(filePath, collection));
-                    preferencesService.PushRecentCollection(filePath);
+                    messageService.Send(new OpenCollectionRequestMessage(file, collection));
+                    preferencesService.PushRecentCollection(file);
                 }
                 else {
                     await popupService.ShowErrorPopup("Failed to load collection.");
@@ -88,7 +88,7 @@ public partial class MainPageModel : PageBoundModelBase {
         }
         else {
             await popupService.ShowErrorPopup("Collection file does not exist.");
-            preferencesService.RemoveRecentCollection(filePath);
+            preferencesService.RemoveRecentCollection(file);
         }
     }
 }

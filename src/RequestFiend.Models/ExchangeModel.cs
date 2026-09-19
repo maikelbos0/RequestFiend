@@ -78,7 +78,7 @@ public partial class ExchangeModel : PageBoundModelBase, IExchangeListener, IDis
             preferencesService.GetScriptEvaluationMode() switch {
                 ScriptEvaluationMode.Disabled => false,
                 ScriptEvaluationMode.Enabled => true,
-                ScriptEvaluationMode.CollectionScoped => preferencesService.GetCollectionAllowScriptEvaluation(file.FilePath),
+                ScriptEvaluationMode.CollectionScoped => preferencesService.GetCollectionAllowScriptEvaluation(file),
                 _ => throw new NotImplementedException($"Received unknown script evaluation mode '{scriptEvaluationMode}'.")
             },
             preferencesService.GetRequestTimeoutInSeconds()

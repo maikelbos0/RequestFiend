@@ -17,10 +17,10 @@ public class RequestTemplateCollectionService : IRequestTemplateCollectionServic
         this.preferencesService = preferencesService;
     }
 
-    public async Task Save(string filePath, RequestTemplateCollection collection) {
-        await fileSystem.File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(collection));
+    public async Task Save(FileModel file, RequestTemplateCollection collection) {
+        await fileSystem.File.WriteAllTextAsync(file.FilePath, JsonSerializer.Serialize(collection));
 
-        messageService.Send(new RequestTemplateCollectionUpdatedMessage(), filePath);
-        preferencesService.PushRecentCollection(filePath);
+        messageService.Send(new RequestTemplateCollectionUpdatedMessage(), file);
+        preferencesService.PushRecentCollection(file);
     }
 }

@@ -76,7 +76,7 @@ public class CloneRequestTemplateModelTests : TestsBase {
 
         Assert.False(subject.IsModified);
 
-        await requestTemplateCollectionService.Received(1).Save(filePath, collection);
+        await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
         messageService.Received(1).Send(Arg.Is<RequestTemplateCreatedMessage>(message => message.FilePath == filePath && message.Collection == collection));
         messageService.Received(1).Send(Arg.Any<RequestTemplateAddedToCollectionMessage>(), new FileModel(filePath));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
@@ -108,7 +108,7 @@ public class CloneRequestTemplateModelTests : TestsBase {
 
         Assert.True(subject.IsModified);
 
-        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<string>(), Arg.Any<RequestTemplateCollection>());
+        await requestTemplateCollectionService.DidNotReceive().Save(Arg.Any<FileModel>(), Arg.Any<RequestTemplateCollection>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateCreatedMessage>());
         messageService.DidNotReceive().Send(Arg.Any<RequestTemplateAddedToCollectionMessage>(), Arg.Any<FileModel>());
         messageService.DidNotReceive().Send(Arg.Any<SuccessMessage>());

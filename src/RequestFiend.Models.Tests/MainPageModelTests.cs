@@ -52,8 +52,8 @@ public class MainPageModelTests : TestsBase {
         await subject.CreateNewCollection();
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new RequestTemplateCollection())));
-        messageService.Received(1).Send(Arg.Is<OpenCollectionRequestMessage>(message => message.FilePath == filePath));
-        preferencesService.Received(1).PushRecentCollection(filePath);
+        messageService.Received(1).Send(Arg.Is<OpenCollectionRequestMessage>(message => message.File == new FileModel(filePath)));
+        preferencesService.Received(1).PushRecentCollection(new(filePath));
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -70,7 +70,7 @@ public class MainPageModelTests : TestsBase {
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new RequestTemplateCollection())));
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -87,7 +87,7 @@ public class MainPageModelTests : TestsBase {
 
         await popupService.Received(1).ShowSaveDialog(".json", Arg.Is<MemoryStream>(stream => Encoding.Default.GetString(stream.ToArray()) == JsonSerializer.Serialize(new RequestTemplateCollection())));
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -107,8 +107,8 @@ public class MainPageModelTests : TestsBase {
 
         await subject.OpenExistingCollection();
 
-        messageService.Received(1).Send(Arg.Is<OpenCollectionRequestMessage>(message => message.FilePath == filePath));
-        preferencesService.Received(1).PushRecentCollection(filePath);
+        messageService.Received(1).Send(Arg.Is<OpenCollectionRequestMessage>(message => message.File == new FileModel(filePath)));
+        preferencesService.Received(1).PushRecentCollection(new(filePath));
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -128,7 +128,7 @@ public class MainPageModelTests : TestsBase {
         await subject.OpenExistingCollection();
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        recentCollectionService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        recentCollectionService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -148,7 +148,7 @@ public class MainPageModelTests : TestsBase {
         await subject.OpenExistingCollection();
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -169,7 +169,7 @@ public class MainPageModelTests : TestsBase {
         await subject.OpenExistingCollection();
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -190,7 +190,7 @@ public class MainPageModelTests : TestsBase {
         await subject.OpenExistingCollection();
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -207,10 +207,10 @@ public class MainPageModelTests : TestsBase {
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
-        await subject.OpenCollection(filePath);
+        await subject.OpenCollection(new(filePath));
 
-        messageService.Received(1).Send(Arg.Is<OpenCollectionRequestMessage>(message => message.FilePath == filePath));
-        preferencesService.Received(1).PushRecentCollection(filePath);
+        messageService.Received(1).Send(Arg.Is<OpenCollectionRequestMessage>(message => message.File == new FileModel(filePath)));
+        preferencesService.Received(1).PushRecentCollection(new(filePath));
         await popupService.DidNotReceive().ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -226,10 +226,10 @@ public class MainPageModelTests : TestsBase {
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
-        await subject.OpenCollection(filePath);
+        await subject.OpenCollection(new(filePath));
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -246,10 +246,10 @@ public class MainPageModelTests : TestsBase {
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
-        await subject.OpenCollection(filePath);
+        await subject.OpenCollection(new(filePath));
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 
@@ -266,10 +266,10 @@ public class MainPageModelTests : TestsBase {
 
         var subject = new MainPageModel(popupService, messageService, preferencesService, fileSystem);
 
-        await subject.OpenCollection(filePath);
+        await subject.OpenCollection(new(filePath));
 
         messageService.DidNotReceive().Send(Arg.Any<OpenCollectionRequestMessage>());
-        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<string>());
+        preferencesService.DidNotReceive().PushRecentCollection(Arg.Any<FileModel>());
         await popupService.Received(1).ShowErrorPopup(Arg.Any<string>());
     }
 }
