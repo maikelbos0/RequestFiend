@@ -90,7 +90,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
             return;
         }
 
-        messageService.Send(new CreateExchangeMessage(File.FilePath, Id, Collection, CreateRequest().CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
+        messageService.Send(new CreateExchangeMessage(File, Id, Collection, CreateRequest().CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
     }
 
     [RelayCommand]

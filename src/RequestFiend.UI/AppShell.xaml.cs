@@ -129,8 +129,9 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(CreateExchangeMessage message) {
-        using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(new FileModel(message.FilePath), message.Collection, message.Request);
-        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+        using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Collection, message.Request);
+        // TODO use os-dependent comparison in FileModel for finding
+        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.File.FilePath, StringComparison.OrdinalIgnoreCase));
         var (requestItem, index) = collectionItem.Items
             .Select((item, index) => new { Index = index, Item = item, item.StyleId })
             .Where(x => x.StyleId == message.Id)

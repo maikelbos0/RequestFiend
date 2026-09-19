@@ -303,7 +303,7 @@ public class RequestTemplateModelTests : TestsBase {
 
         await subject.CreateExchange();
 
-        messageService.Received(1).Send(Arg.Is<CreateExchangeMessage>(message => message.FilePath == filePath && message.Id == subject.Id && message.Collection == collection && message.Request.Name == subject.Name.Value));
+        messageService.Received(1).Send(Arg.Is<CreateExchangeMessage>(message => message.File == new FileModel(filePath) && message.Id == subject.Id && message.Collection == collection && message.Request.Name == subject.Name.Value));
     }
 
     [Theory]
