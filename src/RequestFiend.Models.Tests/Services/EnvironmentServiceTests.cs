@@ -26,7 +26,7 @@ public class EnvironmentServiceTests : TestsBase {
 
         var subject = new EnvironmentService(fileSystem, Substitute.For<IPreferencesService>(), Substitute.For<IPopupService>(), messageService);
 
-        await subject.Save(filePath, environment);
+        await subject.Save(new(filePath), environment);
 
         await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment), Arg.Any<CancellationToken>());
 
@@ -49,7 +49,7 @@ public class EnvironmentServiceTests : TestsBase {
 
         var subject = new EnvironmentService(fileSystem, preferencesService, Substitute.For<IPopupService>(), messageService);
 
-        await subject.Save(filePath, environment);
+        await subject.Save(new(filePath), environment);
 
         await fileSystem.Received(1).File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment), Arg.Any<CancellationToken>());
 

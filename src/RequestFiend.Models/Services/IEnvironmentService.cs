@@ -5,5 +5,5 @@ namespace RequestFiend.Models.Services;
 
 public interface IEnvironmentService {
     Task<Environment> GetActiveEnvironment();
-    Task Save(string filePath, Environment environment);
+    Task Save(FileModel file, Environment environment);
 }

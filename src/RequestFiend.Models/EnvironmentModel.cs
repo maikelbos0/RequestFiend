@@ -49,7 +49,7 @@ public partial class EnvironmentModel : BoundModelBase {
 
         Set();
 
-        await environmentService.Save(file.FilePath, environment);
+        await environmentService.Save(file, environment);
         await closeMethod(cancellationToken);
     }
 

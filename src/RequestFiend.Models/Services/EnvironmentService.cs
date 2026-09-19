@@ -23,10 +23,10 @@ public class EnvironmentService : IEnvironmentService, IRecipient<ActiveEnvironm
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
-    public async Task Save(string filePath, Environment environment) {
-        await fileSystem.File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(environment));
+    public async Task Save(FileModel file, Environment environment) {
+        await fileSystem.File.WriteAllTextAsync(file.FilePath, JsonSerializer.Serialize(environment));
 
-        if (preferencesService.GetActiveEnvironment()?.FilePath == filePath) {
+        if (preferencesService.GetActiveEnvironment()?.FilePath == file.FilePath) {
             messageService.Send(new ActiveEnvironmentChangedMessage());
         }
     }
