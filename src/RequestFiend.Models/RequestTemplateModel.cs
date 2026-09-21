@@ -136,7 +136,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
 
     [RelayCommand]
     public async Task ShowUrlPopup() {
-        var result = await popupService.ShowUrlPopup(environmentService, Collection, Url.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, File, Collection, Url.Value);
 
         if (result.Result != null) {
             Url.Value = result.Result;

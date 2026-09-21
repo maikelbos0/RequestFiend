@@ -575,14 +575,14 @@ public class RequestTemplateModelTests : TestsBase {
         };
         popupResult.Result.Returns(expectedUrl);
         var environmentService = Substitute.For<IEnvironmentService>();
-        popupService.ShowUrlPopup(environmentService, collection, url).Returns(popupResult);
+        popupService.ShowUrlPopup(environmentService, new(filePath), collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, environmentService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(environmentService, collection, url);
+        await popupService.Received(1).ShowUrlPopup(environmentService, new(filePath), collection, url);
         Assert.Equal(expectedUrl, subject.Url.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.Url));
     }
@@ -602,14 +602,14 @@ public class RequestTemplateModelTests : TestsBase {
         };
         popupResult.Result.ReturnsNull();
         var environmentService = Substitute.For<IEnvironmentService>();
-        popupService.ShowUrlPopup(environmentService, collection, url).Returns(popupResult);
+        popupService.ShowUrlPopup(environmentService, new(filePath), collection, url).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, environmentService, new(filePath), collection, request);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(environmentService, collection, url);
+        await popupService.Received(1).ShowUrlPopup(environmentService, new(filePath), collection, url);
         Assert.Equal(url, subject.Url.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }

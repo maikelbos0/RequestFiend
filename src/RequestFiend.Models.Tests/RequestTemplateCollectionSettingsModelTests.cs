@@ -721,7 +721,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         };
         popupResult.Result.Returns(expectedUrl);
         var environmentService = Substitute.For<IEnvironmentService>(); 
-        popupService.ShowUrlPopup(environmentService, collection, defaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(environmentService, new(filePath), collection, defaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -737,7 +737,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(environmentService, collection, defaultUrl);
+        await popupService.Received(1).ShowUrlPopup(environmentService, new(filePath), collection, defaultUrl);
         Assert.Equal(expectedUrl, subject.DefaultUrl.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.DefaultUrl));
     }
@@ -754,7 +754,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         };
         popupResult.Result.ReturnsNull();
         var environmentService = Substitute.For<IEnvironmentService>(); 
-        popupService.ShowUrlPopup(environmentService, collection, defaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(environmentService, new(filePath), collection, defaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new RequestTemplateCollectionSettingsModel(
@@ -770,7 +770,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         await subject.ShowDefaultUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(environmentService, collection, defaultUrl);
+        await popupService.Received(1).ShowUrlPopup(environmentService, new(filePath), collection, defaultUrl);
         Assert.Equal(defaultUrl, subject.DefaultUrl.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }

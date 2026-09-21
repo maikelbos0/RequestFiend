@@ -111,14 +111,14 @@ public class NewRequestTemplateModelTests : TestsBase {
         };
         popupResult.Result.Returns(expectedUrl);
         var environmentService = Substitute.For<IEnvironmentService>();
-        popupService.ShowUrlPopup(environmentService, collection, collection.DefaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(environmentService, new(filePath), collection, collection.DefaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, environmentService, new(filePath), collection);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(environmentService, collection, collection.DefaultUrl);
+        await popupService.Received(1).ShowUrlPopup(environmentService, new(filePath), collection, collection.DefaultUrl);
         Assert.Equal(expectedUrl, subject.Url.Value);
         messageService.Received(1).Send(Arg.Is<ValidatablePropertyUpdatedMessage>(message => message.Property == subject.Url));
     }
@@ -135,14 +135,14 @@ public class NewRequestTemplateModelTests : TestsBase {
         };
         popupResult.Result.ReturnsNull();
         var environmentService = Substitute.For<IEnvironmentService>();
-        popupService.ShowUrlPopup(environmentService, collection, collection.DefaultUrl).Returns(popupResult);
+        popupService.ShowUrlPopup(environmentService, new(filePath), collection, collection.DefaultUrl).Returns(popupResult);
         var messageService = Substitute.For<IMessageService>();
 
         var subject = new NewRequestTemplateModel(Substitute.For<IRequestTemplateCollectionService>(), popupService, messageService, environmentService, new(filePath), collection);
 
         await subject.ShowUrlPopup();
 
-        await popupService.Received(1).ShowUrlPopup(environmentService, collection, collection.DefaultUrl);
+        await popupService.Received(1).ShowUrlPopup(environmentService, new(filePath), collection, collection.DefaultUrl);
         Assert.Equal(expectedUrl, subject.Url.Value);
         messageService.DidNotReceive().Send(Arg.Any<ValidatablePropertyUpdatedMessage>());
     }

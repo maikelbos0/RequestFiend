@@ -19,16 +19,18 @@ public partial class UrlModel : BoundModelBase, IVariableSnapshotProvider {
     private readonly Func<string?, CancellationToken, Task> closeMethod;
     private readonly IEnvironmentService environmentService;
 
+    public FileModel File { get; }
     // TODO private
     public RequestTemplateCollection Collection { get; }
     public ValidatableProperty<string> BaseUrl { get; set; }
     public NameValuePairModelCollection Parameters { get; }
 
-    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, IEnvironmentService environmentService, RequestTemplateCollection collection, string url) {
+    public UrlModel(Func<string?, CancellationToken, Task> closeMethod, IEnvironmentService environmentService, FileModel file, RequestTemplateCollection collection, string url) {
         this.closeMethod = closeMethod;
         this.environmentService = environmentService;
         var (baseUrl, parameters) = ParseUrl(url);
 
+        File = file;
         Collection = collection;
         BaseUrl = new(() => baseUrl, _ => { }, Validator.Required);
         Parameters = new([.. parameters.Select(parameter => new NameValuePair() { Name = parameter.Name, Value = parameter.Value })], Validator.Required);

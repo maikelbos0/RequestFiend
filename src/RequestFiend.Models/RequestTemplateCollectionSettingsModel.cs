@@ -179,7 +179,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
     [RelayCommand]
     public async Task ShowDefaultUrlPopup() {
-        var result = await popupService.ShowUrlPopup(environmentService, Collection, DefaultUrl.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, File, Collection, DefaultUrl.Value);
 
         if (result.Result != null) {
             DefaultUrl.Value = result.Result;

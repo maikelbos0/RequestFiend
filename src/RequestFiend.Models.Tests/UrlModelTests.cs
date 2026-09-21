@@ -12,10 +12,13 @@ public class UrlModelTests : TestsBase {
     [InlineData("https://localhost/api")]
     [InlineData("https://localhost/api?")]
     public void Constructor_Without_Parameters(string url) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var collection = new RequestTemplateCollection();
 
-        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), collection, url);
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, url);
 
+        Assert.Equal(new(filePath), subject.File);
         Assert.Equal(collection, subject.Collection);
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
@@ -26,7 +29,9 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public void Constructor_With_Parameters() {
-        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo&%7bBar%7d=Test%2b{{Qux}}&Baz");
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), new(), "https://localhost/api?Foo&%7bBar%7d=Test%2b{{Qux}}&Baz");
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Equal(3, subject.Parameters.Count);
@@ -39,7 +44,9 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public void ParseQueryStringFromBaseUrl_Without_Parameters() {
-        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo");
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), new(), "https://localhost/api?Foo");
 
         subject.ParseQueryStringFromBaseUrl();
 
@@ -51,7 +58,9 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public void ParseQueryStringFromBaseUrl_With_Parameters() {
-        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo") {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), new(), "https://localhost/api?Foo") {
             BaseUrl = { Value = "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz" }
         };
 
@@ -74,9 +83,11 @@ public class UrlModelTests : TestsBase {
     [InlineData("https://localhost/api", "https://localhost/api", true, "https://localhost/api?%7bBar%7d=Test%2b{{Qux}}&Baz=")]
     [InlineData("https://localhost/api?Foo", "https://localhost/api?Bar", false, "https://localhost/api?Bar&Foo=")]
     public async Task Confirm(string url, string baseUrl, bool addParameters, string expectedUrl) {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var closeMethod = Substitute.For<System.Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(), url) {
+        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(filePath), new(), url) {
             BaseUrl = { Value = baseUrl }
         };
 
@@ -92,9 +103,11 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public async Task Confirm_Fails_When_Invalid() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var closeMethod = Substitute.For<System.Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(), "");
+        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(filePath), new(), "");
 
         await subject.Confirm(CancellationToken.None);
 
@@ -103,9 +116,11 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public async Task Cancel() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var closeMethod = Substitute.For<System.Func<string?, CancellationToken, Task>>();
 
-        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(), "https://localhost/api?Foo");
+        var subject = new UrlModel(closeMethod, Substitute.For<IEnvironmentService>(), new(filePath), new(), "https://localhost/api?Foo");
 
         await subject.Cancel(CancellationToken.None);
 
@@ -114,6 +129,8 @@ public class UrlModelTests : TestsBase {
 
     [Fact]
     public async Task CreateVariableSnapshot() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
         var environmentService = Substitute.For<IEnvironmentService>();
         environmentService.GetActiveEnvironment().Returns(new Environment() {
             Variables = {
@@ -127,7 +144,7 @@ public class UrlModelTests : TestsBase {
             }
         };
 
-        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), environmentService, collection, "");
+        var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), environmentService, new(filePath), collection, "");
 
         var result = await subject.CreateVariableSnapshot();
 
