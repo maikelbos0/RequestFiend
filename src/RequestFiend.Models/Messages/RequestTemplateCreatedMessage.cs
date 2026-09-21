@@ -2,4 +2,4 @@
 
 namespace RequestFiend.Models.Messages;
 
-public record RequestTemplateCreatedMessage(string FilePath, RequestTemplateCollection Collection, RequestTemplate Request);
+public record RequestTemplateCreatedMessage(FileModel File, RequestTemplateCollection Collection, RequestTemplate Request);

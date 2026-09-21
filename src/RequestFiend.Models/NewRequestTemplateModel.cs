@@ -63,7 +63,7 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
         Reset();
 
         await requestTemplateCollectionService.Save(File, Collection);
-        messageService.Send(new RequestTemplateCreatedMessage(File.FilePath, Collection, request));
+        messageService.Send(new RequestTemplateCreatedMessage(File, Collection, request));
         messageService.Send(new RequestTemplateAddedToCollectionMessage(request), File);
         messageService.Send(new SuccessMessage("Request has been added"));
     }

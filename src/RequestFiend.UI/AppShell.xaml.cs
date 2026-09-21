@@ -102,7 +102,8 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(RequestTemplateCreatedMessage message) {
-        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.FilePath, StringComparison.OrdinalIgnoreCase));
+        // TODO use os-dependent comparison in FileModel for finding
+        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.File.FilePath, StringComparison.OrdinalIgnoreCase));
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
         var item = CreateRequestTab(collectionModel, collectionModel.AddRequest(message.Request));
 
@@ -155,7 +156,8 @@ public partial class AppShell : Shell,
     }
 
     public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
-        var collectionItem = Items.First(item => item.StyleId == message.FilePath);
+        // TODO use os-dependent comparison in FileModel for finding
+        var collectionItem = Items.First(item => item.StyleId == message.File.FilePath);
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
 
         collectionModel.SynchronizeRequests(collectionItem.Items);

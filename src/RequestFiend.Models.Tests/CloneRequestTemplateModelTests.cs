@@ -77,7 +77,7 @@ public class CloneRequestTemplateModelTests : TestsBase {
         Assert.False(subject.IsModified);
 
         await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
-        messageService.Received(1).Send(Arg.Is<RequestTemplateCreatedMessage>(message => message.FilePath == filePath && message.Collection == collection));
+        messageService.Received(1).Send(Arg.Is<RequestTemplateCreatedMessage>(message => message.File == new FileModel(filePath) && message.Collection == collection));
         messageService.Received(1).Send(Arg.Any<RequestTemplateAddedToCollectionMessage>(), new FileModel(filePath));
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
         await closeMethod.Received().Invoke(CancellationToken.None);

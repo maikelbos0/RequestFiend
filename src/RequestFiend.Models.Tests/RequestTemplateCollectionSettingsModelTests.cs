@@ -291,7 +291,7 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         await requestTemplateCollectionService.Received(1).Save(new(filePath), collection);
         messageService.Received(1).Send(Arg.Any<SuccessMessage>());
-        messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.FilePath == filePath));
+        messageService.Received(1).Send(Arg.Is<RequestTemplateCollectionSettingsUpdatedMessage>(x => x.File == new FileModel(filePath)));
     }
 
     [Theory]

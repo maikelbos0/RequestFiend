@@ -51,7 +51,7 @@ public partial class CloneRequestTemplateModel : BoundModelBase {
         collection.Requests.Add(request);
 
         await requestTemplateCollectionService.Save(file, collection);
-        messageService.Send(new RequestTemplateCreatedMessage(file.FilePath, collection, request));
+        messageService.Send(new RequestTemplateCreatedMessage(file, collection, request));
         messageService.Send(new RequestTemplateAddedToCollectionMessage(request), file);
         messageService.Send(new SuccessMessage("Request has been cloned"));
 

@@ -3,4 +3,4 @@ using System;
 
 namespace RequestFiend.Models.Messages;
 
-public record RequestTemplateCollectionSettingsUpdatedMessage(string FilePath, [property: Obsolete] RequestTemplateCollection Collection);
+public record RequestTemplateCollectionSettingsUpdatedMessage(FileModel File, [property: Obsolete] RequestTemplateCollection Collection);
