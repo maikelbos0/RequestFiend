@@ -47,7 +47,7 @@
                         </Label.FormattedText>
                     </Label>
 
-                    <views:ValidatableEntry Text="{Binding DefaultUrl}" Collection="{Binding Collection}" />
+                    <views:ValidatableEntry Text="{Binding DefaultUrl}" VariableSnapshotProvider="{Binding .}" />
 
                     <Grid ColumnDefinitions="Auto, *">
                         <Switch IsToggled="{Binding IgnoreRemoteCertificateNotAvailable.Value}"/>
@@ -90,7 +90,7 @@
                         NameLabelText="Default header name"
                         DeleteButtonText="Delete default header"
                         AddButtonText="Add default header"
-                        Collection="{Binding Collection}"/>
+                        VariableSnapshotProvider="{Binding .}"/>
                 </VerticalStackLayout>
             </Border>
 

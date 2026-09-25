@@ -52,7 +52,7 @@
 
                         <views:ValidatablePicker SelectedItem="{Binding Method}" ItemsSource="{x:Static models:Options.Methods}" Grid.Row="1" />
 
-                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" Collection="{Binding Collection}" />
+                        <views:ValidatableEntry Text="{Binding Url}" Grid.Row="1" Grid.Column="1" VariableSnapshotProvider="{Binding .}" />
                     </Grid>
 
                     <views:NameValuePairCollectionView
@@ -60,7 +60,7 @@
                         NameLabelText="Header name"
                         DeleteButtonText="Delete header"
                         AddButtonText="Add header"
-                        Collection="{Binding Collection}"/>
+                        VariableSnapshotProvider="{Binding .}"/>
 
                     <Label Text="Content type" Style="{StaticResource EntryLabel}"/>
 
@@ -91,7 +91,7 @@
                     <views:ValidatableEditor Text="{Binding StringContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesStringContent}"/>
 
                     <Grid ColumnDefinitions="*,44" RowDefinitions="*" IsVisible="{Binding UsesFileContent}">
-                        <views:ValidatableEntry Text="{Binding FileContent}" Collection="{Binding Collection}" IsVisible="{Binding UsesFileContent}" />
+                        <views:ValidatableEntry Text="{Binding FileContent}" VariableSnapshotProvider="{Binding .}" IsVisible="{Binding UsesFileContent}" />
 
                         <Button 
                             Text="…"
@@ -108,7 +108,7 @@
                         NameLabelText="Form field name"
                         DeleteButtonText="Delete form field"
                         AddButtonText="Add form field"
-                        Collection="{Binding Collection}"
+                        VariableSnapshotProvider="{Binding .}"
                         IsVisible="{Binding UsesFormDataContent}"/>
 
                     <CollectionView SelectionMode="None" ItemsSource="{Binding FormFileContent}" IsVisible="{Binding UsesFormDataContent}">
@@ -125,12 +125,12 @@
                                     <views:ValidatableEntry
                                         Text="{Binding Name}"
                                         Margin="0, 10, 0, 0"
-                                        Collection="{Binding x:DataType='models:RequestTemplateModel', Path=Collection, Source={RelativeSource AncestorType={x:Type models:RequestTemplateModel}}}"/>
+                                        VariableSnapshotProvider="{Binding x:DataType='models:RequestTemplateModel', Path=., Source={RelativeSource AncestorType={x:Type models:RequestTemplateModel}}}"/>
 
                                     <views:ValidatableEntry
                                         Text="{Binding Value}"
                                         Margin="0, 10, 0, 0"
-                                        Collection="{Binding x:DataType='models:RequestTemplateModel', Path=Collection, Source={RelativeSource AncestorType={x:Type models:RequestTemplateModel}}}"
+                                        VariableSnapshotProvider="{Binding x:DataType='models:RequestTemplateModel', Path=., Source={RelativeSource AncestorType={x:Type models:RequestTemplateModel}}}"
                                         Grid.Column="1"/>
 
                                     <Button 
