@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
-using RequestFiend.Core;
+using RequestFiend.Models;
 using RequestFiend.Models.Messages;
 using RequestFiend.Models.PropertyTypes;
 using RequestFiend.Models.Services;
@@ -16,11 +16,11 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
         default(ValidatableProperty<string>),
         propertyChanged: (bindable, _, _) => ((ValidatableEditor)bindable).UpdateOverlay()
     );
-    public static readonly BindableProperty CollectionProperty = BindableProperty.Create(
-        nameof(Collection),
-        typeof(RequestTemplateCollection),
+    public static readonly BindableProperty VariableSnapshotProviderProperty = BindableProperty.Create(
+        nameof(VariableSnapshotProvider),
+        typeof(IVariableSnapshotProvider),
         typeof(ValidatableEditor),
-        default(RequestTemplateCollection),
+        default(IVariableSnapshotProvider),
         propertyChanged: (bindable, _, _) => ((ValidatableEditor)bindable).UpdateOverlay()
     );
     public static readonly BindableProperty EditorStyleProperty = BindableProperty.Create(
@@ -30,16 +30,14 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
         default(Style)
     );
 
-    private readonly IEnvironmentService environmentService;
-
     public ValidatableProperty<string> Text {
         get => (ValidatableProperty<string>)GetValue(TextProperty);
         set => SetValue(TextProperty, value);
     }
 
-    public RequestTemplateCollection? Collection {
-        get => GetValue(CollectionProperty) as RequestTemplateCollection;
-        set => SetValue(CollectionProperty, value);
+    public IVariableSnapshotProvider? VariableSnapshotProvider {
+        get => GetValue(VariableSnapshotProviderProperty) as IVariableSnapshotProvider;
+        set => SetValue(VariableSnapshotProviderProperty, value);
     }
 
     public Style? EditorStyle {
@@ -50,7 +48,6 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
     public ValidatableEditor() {
         InitializeComponent();
         WeakReferenceMessenger.Default.RegisterAll(this);
-        environmentService = App.GetRequiredService<IEnvironmentService>();
     }
 
     private void OnOverlayTapped(object sender, TappedEventArgs e) {
@@ -66,9 +63,9 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
     }
 
     private async void UpdateOverlay() {
-        if (Collection != null && Text != null) {
+        if (VariableSnapshotProvider != null && Text != null) {
             try {
-                var variableSnapshot = Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
+                var variableSnapshot = await VariableSnapshotProvider.CreateVariableSnapshot();
                 var hasVariables = false;
 
                 Overlay.IsVisible = true;
@@ -116,9 +113,8 @@ public partial class ValidatableEditor : Grid, IRecipient<ActiveEnvironmentChang
         UpdateOverlay();
     }
 
-    // TODO figure out how to do this without depending on Collection
     public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
-        if (message.Collection == Collection) {
+        if (message.File == VariableSnapshotProvider?.File) {
             UpdateOverlay();
         }
     }
