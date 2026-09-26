@@ -18,7 +18,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly RequestTemplateCollection collection;
 
     public FileModel File { get; }
-    
+
     public ValidatableProperty<bool> AllowScriptEvaluation { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection Variables { get; }
@@ -61,10 +61,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         DefaultHeaders = new(collection.DefaultHeaders, Validator.Required);
         Requests = new(
             () => collection.Requests.Select(request => new RequestTemplateItemModel(request)),
-            value => {
-                var sortOrder = value.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
-                this.collection.Requests = [.. this.collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
-            }
+            value => this.collection.Requests = [.. value.Select(item => this.collection.Requests.Single(request => item.Equals(request)))]
         );
 
         ConfigureState([

@@ -2,5 +2,15 @@
 
 namespace RequestFiend.Models;
 
-// TODO make request private somehow?
-public record RequestTemplateItemModel(RequestTemplate Request) : IImmutable;
+public record RequestTemplateItemModel : IImmutable {
+    private readonly RequestTemplate request;
+
+    public string Name => request.Name;
+
+    public RequestTemplateItemModel(RequestTemplate request) {
+        this.request = request;
+    }
+
+    public bool Equals(RequestTemplate request)
+        => this.request == request;
+}

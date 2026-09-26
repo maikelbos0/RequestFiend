@@ -427,9 +427,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.MoveRequestUp(subject.Requests[1]);
 
-        Assert.Equal(collection.Requests[1], subject.Requests[0].Request);
-        Assert.Equal(collection.Requests[0], subject.Requests[1].Request);
-        Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
+        Assert.Equal(collection.Requests[1].Name, subject.Requests[0].Name);
+        Assert.Equal(collection.Requests[0].Name, subject.Requests[1].Name);
+        Assert.Equal(collection.Requests[2].Name, subject.Requests[2].Name);
     }
 
     [Fact]
@@ -457,9 +457,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.MoveRequestUp(subject.Requests[0]);
 
-        Assert.Equal(collection.Requests[0], subject.Requests[0].Request);
-        Assert.Equal(collection.Requests[1], subject.Requests[1].Request);
-        Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
+        Assert.Equal(collection.Requests[0].Name, subject.Requests[0].Name);
+        Assert.Equal(collection.Requests[1].Name, subject.Requests[1].Name);
+        Assert.Equal(collection.Requests[2].Name, subject.Requests[2].Name);
     }
 
     [Fact]
@@ -487,9 +487,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.MoveRequestDown(subject.Requests[1]);
 
-        Assert.Equal(collection.Requests[0], subject.Requests[0].Request);
-        Assert.Equal(collection.Requests[2], subject.Requests[1].Request);
-        Assert.Equal(collection.Requests[1], subject.Requests[2].Request);
+        Assert.Equal(collection.Requests[0].Name, subject.Requests[0].Name);
+        Assert.Equal(collection.Requests[2].Name, subject.Requests[1].Name);
+        Assert.Equal(collection.Requests[1].Name, subject.Requests[2].Name);
     }
 
     [Fact]
@@ -517,9 +517,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.MoveRequestDown(subject.Requests[2]);
 
-        Assert.Equal(collection.Requests[0], subject.Requests[0].Request);
-        Assert.Equal(collection.Requests[1], subject.Requests[1].Request);
-        Assert.Equal(collection.Requests[2], subject.Requests[2].Request);
+        Assert.Equal(collection.Requests[0].Name, subject.Requests[0].Name);
+        Assert.Equal(collection.Requests[1].Name, subject.Requests[1].Name);
+        Assert.Equal(collection.Requests[2].Name, subject.Requests[2].Name);
     }
 
     [Fact]
@@ -577,9 +577,9 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
 
         subject.MoveSelectedRequest(subject.Requests[0]);
 
-        Assert.Equal(collection.Requests[2], subject.Requests[0].Request);
-        Assert.Equal(collection.Requests[0], subject.Requests[1].Request);
-        Assert.Equal(collection.Requests[1], subject.Requests[2].Request);
+        Assert.Equal(collection.Requests[2].Name, subject.Requests[0].Name);
+        Assert.Equal(collection.Requests[0].Name, subject.Requests[1].Name);
+        Assert.Equal(collection.Requests[1].Name, subject.Requests[2].Name);
     }
     [Fact]
     public void DeselectRequest() {
