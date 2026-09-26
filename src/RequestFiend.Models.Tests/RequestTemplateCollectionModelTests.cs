@@ -35,14 +35,10 @@ public class RequestTemplateCollectionModelTests : TestsBase {
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitleBase);
 
         Assert.Equal(new(filePath), subject.Settings.File);
-
         Assert.Equal(new(filePath), subject.NewRequest.File);
+        Assert.Equal(new(filePath), Assert.Single(subject.Requests).File);
 
-        var requestModel = Assert.Single(subject.Requests);
-        Assert.Same(collection.Requests[0], requestModel.Request);
-        Assert.Equal(new(filePath), requestModel.File);
-
-        Assert.Equal([subject.Settings, subject.NewRequest, requestModel], subject.Validatables);
+        Assert.Equal([subject.Settings, subject.NewRequest, .. subject.Requests], subject.Validatables);
     }
 
     [Fact]
@@ -71,7 +67,6 @@ public class RequestTemplateCollectionModelTests : TestsBase {
         var requestModel = subject.AddRequest(request);
 
         Assert.Same(requestModel, Assert.Single(subject.Requests));
-        Assert.Same(request, requestModel.Request);
         Assert.Equal(new(filePath), requestModel.File);
 
         Assert.Equal([subject.Settings, subject.NewRequest, requestModel], subject.Validatables);
@@ -133,10 +128,10 @@ public class RequestTemplateCollectionModelTests : TestsBase {
         var request1 = subject.Requests.ElementAt(0);
         var request1Item = new Tab() { Items = { new ContentPage() { BindingContext = request1 } } };
         var request1ExchangeItem = new Tab() { Items = { new ContentPage() } };
-        
+
         var request2 = subject.Requests.ElementAt(1);
         var request2Item = new Tab() { Items = { new ContentPage() { BindingContext = request2 } } };
-        
+
         var request3 = subject.Requests.ElementAt(2);
         var request3Item = new Tab() { Items = { new ContentPage() { BindingContext = request3 } } };
         var request3ExchangeItem = new Tab() { Items = { new ContentPage() } };

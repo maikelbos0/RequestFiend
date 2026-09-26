@@ -239,7 +239,6 @@ public class RequestTemplateModelTests : TestsBase {
         Assert.Equal(request.Name, subject.ShellItemTitleBase);
 
         Assert.Equal(new FileModel(filePath), subject.File);
-        Assert.Equal(request, subject.Request);
 
         Assert.Equal(request.Name, subject.Name.Value);
         Assert.Equal(request.Method, subject.Method.Value);

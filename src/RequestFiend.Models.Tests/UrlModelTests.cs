@@ -19,7 +19,6 @@ public class UrlModelTests : TestsBase {
         var subject = new UrlModel(Substitute.For<System.Func<string?, CancellationToken, Task>>(), Substitute.For<IEnvironmentService>(), new(filePath), collection, url);
 
         Assert.Equal(new(filePath), subject.File);
-        Assert.Equal(collection, subject.Collection);
 
         Assert.Equal("https://localhost/api", subject.BaseUrl.Value);
         Assert.Empty(subject.Parameters);

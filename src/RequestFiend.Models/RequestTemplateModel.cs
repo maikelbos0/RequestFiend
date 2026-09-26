@@ -20,11 +20,9 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
     private readonly IMessageService messageService;
     private readonly IEnvironmentService environmentService;
     private readonly RequestTemplateCollection collection;
+    private readonly RequestTemplate request;
 
     public FileModel File { get; }
-
-    // TODO make private fields
-    public RequestTemplate Request { get; }
 
     public string Id { get; } = Guid.NewGuid().ToString();
     public ValidatableProperty<string> Name { get; }
@@ -63,7 +61,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
         this.collection = collection;
 
         File = file;
-        Request = request;
+        this.request = request;
 
         Name = new(() => request.Name, value => request.Name = value, Validator.Required);
         Method = new(() => request.Method, value => request.Method = value, Validator.Required);
@@ -128,8 +126,8 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
 
         Set();
 
-        PageTitleBase = $"{File.Name} - {Request.Name}";
-        ShellItemTitleBase = Request.Name;
+        PageTitleBase = $"{File.Name} - {request.Name}";
+        ShellItemTitleBase = request.Name;
 
         await requestTemplateCollectionService.Save(File, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
@@ -220,10 +218,10 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
     [RelayCommand]
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
-            collection.Requests.Remove(Request);
+            collection.Requests.Remove(request);
             await requestTemplateCollectionService.Save(File, collection);
             messageService.Send(new RequestTemplateDeletedMessage(), Id);
-            messageService.Send(new RequestTemplateRemovedFromCollectionMessage(Request), File);
+            messageService.Send(new RequestTemplateRemovedFromCollectionMessage(request), File);
             messageService.Send(new SuccessMessage("Request has been deleted"));
         }
     }
@@ -258,7 +256,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
         => HasManualContentTypeHeader.Value = !HasManualContentTypeHeader.Value;
 
     public bool Equals(RequestTemplate request)
-        => Request == request;
+        => this.request == request;
 
     public async Task<VariableSnapshot> CreateVariableSnapshot()
         => collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
