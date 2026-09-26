@@ -15,11 +15,10 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     private readonly IMessageService messageService;
     private readonly ISecretEncryptor secretEncryptor;
     private readonly IEnvironmentService environmentService;
+    private readonly RequestTemplateCollection collection;
 
-    // TODO make private fields
     public FileModel File { get; }
-    public RequestTemplateCollection Collection { get; }
-
+    
     public ValidatableProperty<bool> AllowScriptEvaluation { get; }
     public ValidatableProperty<string> DefaultUrl { get; }
     public NameValuePairModelCollection Variables { get; }
@@ -48,9 +47,9 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
         this.messageService = messageService;
         this.secretEncryptor = secretEncryptor;
         this.environmentService = environmentService;
-        File = file;
-        Collection = collection;
+        this.collection = collection;
 
+        File = file;
         ShowAllowScriptEvaluation = preferencesService.GetScriptEvaluationMode() == ScriptEvaluationMode.CollectionScoped;
         AllowScriptEvaluation = new(() => preferencesService.GetCollectionAllowScriptEvaluation(file), value => preferencesService.SetCollectionAllowScriptEvaluation(file, value));
         DefaultUrl = new(() => collection.DefaultUrl, value => collection.DefaultUrl = value);
@@ -64,7 +63,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
             () => collection.Requests.Select(request => new RequestTemplateItemModel(request)),
             value => {
                 var sortOrder = value.Select((request, index) => new { request.Request, Index = index }).ToDictionary(x => x.Request, x => x.Index);
-                Collection.Requests = [.. Collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
+                this.collection.Requests = [.. this.collection.Requests.OrderBy(r => sortOrder.TryGetValue(r, out var order) ? order : int.MaxValue)];
             }
         );
 
@@ -104,20 +103,20 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
         Set();
 
-        await requestTemplateCollectionService.Save(File, Collection);
+        await requestTemplateCollectionService.Save(File, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
         messageService.Send(new RequestTemplateCollectionSettingsUpdatedMessage(File));
     }
 
     [RelayCommand]
     public async Task Unlock() {
-        var result = await popupService.ShowUnlockPopup(secretEncryptor, Collection);
+        var result = await popupService.ShowUnlockPopup(secretEncryptor, collection);
         IsLocked = !result.Result;
     }
 
     [RelayCommand]
     public void Lock() {
-        secretEncryptor.Lock(Collection);
+        secretEncryptor.Lock(collection);
         IsLocked = true;
     }
 
@@ -179,7 +178,7 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
 
     [RelayCommand]
     public async Task ShowDefaultUrlPopup() {
-        var result = await popupService.ShowUrlPopup(environmentService, File, Collection, DefaultUrl.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, File, collection, DefaultUrl.Value);
 
         if (result.Result != null) {
             DefaultUrl.Value = result.Result;
@@ -188,5 +187,5 @@ public partial class RequestTemplateCollectionSettingsModel : PageBoundModelBase
     }
 
     public async Task<VariableSnapshot> CreateVariableSnapshot()
-        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
+        => collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }

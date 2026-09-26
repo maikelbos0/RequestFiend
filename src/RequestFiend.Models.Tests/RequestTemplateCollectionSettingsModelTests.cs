@@ -215,7 +215,6 @@ public class RequestTemplateCollectionSettingsModelTests : TestsBase {
         Assert.Equal("Collection settings", subject.ShellItemTitleBase);
 
         Assert.Equal(new FileModel(filePath), subject.File);
-        Assert.Equal(collection, subject.Collection);
 
         Assert.Equal(expectedShowAllowScriptEvaluation, subject.ShowAllowScriptEvaluation);
         Assert.Equal(allowScriptEvaluation, subject.AllowScriptEvaluation.Value);

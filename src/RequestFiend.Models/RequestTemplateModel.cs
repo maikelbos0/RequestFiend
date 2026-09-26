@@ -19,10 +19,11 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
     private readonly IEnvironmentService environmentService;
+    private readonly RequestTemplateCollection collection;
+
+    public FileModel File { get; }
 
     // TODO make private fields
-    public FileModel File { get; }
-    public RequestTemplateCollection Collection { get; }
     public RequestTemplate Request { get; }
 
     public string Id { get; } = Guid.NewGuid().ToString();
@@ -59,9 +60,9 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
         this.popupService = popupService;
         this.messageService = messageService;
         this.environmentService = environmentService;
+        this.collection = collection;
 
         File = file;
-        Collection = collection;
         Request = request;
 
         Name = new(() => request.Name, value => request.Name = value, Validator.Required);
@@ -90,7 +91,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
             return;
         }
 
-        messageService.Send(new CreateExchangeMessage(File, Id, Collection, CreateRequest().CreateSnapshot(Collection, await environmentService.GetActiveEnvironment())));
+        messageService.Send(new CreateExchangeMessage(File, Id, collection, CreateRequest().CreateSnapshot(collection, await environmentService.GetActiveEnvironment())));
     }
 
     [RelayCommand]
@@ -99,7 +100,7 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
             return;
         }
 
-        await  popupService.ShowCloneRequestPopup(requestTemplateCollectionService, messageService, File, Collection, CreateRequest());
+        await  popupService.ShowCloneRequestPopup(requestTemplateCollectionService, messageService, File, collection, CreateRequest());
     }
 
     public RequestTemplate CreateRequest()
@@ -130,13 +131,13 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
         PageTitleBase = $"{File.Name} - {Request.Name}";
         ShellItemTitleBase = Request.Name;
 
-        await requestTemplateCollectionService.Save(File, Collection);
+        await requestTemplateCollectionService.Save(File, collection);
         messageService.Send(new SuccessMessage("Changes have been saved"));
     }
 
     [RelayCommand]
     public async Task ShowUrlPopup() {
-        var result = await popupService.ShowUrlPopup(environmentService, File, Collection, Url.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, File, collection, Url.Value);
 
         if (result.Result != null) {
             Url.Value = result.Result;
@@ -219,8 +220,8 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
     [RelayCommand]
     public async Task Delete() {
         if (await popupService.ShowConfirmPopup("Are you sure you want to delete this request?")) {
-            Collection.Requests.Remove(Request);
-            await requestTemplateCollectionService.Save(File, Collection);
+            collection.Requests.Remove(Request);
+            await requestTemplateCollectionService.Save(File, collection);
             messageService.Send(new RequestTemplateDeletedMessage(), Id);
             messageService.Send(new RequestTemplateRemovedFromCollectionMessage(Request), File);
             messageService.Send(new SuccessMessage("Request has been deleted"));
@@ -260,5 +261,5 @@ public partial class RequestTemplateModel : PageBoundModelBase, IVariableSnapsho
         => Request == request;
 
     public async Task<VariableSnapshot> CreateVariableSnapshot()
-        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
+        => collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }

@@ -34,14 +34,11 @@ public class RequestTemplateCollectionModelTests : TestsBase {
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.PageTitleBase);
         Assert.Equal(Path.GetFileNameWithoutExtension(filePath), subject.ShellItemTitleBase);
 
-        Assert.Same(collection, subject.Settings.Collection);
         Assert.Equal(new(filePath), subject.Settings.File);
 
-        Assert.Same(collection, subject.NewRequest.Collection);
         Assert.Equal(new(filePath), subject.NewRequest.File);
 
         var requestModel = Assert.Single(subject.Requests);
-        Assert.Same(collection, requestModel.Collection);
         Assert.Same(collection.Requests[0], requestModel.Request);
         Assert.Equal(new(filePath), requestModel.File);
 
@@ -74,7 +71,6 @@ public class RequestTemplateCollectionModelTests : TestsBase {
         var requestModel = subject.AddRequest(request);
 
         Assert.Same(requestModel, Assert.Single(subject.Requests));
-        Assert.Same(collection, requestModel.Collection);
         Assert.Same(request, requestModel.Request);
         Assert.Equal(new(filePath), requestModel.File);
 

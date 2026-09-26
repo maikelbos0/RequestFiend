@@ -27,8 +27,7 @@ public class NewRequestTemplateModelTests : TestsBase {
         Assert.Equal("New request", subject.ShellItemTitleBase);
 
         Assert.Equal(new FileModel(filePath), subject.File);
-        Assert.Equal(collection, subject.Collection);
-
+        
         Assert.Equal(collection.DefaultUrl, subject.Url.Value);
 
         messageService.Received(1).Register(subject, new FileModel(filePath), Arg.Any<MessageHandler<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage>>());

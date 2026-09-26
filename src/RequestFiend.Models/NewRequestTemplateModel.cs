@@ -12,16 +12,14 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
     private readonly IPopupService popupService;
     private readonly IMessageService messageService;
     private readonly IEnvironmentService environmentService;
+    private readonly RequestTemplateCollection collection;
 
     public FileModel File { get; }
-
-    // TODO private
-    public RequestTemplateCollection Collection { get; }
 
     public ValidatableProperty<string> Name { get; } = new(() => "", _ => { }, Validator.Required);
     public ValidatableProperty<string> Method { get; } = new(() => "GET", _ => { }, Validator.Required);
     public ValidatableProperty<string> Url { get; }
-    
+
     public NewRequestTemplateModel(
         IRequestTemplateCollectionService requestTemplateCollectionService,
         IPopupService popupService,
@@ -34,9 +32,9 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
         this.popupService = popupService;
         this.messageService = messageService;
         this.environmentService = environmentService;
-        File = file;        
-        Collection = collection;
+        this.collection = collection;
 
+        File = file;
         Url = new(() => collection.DefaultUrl, _ => { }, Validator.Required);
         messageService.Register<NewRequestTemplateModel, RequestTemplateCollectionUpdatedMessage, FileModel>(this, file, (model, _) => {
             if (!model.Url.IsModified) {
@@ -58,19 +56,19 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
             Method = Method.Value,
             Url = Url.Value
         };
-        Collection.Requests.Add(request);
+        collection.Requests.Add(request);
 
         Reset();
 
-        await requestTemplateCollectionService.Save(File, Collection);
-        messageService.Send(new RequestTemplateCreatedMessage(File, Collection, request));
+        await requestTemplateCollectionService.Save(File, collection);
+        messageService.Send(new RequestTemplateCreatedMessage(File, collection, request));
         messageService.Send(new RequestTemplateAddedToCollectionMessage(request), File);
         messageService.Send(new SuccessMessage("Request has been added"));
     }
 
     [RelayCommand]
     public async Task ShowUrlPopup() {
-        var result = await popupService.ShowUrlPopup(environmentService, File, Collection, Url.Value);
+        var result = await popupService.ShowUrlPopup(environmentService, File, collection, Url.Value);
 
         if (result.Result != null) {
             Url.Value = result.Result;
@@ -79,5 +77,5 @@ public partial class NewRequestTemplateModel : PageBoundModelBase, IVariableSnap
     }
 
     public async Task<VariableSnapshot> CreateVariableSnapshot()
-        => Collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
+        => collection.CreateVariableSnapshot(await environmentService.GetActiveEnvironment());
 }
