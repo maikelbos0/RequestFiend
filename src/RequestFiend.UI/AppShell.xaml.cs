@@ -61,8 +61,7 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(OpenCollectionRequestMessage message) {
-        // TODO use os-dependent comparison in FileModel for finding
-        var collectionItem = Items.SingleOrDefault(item => string.Equals(item.StyleId, message.File.FilePath, StringComparison.OrdinalIgnoreCase));
+        var collectionItem = Items.SingleOrDefault(item => item.StyleId == message.File);
 
         if (collectionItem == null) {
             using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Collection);
@@ -71,7 +70,7 @@ public partial class AppShell : Shell,
             collectionItem = new FlyoutItem() {
                 Icon = "folder_open_solid_full.png",
                 Route = $"RequestTemplateCollection_{Guid.NewGuid()}",
-                StyleId = message.File.FilePath, // TODO does any work need to be done here?
+                StyleId = message.File,
                 BindingContext = collectionModel
             };
 
@@ -102,8 +101,7 @@ public partial class AppShell : Shell,
     }
 
     public async void Receive(RequestTemplateCreatedMessage message) {
-        // TODO use os-dependent comparison in FileModel for finding
-        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.File.FilePath, StringComparison.OrdinalIgnoreCase));
+        var collectionItem = Items.Single(item => item.StyleId == message.File);
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
         var item = CreateRequestTab(collectionModel, collectionModel.AddRequest(message.Request));
 
@@ -131,8 +129,7 @@ public partial class AppShell : Shell,
 
     public async void Receive(CreateExchangeMessage message) {
         using var _ = App.GetRequiredService<IModelDataProvider>().CreateScope(message.File, message.Collection, message.Request);
-        // TODO use os-dependent comparison in FileModel for finding
-        var collectionItem = Items.Single(item => string.Equals(item.StyleId, message.File.FilePath, StringComparison.OrdinalIgnoreCase));
+        var collectionItem = Items.Single(item => item.StyleId == message.File);
         var (requestItem, index) = collectionItem.Items
             .Select((item, index) => new { Index = index, Item = item, item.StyleId })
             .Where(x => x.StyleId == message.Id)
@@ -156,8 +153,7 @@ public partial class AppShell : Shell,
     }
 
     public void Receive(RequestTemplateCollectionSettingsUpdatedMessage message) {
-        // TODO use os-dependent comparison in FileModel for finding
-        var collectionItem = Items.First(item => item.StyleId == message.File.FilePath);
+        var collectionItem = Items.First(item => item.StyleId == message.File);
         var collectionModel = (RequestTemplateCollectionModel)collectionItem.BindingContext;
 
         collectionModel.SynchronizeRequests(collectionItem.Items);

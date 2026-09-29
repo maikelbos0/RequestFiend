@@ -4,9 +4,20 @@ namespace RequestFiend.Models.Tests;
 
 public class FileModelTests : TestsBase {
     [Fact]
-    public void Name() {
-        var subject = new FileModel(@"C:\Path\To\File.json");
+    public void OperatorString() {
+        const string filePath = @"C:\Documents\External data requests.json";
 
-        Assert.Equal("File", subject.Name);
+        string result = new FileModel(filePath);
+
+        Assert.Equal(filePath, result);
+    }
+
+    [Fact]
+    public void OperatorFileModel() {
+        const string filePath = @"C:\Documents\External data requests.json";
+
+        FileModel result = filePath;
+
+        Assert.Equal(filePath, result.FilePath);
     }
 }
